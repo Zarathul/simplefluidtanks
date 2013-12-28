@@ -66,20 +66,19 @@ public class CommonProxy
 	{
 		// create and register TankBlock
 		SimpleFluidTanks.tankBlock = new TankBlock(SimpleFluidTanks.tankBlockId);
-//		SimpleFluidTanks.tankBlock.setUnlocalizedName(SimpleFluidTanks.REGISTRY_TANKBLOCK_NAME);
 		
 		GameRegistry.registerBlock(SimpleFluidTanks.tankBlock, SimpleFluidTanks.REGISTRY_TANKBLOCK_KEY);
 		LanguageRegistry.addName(SimpleFluidTanks.tankBlock, SimpleFluidTanks.REGISTRY_TANKBLOCK_READABLE_NAME);
 		
 		// create and register ValveBlock
 		SimpleFluidTanks.valveBlock = new ValveBlock(SimpleFluidTanks.valveBlockId);
-//		SimpleFluidTanks.valveBlock.setUnlocalizedName(SimpleFluidTanks.REGISTRY_VALVEBLOCK_NAME);
 		
 		GameRegistry.registerBlock(SimpleFluidTanks.valveBlock, SimpleFluidTanks.REGISTRY_VALVEBLOCK_KEY);
 		LanguageRegistry.addName(SimpleFluidTanks.valveBlock, SimpleFluidTanks.REGISTRY_VALVEBLOCK_READABLE_NAME);
 		
-		// register ValveBlockEntity
+		// register TileEntities
 		GameRegistry.registerTileEntity(ValveBlockEntity.class, SimpleFluidTanks.REGISTRY_VALVEBLOCK_ENTITY_KEY);
+		GameRegistry.registerTileEntity(TankBlockEntity.class, SimpleFluidTanks.REGISTRY_TANKBLOCK_ENTITY_KEY);
 	}
 	
 	public void postInit(FMLPostInitializationEvent event)

@@ -14,7 +14,7 @@ import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-@Mod(modid = SimpleFluidTanks.modId, name = "SimpleFluidTanks", version = "0.0.1")
+@Mod(modid = SimpleFluidTanks.MOD_ID, name = "SimpleFluidTanks", version = "0.0.1")
 @NetworkMod(serverSideRequired = true, clientSideRequired = true)
 public class SimpleFluidTanks
 {
@@ -38,8 +38,7 @@ public class SimpleFluidTanks
 	public static TankBlockRenderer tankBlockRenderer;
 	
 	// constants
-	public static final String modId = "SimpleFluidTanks";
-	public static final int TANKBLOCK_RENDERER_ID = RenderingRegistry.getNextAvailableRenderId();
+	public static final String MOD_ID = "SimpleFluidTanks";
 	
 	// - texture
 	public static final String TEXTURE_LOCATION = "simplefluidtanks";
@@ -47,15 +46,18 @@ public class SimpleFluidTanks
 	
 	// - registry
 	public static final String REGISTRY_TANKBLOCK_NAME = "tankBlock";
-	public static final String REGISTRY_TANKBLOCK_KEY = modId + REGISTRY_TANKBLOCK_NAME;
+	public static final String REGISTRY_TANKBLOCK_KEY = MOD_ID + REGISTRY_TANKBLOCK_NAME;
 	public static final String REGISTRY_TANKBLOCK_READABLE_NAME = "Fluid Tank";
 	
+	public static final String REGISTRY_TANKBLOCK_ENTITY_NAME = "tankBlockEntity";
+	public static final String REGISTRY_TANKBLOCK_ENTITY_KEY = MOD_ID + REGISTRY_TANKBLOCK_ENTITY_NAME;
+	
 	public static final String REGISTRY_VALVEBLOCK_NAME = "valveBlock";
-	public static final String REGISTRY_VALVEBLOCK_KEY = modId + REGISTRY_VALVEBLOCK_NAME;
+	public static final String REGISTRY_VALVEBLOCK_KEY = MOD_ID + REGISTRY_VALVEBLOCK_NAME;
 	public static final String REGISTRY_VALVEBLOCK_READABLE_NAME = "Fluid Tank Valve";
 	
 	public static final String REGISTRY_VALVEBLOCK_ENTITY_NAME = "valveBlockEntity";
-	public static final String REGISTRY_VALVEBLOCK_ENTITY_KEY = modId + REGISTRY_VALVEBLOCK_ENTITY_NAME;
+	public static final String REGISTRY_VALVEBLOCK_ENTITY_KEY = MOD_ID + REGISTRY_VALVEBLOCK_ENTITY_NAME;
 	
 	// - config settings
 	public static final int CONFIG_DEFAULT_TANKBLOCK_ID = 2526;
@@ -89,6 +91,6 @@ public class SimpleFluidTanks
 
 	public static String getModId()
 	{
-		return SimpleFluidTanks.class.getAnnotation(Mod.class).modid();
+		return SimpleFluidTanks.MOD_ID;
 	}
 }

@@ -41,7 +41,11 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
     public int fill(ForgeDirection from, FluidStack resource, boolean doFill)
     {
     	int fillAmount = tank.fill(resource, doFill);
-		this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+    	
+    	if (fillAmount > 0 && doFill)
+    	{
+    		this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+    	}
     	
         return fillAmount;
     }
@@ -55,7 +59,11 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
         }
         
         FluidStack drainedFluid = tank.drain(resource.amount, doDrain);
-        this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        
+        if (drainedFluid.amount > 0 && doDrain)
+        {
+        	this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        }
         
         return drainedFluid;
     }
@@ -63,8 +71,12 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
     @Override
     public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain)
     {
-    	this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-    	FluidStack drainedFluid =  tank.drain(maxDrain, doDrain);
+    	FluidStack drainedFluid = tank.drain(maxDrain, doDrain);
+        
+    	if (drainedFluid.amount > 0 && doDrain)
+        {
+        	this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        }
     	
     	return drainedFluid;
     }

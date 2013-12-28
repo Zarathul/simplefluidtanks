@@ -19,7 +19,7 @@ public class ClientProxy extends CommonProxy
 	{
 		super.init(event);
 		
-		RenderingRegistry.registerBlockHandler(new TankBlockRenderer());
+		ClientRegistry.bindTileEntitySpecialRenderer(TankBlockEntity.class, new TankBlockRenderer());
 	}
 	
 	@Override
