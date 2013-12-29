@@ -58,7 +58,9 @@ public class TankBlockEntity extends TileEntity
 	
 	public boolean isPartOfTank()
 	{
-		return valveCoords != null && valveCoords.length == 3;
+		// TODO: remove after testing
+		return true;
+//		return isPartOfTank && valveCoords != null && valveCoords.length == 3;
 	}
 	
 	public int[] getValveCoords()
@@ -90,6 +92,7 @@ public class TankBlockEntity extends TileEntity
 			if (entity != null && entity instanceof ValveBlockEntity)
 			{
 				valveCoords = new int[] { x, y, z };
+				isPartOfTank = true;
 				this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 				
 				return true;
@@ -97,6 +100,11 @@ public class TankBlockEntity extends TileEntity
 		}
 		
 		return false;
+	}
+	
+	public int getFillPercentage()
+	{
+		return fillPercentage;
 	}
 	
 	public boolean setFillPercentage(int percentage)
@@ -110,5 +118,18 @@ public class TankBlockEntity extends TileEntity
 		}
 		
 		return false;
+	}
+	
+	public boolean isSameValve(int ... coords)
+	{
+		// TODO: remove after testing
+		return true;
+		
+//		if (coords == null || coords.length != 3)
+//		{
+//			return false;
+//		}
+//		
+//		return (coords[0] == valveCoords[0] && coords[1] == valveCoords[1] && coords[2] == valveCoords[2]);
 	}
 }

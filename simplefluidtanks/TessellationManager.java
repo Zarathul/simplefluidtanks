@@ -37,32 +37,38 @@ public final class TessellationManager
 	
 	public static void renderCube(int xOffset, int yOffset, int zOffset, int width, int height, int depth, ResourceLocation texture, UVTextureMapping textureMapping, boolean renderInside)
 	{
-		renderPositiveZFace(0, 0, 0, 16, 16, texture, textureMapping);
-		renderNegativeZFace(0, 0, 0, 16, 16, texture, textureMapping);
-		renderPositiveXFace(0, 0, 0, 16, 16, texture, textureMapping);
-		renderNegativeXFace(0, 0, 0, 16, 16, texture, textureMapping);
-		renderPositiveYFace(0, 0, 0, 16, 16, texture, textureMapping);
-		renderNegativeYFace(0, 0, 0, 16, 16, texture, textureMapping);
+		renderPositiveXFace(xOffset + width, yOffset, zOffset, height, depth, texture, textureMapping.positiveX);
+		renderNegativeXFace(xOffset, yOffset, zOffset, height, depth, texture, textureMapping.negativeX);
+		renderPositiveYFace(xOffset, yOffset + height, zOffset, width, depth, texture, textureMapping.positiveY);
+		renderNegativeYFace(xOffset, yOffset, zOffset, width, depth, texture, textureMapping.negativeY);
+		renderPositiveZFace(xOffset, yOffset, zOffset + depth, width, height, texture, textureMapping.positiveZ);
+		renderNegativeZFace(xOffset, yOffset, zOffset, width, height, texture, textureMapping.negativeZ);
 		
 		if (renderInside)
 		{
-			renderNegativeZFace(0, 0, 16, 16, 16, texture, textureMapping);
-			renderPositiveZFace(0, 0, -16, 16, 16, texture, textureMapping);
-			renderNegativeXFace(16, 0, 0, 16, 16, texture, textureMapping);
-			renderPositiveXFace(-16, 0, 0, 16, 16, texture, textureMapping);
-			renderNegativeYFace(0, 16, 0, 16, 16, texture, textureMapping);
-			renderPositiveYFace(0, -16, 0, 16, 16, texture, textureMapping);
+			// positive x back side
+			renderNegativeXFace(xOffset + width, yOffset, zOffset, height, depth, texture, textureMapping.negativeX);
+			// negative x back side
+			renderPositiveXFace(xOffset, yOffset, zOffset, height, depth, texture, textureMapping.positiveX);
+			// positive y back side
+			renderNegativeYFace(xOffset, yOffset + height, zOffset, width, depth, texture, textureMapping.negativeY);
+			// negative y back side
+			renderPositiveYFace(xOffset, yOffset, zOffset, width, depth, texture, textureMapping.positiveY);
+			// positive z back side
+			renderNegativeZFace(xOffset, yOffset, zOffset + depth, width, height, texture, textureMapping.negativeZ);
+			// negative back side
+			renderPositiveZFace(xOffset, yOffset, zOffset, width, height, texture, textureMapping.positiveZ);
 		}
 	}
 	
 	public static void renderPositiveXFace(int xOffset, int yOffset, int zOffset, int height, int depth, ResourceLocation texture)
 	{
-		renderPositiveXFace(xOffset, yOffset, zOffset, height, depth, texture, new UVTextureMapping());
+		renderPositiveXFace(xOffset, yOffset, zOffset, height, depth, texture, new UVTextureMapping().positiveX);
 	}
 	
-	public static void renderPositiveXFace(int xOffset, int yOffset, int zOffset, int height, int depth, ResourceLocation texture, UVTextureMapping textureMapping)
+	public static void renderPositiveXFace(int xOffset, int yOffset, int zOffset, int height, int depth, ResourceLocation texture, Face mapping)
 	{
-		double x = xBaseCoord + (xOffset + 16) * pixel;
+		double x = xBaseCoord + xOffset * pixel;
 
 		// bottom right
 		double zBr = zBaseCoord + zOffset * pixel;
@@ -85,23 +91,23 @@ public final class TessellationManager
 		tr.startDrawingQuads();
 		
 		// bottom right
-		tr.addVertexWithUV(x, yBr, zBr, textureMapping.positiveX.bottomRight.u, textureMapping.positiveX.bottomRight.v);
+		tr.addVertexWithUV(x, yBr, zBr, mapping.bottomRight.u, mapping.bottomRight.v);
 		// top right
-		tr.addVertexWithUV(x, yTr, zTr, textureMapping.positiveX.topRight.u, textureMapping.positiveX.topRight.v);
+		tr.addVertexWithUV(x, yTr, zTr, mapping.topRight.u, mapping.topRight.v);
 		// top left
-		tr.addVertexWithUV(x, yTl, zTl, textureMapping.positiveX.topLeft.u, textureMapping.positiveX.topLeft.v);
+		tr.addVertexWithUV(x, yTl, zTl, mapping.topLeft.u, mapping.topLeft.v);
 		// bottom left
-		tr.addVertexWithUV(x, yBl, zBl, textureMapping.positiveX.bottomLeft.u, textureMapping.positiveX.bottomLeft.v);
+		tr.addVertexWithUV(x, yBl, zBl, mapping.bottomLeft.u, mapping.bottomLeft.v);
 		
 		tr.draw();
 	}
 	
 	public static void renderNegativeXFace(int xOffset, int yOffset, int zOffset, int height, int depth, ResourceLocation texture)
 	{
-		renderNegativeXFace(xOffset, yOffset, zOffset, height, depth, texture, new UVTextureMapping());
+		renderNegativeXFace(xOffset, yOffset, zOffset, height, depth, texture, new UVTextureMapping().negativeX);
 	}
 	
-	public static void renderNegativeXFace(int xOffset, int yOffset, int zOffset, int height, int depth, ResourceLocation texture, UVTextureMapping textureMapping)
+	public static void renderNegativeXFace(int xOffset, int yOffset, int zOffset, int height, int depth, ResourceLocation texture, Face mapping)
 	{
 		double x = xBaseCoord + xOffset * pixel;
 		
@@ -126,25 +132,25 @@ public final class TessellationManager
 		tr.startDrawingQuads();
 		
 		// bottom left
-		tr.addVertexWithUV(x, yBl, zBl, textureMapping.negativeX.bottomLeft.u, textureMapping.negativeX.bottomLeft.v);
+		tr.addVertexWithUV(x, yBl, zBl, mapping.bottomLeft.u, mapping.bottomLeft.v);
 		// bottom right
-		tr.addVertexWithUV(x, yBr, zBr, textureMapping.negativeX.bottomRight.u, textureMapping.negativeX.bottomRight.v);
+		tr.addVertexWithUV(x, yBr, zBr, mapping.bottomRight.u, mapping.bottomRight.v);
 		// top right
-		tr.addVertexWithUV(x, yTr, zTr, textureMapping.negativeX.topRight.u, textureMapping.negativeX.topRight.v);
+		tr.addVertexWithUV(x, yTr, zTr, mapping.topRight.u, mapping.topRight.v);
 		// top left
-		tr.addVertexWithUV(x, yTl, zTl, textureMapping.negativeX.topLeft.u, textureMapping.negativeX.topLeft.v);
+		tr.addVertexWithUV(x, yTl, zTl, mapping.topLeft.u, mapping.topLeft.v);
 		
 		tr.draw();
 	}
 	
 	public static void renderPositiveYFace(int xOffset, int yOffset, int zOffset, int width, int depth, ResourceLocation texture)
 	{
-		renderPositiveYFace(xOffset, yOffset, zOffset, width, depth, texture, new UVTextureMapping());
+		renderPositiveYFace(xOffset, yOffset, zOffset, width, depth, texture, new UVTextureMapping().positiveY);
 	}
 	
-	public static void renderPositiveYFace(int xOffset, int yOffset, int zOffset, int width, int depth, ResourceLocation texture, UVTextureMapping textureMapping)
+	public static void renderPositiveYFace(int xOffset, int yOffset, int zOffset, int width, int depth, ResourceLocation texture, Face mapping)
 	{
-		double y = yBaseCoord + (yOffset + 16) * pixel;
+		double y = yBaseCoord + yOffset * pixel;
 
 		// top left
 		double xTl = xBaseCoord + xOffset * pixel;
@@ -167,23 +173,23 @@ public final class TessellationManager
 		tr.startDrawingQuads();
 		
 		// top left
-		tr.addVertexWithUV(xTl, y, zTl, textureMapping.positiveY.topLeft.u, textureMapping.positiveY.topLeft.v);
+		tr.addVertexWithUV(xTl, y, zTl, mapping.topLeft.u, mapping.topLeft.v);
 		// bottom left
-		tr.addVertexWithUV(xBl, y, zBl, textureMapping.positiveY.bottomLeft.u, textureMapping.positiveY.bottomLeft.v);
+		tr.addVertexWithUV(xBl, y, zBl, mapping.bottomLeft.u, mapping.bottomLeft.v);
 		// bottom right
-		tr.addVertexWithUV(xBr, y, zBr, textureMapping.positiveY.bottomRight.u, textureMapping.positiveY.bottomRight.v);
+		tr.addVertexWithUV(xBr, y, zBr, mapping.bottomRight.u, mapping.bottomRight.v);
 		// top right
-		tr.addVertexWithUV(xTr, y, zTr, textureMapping.positiveY.topRight.u, textureMapping.positiveY.topRight.v);
+		tr.addVertexWithUV(xTr, y, zTr, mapping.topRight.u, mapping.topRight.v);
 		
 		tr.draw();
 	}
 	
 	public static void renderNegativeYFace(int xOffset, int yOffset, int zOffset, int width, int depth, ResourceLocation texture)
 	{
-		renderNegativeYFace(xOffset, yOffset, zOffset, width, depth, texture, new UVTextureMapping());
+		renderNegativeYFace(xOffset, yOffset, zOffset, width, depth, texture, new UVTextureMapping().negativeY);
 	}
 	
-	public static void renderNegativeYFace(int xOffset, int yOffset, int zOffset, int width, int depth, ResourceLocation texture, UVTextureMapping textureMapping)
+	public static void renderNegativeYFace(int xOffset, int yOffset, int zOffset, int width, int depth, ResourceLocation texture, Face mapping)
 	{
 		double y = yBaseCoord + yOffset * pixel;
 		
@@ -208,25 +214,25 @@ public final class TessellationManager
 		tr.startDrawingQuads();
 		
 		// bottom left
-		tr.addVertexWithUV(xBl, y, zBl, textureMapping.negativeY.bottomLeft.u, textureMapping.negativeY.bottomLeft.v);
+		tr.addVertexWithUV(xBl, y, zBl, mapping.bottomLeft.u, mapping.bottomLeft.v);
 		// bottom right
-		tr.addVertexWithUV(xBr, y, zBr, textureMapping.negativeY.bottomRight.u, textureMapping.negativeY.bottomRight.v);
+		tr.addVertexWithUV(xBr, y, zBr, mapping.bottomRight.u, mapping.bottomRight.v);
 		// top right
-		tr.addVertexWithUV(xTr, y, zTr, textureMapping.negativeY.topRight.u, textureMapping.negativeY.topRight.v);
+		tr.addVertexWithUV(xTr, y, zTr, mapping.topRight.u, mapping.topRight.v);
 		// top left
-		tr.addVertexWithUV(xTl, y, zTl, textureMapping.negativeY.topLeft.u, textureMapping.negativeY.topLeft.v);
+		tr.addVertexWithUV(xTl, y, zTl, mapping.topLeft.u, mapping.topLeft.v);
 		
 		tr.draw();
 	}
 	
 	public static void renderPositiveZFace(int xOffset, int yOffset, int zOffset, int width, int height, ResourceLocation texture)
 	{
-		renderPositiveZFace(xOffset, yOffset, zOffset, width, height, texture, new UVTextureMapping());
+		renderPositiveZFace(xOffset, yOffset, zOffset, width, height, texture, new UVTextureMapping().positiveZ);
 	}
 	
-	public static void renderPositiveZFace(int xOffset, int yOffset, int zOffset, int width, int height, ResourceLocation texture, UVTextureMapping textureMapping)
+	public static void renderPositiveZFace(int xOffset, int yOffset, int zOffset, int width, int height, ResourceLocation texture, Face mapping)
 	{
-		double z = zBaseCoord + (zOffset + 16) * pixel;
+		double z = zBaseCoord + zOffset * pixel;
 		
 		// bottom left
 		double xBl = xBaseCoord + xOffset * pixel;
@@ -249,23 +255,23 @@ public final class TessellationManager
 		tr.startDrawingQuads();
 		
 		// bottom left
-		tr.addVertexWithUV(xBl, yBl, z, textureMapping.positiveZ.bottomLeft.u, textureMapping.positiveZ.bottomLeft.v);
+		tr.addVertexWithUV(xBl, yBl, z, mapping.bottomLeft.u, mapping.bottomLeft.v);
 		// bottom right
-		tr.addVertexWithUV(xBr, yBr, z, textureMapping.positiveZ.bottomRight.u, textureMapping.positiveZ.bottomRight.v);
+		tr.addVertexWithUV(xBr, yBr, z, mapping.bottomRight.u, mapping.bottomRight.v);
 		// top right
-		tr.addVertexWithUV(xTr, yTr, z, textureMapping.positiveZ.topRight.u, textureMapping.positiveZ.topRight.v);
+		tr.addVertexWithUV(xTr, yTr, z, mapping.topRight.u, mapping.topRight.v);
 		// top left
-		tr.addVertexWithUV(xTl, yTl, z, textureMapping.positiveZ.topLeft.u, textureMapping.positiveZ.topLeft.v);
+		tr.addVertexWithUV(xTl, yTl, z, mapping.topLeft.u, mapping.topLeft.v);
 		
 		tr.draw();
 	}
 	
 	public static void renderNegativeZFace(int xOffset, int yOffset, int zOffset, int width, int height, ResourceLocation texture)
 	{
-		renderNegativeZFace(xOffset, yOffset, zOffset, width, height, texture, new UVTextureMapping());
+		renderNegativeZFace(xOffset, yOffset, zOffset, width, height, texture, new UVTextureMapping().negativeZ);
 	}
 	
-	public static void renderNegativeZFace(int xOffset, int yOffset, int zOffset, int width, int height, ResourceLocation texture, UVTextureMapping textureMapping)
+	public static void renderNegativeZFace(int xOffset, int yOffset, int zOffset, int width, int height, ResourceLocation texture, Face mapping)
 	{
 		double z = zBaseCoord + zOffset * pixel;
 
@@ -290,13 +296,13 @@ public final class TessellationManager
 		tr.startDrawingQuads();
 		
 		// bottom right
-		tr.addVertexWithUV(xBr, yBr, z, textureMapping.negativeZ.bottomRight.u, textureMapping.negativeZ.bottomRight.v);
+		tr.addVertexWithUV(xBr, yBr, z, mapping.bottomRight.u, mapping.bottomRight.v);
 		// top right
-		tr.addVertexWithUV(xTr, yTr, z, textureMapping.negativeZ.topRight.u, textureMapping.negativeZ.topRight.v);
+		tr.addVertexWithUV(xTr, yTr, z, mapping.topRight.u, mapping.topRight.v);
 		// top left
-		tr.addVertexWithUV(xTl, yTl, z, textureMapping.negativeZ.topLeft.u, textureMapping.negativeZ.topLeft.v);
+		tr.addVertexWithUV(xTl, yTl, z, mapping.topLeft.u, mapping.topLeft.v);
 		// bottom left
-		tr.addVertexWithUV(xBl, yBl, z, textureMapping.negativeZ.bottomLeft.u, textureMapping.negativeZ.bottomLeft.v);
+		tr.addVertexWithUV(xBl, yBl, z, mapping.bottomLeft.u, mapping.bottomLeft.v);
 		
 		tr.draw();
 	}
