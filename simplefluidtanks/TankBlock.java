@@ -28,6 +28,12 @@ public class TankBlock extends BlockContainer
 	@SideOnly(Side.CLIENT)
 	private Icon[] icons;
 
+	@SideOnly(Side.CLIENT)
+	public Icon[] getIcons()
+	{
+		return icons;
+	}
+
 	@Override
 	@SideOnly(Side.CLIENT)
 	public Icon getIcon(int side, int meta)

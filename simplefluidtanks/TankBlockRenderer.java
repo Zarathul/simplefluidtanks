@@ -86,109 +86,113 @@ public class TankBlockRenderer extends TileEntitySpecialRenderer
 		
 		TankBlock tank = (TankBlock)block;
 		TankBlockEntity entity = (TankBlockEntity)tileEntity;
+		Icon[] icons = tank.getIcons();
 		
 		Tessellator tsr = Tessellator.instance;
 		int brightness = block.getMixedBrightnessForBlock(tileEntity.worldObj, (int)x, (int)y, (int)z);
 		tsr.setBrightness(brightness);
 		
 		TessellationManager.setBaseCoords(x, y, z);
+		tsr.startDrawingQuads();
 		
 		if (!entity.isPartOfTank())
 		{
-			renderSolid(entity);
+			renderSolid(entity, icons[0]);
 		}
 		else
 		{
 			HashMap<String, Boolean> connections = getConnections(entity);
 			
-			renderPositiveXFace(entity, connections);
-			renderNegativeXFace(entity, connections);
-			renderPositiveZFace(entity, connections);
-			renderNegativeZFace(entity, connections);
-			renderPositiveYFace(entity, connections);
-			renderNegativeYFace(entity, connections);
+			renderPositiveXFace(entity, connections, icons);
+			renderNegativeXFace(entity, connections, icons);
+			renderPositiveZFace(entity, connections, icons);
+			renderNegativeZFace(entity, connections, icons);
+			renderPositiveYFace(entity, connections, icons);
+			renderNegativeYFace(entity, connections, icons);
 		}
+		
+		tsr.draw();
 	}
 	
-	private void renderSolid(TankBlockEntity entity)
+	private void renderSolid(TankBlockEntity entity, Icon icon)
 	{
-		TessellationManager.renderCube(2, 0, 2, 12, 14, 12, textureLocations[0], true);
+		TessellationManager.renderCube(2, 0, 2, 12, 14, 12, icon, true);
 	}
 	
-	private void renderPositiveXFace(TankBlockEntity entity, HashMap<String, Boolean> connections)
+	private void renderPositiveXFace(TankBlockEntity entity, HashMap<String, Boolean> connections, Icon[] icons)
 	{
 		// only render this side if there isn't a tank block from the same tank in front of it 
 		if (!connections.get("X+"))
 		{
 			int textureIndex = getConnectedTexture(connections, 3);
-			TessellationManager.renderPositiveXFace(16, 0, 0, 16, 16, textureLocations[textureIndex]);
+			TessellationManager.renderPositiveXFace(16, 0, 0, 16, 16, icons[textureIndex]);
 			
 			textureIndex = getConnectedTexture(connections, 1);
-			TessellationManager.renderNegativeXFace(16, 0, 0, 16, 16, textureLocations[textureIndex]);
+			TessellationManager.renderNegativeXFace(16, 0, 0, 16, 16, icons[textureIndex]);
 		}
 	}
 	
-	private void renderNegativeXFace(TankBlockEntity entity, HashMap<String, Boolean> connections)
+	private void renderNegativeXFace(TankBlockEntity entity, HashMap<String, Boolean> connections, Icon[] icons)
 	{
 		// only render this side if there isn't a tank block from the same tank in front of it 
 		if (!connections.get("X-"))
 		{
 			int textureIndex = getConnectedTexture(connections, 1);
-			TessellationManager.renderNegativeXFace(0, 0, 0, 16, 16, textureLocations[textureIndex]);
+			TessellationManager.renderNegativeXFace(0, 0, 0, 16, 16, icons[textureIndex]);
 			
 			textureIndex = getConnectedTexture(connections, 3);
-			TessellationManager.renderPositiveXFace(0, 0, 0, 16, 16, textureLocations[textureIndex]);
+			TessellationManager.renderPositiveXFace(0, 0, 0, 16, 16, icons[textureIndex]);
 		}
 	}
 	
-	private void renderPositiveZFace(TankBlockEntity entity, HashMap<String, Boolean> connections)
+	private void renderPositiveZFace(TankBlockEntity entity, HashMap<String, Boolean> connections, Icon[] icons)
 	{
 		// only render this side if there isn't a tank block from the same tank in front of it 
 		if (!connections.get("Z+"))
 		{
 			int textureIndex = getConnectedTexture(connections, 0);
-			TessellationManager.renderPositiveZFace(0, 0, 16, 16, 16, textureLocations[textureIndex]);
+			TessellationManager.renderPositiveZFace(0, 0, 16, 16, 16, icons[textureIndex]);
 			
 			textureIndex = getConnectedTexture(connections, 2);
-			TessellationManager.renderNegativeZFace(0, 0, 16, 16, 16, textureLocations[textureIndex]);		}
+			TessellationManager.renderNegativeZFace(0, 0, 16, 16, 16, icons[textureIndex]);		}
 	}
 	
-	private void renderNegativeZFace(TankBlockEntity entity, HashMap<String, Boolean> connections)
+	private void renderNegativeZFace(TankBlockEntity entity, HashMap<String, Boolean> connections, Icon[] icons)
 	{
 		// only render this side if there isn't a tank block from the same tank in front of it 
 		if (!connections.get("Z-"))
 		{
 			int textureIndex = getConnectedTexture(connections, 2);
-			TessellationManager.renderNegativeZFace(0, 0, 0, 16, 16, textureLocations[textureIndex]);
+			TessellationManager.renderNegativeZFace(0, 0, 0, 16, 16, icons[textureIndex]);
 			
 			textureIndex = getConnectedTexture(connections, 0);
-			TessellationManager.renderPositiveZFace(0, 0, 0, 16, 16, textureLocations[textureIndex]);
+			TessellationManager.renderPositiveZFace(0, 0, 0, 16, 16, icons[textureIndex]);
 		}
 	}
 	
-	private void renderPositiveYFace(TankBlockEntity entity, HashMap<String, Boolean> connections)
+	private void renderPositiveYFace(TankBlockEntity entity, HashMap<String, Boolean> connections, Icon[] icons)
 	{
 		// only render this side if there isn't a tank block from the same tank in front of it 
 		if (!connections.get("Y+"))
 		{
 			int textureIndex = getConnectedTexture(connections, 5);
-			TessellationManager.renderPositiveYFace(0, 16, 0, 16, 16, textureLocations[textureIndex]);
+			TessellationManager.renderPositiveYFace(0, 16, 0, 16, 16, icons[textureIndex]);
 			
 			textureIndex = getConnectedTexture(connections, 4);
-			TessellationManager.renderNegativeYFace(0, 16, 0, 16, 16, textureLocations[textureIndex]);
+			TessellationManager.renderNegativeYFace(0, 16, 0, 16, 16, icons[textureIndex]);
 		}
 	}
 	
-	private void renderNegativeYFace(TankBlockEntity entity, HashMap<String, Boolean> connections)
+	private void renderNegativeYFace(TankBlockEntity entity, HashMap<String, Boolean> connections, Icon[] icons)
 	{
 		// only render this side if there isn't a tank block from the same tank in front of it 
 		if (!connections.get("Y-"))
 		{
 			int textureIndex = getConnectedTexture(connections, 4);
-			TessellationManager.renderNegativeYFace(0, 0, 0, 16, 16, textureLocations[textureIndex]);
+			TessellationManager.renderNegativeYFace(0, 0, 0, 16, 16, icons[textureIndex]);
 			
 			textureIndex = getConnectedTexture(connections, 5);
-			TessellationManager.renderPositiveYFace(0, 0, 0, 16, 16, textureLocations[textureIndex]);
+			TessellationManager.renderPositiveYFace(0, 0, 0, 16, 16, icons[textureIndex]);
 		}
 	}
 	
