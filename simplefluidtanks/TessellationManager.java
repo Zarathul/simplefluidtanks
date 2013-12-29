@@ -8,6 +8,8 @@ public final class TessellationManager
 {
 	// The max block width, height and depth is 1f, so we divide it by 16f to get 16 "subblocks" in every dimension 
 	private static final float pixel = 1f / 16f;
+	// Bandaid fix for the flickering issues with adjacent blocks
+	private static final double flickerOffset = 0.0001;
 	private static final Tessellator tr = Tessellator.instance;
 	
 	private static double xBaseCoord;
@@ -68,7 +70,7 @@ public final class TessellationManager
 	
 	public static void renderPositiveXFace(int xOffset, int yOffset, int zOffset, int height, int depth, ResourceLocation texture, Face mapping)
 	{
-		double x = xBaseCoord + xOffset * pixel;
+		double x = xBaseCoord + xOffset * pixel + flickerOffset;
 
 		// bottom right
 		double zBr = zBaseCoord + zOffset * pixel;
@@ -109,7 +111,7 @@ public final class TessellationManager
 	
 	public static void renderNegativeXFace(int xOffset, int yOffset, int zOffset, int height, int depth, ResourceLocation texture, Face mapping)
 	{
-		double x = xBaseCoord + xOffset * pixel;
+		double x = xBaseCoord + xOffset * pixel - flickerOffset;
 		
 		// bottom left
 		double zBl = zBaseCoord + zOffset * pixel;
@@ -150,36 +152,36 @@ public final class TessellationManager
 	
 	public static void renderPositiveYFace(int xOffset, int yOffset, int zOffset, int width, int depth, ResourceLocation texture, Face mapping)
 	{
-		double y = yBaseCoord + yOffset * pixel;
-
-		// top left
-		double xTl = xBaseCoord + xOffset * pixel;
-		double zTl = zBaseCoord + zOffset * pixel;
-		
-		// bottom left
-		double xBl = xBaseCoord + xOffset * pixel;
-		double zBl = zBaseCoord + (zOffset + depth) * pixel;
+		double y = yBaseCoord + yOffset * pixel + flickerOffset;
 
 		// bottom right
-		double xBr = xBaseCoord + (xOffset + width) * pixel;
-		double zBr = zBaseCoord + (zOffset + depth) * pixel;
+		double xBr = xBaseCoord + xOffset * pixel;
+		double zBr = zBaseCoord + zOffset * pixel;
 
 		// top right
-		double xTr = xBaseCoord + (xOffset + width) * pixel;
-		double zTr = zBaseCoord + zOffset * pixel;
+		double xTr = xBaseCoord + xOffset * pixel;
+		double zTr = zBaseCoord + (zOffset + depth) * pixel;
+		
+		// top left
+		double xTl = xBaseCoord + (xOffset + width) * pixel;
+		double zTl = zBaseCoord + (zOffset + depth) * pixel;
+		
+		// bottom left
+		double xBl = xBaseCoord + (xOffset + width) * pixel;
+		double zBl = zBaseCoord + zOffset * pixel;
 		
 		Minecraft.getMinecraft().renderEngine.bindTexture(texture);
 		
 		tr.startDrawingQuads();
 		
-		// top left
-		tr.addVertexWithUV(xTl, y, zTl, mapping.topLeft.u, mapping.topLeft.v);
-		// bottom left
-		tr.addVertexWithUV(xBl, y, zBl, mapping.bottomLeft.u, mapping.bottomLeft.v);
 		// bottom right
 		tr.addVertexWithUV(xBr, y, zBr, mapping.bottomRight.u, mapping.bottomRight.v);
 		// top right
 		tr.addVertexWithUV(xTr, y, zTr, mapping.topRight.u, mapping.topRight.v);
+		// top left
+		tr.addVertexWithUV(xTl, y, zTl, mapping.topLeft.u, mapping.topLeft.v);
+		// bottom left
+		tr.addVertexWithUV(xBl, y, zBl, mapping.bottomLeft.u, mapping.bottomLeft.v);
 		
 		tr.draw();
 	}
@@ -191,36 +193,36 @@ public final class TessellationManager
 	
 	public static void renderNegativeYFace(int xOffset, int yOffset, int zOffset, int width, int depth, ResourceLocation texture, Face mapping)
 	{
-		double y = yBaseCoord + yOffset * pixel;
+		double y = yBaseCoord + yOffset * pixel - flickerOffset;
 		
-		// bottom left
-		double xBl = xBaseCoord + xOffset * pixel;
-		double zBl = zBaseCoord + zOffset * pixel;
-
-		// bottom right
-		double xBr = xBaseCoord + (xOffset + width) * pixel;
-		double zBr = zBaseCoord + zOffset * pixel;
-
 		// top right
-		double xTr = xBaseCoord + (xOffset + width) * pixel;
-		double zTr = zBaseCoord + (zOffset + depth) * pixel;
+		double xTr = xBaseCoord + xOffset * pixel;
+		double zTr = zBaseCoord + zOffset * pixel;
 
 		// top left
-		double xTl = xBaseCoord + xOffset * pixel;
-		double zTl = zBaseCoord + (zOffset + depth) * pixel;
+		double xTl = xBaseCoord + (xOffset + width) * pixel;
+		double zTl = zBaseCoord + zOffset * pixel;
+		
+		// bottom left
+		double xBl = xBaseCoord + (xOffset + width) * pixel;
+		double zBl = zBaseCoord + (zOffset + depth) * pixel;
+
+		// bottom right
+		double xBr = xBaseCoord + xOffset * pixel;
+		double zBr = zBaseCoord + (zOffset + depth) * pixel;
 		
 		Minecraft.getMinecraft().renderEngine.bindTexture(texture);
 		
 		tr.startDrawingQuads();
 		
-		// bottom left
-		tr.addVertexWithUV(xBl, y, zBl, mapping.bottomLeft.u, mapping.bottomLeft.v);
-		// bottom right
-		tr.addVertexWithUV(xBr, y, zBr, mapping.bottomRight.u, mapping.bottomRight.v);
 		// top right
 		tr.addVertexWithUV(xTr, y, zTr, mapping.topRight.u, mapping.topRight.v);
 		// top left
 		tr.addVertexWithUV(xTl, y, zTl, mapping.topLeft.u, mapping.topLeft.v);
+		// bottom left
+		tr.addVertexWithUV(xBl, y, zBl, mapping.bottomLeft.u, mapping.bottomLeft.v);
+		// bottom right
+		tr.addVertexWithUV(xBr, y, zBr, mapping.bottomRight.u, mapping.bottomRight.v);
 		
 		tr.draw();
 	}
@@ -232,7 +234,7 @@ public final class TessellationManager
 	
 	public static void renderPositiveZFace(int xOffset, int yOffset, int zOffset, int width, int height, ResourceLocation texture, Face mapping)
 	{
-		double z = zBaseCoord + zOffset * pixel;
+		double z = zBaseCoord + zOffset * pixel + flickerOffset;
 		
 		// bottom left
 		double xBl = xBaseCoord + xOffset * pixel;
@@ -273,7 +275,7 @@ public final class TessellationManager
 	
 	public static void renderNegativeZFace(int xOffset, int yOffset, int zOffset, int width, int height, ResourceLocation texture, Face mapping)
 	{
-		double z = zBaseCoord + zOffset * pixel;
+		double z = zBaseCoord + zOffset * pixel - flickerOffset;
 
 		// bottom right
 		double xBr = xBaseCoord + xOffset * pixel;

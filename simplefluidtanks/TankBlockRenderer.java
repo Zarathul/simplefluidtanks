@@ -42,13 +42,26 @@ public class TankBlockRenderer extends TileEntitySpecialRenderer
 		
 		textureLocations = new ResourceLocation[]
 		{
-			new ResourceLocation("simplefluidtanks", "/textures/blocks/tank_closed.png"),
-			new ResourceLocation("simplefluidtanks", "/textures/blocks/tank_top_open.png"),
-			new ResourceLocation("simplefluidtanks", "/textures/blocks/tank_topBottom_open.png"),
-			new ResourceLocation("simplefluidtanks", "/textures/blocks/tank_topright_open.png"),
-			new ResourceLocation("simplefluidtanks", "/textures/blocks/tank_lefttopright_open.png"),
-			new ResourceLocation("simplefluidtanks", "/textures/blocks/tank_all_open.png"),
-			new ResourceLocation("simplefluidtanks", "/textures/blocks/tank_only_corners.png"),
+			new ResourceLocation("simplefluidtanks", "/textures/blocks/tank_closed.png"),				//  0
+			new ResourceLocation("simplefluidtanks", "/textures/blocks/tank_open.png"),					//  1
+
+			new ResourceLocation("simplefluidtanks", "/textures/blocks/tank_top_bottom.png"),			//  2
+			new ResourceLocation("simplefluidtanks", "/textures/blocks/tank_left_right.png"),			//  3
+
+			new ResourceLocation("simplefluidtanks", "/textures/blocks/tank_top_right.png"),			//  4
+			new ResourceLocation("simplefluidtanks", "/textures/blocks/tank_bottom_right.png"),			//  5
+			new ResourceLocation("simplefluidtanks", "/textures/blocks/tank_bottom_left.png"),			//  6
+			new ResourceLocation("simplefluidtanks", "/textures/blocks/tank_top_left.png"),				//  7
+
+			new ResourceLocation("simplefluidtanks", "/textures/blocks/tank_left_right_top.png"),		//  8
+			new ResourceLocation("simplefluidtanks", "/textures/blocks/tank_top_bottom_right.png"),		//  9
+			new ResourceLocation("simplefluidtanks", "/textures/blocks/tank_left_right_bottom.png"),	// 10
+			new ResourceLocation("simplefluidtanks", "/textures/blocks/tank_top_bottom_left.png"),		// 11
+			
+			new ResourceLocation("simplefluidtanks", "/textures/blocks/tank_top.png"),					// 12
+			new ResourceLocation("simplefluidtanks", "/textures/blocks/tank_bottom.png"),				// 13
+			new ResourceLocation("simplefluidtanks", "/textures/blocks/tank_left.png"),					// 14
+			new ResourceLocation("simplefluidtanks", "/textures/blocks/tank_right.png"),				// 15
 		};
 	}
 
@@ -89,6 +102,11 @@ public class TankBlockRenderer extends TileEntitySpecialRenderer
 			HashMap<String, Boolean> connections = getConnections(entity);
 			
 			renderPositiveXFace(entity, connections);
+			renderNegativeXFace(entity, connections);
+			renderPositiveZFace(entity, connections);
+			renderNegativeZFace(entity, connections);
+			renderPositiveYFace(entity, connections);
+			renderNegativeYFace(entity, connections);
 		}
 	}
 	
@@ -102,117 +120,518 @@ public class TankBlockRenderer extends TileEntitySpecialRenderer
 		// only render this side if there isn't a tank block from the same tank in front of it 
 		if (!connections.get("X+"))
 		{
-			int[] textureInfo = getConnectedTexture(connections);
+			int textureIndex = getConnectedTexture(connections, 3);
+			TessellationManager.renderPositiveXFace(16, 0, 0, 16, 16, textureLocations[textureIndex]);
 			
-			Face mapping = new Face();
-			int transformations = textureInfo[1]; 
-			
-			if (transformations - 4 >= 0)
-			{
-				mapping.rotateRight();
-				transformations -= 4;
-			}
-			if (transformations - 2 >= 0)
-			{
-				mapping.mirrorV();
-				transformations -= 2;
-			}
-			if (transformations - 1 >= 0)
-			{
-				mapping.mirrorU();
-			}
-			
-			int z = (connections.get("Z-")) ? 0 : 2;
-			int depth = (connections.get("Z+")) ? 16 - z : 14 - z;
-			int height = (connections.get("Y+")) ? 16 : 14;
-			
-//			TessellationManager.renderPositiveXFace(2 + 12, 0, z, height, depth, textureLocations[textureInfo[0]], mapping);
-			TessellationManager.renderPositiveXFace(16, 0, 0, 16, 16, textureLocations[textureInfo[0]], mapping);
+			textureIndex = getConnectedTexture(connections, 1);
+			TessellationManager.renderNegativeXFace(16, 0, 0, 16, 16, textureLocations[textureIndex]);
 		}
 	}
 	
-	private int[] getConnectedTexture(HashMap<String, Boolean> connections)
+	private void renderNegativeXFace(TankBlockEntity entity, HashMap<String, Boolean> connections)
 	{
-		// first int is the texture index, second a bitmask : 1=mirrorU, 2=mirrorV, 4=rotateRight
-		int[] textureInfo = new int[] { 0, 0 };
+		// only render this side if there isn't a tank block from the same tank in front of it 
+		if (!connections.get("X-"))
+		{
+			int textureIndex = getConnectedTexture(connections, 1);
+			TessellationManager.renderNegativeXFace(0, 0, 0, 16, 16, textureLocations[textureIndex]);
+			
+			textureIndex = getConnectedTexture(connections, 3);
+			TessellationManager.renderPositiveXFace(0, 0, 0, 16, 16, textureLocations[textureIndex]);
+		}
+	}
+	
+	private void renderPositiveZFace(TankBlockEntity entity, HashMap<String, Boolean> connections)
+	{
+		// only render this side if there isn't a tank block from the same tank in front of it 
+		if (!connections.get("Z+"))
+		{
+			int textureIndex = getConnectedTexture(connections, 0);
+			TessellationManager.renderPositiveZFace(0, 0, 16, 16, 16, textureLocations[textureIndex]);
+			
+			textureIndex = getConnectedTexture(connections, 2);
+			TessellationManager.renderNegativeZFace(0, 0, 16, 16, 16, textureLocations[textureIndex]);		}
+	}
+	
+	private void renderNegativeZFace(TankBlockEntity entity, HashMap<String, Boolean> connections)
+	{
+		// only render this side if there isn't a tank block from the same tank in front of it 
+		if (!connections.get("Z-"))
+		{
+			int textureIndex = getConnectedTexture(connections, 2);
+			TessellationManager.renderNegativeZFace(0, 0, 0, 16, 16, textureLocations[textureIndex]);
+			
+			textureIndex = getConnectedTexture(connections, 0);
+			TessellationManager.renderPositiveZFace(0, 0, 0, 16, 16, textureLocations[textureIndex]);
+		}
+	}
+	
+	private void renderPositiveYFace(TankBlockEntity entity, HashMap<String, Boolean> connections)
+	{
+		// only render this side if there isn't a tank block from the same tank in front of it 
+		if (!connections.get("Y+"))
+		{
+			int textureIndex = getConnectedTexture(connections, 5);
+			TessellationManager.renderPositiveYFace(0, 16, 0, 16, 16, textureLocations[textureIndex]);
+			
+			textureIndex = getConnectedTexture(connections, 4);
+			TessellationManager.renderNegativeYFace(0, 16, 0, 16, 16, textureLocations[textureIndex]);
+		}
+	}
+	
+	private void renderNegativeYFace(TankBlockEntity entity, HashMap<String, Boolean> connections)
+	{
+		// only render this side if there isn't a tank block from the same tank in front of it 
+		if (!connections.get("Y-"))
+		{
+			int textureIndex = getConnectedTexture(connections, 4);
+			TessellationManager.renderNegativeYFace(0, 0, 0, 16, 16, textureLocations[textureIndex]);
+			
+			textureIndex = getConnectedTexture(connections, 5);
+			TessellationManager.renderPositiveYFace(0, 0, 0, 16, 16, textureLocations[textureIndex]);
+		}
+	}
+	
+	// direction: 0 = Z+, 1 = X-, 2 = Z-, 3 = X+, 4 = Y-, 5 = Y+
+	private int getConnectedTexture(HashMap<String, Boolean> connections, int direction)
+	{
+		int textureIndex = 0;
+		
+		switch (direction)
+		{
+			case 0:
+				textureIndex = getPositiveZTexture(connections);
+			break;
+			
+			case 1:
+				textureIndex = getNegativeXTexture(connections);
+			break;
+			
+			case 2:
+				textureIndex = getNegativeZTexture(connections);
+			break;
+			
+			case 3:
+				textureIndex = getPositiveXTexture(connections);
+			break;
+			
+			case 4:
+				textureIndex = getNegativeYTexture(connections);
+			break;
+			case 5:
+				textureIndex = getPositiveYTexture(connections);
+			break;
+		}
+		
+		return textureIndex;
+	}
+	
+	private int getPositiveXTexture(HashMap<String, Boolean> connections)
+	{
+		int textureIndex = 0;
 		
 		if (connections.get("Y+") && connections.get("Y-") && connections.get("Z+") && connections.get("Z-"))
 		{
-			textureInfo[0] = ((connections.get("Z-Y+") && connections.get("Z+Y+") && connections.get("Z+Y-") && connections.get("Z-Y-"))) ? 5 : 6;
-			textureInfo[1] = 0;
+			textureIndex = 1;
 		}
 		else if (connections.get("Y+") && connections.get("Z+") && connections.get("Z-"))
 		{
-			textureInfo[0] = 4;
-			textureInfo[1] = 0;
+			textureIndex = 8;
 		}
 		else if (connections.get("Z+") && connections.get("Y+") && connections.get("Y-"))
 		{
-			textureInfo[0] = 4;
-			textureInfo[1] = 6;
+			textureIndex = 11;
 		}
 		else if (connections.get("Y-") && connections.get("Z+") && connections.get("Z-"))
 		{
-			textureInfo[0] = 4;
-			textureInfo[1] = 1;
+			textureIndex = 10;
 		}
 		else if (connections.get("Z-") && connections.get("Y-") && connections.get("Y+"))
 		{
-			textureInfo[0] = 4;
-			textureInfo[1] = 4;
+			textureIndex = 9;
 		}
 		else if (connections.get("Y+") && connections.get("Y-"))
 		{
-			textureInfo[0] = 2;
-			textureInfo[1] = 0;
+			textureIndex = 2;
 		}
 		else if (connections.get("Z+") && connections.get("Z-"))
 		{
-			textureInfo[0] = 2;
-			textureInfo[1] = 4;
+			textureIndex = 3;
 		}
 		else if (connections.get("Y+") && connections.get("Z+"))
 		{
-			textureInfo[0] = 3;
-			textureInfo[1] = 2;
+			textureIndex = 7;
 		}
 		else if (connections.get("Z+") && connections.get("Y-"))
 		{
-			textureInfo[0] = 3;
-			textureInfo[1] = 3;
+			textureIndex = 6;
 		}
 		else if (connections.get("Y-") && connections.get("Z-"))
 		{
-			textureInfo[0] = 3;
-			textureInfo[1] = 4;
+			textureIndex = 5;
 		}
 		else if (connections.get("Z-") && connections.get("Y+"))
 		{
-			textureInfo[0] = 3;
-			textureInfo[1] = 0;
+			textureIndex = 4;
 		}
 		else if (connections.get("Y+"))
 		{
-			textureInfo[0] = 1;
-			textureInfo[1] = 0;
+			textureIndex = 12;
 		}
 		else if (connections.get("Y-"))
 		{
-			textureInfo[0] = 1;
-			textureInfo[1] = 1;
+			textureIndex = 13;
 		}
 		else if (connections.get("Z+"))
 		{
-			textureInfo[0] = 1;
-			textureInfo[1] = 6;
+			textureIndex = 14;
 		}
 		else if (connections.get("Z-"))
 		{
-			textureInfo[0] = 1;
-			textureInfo[1] = 4;
+			textureIndex = 15;
 		}
 		
-		return textureInfo;
+		return textureIndex;
+	}
+	
+	private int getNegativeXTexture(HashMap<String, Boolean> connections)
+	{
+		int textureIndex = 0;
+		
+		if (connections.get("Y+") && connections.get("Y-") && connections.get("Z+") && connections.get("Z-"))
+		{
+			textureIndex = 1;
+		}
+		else if (connections.get("Y+") && connections.get("Z+") && connections.get("Z-"))
+		{
+			textureIndex = 8;
+		}
+		else if (connections.get("Z+") && connections.get("Y+") && connections.get("Y-"))
+		{
+			textureIndex = 9;
+		}
+		else if (connections.get("Y-") && connections.get("Z+") && connections.get("Z-"))
+		{
+			textureIndex = 10;
+		}
+		else if (connections.get("Z-") && connections.get("Y-") && connections.get("Y+"))
+		{
+			textureIndex = 11;
+		}
+		else if (connections.get("Y+") && connections.get("Y-"))
+		{
+			textureIndex = 2;
+		}
+		else if (connections.get("Z+") && connections.get("Z-"))
+		{
+			textureIndex = 3;
+		}
+		else if (connections.get("Y+") && connections.get("Z+"))
+		{
+			textureIndex = 4;
+		}
+		else if (connections.get("Z+") && connections.get("Y-"))
+		{
+			textureIndex = 5;
+		}
+		else if (connections.get("Y-") && connections.get("Z-"))
+		{
+			textureIndex = 6;
+		}
+		else if (connections.get("Z-") && connections.get("Y+"))
+		{
+			textureIndex = 7;
+		}
+		else if (connections.get("Y+"))
+		{
+			textureIndex = 12;
+		}
+		else if (connections.get("Y-"))
+		{
+			textureIndex = 13;
+		}
+		else if (connections.get("Z+"))
+		{
+			textureIndex = 15;
+		}
+		else if (connections.get("Z-"))
+		{
+			textureIndex = 14;
+		}
+		
+		return textureIndex;
+	}
+	
+	private int getPositiveZTexture(HashMap<String, Boolean> connections)
+	{
+		int textureIndex = 0;
+		
+		if (connections.get("Y+") && connections.get("Y-") && connections.get("X+") && connections.get("X-"))
+		{
+			textureIndex = 1;
+		}
+		else if (connections.get("Y+") && connections.get("X+") && connections.get("X-"))
+		{
+			textureIndex = 8;
+		}
+		else if (connections.get("X+") && connections.get("Y+") && connections.get("Y-"))
+		{
+			textureIndex = 9;
+		}
+		else if (connections.get("Y-") && connections.get("X+") && connections.get("X-"))
+		{
+			textureIndex = 10;
+		}
+		else if (connections.get("X-") && connections.get("Y-") && connections.get("Y+"))
+		{
+			textureIndex = 11;
+		}
+		else if (connections.get("Y+") && connections.get("Y-"))
+		{
+			textureIndex = 2;
+		}
+		else if (connections.get("X+") && connections.get("X-"))
+		{
+			textureIndex = 3;
+		}
+		else if (connections.get("Y+") && connections.get("X+"))
+		{
+			textureIndex = 4;
+		}
+		else if (connections.get("X+") && connections.get("Y-"))
+		{
+			textureIndex = 5;
+		}
+		else if (connections.get("Y-") && connections.get("X-"))
+		{
+			textureIndex = 6;
+		}
+		else if (connections.get("X-") && connections.get("Y+"))
+		{
+			textureIndex = 7;
+		}
+		else if (connections.get("Y+"))
+		{
+			textureIndex = 12;
+		}
+		else if (connections.get("Y-"))
+		{
+			textureIndex = 13;
+		}
+		else if (connections.get("X+"))
+		{
+			textureIndex = 15;
+		}
+		else if (connections.get("X-"))
+		{
+			textureIndex = 14;
+		}
+		
+		return textureIndex;
+	}
+	
+	private int getNegativeZTexture(HashMap<String, Boolean> connections)
+	{
+		int textureIndex = 0;
+		
+		if (connections.get("Y+") && connections.get("Y-") && connections.get("X+") && connections.get("X-"))
+		{
+			textureIndex = 1;
+		}
+		else if (connections.get("Y+") && connections.get("X+") && connections.get("X-"))
+		{
+			textureIndex = 8;
+		}
+		else if (connections.get("X+") && connections.get("Y+") && connections.get("Y-"))
+		{
+			textureIndex = 11;
+		}
+		else if (connections.get("Y-") && connections.get("X+") && connections.get("X-"))
+		{
+			textureIndex = 10;
+		}
+		else if (connections.get("X-") && connections.get("Y-") && connections.get("Y+"))
+		{
+			textureIndex = 9;
+		}
+		else if (connections.get("Y+") && connections.get("Y-"))
+		{
+			textureIndex = 2;
+		}
+		else if (connections.get("X+") && connections.get("X-"))
+		{
+			textureIndex = 3;
+		}
+		else if (connections.get("Y+") && connections.get("X+"))
+		{
+			textureIndex = 7;
+		}
+		else if (connections.get("X+") && connections.get("Y-"))
+		{
+			textureIndex = 6;
+		}
+		else if (connections.get("Y-") && connections.get("X-"))
+		{
+			textureIndex = 5;
+		}
+		else if (connections.get("X-") && connections.get("Y+"))
+		{
+			textureIndex = 4;
+		}
+		else if (connections.get("Y+"))
+		{
+			textureIndex = 12;
+		}
+		else if (connections.get("Y-"))
+		{
+			textureIndex = 13;
+		}
+		else if (connections.get("X+"))
+		{
+			textureIndex = 14;
+		}
+		else if (connections.get("X-"))
+		{
+			textureIndex = 15;
+		}
+		
+		return textureIndex;
+	}
+	
+	private int getPositiveYTexture(HashMap<String, Boolean> connections)
+	{
+		int textureIndex = 0;
+		
+		if (connections.get("X+") && connections.get("X-") && connections.get("Z+") && connections.get("Z-"))
+		{
+			textureIndex = 1;
+		}
+		else if (connections.get("X+") && connections.get("Z+") && connections.get("Z-"))
+		{
+			textureIndex = 11;
+		}
+		else if (connections.get("Z+") && connections.get("X+") && connections.get("X-"))
+		{
+			textureIndex = 8;
+		}
+		else if (connections.get("X-") && connections.get("Z+") && connections.get("Z-"))
+		{
+			textureIndex = 9;
+		}
+		else if (connections.get("Z-") && connections.get("X-") && connections.get("X+"))
+		{
+			textureIndex = 10;
+		}
+		else if (connections.get("X+") && connections.get("X-"))
+		{
+			textureIndex = 3;
+		}
+		else if (connections.get("Z+") && connections.get("Z-"))
+		{
+			textureIndex = 2;
+		}
+		else if (connections.get("X+") && connections.get("Z+"))
+		{
+			textureIndex = 7;
+		}
+		else if (connections.get("Z+") && connections.get("X-"))
+		{
+			textureIndex = 4;
+		}
+		else if (connections.get("X-") && connections.get("Z-"))
+		{
+			textureIndex = 5;
+		}
+		else if (connections.get("Z-") && connections.get("X+"))
+		{
+			textureIndex = 6;
+		}
+		else if (connections.get("X+"))
+		{
+			textureIndex = 14;
+		}
+		else if (connections.get("X-"))
+		{
+			textureIndex = 15;
+		}
+		else if (connections.get("Z+"))
+		{
+			textureIndex = 12;
+		}
+		else if (connections.get("Z-"))
+		{
+			textureIndex = 13;
+		}
+		
+		return textureIndex;
+	}
+	
+	private int getNegativeYTexture(HashMap<String, Boolean> connections)
+	{
+		int textureIndex = 0;
+		
+		if (connections.get("X+") && connections.get("X-") && connections.get("Z+") && connections.get("Z-"))
+		{
+			textureIndex = 1;
+		}
+		else if (connections.get("X+") && connections.get("Z+") && connections.get("Z-"))
+		{
+			textureIndex = 11;
+		}
+		else if (connections.get("Z+") && connections.get("X+") && connections.get("X-"))
+		{
+			textureIndex = 10;
+		}
+		else if (connections.get("X-") && connections.get("Z+") && connections.get("Z-"))
+		{
+			textureIndex = 9;
+		}
+		else if (connections.get("Z-") && connections.get("X-") && connections.get("X+"))
+		{
+			textureIndex = 8;
+		}
+		else if (connections.get("X+") && connections.get("X-"))
+		{
+			textureIndex = 3;
+		}
+		else if (connections.get("Z+") && connections.get("Z-"))
+		{
+			textureIndex = 2;
+		}
+		else if (connections.get("X+") && connections.get("Z+"))
+		{
+			textureIndex = 6;
+		}
+		else if (connections.get("Z+") && connections.get("X-"))
+		{
+			textureIndex = 5;
+		}
+		else if (connections.get("X-") && connections.get("Z-"))
+		{
+			textureIndex = 4;
+		}
+		else if (connections.get("Z-") && connections.get("X+"))
+		{
+			textureIndex = 7;
+		}
+		else if (connections.get("X+"))
+		{
+			textureIndex = 14;
+		}
+		else if (connections.get("X-"))
+		{
+			textureIndex = 15;
+		}
+		else if (connections.get("Z+"))
+		{
+			textureIndex = 13;
+		}
+		else if (connections.get("Z-"))
+		{
+			textureIndex = 12;
+		}
+		
+		return textureIndex;
 	}
 	
 	private Icon getFluidTexture(TankBlockEntity entity)
@@ -244,8 +663,18 @@ public class TankBlockRenderer extends TileEntitySpecialRenderer
 
 		connections.put("Z-Y+", shouldConnectTo(entity, entity.xCoord, entity.yCoord + 1, entity.zCoord - 1));
 		connections.put("Z+Y+", shouldConnectTo(entity, entity.xCoord, entity.yCoord + 1, entity.zCoord + 1));
-		connections.put("Z+Y-", shouldConnectTo(entity, entity.xCoord, entity.yCoord - 1, entity.zCoord + 1));
 		connections.put("Z-Y-", shouldConnectTo(entity, entity.xCoord, entity.yCoord - 1, entity.zCoord - 1));
+		connections.put("Z+Y-", shouldConnectTo(entity, entity.xCoord, entity.yCoord - 1, entity.zCoord + 1));
+		
+		connections.put("X-Y+", shouldConnectTo(entity, entity.xCoord - 1, entity.yCoord + 1, entity.zCoord));
+		connections.put("X+Y+", shouldConnectTo(entity, entity.xCoord + 1, entity.yCoord + 1, entity.zCoord));
+		connections.put("X-Y-", shouldConnectTo(entity, entity.xCoord - 1, entity.yCoord - 1, entity.zCoord));
+		connections.put("X+Y-", shouldConnectTo(entity, entity.xCoord + 1, entity.yCoord - 1, entity.zCoord));
+		
+		connections.put("X-Z+", shouldConnectTo(entity, entity.xCoord - 1, entity.yCoord, entity.zCoord + 1));
+		connections.put("X+Z+", shouldConnectTo(entity, entity.xCoord + 1, entity.yCoord, entity.zCoord + 1));
+		connections.put("X-Z-", shouldConnectTo(entity, entity.xCoord - 1, entity.yCoord, entity.zCoord - 1));
+		connections.put("X+Z-", shouldConnectTo(entity, entity.xCoord + 1, entity.yCoord, entity.zCoord - 1));
 
 		return connections;
 	}

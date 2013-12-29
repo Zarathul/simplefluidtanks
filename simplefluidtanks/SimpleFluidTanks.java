@@ -38,11 +38,7 @@ public class SimpleFluidTanks
 	public static TankBlockRenderer tankBlockRenderer;
 	
 	// constants
-	public static final String MOD_ID = "SimpleFluidTanks";
-	
-	// - texture
-	public static final String TEXTURE_LOCATION = "simplefluidtanks";
-	public static final String TEXTURE_TANKBLOCK = "brick";
+	public static final String MOD_ID = "simplefluidtanks";
 	
 	// - registry
 	public static final String REGISTRY_TANKBLOCK_NAME = "tankBlock";

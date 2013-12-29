@@ -10,6 +10,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 public class TankBlock extends BlockContainer
@@ -25,20 +26,42 @@ public class TankBlock extends BlockContainer
 	}
 
 	@SideOnly(Side.CLIENT)
-	private Icon icon;
+	private Icon[] icons;
 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public Icon getIcon(int side, int meta)
 	{
-		return icon;
+		return icons[0];
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister iconRegister)
 	{
-//		icon = iconRegister.registerIcon(SimpleFluidTanks.TEXTURE_LOCATION + ":" + SimpleFluidTanks.TEXTURE_TANKBLOCK);
+		icons = new Icon[]
+		{
+			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_closed"),				//  0
+			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_open"),					//  1
+
+			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_top_bottom"),			//  2
+			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_left_right"),			//  3
+
+			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_top_right"),				//  4
+			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_bottom_right"),			//  5
+			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_bottom_left"),			//  6
+			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_top_left"),				//  7
+
+			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_left_right_top"),		//  8
+			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_top_bottom_right"),		//  9
+			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_left_right_bottom"),		// 10
+			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_top_bottom_left"),		// 11
+				
+			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_top"),					// 12
+			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_bottom"),				// 13
+			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_left"),					// 14
+			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_right")					// 15
+		};
 	}
 	
 	@Override
@@ -57,6 +80,12 @@ public class TankBlock extends BlockContainer
 	public boolean isOpaqueCube()
 	{
 		return false;
+	}
+	
+	@Override
+	public boolean canRenderInPass(int pass)
+	{
+		return (pass == 1);
 	}
 
 	@Override
