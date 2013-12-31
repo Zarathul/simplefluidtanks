@@ -115,14 +115,12 @@ public class TankBlockRenderer extends TileEntitySpecialRenderer
 			
 			if (fillPercentage > 0)
 			{
-				double fluidY = (connections.get("Y-")) ? 0.0 : 1.0;
-				double fluidHeight = 16.0 / 100 * fillPercentage;
-				if (!connections.get("Y+"))
-				{
-					fluidHeight = Math.min(fluidHeight, 14.0);
-				}
 				double fluidZ = (connections.get("Z-")) ? 0.0 : 1.0;
 				double fluidDepth = ((connections.get("Z+")) ? 16.0 : 15.0) - fluidZ;
+				double fluidY = (connections.get("Y-")) ? 0.0 : 1.0;
+				double fluidHeight = 16.0 / 100 * fillPercentage;
+				fluidHeight -= fluidY;
+				fluidHeight = ((!connections.get("Y+")) ? Math.min(fluidHeight, 15) : fluidHeight);
 				
 				TessellationManager.renderPositiveXFace(15, fluidY, fluidZ, fluidHeight, fluidDepth, fluidIcon);
 			}
@@ -142,14 +140,12 @@ public class TankBlockRenderer extends TileEntitySpecialRenderer
 			
 			if (fillPercentage > 0)
 			{
-				double fluidY = (connections.get("Y-")) ? 0.0 : 1.0;
-				double fluidHeight = 16.0 / 100 * fillPercentage;
-				if (!connections.get("Y+"))
-				{
-					fluidHeight = Math.min(fluidHeight, 14.0);
-				}
 				double fluidZ = (connections.get("Z-")) ? 0.0 : 1.0;
 				double fluidDepth = ((connections.get("Z+")) ? 16.0 : 15.0) - fluidZ;
+				double fluidY = (connections.get("Y-")) ? 0.0 : 1.0;
+				double fluidHeight = 16.0 / 100 * fillPercentage;
+				fluidHeight -= fluidY;
+				fluidHeight = ((!connections.get("Y+")) ? Math.min(fluidHeight, 15) : fluidHeight);
 				
 				TessellationManager.renderNegativeXFace(1, fluidY, fluidZ, fluidHeight, fluidDepth, fluidIcon);
 			}
@@ -169,15 +165,12 @@ public class TankBlockRenderer extends TileEntitySpecialRenderer
 			
 			if (fillPercentage > 0)
 			{
-				double fluidY = (connections.get("Y-")) ? 0.0 : 1.0;
-				double fluidHeight = 16.0 / 100 * fillPercentage;
-				if (!connections.get("Y+"))
-				{
-					fluidHeight = Math.min(fluidHeight, 14.0);
-				}
-				
 				double fluidX = (connections.get("X-")) ? 0.0 : 1.0;
 				double fluidWidth = ((connections.get("X+")) ? 16.0 : 15.0) - fluidX;
+				double fluidY = (connections.get("Y-")) ? 0.0 : 1.0;
+				double fluidHeight = 16.0 / 100 * fillPercentage;
+				fluidHeight -= fluidY;
+				fluidHeight = ((!connections.get("Y+")) ? Math.min(fluidHeight, 15) : fluidHeight);
 				
 				TessellationManager.renderPositiveZFace(fluidX, fluidY, 15, fluidWidth, fluidHeight, fluidIcon);
 			}
@@ -197,20 +190,12 @@ public class TankBlockRenderer extends TileEntitySpecialRenderer
 			
 			if (fillPercentage > 0)
 			{
-				double fluidY = (connections.get("Y-")) ? 0.0 : 1.0;
-				double fluidHeight = 16.0 / 100 * fillPercentage;
-				fluidHeight += (!connections.get("Y+") && connections.get("Y-")) ? 1.0 : 0;
-				
-				if ((connections.get("Y+") && !connections.get("Y-")) || (!connections.get("Y+") && connections.get("Y-")))
-				{
-					fluidHeight = Math.min(fluidHeight, 15.0);
-				}
-				else if (!connections.get("Y+") && !connections.get("Y-"))
-				{
-					fluidHeight = Math.min(fluidHeight, 14.0);
-				}
 				double fluidX = (connections.get("X-")) ? 0.0 : 1.0;
 				double fluidWidth = ((connections.get("X+")) ? 16.0 : 15.0) - fluidX;
+				double fluidY = (connections.get("Y-")) ? 0.0 : 1.0;
+				double fluidHeight = 16.0 / 100 * fillPercentage;
+				fluidHeight -= fluidY;
+				fluidHeight = ((!connections.get("Y+")) ? Math.min(fluidHeight, 15) : fluidHeight);
 				
 				TessellationManager.renderNegativeZFace(fluidX, fluidY, 1, fluidWidth, fluidHeight, fluidIcon);
 			}
@@ -236,18 +221,8 @@ public class TankBlockRenderer extends TileEntitySpecialRenderer
 			double fluidX = (connections.get("X-")) ? 0.0 : 1.0;
 			double fluidWidth = ((connections.get("X+")) ? 16.0 : 15.0) - fluidX;
 			
-			double fluidY = ((connections.get("Y-")) ? 0.0 : 1.0);
 			double fluidHeight = 16.0 / 100 * fillPercentage;
-			fluidY += fluidHeight + ((!connections.get("Y+") && connections.get("Y-")) ? 1.0 : 0.0);
-			
-			if ((connections.get("Y+") && !connections.get("Y-")) || (!connections.get("Y+") && connections.get("Y-")))
-			{
-				fluidHeight = Math.min(fluidHeight, 15.0);
-			}
-			else if (!connections.get("Y+") && !connections.get("Y-"))
-			{
-				fluidY = Math.min(fluidHeight, 14.0);
-			}
+			double fluidY = ((!connections.get("Y+")) ? Math.min(fluidHeight, 15) : fluidHeight);
 			
 			TessellationManager.renderPositiveYFace(fluidX, fluidY, fluidZ, fluidWidth, fluidDepth, fluidIcon);
 		}
@@ -267,13 +242,14 @@ public class TankBlockRenderer extends TileEntitySpecialRenderer
 		
 		if (!connections.get("Y-"))
 		{
-			double fluidZ = (connections.get("Z-")) ? 0.0 : 0.5;
-			double fluidDepth = ((connections.get("Z+")) ? 16.0 : 15.5) - fluidZ;
-			double fluidX = (connections.get("X-")) ? 0.0 : 0.5;
-			double fluidWidth = ((connections.get("X+")) ? 16.0 : 15.5) - fluidX;
+			double fluidZ = (connections.get("Z-")) ? 0.0 : 1.0;
+			double fluidDepth = ((connections.get("Z+")) ? 16.0 : 15.0) - fluidZ;
+			double fluidX = (connections.get("X-")) ? 0.0 : 1.0;
+			double fluidWidth = ((connections.get("X+")) ? 16.0 : 15.0) - fluidX;
 			
-			TessellationManager.renderNegativeYFace(fluidX, 0.5, fluidZ, fluidWidth, fluidDepth, fluidIcon);
+			TessellationManager.renderNegativeYFace(fluidX, 1.0, fluidZ, fluidWidth, fluidDepth, fluidIcon);
 		}
+		
 	}
 	
 	// direction: 0 = Z+, 1 = X-, 2 = Z-, 3 = X+, 4 = Y-, 5 = Y+
