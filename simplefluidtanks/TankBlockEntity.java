@@ -16,7 +16,7 @@ public class TankBlockEntity extends TileEntity
 	
 	public TankBlockEntity()
 	{
-		fillPercentage = 0;
+		fillPercentage = 100;
 		valveCoords = new int[] { 0, 0, 0 };
 		isPartOfTank = false;
 	}
