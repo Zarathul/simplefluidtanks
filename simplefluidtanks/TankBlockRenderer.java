@@ -78,12 +78,7 @@ public class TankBlockRenderer extends TileEntitySpecialRenderer
 		{
 			HashMap<String, Boolean> connections = getConnections(entity);
 			int fillPercentage = entity.getFillPercentage();
-//			FluidStack fluidStack = entity.getValve().getFluid();
-//			Icon fluidIcon = fluidStack.getFluid().getStillIcon();
 			Icon fluidIcon = FluidRegistry.LAVA.getStillIcon();
-			double fillHeight = 15.0d / 100.0d * (double)fillPercentage;
-//			fillHeight = 16 / 100 * fillPercentage;
-//			fillHeight = Math.min(16, fillHeight);
 			
 			renderPositiveXFace(entity, connections, icons, fluidIcon, fillPercentage);
 			renderNegativeXFace(entity, connections, icons, fluidIcon, fillPercentage);
@@ -94,7 +89,6 @@ public class TankBlockRenderer extends TileEntitySpecialRenderer
 		}
 		
 		tsr.draw();
-//		TessellationManager.renderCube(0.0015, 0.0015, 0.0015, 15.997, fillHeight, 15.997, fluidIcon);
 	}
 	
 	private void renderSolid(TankBlockEntity entity, Icon icon)
