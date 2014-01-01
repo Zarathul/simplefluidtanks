@@ -35,41 +35,31 @@ public final class TessellationManager
 	
 	public static void renderCube(double xOffset, double yOffset, double zOffset, double width, double height, double depth, Icon icon, boolean renderInside)
 	{
-		renderCube(xOffset, yOffset, zOffset, width, height, depth, icon, new UVTextureMapping(), renderInside);
-	}
-	
-	public static void renderCube(double xOffset, double yOffset, double zOffset, double width, double height, double depth, Icon icon, UVTextureMapping textureMapping, boolean renderInside)
-	{
-		renderPositiveXFace(xOffset + width, yOffset, zOffset, height, depth, icon, textureMapping.positiveX);
-		renderNegativeXFace(xOffset, yOffset, zOffset, height, depth, icon, textureMapping.negativeX);
-		renderPositiveYFace(xOffset, yOffset + height, zOffset, width, depth, icon, textureMapping.positiveY);
-		renderNegativeYFace(xOffset, yOffset, zOffset, width, depth, icon, textureMapping.negativeY);
-		renderPositiveZFace(xOffset, yOffset, zOffset + depth, width, height, icon, textureMapping.positiveZ);
-		renderNegativeZFace(xOffset, yOffset, zOffset, width, height, icon, textureMapping.negativeZ);
+		renderPositiveXFace(xOffset + width, yOffset, zOffset, height, depth, icon);
+		renderNegativeXFace(xOffset, yOffset, zOffset, height, depth, icon);
+		renderPositiveYFace(xOffset, yOffset + height, zOffset, width, depth, icon);
+		renderNegativeYFace(xOffset, yOffset, zOffset, width, depth, icon);
+		renderPositiveZFace(xOffset, yOffset, zOffset + depth, width, height, icon);
+		renderNegativeZFace(xOffset, yOffset, zOffset, width, height, icon);
 		
 		if (renderInside)
 		{
 			// positive x back side
-			renderNegativeXFace(xOffset + width - 1, yOffset, zOffset, height, depth, icon, textureMapping.negativeX);
+			renderNegativeXFace(xOffset + width, yOffset, zOffset, height, depth, icon);
 			// negative x back side
-			renderPositiveXFace(xOffset + 1, yOffset, zOffset, height, depth, icon, textureMapping.positiveX);
+			renderPositiveXFace(xOffset, yOffset, zOffset, height, depth, icon);
 			// positive y back side
-			renderNegativeYFace(xOffset, yOffset + height - 1, zOffset, width, depth, icon, textureMapping.negativeY);
+			renderNegativeYFace(xOffset, yOffset + height, zOffset, width, depth, icon);
 			// negative y back side
-			renderPositiveYFace(xOffset, yOffset + 1, zOffset, width, depth, icon, textureMapping.positiveY);
+			renderPositiveYFace(xOffset, yOffset, zOffset, width, depth, icon);
 			// positive z back side
-			renderNegativeZFace(xOffset, yOffset, zOffset + depth - 1, width, height, icon, textureMapping.negativeZ);
+			renderNegativeZFace(xOffset, yOffset, zOffset + depth, width, height, icon);
 			// negative back side
-			renderPositiveZFace(xOffset, yOffset, zOffset + 1, width, height, icon, textureMapping.positiveZ);
+			renderPositiveZFace(xOffset, yOffset, zOffset, width, height, icon);
 		}
 	}
 	
 	public static void renderPositiveXFace(double xOffset, double yOffset, double zOffset, double height, double depth, Icon icon)
-	{
-		renderPositiveXFace(xOffset, yOffset, zOffset, height, depth, icon, new UVTextureMapping().positiveX);
-	}
-	
-	public static void renderPositiveXFace(double xOffset, double yOffset, double zOffset, double height, double depth, Icon icon, Face mapping)
 	{
 		tr.setNormal(1f, 0f, 0f);
 		
@@ -103,11 +93,8 @@ public final class TessellationManager
 	
 	public static void renderNegativeXFace(double xOffset, double yOffset, double zOffset, double height, double depth, Icon icon)
 	{
-		renderNegativeXFace(xOffset, yOffset, zOffset, height, depth, icon, new UVTextureMapping().negativeX);
-	}
-	
-	public static void renderNegativeXFace(double xOffset, double yOffset, double zOffset, double height, double depth, Icon icon, Face mapping)
-	{
+		tr.setNormal(-1f, 0f, 0f);
+
 		double x = xBaseCoord + xOffset * pixel;
 		
 		// bottom left
@@ -137,11 +124,6 @@ public final class TessellationManager
 	}
 	
 	public static void renderPositiveYFace(double xOffset, double yOffset, double zOffset, double width, double depth, Icon icon)
-	{
-		renderPositiveYFace(xOffset, yOffset, zOffset, width, depth, icon, new UVTextureMapping().positiveY);
-	}
-	
-	public static void renderPositiveYFace(double xOffset, double yOffset, double zOffset, double width, double depth, Icon icon, Face mapping)
 	{
 		tr.setNormal(0f, 1f, 0f);
 		
@@ -175,11 +157,8 @@ public final class TessellationManager
 	
 	public static void renderNegativeYFace(double xOffset, double yOffset, double zOffset, double width, double depth, Icon icon)
 	{
-		renderNegativeYFace(xOffset, yOffset, zOffset, width, depth, icon, new UVTextureMapping().negativeY);
-	}
-	
-	public static void renderNegativeYFace(double xOffset, double yOffset, double zOffset, double width, double depth, Icon icon, Face mapping)
-	{
+		tr.setNormal(0f, -1f, 0f);
+		
 		double y = yBaseCoord + yOffset * pixel;
 		
 		// top right
@@ -209,11 +188,6 @@ public final class TessellationManager
 	}
 	
 	public static void renderPositiveZFace(double xOffset, double yOffset, double zOffset, double width, double height, Icon icon)
-	{
-		renderPositiveZFace(xOffset, yOffset, zOffset, width, height, icon, new UVTextureMapping().positiveZ);
-	}
-	
-	public static void renderPositiveZFace(double xOffset, double yOffset, double zOffset, double width, double height, Icon icon, Face mapping)
 	{
 		tr.setNormal(0f, 0f, 1f);
 		
@@ -247,11 +221,8 @@ public final class TessellationManager
 	
 	public static void renderNegativeZFace(double xOffset, double yOffset, double zOffset, double width, double height, Icon icon)
 	{
-		renderNegativeZFace(xOffset, yOffset, zOffset, width, height, icon, new UVTextureMapping().negativeZ);
-	}
-	
-	public static void renderNegativeZFace(double xOffset, double yOffset, double zOffset, double width, double height, Icon icon, Face mapping)
-	{
+		tr.setNormal(0f, 0f, -1f);
+		
 		double z = zBaseCoord + zOffset * pixel;
 
 		// bottom right

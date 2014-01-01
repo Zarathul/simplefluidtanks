@@ -1,7 +1,10 @@
 package simplefluidtanks;
 
+import java.util.HashMap;
+
 import com.google.common.primitives.Ints;
 
+import net.minecraft.launchwrapper.LogWrapper;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet;
@@ -13,12 +16,16 @@ public class TankBlockEntity extends TileEntity
 	private int fillPercentage;
 	private int[] valveCoords;
 	private boolean isPartOfTank;
+	private int[] textureIds;
+	private boolean[] connections;
 	
 	public TankBlockEntity()
 	{
-		fillPercentage = 100;
+		fillPercentage = 0;
 		valveCoords = new int[] { 0, 0, 0 };
 		isPartOfTank = false;
+		textureIds = new int[] { 0, 0, 0, 0, 0, 0 };
+		connections = new boolean[6];
 	}
 	
 	@Override
@@ -29,6 +36,14 @@ public class TankBlockEntity extends TileEntity
 		fillPercentage = tag.getByte("FillPercentage");
 		valveCoords = tag.getIntArray("ValveCoords");
 		isPartOfTank = tag.getBoolean("IsPartOfTank");
+		textureIds = tag.getIntArray("TextureIds");
+		connections = new boolean[6];
+		connections[ConnectedTexturesHelper.XPOS] = tag.getBoolean("X+");
+		connections[ConnectedTexturesHelper.XNEG] = tag.getBoolean("X-");
+		connections[ConnectedTexturesHelper.YPOS] = tag.getBoolean("Y+");
+		connections[ConnectedTexturesHelper.YNEG] = tag.getBoolean("Y-");
+		connections[ConnectedTexturesHelper.ZPOS] = tag.getBoolean("Z+");
+		connections[ConnectedTexturesHelper.ZNEG] = tag.getBoolean("Z-");
 	}
 
 	@Override
@@ -39,6 +54,13 @@ public class TankBlockEntity extends TileEntity
 		tag.setByte("FillPercentage", (byte)fillPercentage);
 		tag.setIntArray("ValveCoords", valveCoords);
 		tag.setBoolean("IsPartOfTank", isPartOfTank);
+		tag.setIntArray("TextureIds", textureIds);
+		tag.setBoolean("X+", connections[ConnectedTexturesHelper.XPOS]);
+		tag.setBoolean("X-", connections[ConnectedTexturesHelper.XNEG]);
+		tag.setBoolean("Y+", connections[ConnectedTexturesHelper.YPOS]);
+		tag.setBoolean("Y-", connections[ConnectedTexturesHelper.YNEG]);
+		tag.setBoolean("Z+", connections[ConnectedTexturesHelper.ZPOS]);
+		tag.setBoolean("Z-", connections[ConnectedTexturesHelper.ZNEG]);
 	}
 
 	@Override
@@ -58,9 +80,7 @@ public class TankBlockEntity extends TileEntity
 	
 	public boolean isPartOfTank()
 	{
-		// TODO: remove after testing
-		return true;
-//		return isPartOfTank && valveCoords != null && valveCoords.length == 3;
+		return isPartOfTank && valveCoords != null && valveCoords.length == 3;
 	}
 	
 	public int[] getValveCoords()
@@ -93,6 +113,7 @@ public class TankBlockEntity extends TileEntity
 			{
 				valveCoords = new int[] { x, y, z };
 				isPartOfTank = true;
+				textureIds = determineTextureIds();
 				this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 				
 				return true;
@@ -102,9 +123,45 @@ public class TankBlockEntity extends TileEntity
 		return false;
 	}
 	
+	private int[] determineTextureIds()
+	{
+		boolean[] connections = determineConnections();
+		int[] ids = new int[6];
+		ids[ConnectedTexturesHelper.XPOS] = ConnectedTexturesHelper.getPositiveXTexture(connections);
+		ids[ConnectedTexturesHelper.XNEG] = ConnectedTexturesHelper.getNegativeXTexture(connections);
+		ids[ConnectedTexturesHelper.YPOS] = ConnectedTexturesHelper.getPositiveYTexture(connections);
+		ids[ConnectedTexturesHelper.YNEG] = ConnectedTexturesHelper.getNegativeYTexture(connections);
+		ids[ConnectedTexturesHelper.ZPOS] = ConnectedTexturesHelper.getPositiveZTexture(connections);
+		ids[ConnectedTexturesHelper.ZNEG] = ConnectedTexturesHelper.getNegativeZTexture(connections);
+		
+		return ids;
+	}
+
 	public int getFillPercentage()
 	{
 		return fillPercentage;
+	}
+	
+	public boolean[] getConnections()
+	{
+		return connections;
+	}
+	
+	public int getTexture(int side)
+	{
+		if (side < 0 || side > 5)
+		{
+			return -1;
+		}
+		
+		if (textureIds[side] >= 0)
+		{
+			return textureIds[side];
+		}
+		
+		textureIds = determineTextureIds();
+		
+		return textureIds[side];
 	}
 	
 	public boolean setFillPercentage(int percentage)
@@ -122,14 +179,52 @@ public class TankBlockEntity extends TileEntity
 	
 	public boolean isSameValve(int ... coords)
 	{
-		// TODO: remove after testing
-		return true;
+		if (coords == null || coords.length != 3)
+		{
+			return false;
+		}
 		
-//		if (coords == null || coords.length != 3)
-//		{
-//			return false;
-//		}
-//		
-//		return (coords[0] == valveCoords[0] && coords[1] == valveCoords[1] && coords[2] == valveCoords[2]);
+		return (coords[0] == valveCoords[0] && coords[1] == valveCoords[1] && coords[2] == valveCoords[2]);
+	}
+	
+	private boolean[] determineConnections()
+	{
+		boolean[] connections = new boolean[6];
+		connections[ConnectedTexturesHelper.XPOS] = shouldConnectTo(xCoord + 1, yCoord, zCoord);	// X+
+		connections[ConnectedTexturesHelper.XNEG] = shouldConnectTo(xCoord - 1, yCoord, zCoord);	// X-
+		connections[ConnectedTexturesHelper.YPOS] = shouldConnectTo(xCoord, yCoord + 1, zCoord);	// Y+
+		connections[ConnectedTexturesHelper.YNEG] = shouldConnectTo(xCoord, yCoord - 1, zCoord);	// Y-
+		connections[ConnectedTexturesHelper.ZPOS] = shouldConnectTo(xCoord, yCoord, zCoord + 1);	// Z+
+		connections[ConnectedTexturesHelper.ZNEG] = shouldConnectTo(xCoord, yCoord, zCoord - 1);	// Z-
+
+		return connections;
+	}
+	
+	private boolean shouldConnectTo(int x, int y, int z)
+	{
+		// only check adjacent blocks
+		if (x < xCoord - 1 || x > xCoord + 1 || y < yCoord - 1 || y > yCoord + 1 || z < zCoord - 1 || z > zCoord + 1)
+		{
+			return false;
+		}
+		
+		int neighborBlockId = worldObj.getBlockId(x, y, z);
+		
+		if (neighborBlockId == SimpleFluidTanks.tankBlockId)
+		{
+			TileEntity neighborEntity = worldObj.getBlockTileEntity(x, y, z);
+			
+			if (neighborEntity == null || !(neighborEntity instanceof TankBlockEntity))
+			{
+				LogWrapper.log.severe("Possible map corruption detected. TankBlockEntity missing at x:%d / y:%d / z:%d. Expect severe rendering and tank logic issues.", x, y, z);
+				return false;
+			}
+			
+			TankBlockEntity connectionCandidate = (TankBlockEntity)neighborEntity;
+			
+			return (connectionCandidate.isPartOfTank && connectionCandidate.isSameValve(valveCoords));
+		}
+		
+		return false;
 	}
 }

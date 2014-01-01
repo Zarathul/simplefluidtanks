@@ -14,6 +14,7 @@ import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatMessageComponent;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
@@ -42,6 +43,20 @@ public class ValveBlock extends BlockContainer
 		return new ValveBlockEntity();
 	}
 	
+	@Override
+	public void onBlockAdded(World world, int x, int y, int z)
+	{
+		super.onBlockAdded(world, x, y, z);
+		System.out.println("onAdded");
+	}
+
+	@Override
+	public void onBlockHarvested(World world, int x, int y, int z, int par5, EntityPlayer player)
+	{
+		super.onBlockHarvested(world, x, y, z, par5, player);
+		System.out.println("onHarvested");
+	}
+
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int par6, float par7, float par8, float par9)
 	{
