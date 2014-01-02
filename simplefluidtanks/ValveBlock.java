@@ -1,5 +1,14 @@
 package simplefluidtanks;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Map;
+
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
+import com.google.common.io.ByteStreams;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
@@ -47,14 +56,41 @@ public class ValveBlock extends BlockContainer
 	public void onBlockAdded(World world, int x, int y, int z)
 	{
 		super.onBlockAdded(world, x, y, z);
-		System.out.println("onAdded");
+		
+		ArrayListMultimap<Integer, int[]> tanks = ArrayListMultimap.create();
+		generateTankList(world, x, y, z, tanks);
+		ValveBlockEntity entity = (ValveBlockEntity)world.getBlockTileEntity(x, y, z);
+		entity.setTanks(tanks);
+		
+		ArrayList<TankBlockEntity> tankEntities = new ArrayList<TankBlockEntity>(tanks.size());
+		
+		for (Map.Entry<Integer, int[]> entry : tanks.entries())
+		{
+			int[] coords = entry.getValue();
+			TankBlockEntity tankEntity = (TankBlockEntity)world.getBlockTileEntity(coords[0], coords[1], coords[2]);
+			tankEntity.setValve(x, y, z);
+			tankEntities.add(tankEntity);
+		}
+		
+		for (TankBlockEntity t : tankEntities)
+		{
+			t.updateTextures();
+		}
 	}
 
 	@Override
 	public void onBlockHarvested(World world, int x, int y, int z, int par5, EntityPlayer player)
 	{
 		super.onBlockHarvested(world, x, y, z, par5, player);
-		System.out.println("onHarvested");
+		
+		ValveBlockEntity entity = (ValveBlockEntity)world.getBlockTileEntity(x, y, z);
+		
+		for (Map.Entry<Integer, int[]> entry : entity.getTanks().entries())
+		{
+			int[] coords = entry.getValue();
+			TankBlockEntity tankEntity = (TankBlockEntity)world.getBlockTileEntity(coords[0], coords[1], coords[2]);
+			tankEntity.reset();
+		}
 	}
 
 	@Override
@@ -164,5 +200,79 @@ public class ValveBlock extends BlockContainer
                 }
 			}
 		}
+	}
+	
+	private void generateTankList(World world, int x, int y, int z, ArrayListMultimap<Integer, int[]> tanks)
+	{
+		int xOffset = 0;
+		int yOffset = 0;
+		int zOffset = 0;
+		
+		if (isValidTank(world, x, y, z + 1))
+		{
+			zOffset = 1;
+		}
+		else if (isValidTank(world, x, y, z - 1))
+		{
+			zOffset = -1;
+		}
+		else if (isValidTank(world, x + 1, y, z))
+		{
+			xOffset = 1;
+		}
+		else if (isValidTank(world, x - 1, y, z))
+		{
+			xOffset = -1;
+		}
+		else if (isValidTank(world, x, y + 1, z))
+		{
+			yOffset = 1;
+		}
+		else if (isValidTank(world, x, y - 1, z))
+		{
+			yOffset = -1;
+		}
+		
+		floodFindTanks(world, x + xOffset, y + yOffset, z + zOffset, tanks, 255);
+	}
+	
+	private void floodFindTanks(World world, int x, int y, int z, ArrayListMultimap<Integer, int[]> tanks, int priority)
+	{
+		if (!isValidTank(world, x, y, z))
+		{
+			return;
+		}
+		
+		int[] coords = new int[] { x, y, z };
+		
+		// containsValue() seems to check only reference equality, so we have to resort to this or add a superfluous value class
+		for (int[] alreadyFoundCoords : tanks.values())
+		{
+			if (Arrays.equals(alreadyFoundCoords, coords))
+			{
+				return;
+			}
+		}
+		
+		tanks.put(priority, coords);
+		
+		floodFindTanks(world, x + 1, y, z, tanks, priority);
+		floodFindTanks(world, x - 1, y, z, tanks, priority);
+		floodFindTanks(world, x, y, z + 1, tanks, priority);
+		floodFindTanks(world, x, y, z - 1, tanks, priority);
+		floodFindTanks(world, x, y + 1, z, tanks, priority - 1);
+		floodFindTanks(world, x, y - 1, z, tanks, priority + 1);
+	}
+	
+	private boolean isValidTank(World world, int x, int y, int z)
+	{
+		if (world.getBlockId(x, y, z) == SimpleFluidTanks.tankBlockId)
+		{
+			TankBlockEntity tankEntity = (TankBlockEntity)world.getBlockTileEntity(x, y, z);
+			
+			return !tankEntity.isPartOfTank();
+		}
+		
+		return false;
 	}
 }

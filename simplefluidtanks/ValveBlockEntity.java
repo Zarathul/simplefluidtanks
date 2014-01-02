@@ -1,5 +1,14 @@
 package simplefluidtanks;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.ObjectStreamClass;
+
+import com.google.common.collect.ArrayListMultimap;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet;
@@ -16,11 +25,13 @@ import net.minecraftforge.fluids.IFluidHandler;
 public class ValveBlockEntity extends TileEntity implements IFluidHandler
 {
 	protected FluidTank tank;
+	private ArrayListMultimap<Integer, int[]> tanks;
 	
 	public ValveBlockEntity()
 	{
 		super();
 		this.tank = new FluidTank(SimpleFluidTanks.bucketsPerTank * FluidContainerRegistry.BUCKET_VOLUME);
+		this.tanks = ArrayListMultimap.create();
 	}
 
     @Override
@@ -28,6 +39,19 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
     {
         super.readFromNBT(tag);
         tank.readFromNBT(tag);
+        
+        try
+        {
+			tanksFromByteArray(tag.getByteArray("Tanks"));
+		}
+        catch (ClassNotFoundException e)
+        {
+			e.printStackTrace();
+		}
+        catch (IOException e)
+        {
+			e.printStackTrace();
+		}
     }
 
     @Override
@@ -35,6 +59,15 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
     {
         super.writeToNBT(tag);
         tank.writeToNBT(tag);
+        
+        try
+        {
+			tag.setByteArray("Tanks", tanksAsByteArray());
+		}
+        catch (IOException e)
+        {
+			e.printStackTrace();
+		}
     }
 
     @Override
@@ -127,5 +160,58 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	public FluidStack getFluid()
 	{
 		return tank.getFluid();
+	}
+	
+	public ArrayListMultimap<Integer, int[]> getTanks()
+	{
+		return tanks;
+	}
+	
+	public void setTanks(ArrayListMultimap<Integer, int[]> t)
+	{
+		tanks = t;
+	}
+	
+	private byte[] tanksAsByteArray() throws IOException
+	{
+		byte[] data = null;
+		ByteArrayOutputStream byteStream = null;
+		ObjectOutputStream objStream = null;
+		
+		try
+		{
+			byteStream = new ByteArrayOutputStream();
+			objStream = new ObjectOutputStream(byteStream);
+			objStream.writeObject(tanks);
+			data = byteStream.toByteArray();
+		}
+		finally
+		{
+			objStream.close();
+		}
+		
+		return ((data != null) ? data : new byte[0]);
+	}
+	
+	private void tanksFromByteArray(byte[] data) throws IOException, ClassNotFoundException
+	{
+		ByteArrayInputStream byteStream = null;
+		ObjectInputStream objStream = null;
+		
+		try
+		{
+			byteStream = new ByteArrayInputStream(data);
+			objStream = new ObjectInputStream(byteStream);
+			tanks = (ArrayListMultimap<Integer, int[]>)objStream.readObject();
+		}
+		finally
+		{
+			objStream.close();
+		}
+	}
+	
+	private void distributeFluidToTanks()
+	{
+		
 	}
 }

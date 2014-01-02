@@ -14,16 +14,16 @@ import net.minecraft.tileentity.TileEntity;
 public class TankBlockEntity extends TileEntity
 {
 	private int fillPercentage;
-	private int[] valveCoords;
 	private boolean isPartOfTank;
+	private int[] valveCoords;
 	private int[] textureIds;
 	private boolean[] connections;
 	
 	public TankBlockEntity()
 	{
 		fillPercentage = 0;
-		valveCoords = new int[] { 0, 0, 0 };
 		isPartOfTank = false;
+		valveCoords = new int[] { 0, 0, 0 };
 		textureIds = new int[] { 0, 0, 0, 0, 0, 0 };
 		connections = new boolean[6];
 	}
@@ -34,8 +34,8 @@ public class TankBlockEntity extends TileEntity
 		super.readFromNBT(tag);
 		
 		fillPercentage = tag.getByte("FillPercentage");
+		isPartOfTank = tag.getBoolean("isPartOfTank");
 		valveCoords = tag.getIntArray("ValveCoords");
-		isPartOfTank = tag.getBoolean("IsPartOfTank");
 		textureIds = tag.getIntArray("TextureIds");
 		connections = new boolean[6];
 		connections[ConnectedTexturesHelper.XPOS] = tag.getBoolean("X+");
@@ -52,8 +52,8 @@ public class TankBlockEntity extends TileEntity
 		super.writeToNBT(tag);
 		
 		tag.setByte("FillPercentage", (byte)fillPercentage);
+		tag.setBoolean("isPartOfTank", isPartOfTank);
 		tag.setIntArray("ValveCoords", valveCoords);
-		tag.setBoolean("IsPartOfTank", isPartOfTank);
 		tag.setIntArray("TextureIds", textureIds);
 		tag.setBoolean("X+", connections[ConnectedTexturesHelper.XPOS]);
 		tag.setBoolean("X-", connections[ConnectedTexturesHelper.XNEG]);
@@ -113,8 +113,6 @@ public class TankBlockEntity extends TileEntity
 			{
 				valveCoords = new int[] { x, y, z };
 				isPartOfTank = true;
-				textureIds = determineTextureIds();
-				this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 				
 				return true;
 			}
@@ -123,9 +121,15 @@ public class TankBlockEntity extends TileEntity
 		return false;
 	}
 	
+	public void updateTextures()
+	{
+		textureIds = determineTextureIds();
+		this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+	}
+	
 	private int[] determineTextureIds()
 	{
-		boolean[] connections = determineConnections();
+		connections = determineConnections();
 		int[] ids = new int[6];
 		ids[ConnectedTexturesHelper.XPOS] = ConnectedTexturesHelper.getPositiveXTexture(connections);
 		ids[ConnectedTexturesHelper.XNEG] = ConnectedTexturesHelper.getNegativeXTexture(connections);
@@ -222,9 +226,19 @@ public class TankBlockEntity extends TileEntity
 			
 			TankBlockEntity connectionCandidate = (TankBlockEntity)neighborEntity;
 			
-			return (connectionCandidate.isPartOfTank && connectionCandidate.isSameValve(valveCoords));
+			return (connectionCandidate.isSameValve(valveCoords));
 		}
 		
 		return false;
+	}
+
+	public void reset()
+	{
+		fillPercentage = 0;
+		isPartOfTank = false;
+		valveCoords = new int[] { 0, 0, 0 };
+		textureIds = new int[] { 0, 0, 0, 0, 0, 0 };
+		connections = new boolean[6];
+		this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 	}
 }

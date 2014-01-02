@@ -184,7 +184,7 @@ public class TankBlockRenderer extends TileEntitySpecialRenderer
 	private void renderNegativeYFace(TankBlockEntity entity, boolean[] connections, Icon[] icons, Icon fluidIcon, int fillPercentage)
 	{
 		// only render this side if there isn't a tank block from the same tank in front of it 
-		if (!connections[ConnectedTexturesHelper.YNEG])
+		if (fillPercentage > 0 && !connections[ConnectedTexturesHelper.YNEG])
 		{
 			TessellationManager.renderNegativeYFace(0, 0, 0, 16, 16, fluidIcon);
 		}
