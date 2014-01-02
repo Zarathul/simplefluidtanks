@@ -208,6 +208,8 @@ public class ValveBlock extends BlockContainer
 		int yOffset = 0;
 		int zOffset = 0;
 		
+		// find a tank block directly connected to the valve 
+		
 		if (isValidTank(world, x, y, z + 1))
 		{
 			zOffset = 1;
@@ -232,15 +234,39 @@ public class ValveBlock extends BlockContainer
 		{
 			yOffset = -1;
 		}
+		else
+		{
+			return;
+		}
 		
-		floodFindTanks(world, x + xOffset, y + yOffset, z + zOffset, tanks, 255);
+		// find all other tank blocks connected to the first one - note that the flood find algo will not search vertically because it would mess up priority calculations
+		ArrayListMultimap<Integer, int[]> foundTanks = floodFindTanks(world, x + xOffset, y + yOffset, z + zOffset, tanks, world.getActualHeight() - 1);
+		
+		do
+		{
+			ArrayListMultimap<Integer, int[]> newTanks = ArrayListMultimap.create();
+			
+			for (Map.Entry<Integer, int[]> entry : foundTanks.entries())
+			{
+				int priority = entry.getKey();
+				int[] coords = entry.getValue();
+				
+				newTanks.putAll(floodFindTanks(world, coords[0], coords[1] - 1, coords[2], tanks, priority + 1));
+				newTanks.putAll(floodFindTanks(world, coords[0], coords[1] + 1, coords[2], tanks, priority - world.getActualHeight()));
+			}
+			
+			foundTanks = newTanks;
+		}
+		while (foundTanks.size() > 0);
+		
+		System.out.println();
 	}
 	
-	private void floodFindTanks(World world, int x, int y, int z, ArrayListMultimap<Integer, int[]> tanks, int priority)
+	private ArrayListMultimap<Integer, int[]> floodFindTanks(World world, int x, int y, int z, ArrayListMultimap<Integer, int[]> tanks, int priority)
 	{
 		if (!isValidTank(world, x, y, z))
 		{
-			return;
+			return ArrayListMultimap.create();
 		}
 		
 		int[] coords = new int[] { x, y, z };
@@ -250,18 +276,24 @@ public class ValveBlock extends BlockContainer
 		{
 			if (Arrays.equals(alreadyFoundCoords, coords))
 			{
-				return;
+				return ArrayListMultimap.create();
 			}
 		}
 		
 		tanks.put(priority, coords);
 		
-		floodFindTanks(world, x + 1, y, z, tanks, priority);
-		floodFindTanks(world, x - 1, y, z, tanks, priority);
-		floodFindTanks(world, x, y, z + 1, tanks, priority);
-		floodFindTanks(world, x, y, z - 1, tanks, priority);
-		floodFindTanks(world, x, y + 1, z, tanks, priority - 1);
-		floodFindTanks(world, x, y - 1, z, tanks, priority + 1);
+		System.out.printf("Prio: %d - %d/%d/%d", priority, coords[0], coords[1], coords[2]);
+		System.out.println();
+		
+		ArrayListMultimap<Integer, int[]> newTanks = ArrayListMultimap.create();
+		newTanks.put(priority, coords);
+		 
+		newTanks.putAll(floodFindTanks(world, x + 1, y, z, tanks, priority));
+		newTanks.putAll(floodFindTanks(world, x - 1, y, z, tanks, priority));
+		newTanks.putAll(floodFindTanks(world, x, y, z + 1, tanks, priority));
+		newTanks.putAll(floodFindTanks(world, x, y, z - 1, tanks, priority));
+		
+		return newTanks;
 	}
 	
 	private boolean isValidTank(World world, int x, int y, int z)
