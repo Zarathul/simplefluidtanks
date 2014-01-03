@@ -5,6 +5,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidEvent;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidTank;
@@ -40,6 +41,10 @@ public class FluidTank implements IFluidTank
             setFluid(fluid);
         }
         
+//        System.out.println();
+//        System.out.printf("Tank (read): %d/%d (%s)", fluid.amount, capacity, FluidRegistry.getFluidName(fluid.fluidID));
+//        System.out.println();
+        
         return this;
     }
 
@@ -55,8 +60,12 @@ public class FluidTank implements IFluidTank
         {
             nbt.setString("Empty", "");
         }
+    	
+//    	System.out.println();
+//    	System.out.printf("Tank (write): %d/%d (%s)", fluid.amount, capacity, FluidRegistry.getFluidName(fluid.fluidID));
+//    	System.out.println();
         
-        return nbt;
+    	return nbt;
     }
 
     public void setFluid(FluidStack fluid)

@@ -113,6 +113,7 @@ public class TankBlockEntity extends TileEntity
 			{
 				valveCoords = new int[] { x, y, z };
 				isPartOfTank = true;
+				worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);
 				
 				return true;
 			}
@@ -124,6 +125,7 @@ public class TankBlockEntity extends TileEntity
 	public void updateTextures()
 	{
 		textureIds = determineTextureIds();
+		worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);
 		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 	}
 	
@@ -173,6 +175,7 @@ public class TankBlockEntity extends TileEntity
 		if (percentage >= 0 && percentage <= 100)
 		{
 			fillPercentage = percentage;
+			worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);
 			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 			
 			return true;
@@ -239,6 +242,7 @@ public class TankBlockEntity extends TileEntity
 		valveCoords = new int[] { 0, 0, 0 };
 		textureIds = new int[] { 0, 0, 0, 0, 0, 0 };
 		connections = new boolean[6];
+		worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);
 		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 	}
 }

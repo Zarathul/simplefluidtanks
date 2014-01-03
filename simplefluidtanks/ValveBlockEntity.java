@@ -62,6 +62,10 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
         {
 			e.printStackTrace();
 		}
+        
+        String tagcontent = (tag != null) ? tag.toString() : "null";
+        String side = (worldObj != null) ? (!worldObj.isRemote) ? "true" : "false" : "world not loaded";
+        System.out.println("ValveBlockEntity NBTread: " + tagcontent + ". (Server: " + side + ")");
     }
 
     @Override
@@ -78,53 +82,63 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
         {
 			e.printStackTrace();
 		}
+        
+        String tagcontent = (tag != null) ? tag.toString() : "null";
+        String side = (worldObj != null) ? (!worldObj.isRemote) ? "true" : "false" : "world not loaded";
+        System.out.println("ValveBlockEntity NBTwrite: " + tagcontent + ". (Server: " + side + ")");
     }
 
     @Override
-    public int fill(ForgeDirection from, FluidStack resource, boolean doFill)
+    public int fill(ForgeDirection from, FluidStack drainFluid, boolean doFill)
     {
-    	int fillAmount = tank.fill(resource, doFill);
-    	
-    	if (fillAmount > 0 && doFill)
+    	if (!worldObj.isRemote)
     	{
-    		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-    		distributeFluidToTanks();
+        	int fillAmount = tank.fill(drainFluid, doFill);
+        	
+        	if (doFill && fillAmount > 0)
+        	{
+        		worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);
+        		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        		distributeFluidToTanks();
+        	}
+        	
+            return fillAmount;
     	}
     	
-        return fillAmount;
+    	return 0;
     }
 
     @Override
-    public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain)
+    public FluidStack drain(ForgeDirection from, FluidStack drainFluid, boolean doDrain)
     {
-        if (resource == null || !resource.isFluidEqual(tank.getFluid()))
-        {
-            return null;
-        }
-        
-        FluidStack drainedFluid = tank.drain(resource.amount, doDrain);
-        
-        if (drainedFluid.amount > 0 && doDrain)
-        {
-        	worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-        	distributeFluidToTanks();
-        }
-        
-        return drainedFluid;
+    	return drain(from, drainFluid, -1, doDrain);
     }
 
     @Override
-    public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain)
+    public FluidStack drain(ForgeDirection from, int drainAmount, boolean doDrain)
     {
-    	FluidStack drainedFluid = tank.drain(maxDrain, doDrain);
-        
-    	if (drainedFluid.amount > 0 && doDrain)
-        {
-        	worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-        	distributeFluidToTanks();
-        }
+    	return drain(from, null, drainAmount, doDrain);
+    }
+    
+    protected FluidStack drain(ForgeDirection from, FluidStack drainFluid, int drainAmount, boolean doDrain)
+    {
+    	if (!worldObj.isRemote)
+    	{
+            FluidStack drainedFluid = (drainFluid != null) ? tank.drain(drainFluid.amount, doDrain) :
+            						  (drainAmount >= 0) ? tank.drain(drainAmount, doDrain) :
+            						  null;
+            
+            if (doDrain && drainedFluid != null && drainedFluid.amount > 0)
+            {
+        		worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);
+            	worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+            	distributeFluidToTanks();
+            }
+            
+            return drainedFluid;
+    	}
     	
-    	return drainedFluid;
+    	return null;
     }
 
     @Override
@@ -148,15 +162,17 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	@Override
 	public Packet getDescriptionPacket()
 	{
+		System.out.println("ValveBlockEntity desc packet requested. (Server: " + !worldObj.isRemote + ")");
 		NBTTagCompound tag = new NBTTagCompound();
 		writeToNBT(tag);
 		
-		return new Packet132TileEntityData(xCoord, yCoord, zCoord, 1, tag);
+		return new Packet132TileEntityData(xCoord, yCoord, zCoord, -1, tag);
 	}
 
 	@Override
 	public void onDataPacket(INetworkManager net, Packet132TileEntityData packet)
 	{
+		System.out.println("ValveBlockEntity packet132 received. (Client: " + worldObj.isRemote + ")");
 		readFromNBT(packet.data);
 	}
 
@@ -173,16 +189,6 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	public FluidStack getFluid()
 	{
 		return tank.getFluid();
-	}
-	
-	public ArrayListMultimap<Integer, int[]> getTanks()
-	{
-		return tanks;
-	}
-	
-	public void setTanks(ArrayListMultimap<Integer, int[]> t)
-	{
-		tanks = t;
 	}
 	
 	public void findTanks()
@@ -205,6 +211,8 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		}
 		
 		tank.setCapacity(SimpleFluidTanks.bucketsPerTank * FluidContainerRegistry.BUCKET_VOLUME * tankEntities.size());
+		
+		worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);
 	}
 
 	public void resetTanks()
@@ -219,6 +227,8 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		tanks.clear();
 		tank.setCapacity(0);
 		tank.setFluid(null);
+		
+		worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);
 	}
 	
 	private byte[] tanksAsByteArray() throws IOException
@@ -261,9 +271,10 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	
 	private void distributeFluidToTanks()
 	{
-		int buckets = tank.getFluidAmount();
+		// returned amount is mb(milli buckets)
+		int amountToDistribute = tank.getFluidAmount();
 		
-		if (buckets > 0)
+		if (amountToDistribute > 0)
 		{
 			int[] priorities = Ints.toArray(tanks.keySet());
 			Arrays.sort(priorities);
@@ -276,7 +287,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 				tanksToFill = tanks.get(priorities[i]);
 				
 				int capacity = tanksToFill.size() * SimpleFluidTanks.bucketsPerTank * 1000;
-				int fillPercentage = (int)((float)buckets / capacity * 100f);
+				int fillPercentage = (int)((float)amountToDistribute / capacity * 100f);
 				
 				for (int[] tankCoords : tanksToFill)
 				{
@@ -288,9 +299,9 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 					}
 				}
 				
-				buckets -= capacity;
+				amountToDistribute -= capacity;
 				
-				if (buckets <= 0)
+				if (amountToDistribute <= 0)
 				{
 					break;
 				}
@@ -366,8 +377,6 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 			foundTanks = newTanks;
 		}
 		while (foundTanks.size() > 0);
-		
-		System.out.println();
 	}
 	
 	private ArrayListMultimap<Integer, int[]> floodFindTanks(World world, int x, int y, int z, ArrayListMultimap<Integer, int[]> tanks, int priority)
@@ -389,9 +398,6 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		}
 		
 		tanks.put(priority, coords);
-		
-		System.out.printf("Prio: %d - %d/%d/%d", priority, coords[0], coords[1], coords[2]);
-		System.out.println();
 		
 		ArrayListMultimap<Integer, int[]> newTanks = ArrayListMultimap.create();
 		newTanks.put(priority, coords);
