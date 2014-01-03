@@ -64,10 +64,11 @@ public class CommonProxy
 	
 	public void init(FMLInitializationEvent event)
 	{
-		// create and register TankBlock
+		// create and register TankBlock and TankItem
 		SimpleFluidTanks.tankBlock = new TankBlock(SimpleFluidTanks.tankBlockId);
+		SimpleFluidTanks.tankItem = new TankItem(SimpleFluidTanks.tankBlockId - 256);
 		
-		GameRegistry.registerBlock(SimpleFluidTanks.tankBlock, SimpleFluidTanks.REGISTRY_TANKBLOCK_KEY);
+		GameRegistry.registerBlock(SimpleFluidTanks.tankBlock, TankItem.class, SimpleFluidTanks.REGISTRY_TANKBLOCK_KEY);
 		LanguageRegistry.addName(SimpleFluidTanks.tankBlock, SimpleFluidTanks.REGISTRY_TANKBLOCK_READABLE_NAME);
 		
 		// create and register ValveBlock

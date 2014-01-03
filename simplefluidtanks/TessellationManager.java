@@ -10,7 +10,6 @@ public final class TessellationManager
 {
 	// The max block width, height and depth is 1f, so we divide it by 16f to get 16 "subblocks" in every dimension 
 	private static final double pixel = 1d / 16d;
-	// Bandaid fix for the flickering issues with adjacent blocks
 	private static final Tessellator tr = Tessellator.instance;
 	
 	private static double xBaseCoord;

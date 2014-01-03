@@ -8,6 +8,7 @@ import net.minecraft.block.BlockContainer;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
 import net.minecraft.util.ResourceLocation;
@@ -19,10 +20,10 @@ public class TankBlock extends BlockContainer
 	{
 		super(blockId, Material.iron);
 		
-		this.setUnlocalizedName(SimpleFluidTanks.REGISTRY_TANKBLOCK_NAME);
-		this.setCreativeTab(SimpleFluidTanks.creativeTab);
-		this.setHardness(2.0f);
-		this.setStepSound(soundGlassFootstep);
+		setUnlocalizedName(SimpleFluidTanks.REGISTRY_TANKBLOCK_NAME);
+		setCreativeTab(SimpleFluidTanks.creativeTab);
+		setHardness(2.0f);
+		setStepSound(soundGlassFootstep);
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -68,6 +69,23 @@ public class TankBlock extends BlockContainer
 			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_left"),					// 14
 			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_right")					// 15
 		};
+	}
+
+	@Override
+	public void onBlockHarvested(World world, int x, int y, int z, int par5, EntityPlayer player)
+	{
+		super.onBlockHarvested(world, x, y, z, par5, player);
+		
+		if (!world.isRemote)
+		{
+			TankBlockEntity tankEntity = (TankBlockEntity)world.getBlockTileEntity(x, y, z);
+			ValveBlockEntity valveEntity = tankEntity.getValve();
+			
+			if (valveEntity != null)
+			{
+				valveEntity.resetTanks();
+			}
+		}
 	}
 	
 	@Override

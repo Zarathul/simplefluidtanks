@@ -101,7 +101,7 @@ public class TankBlockRenderer extends TileEntitySpecialRenderer
 		// only render this side if there isn't a tank block from the same tank in front of it 
 		if (!connections[ConnectedTexturesHelper.XPOS])
 		{
-			if (fillPercentage > 0)
+			if (fillPercentage > 0 && fluidIcon != null)
 			{
 				double fluidHeight = 16.0 / 100 * fillPercentage;
 				TessellationManager.renderPositiveXFace(16, 0, 0, fluidHeight, 16, fluidIcon);
@@ -118,7 +118,7 @@ public class TankBlockRenderer extends TileEntitySpecialRenderer
 		// only render this side if there isn't a tank block from the same tank in front of it 
 		if (!connections[ConnectedTexturesHelper.XNEG])
 		{
-			if (fillPercentage > 0)
+			if (fillPercentage > 0 && fluidIcon != null)
 			{
 				double fluidHeight = 16.0 / 100 * fillPercentage;
 				TessellationManager.renderNegativeXFace(0, 0, 0, fluidHeight, 16, fluidIcon);
@@ -135,7 +135,7 @@ public class TankBlockRenderer extends TileEntitySpecialRenderer
 		// only render this side if there isn't a tank block from the same tank in front of it 
 		if (!connections[ConnectedTexturesHelper.ZPOS])
 		{
-			if (fillPercentage > 0)
+			if (fillPercentage > 0 && fluidIcon != null)
 			{
 				double fluidHeight = 16.0 / 100 * fillPercentage;
 				TessellationManager.renderPositiveZFace(0, 0, 16, 16, fluidHeight, fluidIcon);
@@ -152,7 +152,7 @@ public class TankBlockRenderer extends TileEntitySpecialRenderer
 		// only render this side if there isn't a tank block from the same tank in front of it 
 		if (!connections[ConnectedTexturesHelper.ZNEG])
 		{
-			if (fillPercentage > 0)
+			if (fillPercentage > 0 && fluidIcon != null)
 			{
 				double fluidHeight = 16.0 / 100 * fillPercentage;
 				TessellationManager.renderNegativeZFace(0, 0, 0, 16, fluidHeight, fluidIcon);
@@ -166,7 +166,7 @@ public class TankBlockRenderer extends TileEntitySpecialRenderer
 	
 	private void renderPositiveYFace(TankBlockEntity entity, boolean[] connections, Icon[] icons, Icon fluidIcon, int fillPercentage)
 	{
-		if (fillPercentage > 0 && !(fillPercentage >= 100 && connections[ConnectedTexturesHelper.YPOS]))
+		if (fillPercentage > 0 && fluidIcon != null)
 		{
 			double fluidY = 16.0 / 100 * fillPercentage;
 			TessellationManager.renderPositiveYFace(0, fluidY, 0, 16, 16, fluidIcon);
@@ -184,7 +184,7 @@ public class TankBlockRenderer extends TileEntitySpecialRenderer
 	private void renderNegativeYFace(TankBlockEntity entity, boolean[] connections, Icon[] icons, Icon fluidIcon, int fillPercentage)
 	{
 		// only render this side if there isn't a tank block from the same tank in front of it 
-		if (fillPercentage > 0 && !connections[ConnectedTexturesHelper.YNEG])
+		if (fillPercentage > 0 && fluidIcon != null && !connections[ConnectedTexturesHelper.YNEG])
 		{
 			TessellationManager.renderNegativeYFace(0, 0, 0, 16, 16, fluidIcon);
 		}

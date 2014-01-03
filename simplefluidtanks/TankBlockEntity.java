@@ -92,7 +92,7 @@ public class TankBlockEntity extends TileEntity
 	{
 		if (isPartOfTank())
 		{
-			TileEntity entity = this.worldObj.getBlockTileEntity(valveCoords[0], valveCoords[1], valveCoords[2]);
+			TileEntity entity = worldObj.getBlockTileEntity(valveCoords[0], valveCoords[1], valveCoords[2]);
 			
 			if (entity != null && entity instanceof ValveBlockEntity)
 			{
@@ -107,7 +107,7 @@ public class TankBlockEntity extends TileEntity
 	{
 		if (!isPartOfTank())
 		{
-			TileEntity entity = this.worldObj.getBlockTileEntity(x, y, z);
+			TileEntity entity = worldObj.getBlockTileEntity(x, y, z);
 			
 			if (entity != null && entity instanceof ValveBlockEntity)
 			{
@@ -124,7 +124,7 @@ public class TankBlockEntity extends TileEntity
 	public void updateTextures()
 	{
 		textureIds = determineTextureIds();
-		this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 	}
 	
 	private int[] determineTextureIds()
@@ -173,7 +173,7 @@ public class TankBlockEntity extends TileEntity
 		if (percentage >= 0 && percentage <= 100)
 		{
 			fillPercentage = percentage;
-			this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 			
 			return true;
 		}
@@ -234,11 +234,11 @@ public class TankBlockEntity extends TileEntity
 
 	public void reset()
 	{
-		fillPercentage = 0;
 		isPartOfTank = false;
+		fillPercentage = 0;
 		valveCoords = new int[] { 0, 0, 0 };
 		textureIds = new int[] { 0, 0, 0, 0, 0, 0 };
 		connections = new boolean[6];
-		this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 	}
 }

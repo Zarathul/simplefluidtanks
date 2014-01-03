@@ -2,7 +2,9 @@ package simplefluidtanks;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.Item;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.*;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -24,8 +26,16 @@ public class SimpleFluidTanks
 	@SidedProxy(clientSide = "simplefluidtanks.ClientProxy", serverSide = "simplefluidtanks.ServerProxy")
 	public static CommonProxy proxy;
 	
+	// blocks
 	public static Block tankBlock;
 	public static Block valveBlock;
+	
+	// items
+	public static Item tankItem;
+	
+	// custom renderers
+	public static TankBlockRenderer tankBlockRenderer;
+	public static TankItemRenderer tankItemRenderer;
 	
 	public static int tankBlockId;
 	public static int valveBlockId;
@@ -34,9 +44,6 @@ public class SimpleFluidTanks
 	
 	public static CreativeTabs creativeTab;
 	
-	@SideOnly(Side.CLIENT)
-	public static TankBlockRenderer tankBlockRenderer;
-	
 	// constants
 	public static final String MOD_ID = "simplefluidtanks";
 	
@@ -44,6 +51,10 @@ public class SimpleFluidTanks
 	public static final String REGISTRY_TANKBLOCK_NAME = "tankBlock";
 	public static final String REGISTRY_TANKBLOCK_KEY = MOD_ID + REGISTRY_TANKBLOCK_NAME;
 	public static final String REGISTRY_TANKBLOCK_READABLE_NAME = "Fluid Tank";
+	
+	public static final String REGISTRY_TANKITEM_NAME = "tankitem";
+	public static final String REGISTRY_TANKITEM_KEY = MOD_ID + REGISTRY_TANKITEM_NAME;
+	public static final String REGISTRY_TANKITEM_READABLE_NAME = "Fluid Tank";
 	
 	public static final String REGISTRY_TANKBLOCK_ENTITY_NAME = "tankBlockEntity";
 	public static final String REGISTRY_TANKBLOCK_ENTITY_KEY = MOD_ID + REGISTRY_TANKBLOCK_ENTITY_NAME;

@@ -1,5 +1,6 @@
 package simplefluidtanks;
 
+import net.minecraftforge.client.MinecraftForgeClient;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -19,7 +20,11 @@ public class ClientProxy extends CommonProxy
 	{
 		super.init(event);
 		
-		ClientRegistry.bindTileEntitySpecialRenderer(TankBlockEntity.class, new TankBlockRenderer());
+		SimpleFluidTanks.tankBlockRenderer = new TankBlockRenderer();
+		SimpleFluidTanks.tankItemRenderer = new TankItemRenderer();
+		
+		ClientRegistry.bindTileEntitySpecialRenderer(TankBlockEntity.class, SimpleFluidTanks.tankBlockRenderer);
+		MinecraftForgeClient.registerItemRenderer(SimpleFluidTanks.tankItem.itemID, SimpleFluidTanks.tankItemRenderer);
 	}
 	
 	@Override
