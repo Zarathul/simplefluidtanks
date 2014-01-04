@@ -103,15 +103,15 @@ public class TankBlockEntity extends TileEntity
 		return null;
 	}
 	
-	public boolean setValve(int x, int y, int z)
+	public boolean setValve(int ... coords)
 	{
-		if (!isPartOfTank())
+		if (!isPartOfTank() && coords != null && coords.length >= 3)
 		{
-			TileEntity entity = worldObj.getBlockTileEntity(x, y, z);
+			TileEntity entity = worldObj.getBlockTileEntity(coords[0], coords[1], coords[2]);
 			
 			if (entity != null && entity instanceof ValveBlockEntity)
 			{
-				valveCoords = new int[] { x, y, z };
+				valveCoords = coords;
 				isPartOfTank = true;
 				worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);
 				
@@ -217,7 +217,7 @@ public class TankBlockEntity extends TileEntity
 		
 		int neighborBlockId = worldObj.getBlockId(x, y, z);
 		
-		if (neighborBlockId == SimpleFluidTanks.tankBlockId)
+		if (neighborBlockId == SimpleFluidTanks.tankBlock.blockID)
 		{
 			TileEntity neighborEntity = worldObj.getBlockTileEntity(x, y, z);
 			

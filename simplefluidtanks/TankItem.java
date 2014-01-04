@@ -19,7 +19,7 @@ public class TankItem extends ItemBlock
 	@Override
 	public Icon getIconFromDamage(int side)
 	{
-	    return Block.blocksList[SimpleFluidTanks.tankBlockId].getIcon(0, 0);
+	    return Block.blocksList[SimpleFluidTanks.tankBlock.blockID].getIcon(0, 0);
 	}
 
 	@Override

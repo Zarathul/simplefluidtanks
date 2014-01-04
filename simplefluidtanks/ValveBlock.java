@@ -151,10 +151,6 @@ public class ValveBlock extends BlockContainer
 					drainBucketIntoTank(tankEntity, player, equippedItemStack);
 				}
 			}
-
-			String containerStatus = tankEntity.getFluidAmount() + "/" + tankEntity.getCapacity() + " (" + ((tankEntity.getFluidAmount() > 0) ? tankEntity.getFluid().getFluid().getLocalizedName() : "empty") + ")";
-			// TODO: remove debug chat message
-			player.sendChatToPlayer(new ChatMessageComponent().addText(containerStatus));
 		}
 	}
 

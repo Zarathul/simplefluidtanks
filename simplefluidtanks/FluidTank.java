@@ -41,10 +41,6 @@ public class FluidTank implements IFluidTank
             setFluid(fluid);
         }
         
-//        System.out.println();
-//        System.out.printf("Tank (read): %d/%d (%s)", fluid.amount, capacity, FluidRegistry.getFluidName(fluid.fluidID));
-//        System.out.println();
-        
         return this;
     }
 
@@ -60,10 +56,6 @@ public class FluidTank implements IFluidTank
         {
             nbt.setString("Empty", "");
         }
-    	
-//    	System.out.println();
-//    	System.out.printf("Tank (write): %d/%d (%s)", fluid.amount, capacity, FluidRegistry.getFluidName(fluid.fluidID));
-//    	System.out.println();
         
     	return nbt;
     }

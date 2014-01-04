@@ -27,14 +27,13 @@ public class SimpleFluidTanks
 	public static CommonProxy proxy;
 	
 	// blocks
-	public static Block tankBlock;
-	public static Block valveBlock;
-	
-	// items
-	public static Item tankItem;
+	public static TankBlock tankBlock;
+	public static ValveBlock valveBlock;
 	
 	// custom renderers
+	@SideOnly(Side.CLIENT)
 	public static TankBlockRenderer tankBlockRenderer;
+	@SideOnly(Side.CLIENT)
 	public static TankItemRenderer tankItemRenderer;
 	
 	public static int tankBlockId;

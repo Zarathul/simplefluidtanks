@@ -2,12 +2,10 @@ package simplefluidtanks;
 
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraftforge.common.Configuration;
-import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -29,8 +27,7 @@ public class CommonProxy
 			@SideOnly(Side.CLIENT)
 			public int getTabIconItemIndex()
 			{
-				// TODO: Change to block id and add icon
-				return super.getTabIconItemIndex();
+				return SimpleFluidTanks.tankBlock.blockID;
 			}
 		};
 		
@@ -64,18 +61,13 @@ public class CommonProxy
 	
 	public void init(FMLInitializationEvent event)
 	{
-		// create and register TankBlock and TankItem
+		// create and register TankBlock
 		SimpleFluidTanks.tankBlock = new TankBlock(SimpleFluidTanks.tankBlockId);
-		SimpleFluidTanks.tankItem = new TankItem(SimpleFluidTanks.tankBlockId - 256);
-		
 		GameRegistry.registerBlock(SimpleFluidTanks.tankBlock, TankItem.class, SimpleFluidTanks.REGISTRY_TANKBLOCK_KEY);
-		LanguageRegistry.addName(SimpleFluidTanks.tankBlock, SimpleFluidTanks.REGISTRY_TANKBLOCK_READABLE_NAME);
 		
 		// create and register ValveBlock
 		SimpleFluidTanks.valveBlock = new ValveBlock(SimpleFluidTanks.valveBlockId);
-		
 		GameRegistry.registerBlock(SimpleFluidTanks.valveBlock, SimpleFluidTanks.REGISTRY_VALVEBLOCK_KEY);
-		LanguageRegistry.addName(SimpleFluidTanks.valveBlock, SimpleFluidTanks.REGISTRY_VALVEBLOCK_READABLE_NAME);
 		
 		// register TileEntities
 		GameRegistry.registerTileEntity(ValveBlockEntity.class, SimpleFluidTanks.REGISTRY_VALVEBLOCK_ENTITY_KEY);

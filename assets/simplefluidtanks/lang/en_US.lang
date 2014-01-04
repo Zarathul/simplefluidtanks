@@ -1,0 +1,5 @@
+# Blocks
+tile.tankBlock.name=Fluid Tank
+tile.valveBlock.name=Valve
+# Items
+item.tankitem.name=Fluid Tank

@@ -172,7 +172,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	@Override
 	public void onDataPacket(INetworkManager net, Packet132TileEntityData packet)
 	{
-		System.out.println("ValveBlockEntity packet132 received. (Client: " + worldObj.isRemote + ")");
+		System.out.println("ValveBlockEntity packet132 received. (Server: " + !worldObj.isRemote + ")");
 		readFromNBT(packet.data);
 	}
 
@@ -412,7 +412,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	
 	private boolean isValidTank(World world, int x, int y, int z)
 	{
-		if (world.getBlockId(x, y, z) == SimpleFluidTanks.tankBlockId)
+		if (world.getBlockId(x, y, z) == SimpleFluidTanks.tankBlock.blockID)
 		{
 			TankBlockEntity tankEntity = (TankBlockEntity)world.getBlockTileEntity(x, y, z);
 			
