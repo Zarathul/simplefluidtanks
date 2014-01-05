@@ -1,7 +1,7 @@
 package simplefluidtanks;
 
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -32,31 +32,7 @@ public class CommonProxy
 		};
 		
 		// load config
-		Configuration config = new Configuration(event.getSuggestedConfigurationFile());
-		config.load();
-		
-		SimpleFluidTanks.tankBlockId = config.getBlock(
-				SimpleFluidTanks.CONFIG_CATEGORY,
-				SimpleFluidTanks.CONFIG_TANKBLOCK_ID_KEY,
-				SimpleFluidTanks.CONFIG_DEFAULT_TANKBLOCK_ID,
-				SimpleFluidTanks.CONFIG_TANKBLOCK_ID_COMMENT
-				).getInt();
-		
-		SimpleFluidTanks.valveBlockId = config.getBlock(
-				SimpleFluidTanks.CONFIG_CATEGORY,
-				SimpleFluidTanks.CONFIG_VALVEBLOCK_ID_KEY,
-				SimpleFluidTanks.CONFIG_DEFAULT_VALVEBLOCK_ID,
-				SimpleFluidTanks.CONFIG_VALVEBLOCK_ID_COMMENT
-				).getInt();
-		
-		SimpleFluidTanks.bucketsPerTank = config.get(
-				SimpleFluidTanks.CONFIG_CATEGORY,
-				SimpleFluidTanks.CONFIG_BUCKETS_PER_TANK_KEY,
-				SimpleFluidTanks.CONFIG_DEFAULT_BUCKETS_PER_TANK,
-				SimpleFluidTanks.CONFIG_BUCKETS_PER_TANK_COMMENT
-				).getInt();
-		
-		config.save();
+		Config.load(event);
 	}
 	
 	public void init(FMLInitializationEvent event)
@@ -72,6 +48,13 @@ public class CommonProxy
 		// register TileEntities
 		GameRegistry.registerTileEntity(ValveBlockEntity.class, SimpleFluidTanks.REGISTRY_VALVEBLOCK_ENTITY_KEY);
 		GameRegistry.registerTileEntity(TankBlockEntity.class, SimpleFluidTanks.REGISTRY_TANKBLOCK_ENTITY_KEY);
+		
+		// register Recipes
+		Recipes.registerRecipes();
+		
+		// set harvest levels for blocks
+		MinecraftForge.setBlockHarvestLevel(SimpleFluidTanks.tankBlock, "pickaxe", 2);
+		MinecraftForge.setBlockHarvestLevel(SimpleFluidTanks.valveBlock, "pickaxe", 2);
 	}
 	
 	public void postInit(FMLPostInitializationEvent event)

@@ -5,19 +5,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.ObjectStreamClass;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.lang3.ArrayUtils;
-
-import scala.tools.nsc.doc.base.comment.OrderedList;
-
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.primitives.Ints;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.INetworkManager;
@@ -31,6 +22,11 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+
+import org.apache.commons.lang3.ArrayUtils;
+
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.primitives.Ints;
 
 public class ValveBlockEntity extends TileEntity implements IFluidHandler
 {
@@ -63,9 +59,11 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 			e.printStackTrace();
 		}
         
+        /*
         String tagcontent = (tag != null) ? tag.toString() : "null";
         String side = (worldObj != null) ? (!worldObj.isRemote) ? "true" : "false" : "world not loaded";
         System.out.println("ValveBlockEntity NBTread: " + tagcontent + ". (Server: " + side + ")");
+        */
     }
 
     @Override
@@ -83,9 +81,11 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 			e.printStackTrace();
 		}
         
+        /*
         String tagcontent = (tag != null) ? tag.toString() : "null";
         String side = (worldObj != null) ? (!worldObj.isRemote) ? "true" : "false" : "world not loaded";
         System.out.println("ValveBlockEntity NBTwrite: " + tagcontent + ". (Server: " + side + ")");
+        */
     }
 
     @Override
@@ -130,9 +130,9 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
             
             if (doDrain && drainedFluid != null && drainedFluid.amount > 0)
             {
+            	distributeFluidToTanks();
         		worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);
             	worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-            	distributeFluidToTanks();
             }
             
             return drainedFluid;
@@ -162,7 +162,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	@Override
 	public Packet getDescriptionPacket()
 	{
-		System.out.println("ValveBlockEntity desc packet requested. (Server: " + !worldObj.isRemote + ")");
+//		System.out.println("ValveBlockEntity desc packet requested. (Server: " + !worldObj.isRemote + ")");
 		NBTTagCompound tag = new NBTTagCompound();
 		writeToNBT(tag);
 		
@@ -172,7 +172,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	@Override
 	public void onDataPacket(INetworkManager net, Packet132TileEntityData packet)
 	{
-		System.out.println("ValveBlockEntity packet132 received. (Server: " + !worldObj.isRemote + ")");
+//		System.out.println("ValveBlockEntity packet132 received. (Server: " + !worldObj.isRemote + ")");
 		readFromNBT(packet.data);
 	}
 
@@ -300,11 +300,6 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 				}
 				
 				amountToDistribute -= capacity;
-				
-				if (amountToDistribute <= 0)
-				{
-					break;
-				}
 			}
 		}
 		else

@@ -2,10 +2,7 @@
 package simplefluidtanks;
 
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidEvent;
-import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidTank;
@@ -37,8 +34,8 @@ public class FluidTank implements IFluidTank
         
         if (!nbt.hasKey("Empty"))
         {
-            FluidStack fluid = FluidStack.loadFluidStackFromNBT(nbt);
-            setFluid(fluid);
+            FluidStack loadedFluid = FluidStack.loadFluidStackFromNBT(nbt);
+            setFluid(loadedFluid);
         }
         
         return this;
@@ -150,7 +147,7 @@ public class FluidTank implements IFluidTank
         	drainAmount = fluid.amount;
         }
 
-        FluidStack stack = new FluidStack(fluid, drainAmount);
+        FluidStack drainedFluid = new FluidStack(fluid, drainAmount);
         
         if (doDrain)
         {
@@ -162,6 +159,6 @@ public class FluidTank implements IFluidTank
             }
         }
         
-        return stack;
+        return drainedFluid;
     }
 }

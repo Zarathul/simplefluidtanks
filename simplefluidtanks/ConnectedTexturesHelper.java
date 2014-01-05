@@ -1,7 +1,5 @@
 package simplefluidtanks;
 
-import java.util.HashMap;
-
 public final class ConnectedTexturesHelper
 {
 	public static final int XPOS = 3;

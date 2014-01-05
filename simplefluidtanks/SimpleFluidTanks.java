@@ -1,14 +1,10 @@
 package simplefluidtanks;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.Item;
-import cpw.mods.fml.client.registry.RenderingRegistry;
-import cpw.mods.fml.common.*;
+import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
+import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -65,17 +61,25 @@ public class SimpleFluidTanks
 	public static final String REGISTRY_VALVEBLOCK_ENTITY_NAME = "valveBlockEntity";
 	public static final String REGISTRY_VALVEBLOCK_ENTITY_KEY = MOD_ID + REGISTRY_VALVEBLOCK_ENTITY_NAME;
 	
+	public static String REGISTRY_THERMAL_EXPANSION_MOD_ID = "";
+	public static String REGISTRY_THERMAL_EXPANSION_HARDENED_GLASS = "";
+	
 	// - config settings
 	public static final int CONFIG_DEFAULT_TANKBLOCK_ID = 2526;
 	public static final int CONFIG_DEFAULT_VALVEBLOCK_ID = 2525;
 	public static final int CONFIG_DEFAULT_BUCKETS_PER_TANK = 16;
-	public static final String CONFIG_CATEGORY = "simple fluid tanks";
+	public static final String CONFIG_CATEGORY_MAIN = "simple fluid tanks";
 	public static final String CONFIG_TANKBLOCK_ID_KEY = "TankblockId";
 	public static final String CONFIG_TANKBLOCK_ID_COMMENT = "The tanks block id.";
 	public static final String CONFIG_VALVEBLOCK_ID_KEY = "ValveblockId";
 	public static final String CONFIG_VALVEBLOCK_ID_COMMENT = "The valves block id.";
 	public static final String CONFIG_BUCKETS_PER_TANK_KEY = "BucketsPerTank";
-	public static final String CONFIG_BUCKETS_PER_TANK_COMMENT = "The amount of liquid that can be stored in one tank, measured in buckets.";
+	public static final String CONFIG_BUCKETS_PER_TANK_COMMENT = "The amount of liquid that can be stored per tank (measured in buckets).";
+	public static final String CONFIG_CATEGORY_MOD_INTEROP = "mod interop";
+	public static final String CONFIG_TE_MOD_ID_KEY = "ThermalExpansionModId";
+	public static final String CONFIG_TE_MOD_ID_COMMENT = "The mod id for Thermal Expansion. This is used to include TE blocks and items in the recipes.";
+	public static final String CONFIG_TE_MOD_HARDENED_GLASS_KEY = "TE_HardenedGlass";
+	public static final String CONFIG_TE_MOD_HARDENED_GLASS_COMMENT = "The name of Thermal Expansions hardened glass block.";
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event)

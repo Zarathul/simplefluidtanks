@@ -65,6 +65,4 @@ public class TankMaterial extends Material
 	{
 		return 2;
 	}
-	
-	
 }

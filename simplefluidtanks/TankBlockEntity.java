@@ -1,9 +1,5 @@
 package simplefluidtanks;
 
-import java.util.HashMap;
-
-import com.google.common.primitives.Ints;
-
 import net.minecraft.launchwrapper.LogWrapper;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.INetworkManager;

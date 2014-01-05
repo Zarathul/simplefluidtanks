@@ -1,50 +1,33 @@
 package simplefluidtanks;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Map;
+import java.util.Random;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
-import com.google.common.io.ByteStreams;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
-import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.Icon;
-import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidContainerRegistry.FluidContainerData;
-import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.fluids.IFluidContainerItem;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class ValveBlock extends BlockContainer
 {
 	public ValveBlock(int blockId)
 	{
-		super(blockId, Material.iron);
+		super(blockId, TankMaterial.tankMaterial);
 		
 		setUnlocalizedName(SimpleFluidTanks.REGISTRY_VALVEBLOCK_NAME);
 		setCreativeTab(SimpleFluidTanks.creativeTab);
-		setHardness(1.5f);
+		setHardness(2.5f);
 		setStepSound(soundMetalFootstep);
 	}
 
@@ -82,17 +65,11 @@ public class ValveBlock extends BlockContainer
 			entity.findTanks();
 		}
 	}
-
+	
 	@Override
-	public void onBlockHarvested(World world, int x, int y, int z, int par5, EntityPlayer player)
+	public void onBlockPreDestroy(World world, int x, int y, int z, int par5)
 	{
-		super.onBlockHarvested(world, x, y, z, par5, player);
-		
-		if (!world.isRemote)
-		{
-			ValveBlockEntity entity = (ValveBlockEntity)world.getBlockTileEntity(x, y, z);
-			entity.resetTanks();
-		}
+		resetTanks(world, x, y, z);
 	}
 
 	@Override
@@ -104,11 +81,7 @@ public class ValveBlock extends BlockContainer
 			
 			if (equippedItemStack != null)
 			{
-				if (equippedItemStack.itemID == Item.stick.itemID)
-				{
-					handleStickClick(world, x, y, z, player);
-				}
-				else if (FluidContainerRegistry.isContainer(equippedItemStack))
+				if (FluidContainerRegistry.isContainer(equippedItemStack))
 				{
 					handleContainerClick(world, x, y, z, player, equippedItemStack);
 				}
@@ -118,17 +91,22 @@ public class ValveBlock extends BlockContainer
 		return true;
 	}
 	
-	private void handleStickClick(World world, int x, int y, int z, EntityPlayer player)
+	@Override
+	public float getExplosionResistance(Entity par1Entity)
 	{
-		TileEntity blockEntity = world.getBlockTileEntity(x, y, z);
+		return 1000f;
+	}
 
-		if (blockEntity != null && blockEntity instanceof ValveBlockEntity)
-		{
-			ValveBlockEntity tankEntity = (ValveBlockEntity) blockEntity;
-			String containerStatus = tankEntity.getFluidAmount() + "/" + tankEntity.getCapacity() + " (" + ((tankEntity.getFluidAmount() > 0) ? tankEntity.getFluid().getFluid().getLocalizedName() : "empty") + ")";
-			// TODO: remove debug chat message
-			player.sendChatToPlayer(new ChatMessageComponent().addText(containerStatus));
-		}
+	@Override
+	public float getExplosionResistance(Entity par1Entity, World world, int x, int y, int z, double explosionX, double explosionY, double explosionZ)
+	{
+		return 1000f;
+	}
+
+	@Override
+	public int quantityDropped(int meta, int fortune, Random random)
+	{
+		return 1;
 	}
 	
 	private void handleContainerClick(World world, int x, int y, int z, EntityPlayer player, ItemStack equippedItemStack)
@@ -197,6 +175,15 @@ public class ValveBlock extends BlockContainer
                     player.inventory.setInventorySlotContents(player.inventory.currentItem, new ItemStack(Item.bucketEmpty));
                 }
 			}
+		}
+	}
+	
+	private void resetTanks(World world, int x, int y, int z)
+	{
+		if (!world.isRemote)
+		{
+			ValveBlockEntity entity = (ValveBlockEntity)world.getBlockTileEntity(x, y, z);
+			entity.resetTanks();
 		}
 	}
 }

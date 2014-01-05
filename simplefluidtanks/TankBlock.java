@@ -1,28 +1,25 @@
 package simplefluidtanks;
 
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.block.Block;
+import java.util.Random;
+
 import net.minecraft.block.BlockContainer;
-import net.minecraft.block.ITileEntityProvider;
-import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class TankBlock extends BlockContainer
 {
 	public TankBlock(int blockId)
 	{
-		super(blockId, Material.glass);
+		super(blockId, TankMaterial.tankMaterial);
 		
 		setUnlocalizedName(SimpleFluidTanks.REGISTRY_TANKBLOCK_NAME);
 		setCreativeTab(SimpleFluidTanks.creativeTab);
-		setHardness(2.0f);
+		setHardness(2.5f);
 		setStepSound(soundGlassFootstep);
 	}
 
@@ -70,24 +67,32 @@ public class TankBlock extends BlockContainer
 			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_right")					// 15
 		};
 	}
+	
+	
+	@Override
+	public void onBlockPreDestroy(World world, int x, int y, int z, int par5)
+	{
+		resetTanks(world, x, y, z);
+	}
 
 	@Override
-	public void onBlockHarvested(World world, int x, int y, int z, int par5, EntityPlayer player)
+	public int quantityDropped(Random par1Random)
 	{
-		super.onBlockHarvested(world, x, y, z, par5, player);
-		
-		if (!world.isRemote)
-		{
-			TankBlockEntity tankEntity = (TankBlockEntity)world.getBlockTileEntity(x, y, z);
-			ValveBlockEntity valveEntity = tankEntity.getValve();
-			
-			if (valveEntity != null)
-			{
-				valveEntity.resetTanks();
-			}
-		}
+		return 1000;
 	}
-	
+
+	@Override
+	public float getExplosionResistance(Entity par1Entity)
+	{
+		return 1000f;
+	}
+
+	@Override
+	public float getExplosionResistance(Entity par1Entity, World world, int x, int y, int z, double explosionX, double explosionY, double explosionZ)
+	{
+		return 1f;
+	}
+
 	@Override
 	public int getRenderType()
 	{
@@ -122,5 +127,19 @@ public class TankBlock extends BlockContainer
 	public TileEntity createNewTileEntity(World world)
 	{
 		return new TankBlockEntity();
+	}
+	
+	private void resetTanks(World world, int x, int y, int z)
+	{
+		if (!world.isRemote)
+		{
+			TankBlockEntity tankEntity = (TankBlockEntity)world.getBlockTileEntity(x, y, z);
+			ValveBlockEntity valveEntity = tankEntity.getValve();
+			
+			if (valveEntity != null)
+			{
+				valveEntity.resetTanks();
+			}
+		}
 	}
 }
