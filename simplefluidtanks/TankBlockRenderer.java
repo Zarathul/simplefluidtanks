@@ -18,6 +18,7 @@ import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.client.renderer.texture.SimpleTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.launchwrapper.LogWrapper;
 import net.minecraft.tileentity.TileEntity;
@@ -62,11 +63,12 @@ public class TankBlockRenderer extends TileEntitySpecialRenderer
 		TankBlockEntity entity = (TankBlockEntity)tileEntity;
 		Icon[] icons = tank.getIcons();
 		
+		TessellationManager.setBaseCoords(x, y, z);
 		Tessellator tsr = Tessellator.instance;
 		int brightness = block.getMixedBrightnessForBlock(entity.worldObj, entity.xCoord, entity.yCoord, entity.zCoord);
 		tsr.setBrightness(brightness);
 		
-		TessellationManager.setBaseCoords(x, y, z);
+		bindTexture(TextureMap.locationBlocksTexture);
 		
 		tsr.startDrawingQuads();
 		

@@ -40,7 +40,7 @@ public class ValveBlock extends BlockContainer
 {
 	public ValveBlock(int blockId)
 	{
-		super(blockId, TankMaterial.tankMaterial);
+		super(blockId, Material.iron);
 		
 		setUnlocalizedName(SimpleFluidTanks.REGISTRY_VALVEBLOCK_NAME);
 		setCreativeTab(SimpleFluidTanks.creativeTab);

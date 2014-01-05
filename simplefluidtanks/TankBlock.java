@@ -18,7 +18,7 @@ public class TankBlock extends BlockContainer
 {
 	public TankBlock(int blockId)
 	{
-		super(blockId, Material.iron);
+		super(blockId, Material.glass);
 		
 		setUnlocalizedName(SimpleFluidTanks.REGISTRY_TANKBLOCK_NAME);
 		setCreativeTab(SimpleFluidTanks.creativeTab);
