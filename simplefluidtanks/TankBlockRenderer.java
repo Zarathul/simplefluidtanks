@@ -1,5 +1,9 @@
 package simplefluidtanks;
 
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GLUConstants;
+import org.lwjgl.util.glu.GLU;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -14,6 +18,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class TankBlockRenderer extends TileEntitySpecialRenderer
 {
+	public static final double flickerOffset = 0.001;
+	
 	public TankBlockRenderer()
 	{
 		super();
@@ -45,6 +51,7 @@ public class TankBlockRenderer extends TileEntitySpecialRenderer
 		TessellationManager.setBaseCoords(x, y, z);
 		Tessellator tsr = Tessellator.instance;
 		int brightness = block.getMixedBrightnessForBlock(entity.worldObj, entity.xCoord, entity.yCoord, entity.zCoord);
+		
 		tsr.setBrightness(brightness);
 		
 		bindTexture(TextureMap.locationBlocksTexture);
@@ -86,12 +93,12 @@ public class TankBlockRenderer extends TileEntitySpecialRenderer
 		{
 			if (fillPercentage > 0 && fluidIcon != null)
 			{
-				TessellationManager.renderPositiveXFace(16, 0, 0, fluidHeight, 16, 0, verticalTextureOffset, 0, 0, fluidIcon, TessellationManager.pixel);
+				TessellationManager.renderPositiveXFace(16 - flickerOffset, 0, 0, fluidHeight, 16, 0, verticalTextureOffset, 0, 0, fluidIcon, TessellationManager.pixel);
 			}
 			
 			TessellationManager.renderPositiveXFace(16, 0, 0, 16, 16, icons[entity.getTexture(ConnectedTexturesHelper.XPOS)]);
 			// inner face
-			TessellationManager.renderNegativeXFace(16, 0, 0, 16, 16, icons[entity.getTexture(ConnectedTexturesHelper.XNEG)]);
+			TessellationManager.renderNegativeXFace(16 - flickerOffset, 0, 0, 16, 16, icons[entity.getTexture(ConnectedTexturesHelper.XNEG)]);
 		}
 	}
 	
@@ -102,12 +109,12 @@ public class TankBlockRenderer extends TileEntitySpecialRenderer
 		{
 			if (fillPercentage > 0 && fluidIcon != null)
 			{
-				TessellationManager.renderNegativeXFace(0, 0, 0, fluidHeight, 16, 0, verticalTextureOffset, 0, 0, fluidIcon, TessellationManager.pixel);
+				TessellationManager.renderNegativeXFace(0 + flickerOffset, 0, 0, fluidHeight, 16, 0, verticalTextureOffset, 0, 0, fluidIcon, TessellationManager.pixel);
 			}
 			
 			TessellationManager.renderNegativeXFace(0, 0, 0, 16, 16, icons[entity.getTexture(ConnectedTexturesHelper.XNEG)]);
 			// inner face
-			TessellationManager.renderPositiveXFace(0, 0, 0, 16, 16, icons[entity.getTexture(ConnectedTexturesHelper.XPOS)]);
+			TessellationManager.renderPositiveXFace(0 + flickerOffset, 0, 0, 16, 16, icons[entity.getTexture(ConnectedTexturesHelper.XPOS)]);
 		}
 	}
 	
@@ -118,12 +125,12 @@ public class TankBlockRenderer extends TileEntitySpecialRenderer
 		{
 			if (fillPercentage > 0 && fluidIcon != null)
 			{
-				TessellationManager.renderPositiveZFace(0, 0, 16, 16, fluidHeight, 0, verticalTextureOffset, 0, 0, fluidIcon, TessellationManager.pixel);
+				TessellationManager.renderPositiveZFace(0, 0, 16 - flickerOffset, 16, fluidHeight, 0, verticalTextureOffset, 0, 0, fluidIcon, TessellationManager.pixel);
 			}
 			
 			TessellationManager.renderPositiveZFace(0, 0, 16, 16, 16, icons[entity.getTexture(ConnectedTexturesHelper.ZPOS)]);
 			// inner face
-			TessellationManager.renderNegativeZFace(0, 0, 16, 16, 16, icons[entity.getTexture(ConnectedTexturesHelper.ZNEG)]);
+			TessellationManager.renderNegativeZFace(0, 0, 16 - flickerOffset, 16, 16, icons[entity.getTexture(ConnectedTexturesHelper.ZNEG)]);
 		}
 	}
 	
@@ -134,12 +141,12 @@ public class TankBlockRenderer extends TileEntitySpecialRenderer
 		{
 			if (fillPercentage > 0 && fluidIcon != null)
 			{
-				TessellationManager.renderNegativeZFace(0, 0, 0, 16, fluidHeight, 0, verticalTextureOffset, 0, 0, fluidIcon, TessellationManager.pixel);
+				TessellationManager.renderNegativeZFace(0, 0, 0 + flickerOffset, 16, fluidHeight, 0, verticalTextureOffset, 0, 0, fluidIcon, TessellationManager.pixel);
 			}
 			
 			TessellationManager.renderNegativeZFace(0, 0, 0, 16, 16, icons[entity.getTexture(ConnectedTexturesHelper.ZNEG)]);
 			// inner face
-			TessellationManager.renderPositiveZFace(0, 0, 0, 16, 16, icons[entity.getTexture(ConnectedTexturesHelper.ZPOS)]);
+			TessellationManager.renderPositiveZFace(0, 0, 0 + flickerOffset, 16, 16, icons[entity.getTexture(ConnectedTexturesHelper.ZPOS)]);
 		}
 	}
 	
@@ -147,7 +154,7 @@ public class TankBlockRenderer extends TileEntitySpecialRenderer
 	{
 		if (fillPercentage > 0 && fluidIcon != null)
 		{
-			TessellationManager.renderPositiveYFace(0, fluidHeight, 0, 16, 16, fluidIcon);
+			TessellationManager.renderPositiveYFace(0, fluidHeight - flickerOffset, 0, 16, 16, fluidIcon);
 		}
 		
 		// only render this side if there isn't a tank block from the same tank in front of it 
@@ -155,7 +162,7 @@ public class TankBlockRenderer extends TileEntitySpecialRenderer
 		{
 			TessellationManager.renderPositiveYFace(0, 16, 0, 16, 16, icons[entity.getTexture(ConnectedTexturesHelper.YPOS)]);
 			// inner face
-			TessellationManager.renderNegativeYFace(0, 16, 0, 16, 16, icons[entity.getTexture(ConnectedTexturesHelper.YNEG)]);
+			TessellationManager.renderNegativeYFace(0, 16 - flickerOffset, 0, 16, 16, icons[entity.getTexture(ConnectedTexturesHelper.YNEG)]);
 		}
 	}
 	
@@ -164,14 +171,14 @@ public class TankBlockRenderer extends TileEntitySpecialRenderer
 		// only render this side if there isn't a tank block from the same tank in front of it 
 		if (fillPercentage > 0 && fluidIcon != null && !connections[ConnectedTexturesHelper.YNEG])
 		{
-			TessellationManager.renderNegativeYFace(0, 0, 0, 16, 16, fluidIcon);
+			TessellationManager.renderNegativeYFace(0, 0 + flickerOffset, 0, 16, 16, fluidIcon);
 		}
 		
 		if (!connections[ConnectedTexturesHelper.YNEG])
 		{
 			TessellationManager.renderNegativeYFace(0, 0, 0, 16, 16, icons[entity.getTexture(ConnectedTexturesHelper.YNEG)]);
 			// inner face
-			TessellationManager.renderPositiveYFace(0, 0, 0, 16, 16, icons[entity.getTexture(ConnectedTexturesHelper.YPOS)]);
+			TessellationManager.renderPositiveYFace(0, 0 + flickerOffset, 0, 16, 16, icons[entity.getTexture(ConnectedTexturesHelper.YPOS)]);
 		}
 	}
 	
