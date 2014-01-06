@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,12 +33,14 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 {
 	protected FluidTank tank;
 	private ArrayListMultimap<Integer, int[]> tanks;
+	private byte inputSides;
 	
 	public ValveBlockEntity()
 	{
 		super();
 		tank = new FluidTank(0);
 		tanks = ArrayListMultimap.create();
+		inputSides = -1;
 	}
 
     @Override
@@ -59,11 +62,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 			e.printStackTrace();
 		}
         
-        /*
-        String tagcontent = (tag != null) ? tag.toString() : "null";
-        String side = (worldObj != null) ? (!worldObj.isRemote) ? "true" : "false" : "world not loaded";
-        System.out.println("ValveBlockEntity NBTread: " + tagcontent + ". (Server: " + side + ")");
-        */
+        inputSides = tag.getByte("InputSides");
     }
 
     @Override
@@ -81,11 +80,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 			e.printStackTrace();
 		}
         
-        /*
-        String tagcontent = (tag != null) ? tag.toString() : "null";
-        String side = (worldObj != null) ? (!worldObj.isRemote) ? "true" : "false" : "world not loaded";
-        System.out.println("ValveBlockEntity NBTwrite: " + tagcontent + ". (Server: " + side + ")");
-        */
+        tag.setByte("InputSides", inputSides);
     }
 
     @Override
@@ -162,7 +157,6 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	@Override
 	public Packet getDescriptionPacket()
 	{
-//		System.out.println("ValveBlockEntity desc packet requested. (Server: " + !worldObj.isRemote + ")");
 		NBTTagCompound tag = new NBTTagCompound();
 		writeToNBT(tag);
 		
@@ -172,8 +166,8 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	@Override
 	public void onDataPacket(INetworkManager net, Packet132TileEntityData packet)
 	{
-//		System.out.println("ValveBlockEntity packet132 received. (Server: " + !worldObj.isRemote + ")");
 		readFromNBT(packet.data);
+		worldObj.markBlockForRenderUpdate(xCoord, yCoord, zCoord);
 	}
 
 	public int getCapacity()
@@ -189,6 +183,65 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	public FluidStack getFluid()
 	{
 		return tank.getFluid();
+	}
+	
+	public int getInputSides()
+	{
+		return inputSides;
+	}
+	
+	public void updateInputSides()
+	{
+		int sides = 0;
+		
+		if (isLinkedTank(worldObj, xCoord, yCoord, zCoord + 1))
+		{
+			sides = sides | ConnectedTexturesHelper.sidesToBitFlagsMappings[3];
+		}
+		
+		if (isLinkedTank(worldObj, xCoord, yCoord, zCoord - 1))
+		{
+			sides = sides | ConnectedTexturesHelper.sidesToBitFlagsMappings[2];
+		}
+		
+		if (isLinkedTank(worldObj, xCoord + 1, yCoord, zCoord))
+		{
+			sides = sides | ConnectedTexturesHelper.sidesToBitFlagsMappings[5];
+		}
+		
+		if (isLinkedTank(worldObj, xCoord - 1, yCoord, zCoord))
+		{
+			sides = sides | ConnectedTexturesHelper.sidesToBitFlagsMappings[4];
+		}
+		
+		if (isLinkedTank(worldObj, xCoord, yCoord + 1, zCoord))
+		{
+			sides = sides | ConnectedTexturesHelper.sidesToBitFlagsMappings[1];
+		}
+		
+		if (isLinkedTank(worldObj, xCoord, yCoord - 1, zCoord))
+		{
+			sides = sides | ConnectedTexturesHelper.sidesToBitFlagsMappings[0];
+		}
+		
+		inputSides = (byte)sides;
+	}
+	
+	public boolean isInputSide(int side)
+	{
+		if (side >= Byte.MIN_VALUE && side <= Byte.MAX_VALUE)
+		{
+			byte flags = (byte)ConnectedTexturesHelper.sidesToBitFlagsMappings[side];
+			
+			return (inputSides & flags) == flags;
+		}
+		
+		return false;
+	}
+	
+	public boolean hasTanks()
+	{
+		return tanks.size() > 0;
 	}
 	
 	public void findTanks()
@@ -324,27 +377,27 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		
 		// find a tank block directly connected to the valve 
 		
-		if (isValidTank(world, x, y, z + 1))
+		if (isUnlinkedTank(world, x, y, z + 1))
 		{
 			zOffset = 1;
 		}
-		else if (isValidTank(world, x, y, z - 1))
+		else if (isUnlinkedTank(world, x, y, z - 1))
 		{
 			zOffset = -1;
 		}
-		else if (isValidTank(world, x + 1, y, z))
+		else if (isUnlinkedTank(world, x + 1, y, z))
 		{
 			xOffset = 1;
 		}
-		else if (isValidTank(world, x - 1, y, z))
+		else if (isUnlinkedTank(world, x - 1, y, z))
 		{
 			xOffset = -1;
 		}
-		else if (isValidTank(world, x, y + 1, z))
+		else if (isUnlinkedTank(world, x, y + 1, z))
 		{
 			yOffset = 1;
 		}
-		else if (isValidTank(world, x, y - 1, z))
+		else if (isUnlinkedTank(world, x, y - 1, z))
 		{
 			yOffset = -1;
 		}
@@ -376,7 +429,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	
 	private ArrayListMultimap<Integer, int[]> floodFindTanks(World world, int x, int y, int z, ArrayListMultimap<Integer, int[]> tanks, int priority)
 	{
-		if (!isValidTank(world, x, y, z))
+		if (!isUnlinkedTank(world, x, y, z))
 		{
 			return ArrayListMultimap.create();
 		}
@@ -405,13 +458,28 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		return newTanks;
 	}
 	
-	private boolean isValidTank(World world, int x, int y, int z)
+	private boolean isUnlinkedTank(World world, int x, int y, int z)
 	{
 		if (world.getBlockId(x, y, z) == SimpleFluidTanks.tankBlock.blockID)
 		{
 			TankBlockEntity tankEntity = (TankBlockEntity)world.getBlockTileEntity(x, y, z);
 			
 			return !tankEntity.isPartOfTank();
+		}
+		
+		return false;
+	}
+	
+	private boolean isLinkedTank(World world, int x, int y, int z)
+	{
+		int[] coords = new int[] { x, y, z };
+		
+		for (int[] linkedTankCoords : tanks.values())
+		{
+			if (ArrayUtils.isEquals(coords, linkedTankCoords))
+			{
+				return true;
+			}
 		}
 		
 		return false;

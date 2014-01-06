@@ -13,6 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.Icon;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -33,19 +34,57 @@ public class ValveBlock extends BlockContainer
 
 	@SideOnly(Side.CLIENT)
 	private Icon icon;
+	@SideOnly(Side.CLIENT)
+	private Icon iconIn;
+	@SideOnly(Side.CLIENT)
+	private Icon iconOut;
 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public Icon getIcon(int side, int meta)
 	{
-		return icon;
+		switch (side)
+		{
+			case ConnectedTexturesHelper.YPOS:
+				return iconIn;
+			case ConnectedTexturesHelper.XNEG:
+				return iconOut;
+			default:
+				return icon;
+		}
 	}
 	
+	@Override
+	@SideOnly(Side.CLIENT)
+	public Icon getBlockTexture(IBlockAccess blockAccess, int x, int y, int z, int side)
+	{
+		TileEntity entity = blockAccess.getBlockTileEntity(x, y, z);
+		
+		if (entity != null)
+		{
+			ValveBlockEntity valveEntity = (ValveBlockEntity)entity;
+			
+			if (valveEntity.hasTanks())
+			{
+				if (valveEntity.isInputSide(side))
+				{
+					return iconIn;
+				}
+				
+				return iconOut;
+			}
+		}
+		
+		return getIcon(side, 0);
+	}
+
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister iconRegister)
 	{
 		icon = iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":valve");
+		iconIn = iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":valve_in");
+		iconOut = iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":valve_out");
 	}
 
 	@Override
@@ -63,9 +102,10 @@ public class ValveBlock extends BlockContainer
 		{
 			ValveBlockEntity entity = (ValveBlockEntity)world.getBlockTileEntity(x, y, z);
 			entity.findTanks();
+			entity.updateInputSides();
 		}
 	}
-	
+
 	@Override
 	public void onBlockPreDestroy(World world, int x, int y, int z, int par5)
 	{

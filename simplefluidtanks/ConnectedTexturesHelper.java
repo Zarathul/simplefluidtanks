@@ -2,11 +2,21 @@ package simplefluidtanks;
 
 public final class ConnectedTexturesHelper
 {
-	public static final int XPOS = 3;
-	public static final int XNEG = 1;
-	public static final int YPOS = 5;
-	public static final int YNEG = 4;
-	public static final int ZPOS = 0;
+	public static final int[] sidesToBitFlagsMappings = new int[]
+	{
+		1, 	// 0	YNEG
+		2, 	// 1	YPOS
+		4, 	// 2	ZNEG
+		8, 	// 3	ZPOS
+		16,	// 4	XNEG
+		32	// 5	XPOS
+	};
+	
+	public static final int XPOS = 5;
+	public static final int XNEG = 4;
+	public static final int YPOS = 1;
+	public static final int YNEG = 0;
+	public static final int ZPOS = 3;
 	public static final int ZNEG = 2;
 	
 	
