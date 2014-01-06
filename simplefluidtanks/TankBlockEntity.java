@@ -1,5 +1,8 @@
 package simplefluidtanks;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.Minecraft;
 import net.minecraft.launchwrapper.LogWrapper;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.INetworkManager;
@@ -24,6 +27,15 @@ public class TankBlockEntity extends TileEntity
 		connections = new boolean[6];
 	}
 	
+	@Override
+	@SideOnly(Side.CLIENT)
+	public double getMaxRenderDistanceSquared()
+	{
+		int renderDistance = Minecraft.getMinecraft().gameSettings.renderDistance;
+		
+		return Math.max(400, Math.pow(64, (3 - renderDistance)));
+	}
+
 	@Override
 	public void readFromNBT(NBTTagCompound tag)
 	{

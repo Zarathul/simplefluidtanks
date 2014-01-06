@@ -78,7 +78,7 @@ public class TankBlock extends BlockContainer
 	@Override
 	public int quantityDropped(Random par1Random)
 	{
-		return 1000;
+		return 1;
 	}
 
 	@Override
@@ -90,7 +90,7 @@ public class TankBlock extends BlockContainer
 	@Override
 	public float getExplosionResistance(Entity par1Entity, World world, int x, int y, int z, double explosionX, double explosionY, double explosionZ)
 	{
-		return 1f;
+		return 1000f;
 	}
 
 	@Override
