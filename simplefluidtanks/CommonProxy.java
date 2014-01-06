@@ -49,9 +49,6 @@ public class CommonProxy
 		GameRegistry.registerTileEntity(ValveBlockEntity.class, SimpleFluidTanks.REGISTRY_VALVEBLOCK_ENTITY_KEY);
 		GameRegistry.registerTileEntity(TankBlockEntity.class, SimpleFluidTanks.REGISTRY_TANKBLOCK_ENTITY_KEY);
 		
-		// register Recipes
-		Recipes.registerRecipes();
-		
 		// set harvest levels for blocks
 		MinecraftForge.setBlockHarvestLevel(SimpleFluidTanks.tankBlock, "pickaxe", 2);
 		MinecraftForge.setBlockHarvestLevel(SimpleFluidTanks.valveBlock, "pickaxe", 2);
@@ -59,5 +56,7 @@ public class CommonProxy
 	
 	public void postInit(FMLPostInitializationEvent event)
 	{
+		// register Recipes
+		Recipes.registerRecipes();
 	}
 }

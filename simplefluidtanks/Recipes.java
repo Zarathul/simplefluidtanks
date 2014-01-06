@@ -11,12 +11,19 @@ public final class Recipes
 	{
 		// use thermal expansions hardened glass for the recipes if TE is installed otherwise use normal glass
 		Block teHardenedGlass = GameRegistry.findBlock(SimpleFluidTanks.REGISTRY_THERMAL_EXPANSION_MOD_ID, SimpleFluidTanks.REGISTRY_THERMAL_EXPANSION_HARDENED_GLASS);
-		Block glassRecipeComponent = (teHardenedGlass != null) ? teHardenedGlass : Block.glass;
+		Block glassRecipeComponent = Block.glass;
+		int outputAmount = 2;
+		
+		if (teHardenedGlass != null)
+		{
+			glassRecipeComponent = teHardenedGlass;
+			outputAmount = 4;
+		}
 		
 		// tank recipe
-		GameRegistry.addShapedRecipe(new ItemStack(SimpleFluidTanks.tankBlock, 2),
+		GameRegistry.addShapedRecipe(new ItemStack(SimpleFluidTanks.tankBlock, outputAmount),
 									 "IGI",
-									 "GGG",
+									 "G G",
 									 "IGI",
 									 'I', Item.ingotIron,
 									 'G', glassRecipeComponent

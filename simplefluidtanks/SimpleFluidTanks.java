@@ -61,8 +61,8 @@ public class SimpleFluidTanks
 	public static final String REGISTRY_VALVEBLOCK_ENTITY_NAME = "valveBlockEntity";
 	public static final String REGISTRY_VALVEBLOCK_ENTITY_KEY = MOD_ID + REGISTRY_VALVEBLOCK_ENTITY_NAME;
 	
-	public static String REGISTRY_THERMAL_EXPANSION_MOD_ID = "";
-	public static String REGISTRY_THERMAL_EXPANSION_HARDENED_GLASS = "";
+	public static String REGISTRY_THERMAL_EXPANSION_MOD_ID = "ThermalExpansion";
+	public static String REGISTRY_THERMAL_EXPANSION_HARDENED_GLASS = "Glass";
 	
 	// - config settings
 	public static final int CONFIG_DEFAULT_TANKBLOCK_ID = 2526;
