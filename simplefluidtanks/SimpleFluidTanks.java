@@ -12,7 +12,7 @@ import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-@Mod(modid = SimpleFluidTanks.MOD_ID, name = "SimpleFluidTanks", version = "0.0.1")
+@Mod(modid = SimpleFluidTanks.MOD_ID, name = "SimpleFluidTanks", version = "1.0.0.1")
 @NetworkMod(serverSideRequired = true, clientSideRequired = true)
 public class SimpleFluidTanks
 {
@@ -65,8 +65,8 @@ public class SimpleFluidTanks
 	public static String REGISTRY_THERMAL_EXPANSION_HARDENED_GLASS = "Glass";
 	
 	// - config settings
-	public static final int CONFIG_DEFAULT_TANKBLOCK_ID = 2526;
-	public static final int CONFIG_DEFAULT_VALVEBLOCK_ID = 2525;
+	public static final int CONFIG_DEFAULT_TANKBLOCK_ID = 2529;
+	public static final int CONFIG_DEFAULT_VALVEBLOCK_ID = 2530;
 	public static final int CONFIG_DEFAULT_BUCKETS_PER_TANK = 16;
 	public static final String CONFIG_CATEGORY_MAIN = "simple fluid tanks";
 	public static final String CONFIG_TANKBLOCK_ID_KEY = "TankblockId";

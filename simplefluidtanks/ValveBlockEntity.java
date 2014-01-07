@@ -94,6 +94,8 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
         	{
         		worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);
         		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+            	// triggers onNeighborTileChange on neighboring blocks, this is needed for comparators to work
+        		worldObj.func_96440_m(xCoord, yCoord, zCoord, SimpleFluidTanks.tankBlock.blockID);
         		distributeFluidToTanks();
         	}
         	
@@ -128,6 +130,8 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
             	distributeFluidToTanks();
         		worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);
             	worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+            	// triggers onNeighborTileChange on neighboring blocks, this is needed for comparators to work
+            	worldObj.func_96440_m(xCoord, yCoord, zCoord, SimpleFluidTanks.tankBlock.blockID);
             }
             
             return drainedFluid;

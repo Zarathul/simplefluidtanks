@@ -149,6 +149,30 @@ public class ValveBlock extends BlockContainer
 		return 1;
 	}
 	
+	@Override
+	public boolean hasComparatorInputOverride()
+	{
+		return true;
+	}
+
+	@Override
+	public int getComparatorInputOverride(World world, int x, int y, int z, int side)
+	{
+		TileEntity entity = world.getBlockTileEntity(x, y, z);
+		
+		if (entity != null && entity instanceof ValveBlockEntity)
+		{
+			ValveBlockEntity valve = (ValveBlockEntity)entity;
+			float capacity = (float)valve.getCapacity();
+			float fluidAmount = (float)valve.getFluidAmount();
+			int signalStrength = ((int)Math.floor((fluidAmount / capacity)  * 14.0f)) + ((fluidAmount > 0) ? 1 : 0);
+			
+			return signalStrength;
+		}
+		
+		return 0;
+	}
+
 	private void handleContainerClick(World world, int x, int y, int z, EntityPlayer player, ItemStack equippedItemStack)
 	{
 		TileEntity blockEntity = world.getBlockTileEntity(x, y, z);
