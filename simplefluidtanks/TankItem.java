@@ -1,6 +1,5 @@
 package simplefluidtanks;
 
-import net.minecraft.block.Block;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.util.Icon;
 import cpw.mods.fml.relauncher.Side;
@@ -19,7 +18,7 @@ public class TankItem extends ItemBlock
 	@Override
 	public Icon getIconFromDamage(int side)
 	{
-	    return Block.blocksList[SimpleFluidTanks.tankBlock.blockID].getIcon(0, 0);
+		return SimpleFluidTanks.tankBlock.getIcon(0, 0);
 	}
 
 	@Override

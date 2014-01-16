@@ -73,8 +73,12 @@ public class FluidTank implements IFluidTank
     	// negative capacity makes no sense
         this.capacity = (capacity >= 0) ? capacity : 0;
     }
+    
+    public int getRemainingCapacity()
+    {
+    	return getCapacity() - getFluidAmount();
+    }
 
-    /* IFluidTank */
     @Override
     public FluidStack getFluid()
     {

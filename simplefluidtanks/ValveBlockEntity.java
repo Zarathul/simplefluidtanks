@@ -5,7 +5,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -27,12 +26,12 @@ import net.minecraftforge.fluids.IFluidHandler;
 import org.apache.commons.lang3.ArrayUtils;
 
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.primitives.Ints;
+import com.google.common.primitives.Floats;
 
 public class ValveBlockEntity extends TileEntity implements IFluidHandler
 {
 	protected FluidTank tank;
-	private ArrayListMultimap<Integer, int[]> tanks;
+	private ArrayListMultimap<Float, int[]> tanks;
 	private byte inputSides;
 	
 	public ValveBlockEntity()
@@ -121,7 +120,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
     {
     	if (!worldObj.isRemote)
     	{
-            FluidStack drainedFluid = (drainFluid != null) ? tank.drain(drainFluid.amount, doDrain) :
+            FluidStack drainedFluid = (drainFluid != null && drainFluid.isFluidEqual(tank.getFluid())) ? tank.drain(drainFluid.amount, doDrain) :
             						  (drainAmount >= 0) ? tank.drain(drainAmount, doDrain) :
             						  null;
             
@@ -143,13 +142,20 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
     @Override
     public boolean canFill(ForgeDirection from, Fluid fluid)
     {
-        return true;
+    	if (fluid != null && tank.getRemainingCapacity() > 0)
+    	{
+        	FluidStack tankFluid = tank.getFluid();
+        	
+        	return (tankFluid == null || tankFluid.fluidID == fluid.getID());
+    	}
+    	
+    	return false;
     }
 
     @Override
     public boolean canDrain(ForgeDirection from, Fluid fluid)
     {
-        return true;
+    	return (fluid != null && tank.getFluidAmount() > 0 && fluid.getID() == tank.getFluid().fluidID);
     }
 
     @Override
@@ -200,32 +206,32 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		
 		if (isLinkedTank(worldObj, xCoord, yCoord, zCoord + 1))
 		{
-			sides = sides | ConnectedTexturesHelper.sidesToBitFlagsMappings[3];
+			sides = sides | ConnectedTexturesHelper.sidesToBitFlagsMappings[ConnectedTexturesHelper.ZPOS];
 		}
 		
 		if (isLinkedTank(worldObj, xCoord, yCoord, zCoord - 1))
 		{
-			sides = sides | ConnectedTexturesHelper.sidesToBitFlagsMappings[2];
+			sides = sides | ConnectedTexturesHelper.sidesToBitFlagsMappings[ConnectedTexturesHelper.ZNEG];
 		}
 		
 		if (isLinkedTank(worldObj, xCoord + 1, yCoord, zCoord))
 		{
-			sides = sides | ConnectedTexturesHelper.sidesToBitFlagsMappings[5];
+			sides = sides | ConnectedTexturesHelper.sidesToBitFlagsMappings[ConnectedTexturesHelper.XPOS];
 		}
 		
 		if (isLinkedTank(worldObj, xCoord - 1, yCoord, zCoord))
 		{
-			sides = sides | ConnectedTexturesHelper.sidesToBitFlagsMappings[4];
+			sides = sides | ConnectedTexturesHelper.sidesToBitFlagsMappings[ConnectedTexturesHelper.XNEG];
 		}
 		
 		if (isLinkedTank(worldObj, xCoord, yCoord + 1, zCoord))
 		{
-			sides = sides | ConnectedTexturesHelper.sidesToBitFlagsMappings[1];
+			sides = sides | ConnectedTexturesHelper.sidesToBitFlagsMappings[ConnectedTexturesHelper.YPOS];
 		}
 		
 		if (isLinkedTank(worldObj, xCoord, yCoord - 1, zCoord))
 		{
-			sides = sides | ConnectedTexturesHelper.sidesToBitFlagsMappings[0];
+			sides = sides | ConnectedTexturesHelper.sidesToBitFlagsMappings[ConnectedTexturesHelper.YNEG];
 		}
 		
 		inputSides = (byte)sides;
@@ -254,7 +260,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		
 		ArrayList<TankBlockEntity> tankEntities = new ArrayList<TankBlockEntity>(tanks.size());
 		
-		for (Map.Entry<Integer, int[]> entry : tanks.entries())
+		for (Map.Entry<Float, int[]> entry : tanks.entries())
 		{
 			int[] coords = entry.getValue();
 			TankBlockEntity tankEntity = (TankBlockEntity)worldObj.getBlockTileEntity(coords[0], coords[1], coords[2]);
@@ -274,7 +280,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 
 	public void resetTanks()
 	{
-		for (Map.Entry<Integer, int[]> entry : tanks.entries())
+		for (Map.Entry<Float, int[]> entry : tanks.entries())
 		{
 			int[] coords = entry.getValue();
 			TankBlockEntity tankEntity = (TankBlockEntity)worldObj.getBlockTileEntity(coords[0], coords[1], coords[2]);
@@ -318,7 +324,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		{
 			byteStream = new ByteArrayInputStream(data);
 			objStream = new ObjectInputStream(byteStream);
-			tanks = (ArrayListMultimap<Integer, int[]>)objStream.readObject();
+			tanks = (ArrayListMultimap<Float, int[]>)objStream.readObject();
 		}
 		finally
 		{
@@ -333,7 +339,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		
 		if (amountToDistribute > 0)
 		{
-			int[] priorities = Ints.toArray(tanks.keySet());
+			float[] priorities = Floats.toArray(tanks.keySet());
 			Arrays.sort(priorities);
 			ArrayUtils.reverse(priorities);
 			
@@ -344,7 +350,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 				tanksToFill = tanks.get(priorities[i]);
 				
 				int capacity = tanksToFill.size() * SimpleFluidTanks.bucketsPerTank * 1000;
-				int fillPercentage = (int)((float)amountToDistribute / capacity * 100f);
+				double fillPercentage = Math.min((double)amountToDistribute / (double)capacity * 100d, 100d);
 				
 				for (int[] tankCoords : tanksToFill)
 				{
@@ -352,11 +358,16 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 					
 					if (tankEntity != null)
 					{
-						tankEntity.setFillPercentage(fillPercentage);
+						tankEntity.setFillPercentage((int)fillPercentage);
 					}
 				}
 				
-				amountToDistribute -= capacity;
+				amountToDistribute -= Math.ceil((double)capacity * (double)fillPercentage / 100d);
+				
+				if (amountToDistribute <= 0)
+				{
+					break;
+				}
 			}
 		}
 		else
@@ -373,57 +384,32 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		}
 	}
 	
-	private void generateTankList(World world, int x, int y, int z, ArrayListMultimap<Integer, int[]> tanks)
+	private void generateTankList(World world, int x, int y, int z, ArrayListMultimap<Float, int[]> tanks)
 	{
-		int xOffset = 0;
-		int yOffset = 0;
-		int zOffset = 0;
+		// fill priority starts at 0 at the same height as the valve, 
+		// going up one block decreases priority by the worlds maximum height (256 at the moment), 
+		// going down one block increases priority by a value between 0 and 1 depending on the distance between the block and the valve on the x or z axis, whichever is longer
 		
-		// find a tank block directly connected to the valve 
-		
-		if (isUnlinkedTank(world, x, y, z + 1))
-		{
-			zOffset = 1;
-		}
-		else if (isUnlinkedTank(world, x, y, z - 1))
-		{
-			zOffset = -1;
-		}
-		else if (isUnlinkedTank(world, x + 1, y, z))
-		{
-			xOffset = 1;
-		}
-		else if (isUnlinkedTank(world, x - 1, y, z))
-		{
-			xOffset = -1;
-		}
-		else if (isUnlinkedTank(world, x, y + 1, z))
-		{
-			yOffset = 1;
-		}
-		else if (isUnlinkedTank(world, x, y - 1, z))
-		{
-			yOffset = -1;
-		}
-		else
-		{
-			return;
-		}
-		
-		// find all other tank blocks connected to the first one - note that the flood find algo will not search vertically because it would mess up priority calculations
-		ArrayListMultimap<Integer, int[]> foundTanks = floodFindTanks(world, x + xOffset, y + yOffset, z + zOffset, tanks, world.getActualHeight() - 1);
+		ArrayListMultimap<Float, int[]> foundTanks = floodFindTanks(world, x, y - 1, z, tanks, 1);		// Y+
+		foundTanks.putAll(floodFindTanks(worldObj, x + 1, y, z, tanks, 0));								// X+
+		foundTanks.putAll(floodFindTanks(worldObj, x - 1, y, z, tanks, 0));								// X-
+		foundTanks.putAll(floodFindTanks(worldObj, x, y, z + 1, tanks, 0));								// Z+
+		foundTanks.putAll(floodFindTanks(worldObj, x, y, z - 1, tanks, 0));								// Z-
+		foundTanks.putAll(floodFindTanks(worldObj, x, y + 1, z, tanks, -world.getActualHeight()));		// Y+
 		
 		do
 		{
-			ArrayListMultimap<Integer, int[]> newTanks = ArrayListMultimap.create();
+			ArrayListMultimap<Float, int[]> newTanks = ArrayListMultimap.create();
 			
-			for (Map.Entry<Integer, int[]> entry : foundTanks.entries())
+			for (Map.Entry<Float, int[]> entry : foundTanks.entries())
 			{
-				int priority = entry.getKey();
+				float priority = entry.getKey();
 				int[] coords = entry.getValue();
+				float priorityYPos = priority - ((coords[1] + 1 <= y) ? 1 : world.getActualHeight());
+				float priorityYNeg = priority + 1 - normalizePriorityOffset((Math.max(Math.abs(x - coords[0]), Math.abs(z - coords[2]))));
 				
-				newTanks.putAll(floodFindTanks(world, coords[0], coords[1] - 1, coords[2], tanks, priority + 1));
-				newTanks.putAll(floodFindTanks(world, coords[0], coords[1] + 1, coords[2], tanks, priority - world.getActualHeight()));
+				newTanks.putAll(floodFindTanks(world, coords[0], coords[1] + 1, coords[2], tanks, priorityYPos));		// Y+
+				newTanks.putAll(floodFindTanks(world, coords[0], coords[1] - 1, coords[2], tanks, priorityYNeg));		// Y-
 			}
 			
 			foundTanks = newTanks;
@@ -431,7 +417,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		while (foundTanks.size() > 0);
 	}
 	
-	private ArrayListMultimap<Integer, int[]> floodFindTanks(World world, int x, int y, int z, ArrayListMultimap<Integer, int[]> tanks, int priority)
+	private ArrayListMultimap<Float, int[]> floodFindTanks(World world, int x, int y, int z, ArrayListMultimap<Float, int[]> tanks, float priority)
 	{
 		if (!isUnlinkedTank(world, x, y, z))
 		{
@@ -440,7 +426,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		
 		int[] coords = new int[] { x, y, z };
 		
-		// containsValue() seems to check only reference equality, so we have to resort to this or add a superfluous value class
+		// check if the tank at the current location has already been found (note: ArrayListMultimap.containsValue() seems to check only reference equality)
 		for (int[] alreadyFoundCoords : tanks.values())
 		{
 			if (Arrays.equals(alreadyFoundCoords, coords))
@@ -451,7 +437,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		
 		tanks.put(priority, coords);
 		
-		ArrayListMultimap<Integer, int[]> newTanks = ArrayListMultimap.create();
+		ArrayListMultimap<Float, int[]> newTanks = ArrayListMultimap.create();
 		newTanks.put(priority, coords);
 		 
 		newTanks.putAll(floodFindTanks(world, x + 1, y, z, tanks, priority));
@@ -487,5 +473,17 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		}
 		
 		return false;
+	}
+	
+	private float normalizePriorityOffset(float value)
+	{
+		float normalized = Math.abs(value);
+		
+		while (normalized >= 1)
+		{
+			normalized /= 10;
+		}
+		
+		return normalized;
 	}
 }

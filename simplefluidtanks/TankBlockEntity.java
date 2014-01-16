@@ -1,7 +1,5 @@
 package simplefluidtanks;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.launchwrapper.LogWrapper;
 import net.minecraft.nbt.NBTTagCompound;
@@ -9,6 +7,8 @@ import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.tileentity.TileEntity;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class TankBlockEntity extends TileEntity
 {
@@ -180,7 +180,7 @@ public class TankBlockEntity extends TileEntity
 	
 	public boolean setFillPercentage(int percentage)
 	{
-		if (percentage >= 0 && percentage <= 100)
+		if (percentage >= 0 && percentage <= 100 && percentage != fillPercentage)
 		{
 			fillPercentage = percentage;
 			worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);

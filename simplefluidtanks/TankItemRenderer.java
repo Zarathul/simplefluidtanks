@@ -64,7 +64,7 @@ public class TankItemRenderer implements IItemRenderer
 
 		// ENTITY and INVENTORY expect [-0.5, -0.5, -0.5] to [0.5, 0.5, 0.5] coordinate range, EQUIPPED and EQUIPPED_FIRST_PERSON expect [0,0,0] to [1,1,1].
 		double[] baseCoords = (type == ItemRenderType.ENTITY || type == ItemRenderType.INVENTORY) ? new double[] { -0.5, -0.5, -0.5 } : new double[]{ 0, 0, 0 };
-		Icon icon = SimpleFluidTanks.tankBlock.getIcons()[0];
+		Icon icon = SimpleFluidTanks.tankBlock.getIcon(0, 0);
 		TessellationManager.setBaseCoords(baseCoords);
 		TessellationManager.renderCube(0, 0, 0, 1, 1, 1, icon, false, 1);
 		tessellator.draw();

@@ -1,9 +1,5 @@
 package simplefluidtanks;
 
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GLUConstants;
-import org.lwjgl.util.glu.GLU;
-
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;

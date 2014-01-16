@@ -47,7 +47,7 @@ public class SimpleFluidTanks
 	public static final String REGISTRY_TANKBLOCK_KEY = MOD_ID + REGISTRY_TANKBLOCK_NAME;
 	public static final String REGISTRY_TANKBLOCK_READABLE_NAME = "Fluid Tank";
 	
-	public static final String REGISTRY_TANKITEM_NAME = "tankitem";
+	public static final String REGISTRY_TANKITEM_NAME = "tankItem";
 	public static final String REGISTRY_TANKITEM_KEY = MOD_ID + REGISTRY_TANKITEM_NAME;
 	public static final String REGISTRY_TANKITEM_READABLE_NAME = "Fluid Tank";
 	
@@ -74,7 +74,7 @@ public class SimpleFluidTanks
 	public static final String CONFIG_VALVEBLOCK_ID_KEY = "ValveblockId";
 	public static final String CONFIG_VALVEBLOCK_ID_COMMENT = "The valves block id.";
 	public static final String CONFIG_BUCKETS_PER_TANK_KEY = "BucketsPerTank";
-	public static final String CONFIG_BUCKETS_PER_TANK_COMMENT = "The amount of liquid that can be stored per tank (measured in buckets).";
+	public static final String CONFIG_BUCKETS_PER_TANK_COMMENT = "The amount of fluid that can be stored per tank (measured in buckets).";
 	public static final String CONFIG_CATEGORY_MOD_INTEROP = "mod interop";
 	public static final String CONFIG_TE_MOD_ID_KEY = "ThermalExpansionModId";
 	public static final String CONFIG_TE_MOD_ID_COMMENT = "The mod id for Thermal Expansion. This is used to include TE blocks and items in the recipes.";

@@ -67,8 +67,7 @@ public class TankBlock extends BlockContainer
 			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_right")					// 15
 		};
 	}
-	
-	
+
 	@Override
 	public void onBlockPreDestroy(World world, int x, int y, int z, int par5)
 	{
