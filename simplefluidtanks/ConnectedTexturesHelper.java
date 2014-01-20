@@ -1,86 +1,69 @@
 package simplefluidtanks;
 
+
 public final class ConnectedTexturesHelper
 {
-	public static final int[] sidesToBitFlagsMappings = new int[]
-	{
-		1, 	// 0	YNEG
-		2, 	// 1	YPOS
-		4, 	// 2	ZNEG
-		8, 	// 3	ZPOS
-		16,	// 4	XNEG
-		32	// 5	XPOS
-	};
-	
-	public static final int XPOS = 5;
-	public static final int XNEG = 4;
-	public static final int YPOS = 1;
-	public static final int YNEG = 0;
-	public static final int ZPOS = 3;
-	public static final int ZNEG = 2;
-	
-	
 	public static int getPositiveXTexture(boolean[] connections)
 	{
 		int textureIndex = 0;
 		
-		if (connections[YPOS] && connections[YNEG] && connections[ZPOS] && connections[ZNEG])
+		if (connections[Direction.YPOS] && connections[Direction.YNEG] && connections[Direction.ZPOS] && connections[Direction.ZNEG])
 		{
 			textureIndex = 1;
 		}
-		else if (connections[YPOS] && connections[ZPOS] && connections[ZNEG])
+		else if (connections[Direction.YPOS] && connections[Direction.ZPOS] && connections[Direction.ZNEG])
 		{
 			textureIndex = 8;
 		}
-		else if (connections[ZPOS] && connections[YPOS] && connections[YNEG])
+		else if (connections[Direction.ZPOS] && connections[Direction.YPOS] && connections[Direction.YNEG])
 		{
 			textureIndex = 11;
 		}
-		else if (connections[YNEG] && connections[ZPOS] && connections[ZNEG])
+		else if (connections[Direction.YNEG] && connections[Direction.ZPOS] && connections[Direction.ZNEG])
 		{
 			textureIndex = 10;
 		}
-		else if (connections[ZNEG] && connections[YNEG] && connections[YPOS])
+		else if (connections[Direction.ZNEG] && connections[Direction.YNEG] && connections[Direction.YPOS])
 		{
 			textureIndex = 9;
 		}
-		else if (connections[YPOS] && connections[YNEG])
+		else if (connections[Direction.YPOS] && connections[Direction.YNEG])
 		{
 			textureIndex = 2;
 		}
-		else if (connections[ZPOS] && connections[ZNEG])
+		else if (connections[Direction.ZPOS] && connections[Direction.ZNEG])
 		{
 			textureIndex = 3;
 		}
-		else if (connections[YPOS] && connections[ZPOS])
+		else if (connections[Direction.YPOS] && connections[Direction.ZPOS])
 		{
 			textureIndex = 7;
 		}
-		else if (connections[ZPOS] && connections[YNEG])
+		else if (connections[Direction.ZPOS] && connections[Direction.YNEG])
 		{
 			textureIndex = 6;
 		}
-		else if (connections[YNEG] && connections[ZNEG])
+		else if (connections[Direction.YNEG] && connections[Direction.ZNEG])
 		{
 			textureIndex = 5;
 		}
-		else if (connections[ZNEG] && connections[YPOS])
+		else if (connections[Direction.ZNEG] && connections[Direction.YPOS])
 		{
 			textureIndex = 4;
 		}
-		else if (connections[YPOS])
+		else if (connections[Direction.YPOS])
 		{
 			textureIndex = 12;
 		}
-		else if (connections[YNEG])
+		else if (connections[Direction.YNEG])
 		{
 			textureIndex = 13;
 		}
-		else if (connections[ZPOS])
+		else if (connections[Direction.ZPOS])
 		{
 			textureIndex = 14;
 		}
-		else if (connections[ZNEG])
+		else if (connections[Direction.ZNEG])
 		{
 			textureIndex = 15;
 		}
@@ -92,63 +75,63 @@ public final class ConnectedTexturesHelper
 	{
 		int textureIndex = 0;
 		
-		if (connections[YPOS] && connections[YNEG] && connections[ZPOS] && connections[ZNEG])
+		if (connections[Direction.YPOS] && connections[Direction.YNEG] && connections[Direction.ZPOS] && connections[Direction.ZNEG])
 		{
 			textureIndex = 1;
 		}
-		else if (connections[YPOS] && connections[ZPOS] && connections[ZNEG])
+		else if (connections[Direction.YPOS] && connections[Direction.ZPOS] && connections[Direction.ZNEG])
 		{
 			textureIndex = 8;
 		}
-		else if (connections[ZPOS] && connections[YPOS] && connections[YNEG])
+		else if (connections[Direction.ZPOS] && connections[Direction.YPOS] && connections[Direction.YNEG])
 		{
 			textureIndex = 9;
 		}
-		else if (connections[YNEG] && connections[ZPOS] && connections[ZNEG])
+		else if (connections[Direction.YNEG] && connections[Direction.ZPOS] && connections[Direction.ZNEG])
 		{
 			textureIndex = 10;
 		}
-		else if (connections[ZNEG] && connections[YNEG] && connections[YPOS])
+		else if (connections[Direction.ZNEG] && connections[Direction.YNEG] && connections[Direction.YPOS])
 		{
 			textureIndex = 11;
 		}
-		else if (connections[YPOS] && connections[YNEG])
+		else if (connections[Direction.YPOS] && connections[Direction.YNEG])
 		{
 			textureIndex = 2;
 		}
-		else if (connections[ZPOS] && connections[ZNEG])
+		else if (connections[Direction.ZPOS] && connections[Direction.ZNEG])
 		{
 			textureIndex = 3;
 		}
-		else if (connections[YPOS] && connections[ZPOS])
+		else if (connections[Direction.YPOS] && connections[Direction.ZPOS])
 		{
 			textureIndex = 4;
 		}
-		else if (connections[ZPOS] && connections[YNEG])
+		else if (connections[Direction.ZPOS] && connections[Direction.YNEG])
 		{
 			textureIndex = 5;
 		}
-		else if (connections[YNEG] && connections[ZNEG])
+		else if (connections[Direction.YNEG] && connections[Direction.ZNEG])
 		{
 			textureIndex = 6;
 		}
-		else if (connections[ZNEG] && connections[YPOS])
+		else if (connections[Direction.ZNEG] && connections[Direction.YPOS])
 		{
 			textureIndex = 7;
 		}
-		else if (connections[YPOS])
+		else if (connections[Direction.YPOS])
 		{
 			textureIndex = 12;
 		}
-		else if (connections[YNEG])
+		else if (connections[Direction.YNEG])
 		{
 			textureIndex = 13;
 		}
-		else if (connections[ZPOS])
+		else if (connections[Direction.ZPOS])
 		{
 			textureIndex = 15;
 		}
-		else if (connections[ZNEG])
+		else if (connections[Direction.ZNEG])
 		{
 			textureIndex = 14;
 		}
@@ -160,63 +143,63 @@ public final class ConnectedTexturesHelper
 	{
 		int textureIndex = 0;
 		
-		if (connections[YPOS] && connections[YNEG] && connections[XPOS] && connections[XNEG])
+		if (connections[Direction.YPOS] && connections[Direction.YNEG] && connections[Direction.XPOS] && connections[Direction.XNEG])
 		{
 			textureIndex = 1;
 		}
-		else if (connections[YPOS] && connections[XPOS] && connections[XNEG])
+		else if (connections[Direction.YPOS] && connections[Direction.XPOS] && connections[Direction.XNEG])
 		{
 			textureIndex = 8;
 		}
-		else if (connections[XPOS] && connections[YPOS] && connections[YNEG])
+		else if (connections[Direction.XPOS] && connections[Direction.YPOS] && connections[Direction.YNEG])
 		{
 			textureIndex = 9;
 		}
-		else if (connections[YNEG] && connections[XPOS] && connections[XNEG])
+		else if (connections[Direction.YNEG] && connections[Direction.XPOS] && connections[Direction.XNEG])
 		{
 			textureIndex = 10;
 		}
-		else if (connections[XNEG] && connections[YNEG] && connections[YPOS])
+		else if (connections[Direction.XNEG] && connections[Direction.YNEG] && connections[Direction.YPOS])
 		{
 			textureIndex = 11;
 		}
-		else if (connections[YPOS] && connections[YNEG])
+		else if (connections[Direction.YPOS] && connections[Direction.YNEG])
 		{
 			textureIndex = 2;
 		}
-		else if (connections[XPOS] && connections[XNEG])
+		else if (connections[Direction.XPOS] && connections[Direction.XNEG])
 		{
 			textureIndex = 3;
 		}
-		else if (connections[YPOS] && connections[XPOS])
+		else if (connections[Direction.YPOS] && connections[Direction.XPOS])
 		{
 			textureIndex = 4;
 		}
-		else if (connections[XPOS] && connections[YNEG])
+		else if (connections[Direction.XPOS] && connections[Direction.YNEG])
 		{
 			textureIndex = 5;
 		}
-		else if (connections[YNEG] && connections[XNEG])
+		else if (connections[Direction.YNEG] && connections[Direction.XNEG])
 		{
 			textureIndex = 6;
 		}
-		else if (connections[XNEG] && connections[YPOS])
+		else if (connections[Direction.XNEG] && connections[Direction.YPOS])
 		{
 			textureIndex = 7;
 		}
-		else if (connections[YPOS])
+		else if (connections[Direction.YPOS])
 		{
 			textureIndex = 12;
 		}
-		else if (connections[YNEG])
+		else if (connections[Direction.YNEG])
 		{
 			textureIndex = 13;
 		}
-		else if (connections[XPOS])
+		else if (connections[Direction.XPOS])
 		{
 			textureIndex = 15;
 		}
-		else if (connections[XNEG])
+		else if (connections[Direction.XNEG])
 		{
 			textureIndex = 14;
 		}
@@ -228,63 +211,63 @@ public final class ConnectedTexturesHelper
 	{
 		int textureIndex = 0;
 		
-		if (connections[YPOS] && connections[YNEG] && connections[XPOS] && connections[XNEG])
+		if (connections[Direction.YPOS] && connections[Direction.YNEG] && connections[Direction.XPOS] && connections[Direction.XNEG])
 		{
 			textureIndex = 1;
 		}
-		else if (connections[YPOS] && connections[XPOS] && connections[XNEG])
+		else if (connections[Direction.YPOS] && connections[Direction.XPOS] && connections[Direction.XNEG])
 		{
 			textureIndex = 8;
 		}
-		else if (connections[XPOS] && connections[YPOS] && connections[YNEG])
+		else if (connections[Direction.XPOS] && connections[Direction.YPOS] && connections[Direction.YNEG])
 		{
 			textureIndex = 11;
 		}
-		else if (connections[YNEG] && connections[XPOS] && connections[XNEG])
+		else if (connections[Direction.YNEG] && connections[Direction.XPOS] && connections[Direction.XNEG])
 		{
 			textureIndex = 10;
 		}
-		else if (connections[XNEG] && connections[YNEG] && connections[YPOS])
+		else if (connections[Direction.XNEG] && connections[Direction.YNEG] && connections[Direction.YPOS])
 		{
 			textureIndex = 9;
 		}
-		else if (connections[YPOS] && connections[YNEG])
+		else if (connections[Direction.YPOS] && connections[Direction.YNEG])
 		{
 			textureIndex = 2;
 		}
-		else if (connections[XPOS] && connections[XNEG])
+		else if (connections[Direction.XPOS] && connections[Direction.XNEG])
 		{
 			textureIndex = 3;
 		}
-		else if (connections[YPOS] && connections[XPOS])
+		else if (connections[Direction.YPOS] && connections[Direction.XPOS])
 		{
 			textureIndex = 7;
 		}
-		else if (connections[XPOS] && connections[YNEG])
+		else if (connections[Direction.XPOS] && connections[Direction.YNEG])
 		{
 			textureIndex = 6;
 		}
-		else if (connections[YNEG] && connections[XNEG])
+		else if (connections[Direction.YNEG] && connections[Direction.XNEG])
 		{
 			textureIndex = 5;
 		}
-		else if (connections[XNEG] && connections[YPOS])
+		else if (connections[Direction.XNEG] && connections[Direction.YPOS])
 		{
 			textureIndex = 4;
 		}
-		else if (connections[YPOS])
+		else if (connections[Direction.YPOS])
 		{
 			textureIndex = 12;
 		}
-		else if (connections[YNEG])
+		else if (connections[Direction.YNEG])
 		{
 			textureIndex = 13;
 		}
-		else if (connections[XPOS])
+		else if (connections[Direction.XPOS])
 		{
 			textureIndex = 14;
 		}
-		else if (connections[XNEG])
+		else if (connections[Direction.XNEG])
 		{
 			textureIndex = 15;
 		}
@@ -296,63 +279,63 @@ public final class ConnectedTexturesHelper
 	{
 		int textureIndex = 0;
 		
-		if (connections[XPOS] && connections[XNEG] && connections[ZPOS] && connections[ZNEG])
+		if (connections[Direction.XPOS] && connections[Direction.XNEG] && connections[Direction.ZPOS] && connections[Direction.ZNEG])
 		{
 			textureIndex = 1;
 		}
-		else if (connections[XPOS] && connections[ZPOS] && connections[ZNEG])
+		else if (connections[Direction.XPOS] && connections[Direction.ZPOS] && connections[Direction.ZNEG])
 		{
 			textureIndex = 11;
 		}
-		else if (connections[ZPOS] && connections[XPOS] && connections[XNEG])
+		else if (connections[Direction.ZPOS] && connections[Direction.XPOS] && connections[Direction.XNEG])
 		{
 			textureIndex = 8;
 		}
-		else if (connections[XNEG] && connections[ZPOS] && connections[ZNEG])
+		else if (connections[Direction.XNEG] && connections[Direction.ZPOS] && connections[Direction.ZNEG])
 		{
 			textureIndex = 9;
 		}
-		else if (connections[ZNEG] && connections[XNEG] && connections[XPOS])
+		else if (connections[Direction.ZNEG] && connections[Direction.XNEG] && connections[Direction.XPOS])
 		{
 			textureIndex = 10;
 		}
-		else if (connections[XPOS] && connections[XNEG])
+		else if (connections[Direction.XPOS] && connections[Direction.XNEG])
 		{
 			textureIndex = 3;
 		}
-		else if (connections[ZPOS] && connections[ZNEG])
+		else if (connections[Direction.ZPOS] && connections[Direction.ZNEG])
 		{
 			textureIndex = 2;
 		}
-		else if (connections[XPOS] && connections[ZPOS])
+		else if (connections[Direction.XPOS] && connections[Direction.ZPOS])
 		{
 			textureIndex = 7;
 		}
-		else if (connections[ZPOS] && connections[XNEG])
+		else if (connections[Direction.ZPOS] && connections[Direction.XNEG])
 		{
 			textureIndex = 4;
 		}
-		else if (connections[XNEG] && connections[ZNEG])
+		else if (connections[Direction.XNEG] && connections[Direction.ZNEG])
 		{
 			textureIndex = 5;
 		}
-		else if (connections[ZNEG] && connections[XPOS])
+		else if (connections[Direction.ZNEG] && connections[Direction.XPOS])
 		{
 			textureIndex = 6;
 		}
-		else if (connections[XPOS])
+		else if (connections[Direction.XPOS])
 		{
 			textureIndex = 14;
 		}
-		else if (connections[XNEG])
+		else if (connections[Direction.XNEG])
 		{
 			textureIndex = 15;
 		}
-		else if (connections[ZPOS])
+		else if (connections[Direction.ZPOS])
 		{
 			textureIndex = 12;
 		}
-		else if (connections[ZNEG])
+		else if (connections[Direction.ZNEG])
 		{
 			textureIndex = 13;
 		}
@@ -364,63 +347,63 @@ public final class ConnectedTexturesHelper
 	{
 		int textureIndex = 0;
 		
-		if (connections[XPOS] && connections[XNEG] && connections[ZPOS] && connections[ZNEG])
+		if (connections[Direction.XPOS] && connections[Direction.XNEG] && connections[Direction.ZPOS] && connections[Direction.ZNEG])
 		{
 			textureIndex = 1;
 		}
-		else if (connections[XPOS] && connections[ZPOS] && connections[ZNEG])
+		else if (connections[Direction.XPOS] && connections[Direction.ZPOS] && connections[Direction.ZNEG])
 		{
 			textureIndex = 11;
 		}
-		else if (connections[ZPOS] && connections[XPOS] && connections[XNEG])
+		else if (connections[Direction.ZPOS] && connections[Direction.XPOS] && connections[Direction.XNEG])
 		{
 			textureIndex = 10;
 		}
-		else if (connections[XNEG] && connections[ZPOS] && connections[ZNEG])
+		else if (connections[Direction.XNEG] && connections[Direction.ZPOS] && connections[Direction.ZNEG])
 		{
 			textureIndex = 9;
 		}
-		else if (connections[ZNEG] && connections[XNEG] && connections[XPOS])
+		else if (connections[Direction.ZNEG] && connections[Direction.XNEG] && connections[Direction.XPOS])
 		{
 			textureIndex = 8;
 		}
-		else if (connections[XPOS] && connections[XNEG])
+		else if (connections[Direction.XPOS] && connections[Direction.XNEG])
 		{
 			textureIndex = 3;
 		}
-		else if (connections[ZPOS] && connections[ZNEG])
+		else if (connections[Direction.ZPOS] && connections[Direction.ZNEG])
 		{
 			textureIndex = 2;
 		}
-		else if (connections[XPOS] && connections[ZPOS])
+		else if (connections[Direction.XPOS] && connections[Direction.ZPOS])
 		{
 			textureIndex = 6;
 		}
-		else if (connections[ZPOS] && connections[XNEG])
+		else if (connections[Direction.ZPOS] && connections[Direction.XNEG])
 		{
 			textureIndex = 5;
 		}
-		else if (connections[XNEG] && connections[ZNEG])
+		else if (connections[Direction.XNEG] && connections[Direction.ZNEG])
 		{
 			textureIndex = 4;
 		}
-		else if (connections[ZNEG] && connections[XPOS])
+		else if (connections[Direction.ZNEG] && connections[Direction.XPOS])
 		{
 			textureIndex = 7;
 		}
-		else if (connections[XPOS])
+		else if (connections[Direction.XPOS])
 		{
 			textureIndex = 14;
 		}
-		else if (connections[XNEG])
+		else if (connections[Direction.XNEG])
 		{
 			textureIndex = 15;
 		}
-		else if (connections[ZPOS])
+		else if (connections[Direction.ZPOS])
 		{
 			textureIndex = 13;
 		}
-		else if (connections[ZNEG])
+		else if (connections[Direction.ZNEG])
 		{
 			textureIndex = 12;
 		}

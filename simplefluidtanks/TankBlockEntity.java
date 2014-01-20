@@ -46,12 +46,12 @@ public class TankBlockEntity extends TileEntity
 		valveCoords = tag.getIntArray("ValveCoords");
 		textureIds = tag.getIntArray("TextureIds");
 		connections = new boolean[6];
-		connections[ConnectedTexturesHelper.XPOS] = tag.getBoolean("X+");
-		connections[ConnectedTexturesHelper.XNEG] = tag.getBoolean("X-");
-		connections[ConnectedTexturesHelper.YPOS] = tag.getBoolean("Y+");
-		connections[ConnectedTexturesHelper.YNEG] = tag.getBoolean("Y-");
-		connections[ConnectedTexturesHelper.ZPOS] = tag.getBoolean("Z+");
-		connections[ConnectedTexturesHelper.ZNEG] = tag.getBoolean("Z-");
+		connections[Direction.XPOS] = tag.getBoolean("X+");
+		connections[Direction.XNEG] = tag.getBoolean("X-");
+		connections[Direction.YPOS] = tag.getBoolean("Y+");
+		connections[Direction.YNEG] = tag.getBoolean("Y-");
+		connections[Direction.ZPOS] = tag.getBoolean("Z+");
+		connections[Direction.ZNEG] = tag.getBoolean("Z-");
 	}
 
 	@Override
@@ -63,12 +63,12 @@ public class TankBlockEntity extends TileEntity
 		tag.setBoolean("isPartOfTank", isPartOfTank);
 		tag.setIntArray("ValveCoords", valveCoords);
 		tag.setIntArray("TextureIds", textureIds);
-		tag.setBoolean("X+", connections[ConnectedTexturesHelper.XPOS]);
-		tag.setBoolean("X-", connections[ConnectedTexturesHelper.XNEG]);
-		tag.setBoolean("Y+", connections[ConnectedTexturesHelper.YPOS]);
-		tag.setBoolean("Y-", connections[ConnectedTexturesHelper.YNEG]);
-		tag.setBoolean("Z+", connections[ConnectedTexturesHelper.ZPOS]);
-		tag.setBoolean("Z-", connections[ConnectedTexturesHelper.ZNEG]);
+		tag.setBoolean("X+", connections[Direction.XPOS]);
+		tag.setBoolean("X-", connections[Direction.XNEG]);
+		tag.setBoolean("Y+", connections[Direction.YPOS]);
+		tag.setBoolean("Y-", connections[Direction.YNEG]);
+		tag.setBoolean("Z+", connections[Direction.ZPOS]);
+		tag.setBoolean("Z-", connections[Direction.ZNEG]);
 	}
 
 	@Override
@@ -141,12 +141,12 @@ public class TankBlockEntity extends TileEntity
 	{
 		connections = determineConnections();
 		int[] ids = new int[6];
-		ids[ConnectedTexturesHelper.XPOS] = ConnectedTexturesHelper.getPositiveXTexture(connections);
-		ids[ConnectedTexturesHelper.XNEG] = ConnectedTexturesHelper.getNegativeXTexture(connections);
-		ids[ConnectedTexturesHelper.YPOS] = ConnectedTexturesHelper.getPositiveYTexture(connections);
-		ids[ConnectedTexturesHelper.YNEG] = ConnectedTexturesHelper.getNegativeYTexture(connections);
-		ids[ConnectedTexturesHelper.ZPOS] = ConnectedTexturesHelper.getPositiveZTexture(connections);
-		ids[ConnectedTexturesHelper.ZNEG] = ConnectedTexturesHelper.getNegativeZTexture(connections);
+		ids[Direction.XPOS] = ConnectedTexturesHelper.getPositiveXTexture(connections);
+		ids[Direction.XNEG] = ConnectedTexturesHelper.getNegativeXTexture(connections);
+		ids[Direction.YPOS] = ConnectedTexturesHelper.getPositiveYTexture(connections);
+		ids[Direction.YNEG] = ConnectedTexturesHelper.getNegativeYTexture(connections);
+		ids[Direction.ZPOS] = ConnectedTexturesHelper.getPositiveZTexture(connections);
+		ids[Direction.ZNEG] = ConnectedTexturesHelper.getNegativeZTexture(connections);
 		
 		return ids;
 	}
@@ -205,12 +205,12 @@ public class TankBlockEntity extends TileEntity
 	private boolean[] determineConnections()
 	{
 		boolean[] connections = new boolean[6];
-		connections[ConnectedTexturesHelper.XPOS] = shouldConnectTo(xCoord + 1, yCoord, zCoord);	// X+
-		connections[ConnectedTexturesHelper.XNEG] = shouldConnectTo(xCoord - 1, yCoord, zCoord);	// X-
-		connections[ConnectedTexturesHelper.YPOS] = shouldConnectTo(xCoord, yCoord + 1, zCoord);	// Y+
-		connections[ConnectedTexturesHelper.YNEG] = shouldConnectTo(xCoord, yCoord - 1, zCoord);	// Y-
-		connections[ConnectedTexturesHelper.ZPOS] = shouldConnectTo(xCoord, yCoord, zCoord + 1);	// Z+
-		connections[ConnectedTexturesHelper.ZNEG] = shouldConnectTo(xCoord, yCoord, zCoord - 1);	// Z-
+		connections[Direction.XPOS] = shouldConnectTo(xCoord + 1, yCoord, zCoord);	// X+
+		connections[Direction.XNEG] = shouldConnectTo(xCoord - 1, yCoord, zCoord);	// X-
+		connections[Direction.YPOS] = shouldConnectTo(xCoord, yCoord + 1, zCoord);	// Y+
+		connections[Direction.YNEG] = shouldConnectTo(xCoord, yCoord - 1, zCoord);	// Y-
+		connections[Direction.ZPOS] = shouldConnectTo(xCoord, yCoord, zCoord + 1);	// Z+
+		connections[Direction.ZNEG] = shouldConnectTo(xCoord, yCoord, zCoord - 1);	// Z-
 
 		return connections;
 	}

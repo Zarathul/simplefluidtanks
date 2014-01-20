@@ -87,18 +87,18 @@ public class TankBlockRenderer extends TileEntitySpecialRenderer
 	private void renderPositiveXFace(TankBlockEntity entity, boolean[] connections, Icon[] icons, Icon fluidIcon, int fillPercentage, double fluidHeight, double verticalTextureOffset)
 	{
 		// only render this side if there isn't a tank block from the same tank in front of it 
-		if (!connections[ConnectedTexturesHelper.XPOS])
+		if (!connections[Direction.XPOS])
 		{
 			if (fillPercentage > 0 && fluidIcon != null)
 			{
 				TessellationManager.renderPositiveXFace(16 - flickerOffset, 0, 0, fluidHeight, 16, 0, verticalTextureOffset, 0, 0, fluidIcon, TessellationManager.pixel);
 			}
 			
-			TessellationManager.renderPositiveXFace(16, 0, 0, 16, 16, icons[entity.getTexture(ConnectedTexturesHelper.XPOS)]);
+			TessellationManager.renderPositiveXFace(16, 0, 0, 16, 16, icons[entity.getTexture(Direction.XPOS)]);
 			// inner face
-			if (shouldRenderInside(entity.xCoord, entity.yCoord, entity.zCoord, ConnectedTexturesHelper.XPOS))
+			if (shouldRenderInside(entity.xCoord, entity.yCoord, entity.zCoord, Direction.XPOS))
 			{
-				TessellationManager.renderNegativeXFace(16 - flickerOffset, 0, 0, 16, 16, icons[entity.getTexture(ConnectedTexturesHelper.XNEG)]);
+				TessellationManager.renderNegativeXFace(16 - flickerOffset, 0, 0, 16, 16, icons[entity.getTexture(Direction.XNEG)]);
 			}
 		}
 	}
@@ -106,18 +106,18 @@ public class TankBlockRenderer extends TileEntitySpecialRenderer
 	private void renderNegativeXFace(TankBlockEntity entity, boolean[] connections, Icon[] icons, Icon fluidIcon, int fillPercentage, double fluidHeight, double verticalTextureOffset)
 	{
 		// only render this side if there isn't a tank block from the same tank in front of it 
-		if (!connections[ConnectedTexturesHelper.XNEG])
+		if (!connections[Direction.XNEG])
 		{
 			if (fillPercentage > 0 && fluidIcon != null)
 			{
 				TessellationManager.renderNegativeXFace(0 + flickerOffset, 0, 0, fluidHeight, 16, 0, verticalTextureOffset, 0, 0, fluidIcon, TessellationManager.pixel);
 			}
 			
-			TessellationManager.renderNegativeXFace(0, 0, 0, 16, 16, icons[entity.getTexture(ConnectedTexturesHelper.XNEG)]);
+			TessellationManager.renderNegativeXFace(0, 0, 0, 16, 16, icons[entity.getTexture(Direction.XNEG)]);
 			// inner face
-			if (shouldRenderInside(entity.xCoord, entity.yCoord, entity.zCoord, ConnectedTexturesHelper.XNEG))
+			if (shouldRenderInside(entity.xCoord, entity.yCoord, entity.zCoord, Direction.XNEG))
 			{
-				TessellationManager.renderPositiveXFace(0 + flickerOffset, 0, 0, 16, 16, icons[entity.getTexture(ConnectedTexturesHelper.XPOS)]);
+				TessellationManager.renderPositiveXFace(0 + flickerOffset, 0, 0, 16, 16, icons[entity.getTexture(Direction.XPOS)]);
 			}
 		}
 	}
@@ -125,18 +125,18 @@ public class TankBlockRenderer extends TileEntitySpecialRenderer
 	private void renderPositiveZFace(TankBlockEntity entity, boolean[] connections, Icon[] icons, Icon fluidIcon, int fillPercentage, double fluidHeight, double verticalTextureOffset)
 	{
 		// only render this side if there isn't a tank block from the same tank in front of it 
-		if (!connections[ConnectedTexturesHelper.ZPOS])
+		if (!connections[Direction.ZPOS])
 		{
 			if (fillPercentage > 0 && fluidIcon != null)
 			{
 				TessellationManager.renderPositiveZFace(0, 0, 16 - flickerOffset, 16, fluidHeight, 0, verticalTextureOffset, 0, 0, fluidIcon, TessellationManager.pixel);
 			}
 			
-			TessellationManager.renderPositiveZFace(0, 0, 16, 16, 16, icons[entity.getTexture(ConnectedTexturesHelper.ZPOS)]);
+			TessellationManager.renderPositiveZFace(0, 0, 16, 16, 16, icons[entity.getTexture(Direction.ZPOS)]);
 			// inner face
-			if (shouldRenderInside(entity.xCoord, entity.yCoord, entity.zCoord, ConnectedTexturesHelper.ZPOS))
+			if (shouldRenderInside(entity.xCoord, entity.yCoord, entity.zCoord, Direction.ZPOS))
 			{
-				TessellationManager.renderNegativeZFace(0, 0, 16 - flickerOffset, 16, 16, icons[entity.getTexture(ConnectedTexturesHelper.ZNEG)]);
+				TessellationManager.renderNegativeZFace(0, 0, 16 - flickerOffset, 16, 16, icons[entity.getTexture(Direction.ZNEG)]);
 			}
 		}
 	}
@@ -144,18 +144,18 @@ public class TankBlockRenderer extends TileEntitySpecialRenderer
 	private void renderNegativeZFace(TankBlockEntity entity, boolean[] connections, Icon[] icons, Icon fluidIcon, int fillPercentage, double fluidHeight, double verticalTextureOffset)
 	{
 		// only render this side if there isn't a tank block from the same tank in front of it 
-		if (!connections[ConnectedTexturesHelper.ZNEG])
+		if (!connections[Direction.ZNEG])
 		{
 			if (fillPercentage > 0 && fluidIcon != null)
 			{
 				TessellationManager.renderNegativeZFace(0, 0, 0 + flickerOffset, 16, fluidHeight, 0, verticalTextureOffset, 0, 0, fluidIcon, TessellationManager.pixel);
 			}
 			
-			TessellationManager.renderNegativeZFace(0, 0, 0, 16, 16, icons[entity.getTexture(ConnectedTexturesHelper.ZNEG)]);
+			TessellationManager.renderNegativeZFace(0, 0, 0, 16, 16, icons[entity.getTexture(Direction.ZNEG)]);
 			// inner face
-			if (shouldRenderInside(entity.xCoord, entity.yCoord, entity.zCoord, ConnectedTexturesHelper.ZNEG))
+			if (shouldRenderInside(entity.xCoord, entity.yCoord, entity.zCoord, Direction.ZNEG))
 			{
-				TessellationManager.renderPositiveZFace(0, 0, 0 + flickerOffset, 16, 16, icons[entity.getTexture(ConnectedTexturesHelper.ZPOS)]);
+				TessellationManager.renderPositiveZFace(0, 0, 0 + flickerOffset, 16, 16, icons[entity.getTexture(Direction.ZPOS)]);
 			}
 		}
 	}
@@ -168,13 +168,13 @@ public class TankBlockRenderer extends TileEntitySpecialRenderer
 		}
 		
 		// only render this side if there isn't a tank block from the same tank in front of it 
-		if (!connections[ConnectedTexturesHelper.YPOS])
+		if (!connections[Direction.YPOS])
 		{
-			TessellationManager.renderPositiveYFace(0, 16, 0, 16, 16, icons[entity.getTexture(ConnectedTexturesHelper.YPOS)]);
+			TessellationManager.renderPositiveYFace(0, 16, 0, 16, 16, icons[entity.getTexture(Direction.YPOS)]);
 			// inner face
-			if (shouldRenderInside(entity.xCoord, entity.yCoord, entity.zCoord, ConnectedTexturesHelper.YPOS))
+			if (shouldRenderInside(entity.xCoord, entity.yCoord, entity.zCoord, Direction.YPOS))
 			{
-				TessellationManager.renderNegativeYFace(0, 16 - flickerOffset, 0, 16, 16, icons[entity.getTexture(ConnectedTexturesHelper.YNEG)]);
+				TessellationManager.renderNegativeYFace(0, 16 - flickerOffset, 0, 16, 16, icons[entity.getTexture(Direction.YNEG)]);
 			}
 		}
 	}
@@ -182,18 +182,18 @@ public class TankBlockRenderer extends TileEntitySpecialRenderer
 	private void renderNegativeYFace(TankBlockEntity entity, boolean[] connections, Icon[] icons, Icon fluidIcon, int fillPercentage)
 	{
 		// only render this side if there isn't a tank block from the same tank in front of it 
-		if (fillPercentage > 0 && fluidIcon != null && !connections[ConnectedTexturesHelper.YNEG])
+		if (fillPercentage > 0 && fluidIcon != null && !connections[Direction.YNEG])
 		{
 			TessellationManager.renderNegativeYFace(0, 0 + flickerOffset, 0, 16, 16, fluidIcon);
 		}
 		
-		if (!connections[ConnectedTexturesHelper.YNEG])
+		if (!connections[Direction.YNEG])
 		{
-			TessellationManager.renderNegativeYFace(0, 0, 0, 16, 16, icons[entity.getTexture(ConnectedTexturesHelper.YNEG)]);
+			TessellationManager.renderNegativeYFace(0, 0, 0, 16, 16, icons[entity.getTexture(Direction.YNEG)]);
 			// inner face
-			if (shouldRenderInside(entity.xCoord, entity.yCoord, entity.zCoord, ConnectedTexturesHelper.YNEG))
+			if (shouldRenderInside(entity.xCoord, entity.yCoord, entity.zCoord, Direction.YNEG))
 			{
-				TessellationManager.renderPositiveYFace(0, 0 + flickerOffset, 0, 16, 16, icons[entity.getTexture(ConnectedTexturesHelper.YPOS)]);
+				TessellationManager.renderPositiveYFace(0, 0 + flickerOffset, 0, 16, 16, icons[entity.getTexture(Direction.YPOS)]);
 			}
 		}
 	}
@@ -204,17 +204,17 @@ public class TankBlockRenderer extends TileEntitySpecialRenderer
 		
 		switch (side)
 		{
-			case ConnectedTexturesHelper.XPOS:
+			case Direction.XPOS:
 				return world.isAirBlock(x + 1, y, z);
-			case ConnectedTexturesHelper.XNEG:
+			case Direction.XNEG:
 				return world.isAirBlock(x - 1, y, z);
-			case ConnectedTexturesHelper.YPOS:
+			case Direction.YPOS:
 				return world.isAirBlock(x, y + 1, z);
-			case ConnectedTexturesHelper.YNEG:
+			case Direction.YNEG:
 				return world.isAirBlock(x, y - 1, z);
-			case ConnectedTexturesHelper.ZPOS:
+			case Direction.ZPOS:
 				return world.isAirBlock(x, y, z + 1);
-			case ConnectedTexturesHelper.ZNEG:
+			case Direction.ZNEG:
 				return world.isAirBlock(x, y, z - 1);
 			default:
 				return false;

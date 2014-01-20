@@ -34,9 +34,9 @@ public class ValveBlock extends BlockContainer
 	@SideOnly(Side.CLIENT)
 	private Icon icon;
 	@SideOnly(Side.CLIENT)
-	private Icon iconIn;
+	private Icon iconTank;
 	@SideOnly(Side.CLIENT)
-	private Icon iconOut;
+	private Icon iconIo;
 
 	@Override
 	@SideOnly(Side.CLIENT)
@@ -44,10 +44,10 @@ public class ValveBlock extends BlockContainer
 	{
 		switch (side)
 		{
-			case ConnectedTexturesHelper.YPOS:
-				return iconIn;
-			case ConnectedTexturesHelper.XNEG:
-				return iconOut;
+			case Direction.YPOS:
+				return iconTank;
+			case Direction.XNEG:
+				return iconIo;
 			default:
 				return icon;
 		}
@@ -65,12 +65,12 @@ public class ValveBlock extends BlockContainer
 			
 			if (valveEntity.hasTanks())
 			{
-				if (valveEntity.isInputSide(side))
+				if (valveEntity.isFacingTank(side))
 				{
-					return iconIn;
+					return iconTank;
 				}
 				
-				return iconOut;
+				return iconIo;
 			}
 		}
 		
@@ -82,8 +82,8 @@ public class ValveBlock extends BlockContainer
 	public void registerIcons(IconRegister iconRegister)
 	{
 		icon = iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":valve");
-		iconIn = iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":valve_in");
-		iconOut = iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":valve_out");
+		iconTank = iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":valve_tank");
+		iconIo = iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":valve_io");
 	}
 
 	@Override
@@ -101,7 +101,7 @@ public class ValveBlock extends BlockContainer
 		{
 			ValveBlockEntity entity = (ValveBlockEntity)world.getBlockTileEntity(x, y, z);
 			entity.findTanks();
-			entity.updateInputSides();
+			entity.updateTankFacingSides();
 		}
 	}
 
