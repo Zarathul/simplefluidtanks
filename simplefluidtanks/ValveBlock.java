@@ -57,21 +57,16 @@ public class ValveBlock extends BlockContainer
 	@SideOnly(Side.CLIENT)
 	public Icon getBlockTexture(IBlockAccess blockAccess, int x, int y, int z, int side)
 	{
-		TileEntity entity = blockAccess.getBlockTileEntity(x, y, z);
+		ValveBlockEntity valveEntity = Utils.getTileEntityAt(blockAccess, ValveBlockEntity.class, x, y, z);
 		
-		if (entity != null)
+		if (valveEntity != null && valveEntity.hasTanks())
 		{
-			ValveBlockEntity valveEntity = (ValveBlockEntity)entity;
-			
-			if (valveEntity.hasTanks())
+			if (valveEntity.isFacingTank(side))
 			{
-				if (valveEntity.isFacingTank(side))
-				{
-					return iconTank;
-				}
-				
-				return iconIo;
+				return iconTank;
 			}
+			
+			return iconIo;
 		}
 		
 		return getIcon(side, 0);
@@ -99,9 +94,13 @@ public class ValveBlock extends BlockContainer
 		
 		if (!world.isRemote)
 		{
-			ValveBlockEntity entity = (ValveBlockEntity)world.getBlockTileEntity(x, y, z);
-			entity.findTanks();
-			entity.updateTankFacingSides();
+			ValveBlockEntity valveEntity = Utils.getTileEntityAt(world, ValveBlockEntity.class, x, y, z);
+			
+			if (valveEntity != null)
+			{
+				valveEntity.findTanks();
+				valveEntity.updateTankFacingSides();
+			}
 		}
 	}
 
@@ -157,13 +156,12 @@ public class ValveBlock extends BlockContainer
 	@Override
 	public int getComparatorInputOverride(World world, int x, int y, int z, int side)
 	{
-		TileEntity entity = world.getBlockTileEntity(x, y, z);
+		ValveBlockEntity valveEntity = Utils.getTileEntityAt(world, ValveBlockEntity.class, x, y, z);
 		
-		if (entity != null && entity instanceof ValveBlockEntity)
+		if (valveEntity != null)
 		{
-			ValveBlockEntity valve = (ValveBlockEntity)entity;
-			float capacity = (float)valve.getCapacity();
-			float fluidAmount = (float)valve.getFluidAmount();
+			float capacity = (float)valveEntity.getCapacity();
+			float fluidAmount = (float)valveEntity.getFluidAmount();
 			int signalStrength = ((int)Math.floor((fluidAmount / capacity)  * 14.0f)) + ((fluidAmount > 0) ? 1 : 0);
 			
 			return signalStrength;
@@ -174,36 +172,34 @@ public class ValveBlock extends BlockContainer
 
 	private void handleContainerClick(World world, int x, int y, int z, EntityPlayer player, ItemStack equippedItemStack)
 	{
-		TileEntity blockEntity = world.getBlockTileEntity(x, y, z);
+		ValveBlockEntity valveEntity = Utils.getTileEntityAt(world, ValveBlockEntity.class, x, y, z);
 
-		if (blockEntity != null	&& blockEntity instanceof ValveBlockEntity)
+		if (valveEntity != null)
 		{
-			ValveBlockEntity tankEntity = (ValveBlockEntity) blockEntity;
-			
 			// only deal with buckets, all other fluid containers need to use pipes
 			if (FluidContainerRegistry.isBucket(equippedItemStack))
 			{
 				if (FluidContainerRegistry.isEmptyContainer(equippedItemStack))
 				{
-					fillBucketFromTank(world, x, y, z, player, equippedItemStack, tankEntity);
+					fillBucketFromTank(world, x, y, z, player, equippedItemStack, valveEntity);
 				}
 				else
 				{
-					drainBucketIntoTank(tankEntity, player, equippedItemStack);
+					drainBucketIntoTank(valveEntity, player, equippedItemStack);
 				}
 			}
 		}
 	}
 
-	private void fillBucketFromTank(World world, int x, int y, int z, EntityPlayer player, ItemStack equippedItemStack, ValveBlockEntity tankEntity)
+	private void fillBucketFromTank(World world, int x, int y, int z, EntityPlayer player, ItemStack equippedItemStack, ValveBlockEntity valveEntity)
 	{
 		// fill empty bucket with liquid from the tank if it has stored enough
-		if (tankEntity.getFluidAmount() >= FluidContainerRegistry.BUCKET_VOLUME)
+		if (valveEntity.getFluidAmount() >= FluidContainerRegistry.BUCKET_VOLUME)
 		{
-			FluidStack oneBucketOfFluid = new FluidStack(tankEntity.getFluid(), FluidContainerRegistry.BUCKET_VOLUME);
+			FluidStack oneBucketOfFluid = new FluidStack(valveEntity.getFluid(), FluidContainerRegistry.BUCKET_VOLUME);
 			ItemStack filledBucket = FluidContainerRegistry.fillFluidContainer(oneBucketOfFluid, FluidContainerRegistry.EMPTY_BUCKET);
 			
-			if (filledBucket != null && tankEntity.drain(null, oneBucketOfFluid, true).amount == FluidContainerRegistry.BUCKET_VOLUME)
+			if (filledBucket != null && valveEntity.drain(null, oneBucketOfFluid, true).amount == FluidContainerRegistry.BUCKET_VOLUME)
 			{
 				// add filled bucket to player inventory or drop it to the ground if the inventory is full
 	            if (!player.inventory.addItemStackToInventory(filledBucket))
@@ -223,14 +219,14 @@ public class ValveBlock extends BlockContainer
 		}
 	}
 	
-	private void drainBucketIntoTank(ValveBlockEntity tankEntity, EntityPlayer player, ItemStack equippedItemStack)
+	private void drainBucketIntoTank(ValveBlockEntity valveEntity, EntityPlayer player, ItemStack equippedItemStack)
 	{
 		// fill the liquid from the bucket into the tank
-		if ((tankEntity.getFluidAmount() == 0 || tankEntity.getFluid().isFluidEqual(equippedItemStack)) && tankEntity.getCapacity() - tankEntity.getFluidAmount() >= FluidContainerRegistry.BUCKET_VOLUME)
+		if ((valveEntity.getFluidAmount() == 0 || valveEntity.getFluid().isFluidEqual(equippedItemStack)) && valveEntity.getCapacity() - valveEntity.getFluidAmount() >= FluidContainerRegistry.BUCKET_VOLUME)
 		{
 			FluidStack fluidFromBucket = FluidContainerRegistry.getFluidForFilledItem(equippedItemStack);
 			
-			if (tankEntity.fill(null, fluidFromBucket, true) == FluidContainerRegistry.BUCKET_VOLUME)
+			if (valveEntity.fill(null, fluidFromBucket, true) == FluidContainerRegistry.BUCKET_VOLUME)
 			{
 				// don't consume the filled bucket in creative mode 
                 if (!player.capabilities.isCreativeMode)
@@ -245,8 +241,12 @@ public class ValveBlock extends BlockContainer
 	{
 		if (!world.isRemote)
 		{
-			ValveBlockEntity entity = (ValveBlockEntity)world.getBlockTileEntity(x, y, z);
-			entity.resetTanks();
+			ValveBlockEntity valveEntity = Utils.getTileEntityAt(world, ValveBlockEntity.class, x, y, z);
+			
+			if (valveEntity != null)
+			{
+				valveEntity.resetTanks();
+			}
 		}
 	}
 }

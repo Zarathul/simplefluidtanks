@@ -1,7 +1,8 @@
 package simplefluidtanks;
 
+import java.util.Arrays;
+
 import net.minecraft.client.Minecraft;
-import net.minecraft.launchwrapper.LogWrapper;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet;
@@ -88,24 +89,14 @@ public class TankBlockEntity extends TileEntity
 	
 	public boolean isPartOfTank()
 	{
-		return isPartOfTank && valveCoords != null && valveCoords.length == 3;
-	}
-	
-	public int[] getValveCoords()
-	{
-		return valveCoords;
+		return isPartOfTank && valveCoords != null && valveCoords.length >= 3;
 	}
 	
 	public ValveBlockEntity getValve()
 	{
 		if (isPartOfTank())
 		{
-			TileEntity entity = worldObj.getBlockTileEntity(valveCoords[0], valveCoords[1], valveCoords[2]);
-			
-			if (entity != null && entity instanceof ValveBlockEntity)
-			{
-				return (ValveBlockEntity)entity;
-			}
+			return Utils.getTileEntityAt(worldObj, ValveBlockEntity.class, valveCoords);
 		}
 		
 		return null;
@@ -113,18 +104,20 @@ public class TankBlockEntity extends TileEntity
 	
 	public boolean setValve(int ... coords)
 	{
-		if (!isPartOfTank() && coords != null && coords.length >= 3)
+		if (isPartOfTank() || coords == null || coords.length < 3)
 		{
-			TileEntity entity = worldObj.getBlockTileEntity(coords[0], coords[1], coords[2]);
+			return false;
+		}
+		
+		ValveBlockEntity valveEntity = Utils.getTileEntityAt(worldObj, ValveBlockEntity.class, coords);
+		
+		if (valveEntity != null)
+		{
+			valveCoords = coords;
+			isPartOfTank = true;
+			worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);
 			
-			if (entity != null && entity instanceof ValveBlockEntity)
-			{
-				valveCoords = coords;
-				isPartOfTank = true;
-				worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);
-				
-				return true;
-			}
+			return true;
 		}
 		
 		return false;
@@ -132,23 +125,9 @@ public class TankBlockEntity extends TileEntity
 	
 	public void updateTextures()
 	{
-		textureIds = determineTextureIds();
+		determineTextureIds();
 		worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);
 		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-	}
-	
-	private int[] determineTextureIds()
-	{
-		connections = determineConnections();
-		int[] ids = new int[6];
-		ids[Direction.XPOS] = ConnectedTexturesHelper.getPositiveXTexture(connections);
-		ids[Direction.XNEG] = ConnectedTexturesHelper.getNegativeXTexture(connections);
-		ids[Direction.YPOS] = ConnectedTexturesHelper.getPositiveYTexture(connections);
-		ids[Direction.YNEG] = ConnectedTexturesHelper.getNegativeYTexture(connections);
-		ids[Direction.ZPOS] = ConnectedTexturesHelper.getPositiveZTexture(connections);
-		ids[Direction.ZNEG] = ConnectedTexturesHelper.getNegativeZTexture(connections);
-		
-		return ids;
 	}
 
 	public int getFillPercentage()
@@ -158,6 +137,7 @@ public class TankBlockEntity extends TileEntity
 	
 	public boolean[] getConnections()
 	{
+		// I'd rather return an read-only collection here. For performance reasons I'll leave it as is for now (the array is used for rendering and a list would introduce unnecessary overhead).
 		return connections;
 	}
 	
@@ -168,51 +148,53 @@ public class TankBlockEntity extends TileEntity
 			return -1;
 		}
 		
-		if (textureIds[side] >= 0)
-		{
-			return textureIds[side];
-		}
-		
-		textureIds = determineTextureIds();
-		
 		return textureIds[side];
 	}
 	
 	public boolean setFillPercentage(int percentage)
 	{
-		if (percentage >= 0 && percentage <= 100 && percentage != fillPercentage)
-		{
-			fillPercentage = percentage;
-			worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);
-			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-			
-			return true;
-		}
-		
-		return false;
-	}
-	
-	public boolean isSameValve(int ... coords)
-	{
-		if (coords == null || coords.length != 3)
+		if (percentage < 0 || percentage > 100 || percentage == fillPercentage)
 		{
 			return false;
 		}
 		
-		return (coords[0] == valveCoords[0] && coords[1] == valveCoords[1] && coords[2] == valveCoords[2]);
+		fillPercentage = percentage;
+		worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);
+		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+		
+		return true;
 	}
 	
-	private boolean[] determineConnections()
+	public boolean hasValveAt(int ... coords)
 	{
-		boolean[] connections = new boolean[6];
+		if (!isPartOfTank() || coords == null || coords.length < 3)
+		{
+			return false;
+		}
+		
+		return Arrays.equals(coords, valveCoords);
+	}
+	
+	private void determineTextureIds()
+	{
+		determineConnections();
+		
+		textureIds[Direction.XPOS] = ConnectedTexturesHelper.getPositiveXTexture(connections);
+		textureIds[Direction.XNEG] = ConnectedTexturesHelper.getNegativeXTexture(connections);
+		textureIds[Direction.YPOS] = ConnectedTexturesHelper.getPositiveYTexture(connections);
+		textureIds[Direction.YNEG] = ConnectedTexturesHelper.getNegativeYTexture(connections);
+		textureIds[Direction.ZPOS] = ConnectedTexturesHelper.getPositiveZTexture(connections);
+		textureIds[Direction.ZNEG] = ConnectedTexturesHelper.getNegativeZTexture(connections);
+	}
+	
+	private void determineConnections()
+	{
 		connections[Direction.XPOS] = shouldConnectTo(xCoord + 1, yCoord, zCoord);	// X+
 		connections[Direction.XNEG] = shouldConnectTo(xCoord - 1, yCoord, zCoord);	// X-
 		connections[Direction.YPOS] = shouldConnectTo(xCoord, yCoord + 1, zCoord);	// Y+
 		connections[Direction.YNEG] = shouldConnectTo(xCoord, yCoord - 1, zCoord);	// Y-
 		connections[Direction.ZPOS] = shouldConnectTo(xCoord, yCoord, zCoord + 1);	// Z+
 		connections[Direction.ZNEG] = shouldConnectTo(xCoord, yCoord, zCoord - 1);	// Z-
-
-		return connections;
 	}
 	
 	private boolean shouldConnectTo(int x, int y, int z)
@@ -223,21 +205,14 @@ public class TankBlockEntity extends TileEntity
 			return false;
 		}
 		
-		int neighborBlockId = worldObj.getBlockId(x, y, z);
-		
-		if (neighborBlockId == SimpleFluidTanks.tankBlock.blockID)
+		if (worldObj.getBlockId(x, y, z) == SimpleFluidTanks.tankBlock.blockID)
 		{
-			TileEntity neighborEntity = worldObj.getBlockTileEntity(x, y, z);
+			TankBlockEntity connectionCandidate = Utils.getTileEntityAt(worldObj, TankBlockEntity.class, x, y, z);
 			
-			if (neighborEntity == null || !(neighborEntity instanceof TankBlockEntity))
+			if (connectionCandidate != null)
 			{
-				LogWrapper.log.severe("Possible map corruption detected. TankBlockEntity missing at x:%d / y:%d / z:%d. Expect severe rendering and tank logic issues.", x, y, z);
-				return false;
+				return (connectionCandidate.hasValveAt(valveCoords));
 			}
-			
-			TankBlockEntity connectionCandidate = (TankBlockEntity)neighborEntity;
-			
-			return (connectionCandidate.isSameValve(valveCoords));
 		}
 		
 		return false;
@@ -247,9 +222,10 @@ public class TankBlockEntity extends TileEntity
 	{
 		isPartOfTank = false;
 		fillPercentage = 0;
-		valveCoords = new int[] { 0, 0, 0 };
-		textureIds = new int[] { 0, 0, 0, 0, 0, 0 };
-		connections = new boolean[6];
+		Arrays.fill(valveCoords, 0);
+		Arrays.fill(textureIds, 0);
+		Arrays.fill(connections, false);
+		
 		worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);
 		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 	}

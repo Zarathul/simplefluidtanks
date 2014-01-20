@@ -1,15 +1,10 @@
 package simplefluidtanks;
 
-import java.util.Arrays;
-import java.util.Map;
 import java.util.Random;
 
 import net.minecraft.block.BlockContainer;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
 import net.minecraft.world.World;
@@ -71,33 +66,6 @@ public class TankBlock extends BlockContainer
 			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_left"),					// 14
 			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_right")					// 15
 		};
-	}
-	// TODO: remove debug code
-	@Override
-	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int par6, float par7, float par8, float par9)
-	{
-		if (!world.isRemote)
-		{
-			ItemStack equippedItemStack = player.getCurrentEquippedItem();
-			
-			if (equippedItemStack != null && equippedItemStack.itemID == Item.stick.itemID)
-			{
-				TankBlockEntity tank = (TankBlockEntity)world.getBlockTileEntity(x, y, z);
-				ValveBlockEntity valve = tank.getValve();
-				int[] coords = new int[] { x, y, z };
-				
-				for (Map.Entry<Float, int[]> entry : valve.tanks.entries())
-				{
-					if (Arrays.equals(coords, entry.getValue()))
-					{
-						player.addChatMessage(String.format("%d/%d/%d - %f", x, y, z, entry.getKey()));
-						break;
-					}
-				}
-			}
-		}
-		
-		return super.onBlockActivated(world, x, y, z, player, par6, par7, par8, par9);
 	}
 
 	@Override
@@ -164,12 +132,16 @@ public class TankBlock extends BlockContainer
 	{
 		if (!world.isRemote)
 		{
-			TankBlockEntity tankEntity = (TankBlockEntity)world.getBlockTileEntity(x, y, z);
-			ValveBlockEntity valveEntity = tankEntity.getValve();
+			TankBlockEntity tankEntity = Utils.getTileEntityAt(world, TankBlockEntity.class, x, y, z);
 			
-			if (valveEntity != null)
+			if (tankEntity != null)
 			{
-				valveEntity.resetTanks();
+				ValveBlockEntity valveEntity = tankEntity.getValve();
+				
+				if (valveEntity != null)
+				{
+					valveEntity.resetTanks();
+				}
 			}
 		}
 	}

@@ -1,11 +1,9 @@
 package simplefluidtanks;
 
-import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.launchwrapper.LogWrapper;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
 import net.minecraft.world.World;
@@ -24,31 +22,22 @@ public class TankBlockRenderer extends TileEntitySpecialRenderer
 	}
 
 	@Override
-	public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float f)
+	public void renderTileEntityAt(TileEntity entity, double x, double y, double z, float f)
 	{
-		// this should never happen, but hey it's minecraft
-		if (tileEntity == null || !(tileEntity instanceof TankBlockEntity))
+		TankBlockEntity tankEntity = Utils.getTileEntityAt(entity.getWorldObj(), TankBlockEntity.class, entity.xCoord, entity.yCoord, entity.zCoord);
+		
+		if (tankEntity == null)
 		{
-			LogWrapper.log.severe("Possible map corruption detected. TankBlockEntity missing at x:%d / y:%d / z:%d. Expect severe rendering and tank logic issues.", x, y, z);
 			return;
 		}
 		
-		Block block = tileEntity.getBlockType();
+		TankBlock tank = (TankBlock)tankEntity.getBlockType();
 		
-		// this should also never happen
-		if (block == null || !(block instanceof TankBlock))
-		{
-			LogWrapper.log.severe("Possible map corruption detected. TankBlock missing at x:%d / y:%d / z:%d. Expect severe rendering and tank logic issues.", x, y, z);
-			return;
-		}
-		
-		TankBlock tank = (TankBlock)block;
-		TankBlockEntity entity = (TankBlockEntity)tileEntity;
 		Icon[] icons = tank.getIcons();
 		
 		TessellationManager.setBaseCoords(x, y, z);
 		Tessellator tsr = Tessellator.instance;
-		int brightness = block.getMixedBrightnessForBlock(entity.worldObj, entity.xCoord, entity.yCoord, entity.zCoord);
+		int brightness = tank.getMixedBrightnessForBlock(tankEntity.worldObj, tankEntity.xCoord, tankEntity.yCoord, tankEntity.zCoord);
 		
 		tsr.setBrightness(brightness);
 		
@@ -56,24 +45,24 @@ public class TankBlockRenderer extends TileEntitySpecialRenderer
 		
 		tsr.startDrawingQuads();
 		
-		if (!entity.isPartOfTank())
+		if (!tankEntity.isPartOfTank())
 		{
-			renderSolid(entity, icons[0]);
+			renderSolid(tankEntity, icons[0]);
 		}
 		else
 		{
-			boolean[] connections = entity.getConnections();
-			int fillPercentage = entity.getFillPercentage();
+			boolean[] connections = tankEntity.getConnections();
+			int fillPercentage = tankEntity.getFillPercentage();
 			double fluidHeight = 16.0 / 100 * fillPercentage;
 			double verticalTextureOffset = 16.0 / 100 * (100 - fillPercentage);
-			Icon fluidIcon = getFluidTexture(entity);
+			Icon fluidIcon = getFluidTexture(tankEntity);
 			
-			renderPositiveXFace(entity, connections, icons, fluidIcon, fillPercentage, fluidHeight, verticalTextureOffset);
-			renderNegativeXFace(entity, connections, icons, fluidIcon, fillPercentage, fluidHeight, verticalTextureOffset);
-			renderPositiveZFace(entity, connections, icons, fluidIcon, fillPercentage, fluidHeight, verticalTextureOffset);
-			renderNegativeZFace(entity, connections, icons, fluidIcon, fillPercentage, fluidHeight, verticalTextureOffset);
-			renderPositiveYFace(entity, connections, icons, fluidIcon, fillPercentage, fluidHeight);
-			renderNegativeYFace(entity, connections, icons, fluidIcon, fillPercentage);
+			renderPositiveXFace(tankEntity, connections, icons, fluidIcon, fillPercentage, fluidHeight, verticalTextureOffset);
+			renderNegativeXFace(tankEntity, connections, icons, fluidIcon, fillPercentage, fluidHeight, verticalTextureOffset);
+			renderPositiveZFace(tankEntity, connections, icons, fluidIcon, fillPercentage, fluidHeight, verticalTextureOffset);
+			renderNegativeZFace(tankEntity, connections, icons, fluidIcon, fillPercentage, fluidHeight, verticalTextureOffset);
+			renderPositiveYFace(tankEntity, connections, icons, fluidIcon, fillPercentage, fluidHeight);
+			renderNegativeYFace(tankEntity, connections, icons, fluidIcon, fillPercentage);
 		}
 		
 		tsr.draw();
