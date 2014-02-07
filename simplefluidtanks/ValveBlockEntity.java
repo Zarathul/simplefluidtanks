@@ -336,6 +336,27 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	
 	private void distributeFluidToTanks()
 	{
+		int amountToDistribute = internalTank.getFluidAmount();
+		
+		if (amountToDistribute == 0 || amountToDistribute == internalTank.getCapacity())
+		{
+			int percentage = (amountToDistribute == 0) ? 0 : 100;
+			
+			// empty all tanks
+			for (int[] tankCoords : tanks)
+			{
+				TankBlockEntity tankEntity = Utils.getTileEntityAt(worldObj, TankBlockEntity.class, tankCoords);
+				
+				if (tankEntity != null)
+				{
+					tankEntity.setFillPercentage(percentage);
+				}
+			}
+		}
+		else
+		{
+			
+		}
 	}
 	
 	private void generateTankList()
