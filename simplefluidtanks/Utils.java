@@ -1,5 +1,14 @@
 package simplefluidtanks;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.PriorityQueue;
+
+import com.google.common.collect.Multimap;
+
+import paulscode.sound.Vector3D;
+
 import net.minecraft.launchwrapper.LogWrapper;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
@@ -10,6 +19,11 @@ public final class Utils
 	public static final <T extends TileEntity> T getTileEntityAt(IBlockAccess access, Class<T> entityType, int ... coords)
 	{
 		return getTileEntityAt(access, entityType, true, coords);
+	}
+	
+	public static final <T extends TileEntity> T getTileEntityAt(IBlockAccess access, Class<T> entityType, BlockCoords coords)
+	{
+		return getTileEntityAt(access, entityType, true, coords.x, coords.y, coords.z);
 	}
 	
 	public static final <T extends TileEntity> T getTileEntityAt(IBlockAccess access, Class<T> entityType, boolean suppressLogEntry, int ... coords)
@@ -29,6 +43,19 @@ public final class Utils
 			}
 			
 			return (T)entity;
+		}
+		
+		return null;
+	}
+	
+	public static final <K, V> V getFirstValueInMap(Multimap<K, V> map)
+	{
+		if (map != null)
+		{
+			for (V value : map.values())
+			{
+				return value;
+			}
 		}
 		
 		return null;

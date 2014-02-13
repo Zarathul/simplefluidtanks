@@ -7,12 +7,30 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Stack;
+import java.util.Vector;
 
+import org.bouncycastle.util.CollectionStore;
+
+import simplefluidtanks.BasicAStar.Node;
+
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+
+import net.minecraft.launchwrapper.LogWrapper;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Vec3;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -22,15 +40,17 @@ import net.minecraftforge.fluids.IFluidHandler;
 
 public class ValveBlockEntity extends TileEntity implements IFluidHandler
 {
-	protected FluidTank internalTank;
-	private ArrayList<int[]> tanks;
+	private HashSet<BlockCoords> tanks;
+	private ArrayList<FluidFlowNode> fluidFlowBranches;
+	
+	private FluidTank internalTank;
 	private byte tankFacingSides;
 	
 	public ValveBlockEntity()
 	{
 		super();
 		internalTank = new FluidTank(0);
-		tanks = new ArrayList<int[]>();
+		tanks = new HashSet<BlockCoords>();
 		tankFacingSides = -1;
 	}
 
@@ -196,32 +216,34 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	{
 		int sides = 0;
 		
-		if (isLinkedTank(xCoord, yCoord, zCoord + 1))
+		BlockCoords coords = new BlockCoords(xCoord, yCoord, zCoord);
+		
+		if (isLinkedTank(coords.cloneWithOffset(0, 0, 1)))
 		{
 			sides = sides | Direction.sidesToBitFlagsMappings[Direction.ZPOS];
 		}
 		
-		if (isLinkedTank(xCoord, yCoord, zCoord - 1))
+		if (isLinkedTank(coords.cloneWithOffset(0, 0, -1)))
 		{
 			sides = sides | Direction.sidesToBitFlagsMappings[Direction.ZNEG];
 		}
 		
-		if (isLinkedTank(xCoord + 1, yCoord, zCoord))
+		if (isLinkedTank(coords.cloneWithOffset(1, 0, 0)))
 		{
 			sides = sides | Direction.sidesToBitFlagsMappings[Direction.XPOS];
 		}
 		
-		if (isLinkedTank(xCoord - 1, yCoord, zCoord))
+		if (isLinkedTank(coords.cloneWithOffset(-1, 0, 0)))
 		{
 			sides = sides | Direction.sidesToBitFlagsMappings[Direction.XNEG];
 		}
 		
-		if (isLinkedTank(xCoord, yCoord + 1, zCoord))
+		if (isLinkedTank(coords.cloneWithOffset(0, 1, 0)))
 		{
 			sides = sides | Direction.sidesToBitFlagsMappings[Direction.YPOS];
 		}
 		
-		if (isLinkedTank(xCoord, yCoord - 1, zCoord))
+		if (isLinkedTank(coords.cloneWithOffset(0, -1, 0)))
 		{
 			sides = sides | Direction.sidesToBitFlagsMappings[Direction.YNEG];
 		}
@@ -253,7 +275,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		ArrayList<TankBlockEntity> tankEntities = new ArrayList<TankBlockEntity>(tanks.size());
 		
 		// set the valve for all connected tanks
-		for (int[] tankCoords : tanks)
+		for (BlockCoords tankCoords : tanks)
 		{
 			TankBlockEntity tankEntity = Utils.getTileEntityAt(worldObj, TankBlockEntity.class, tankCoords);
 			
@@ -277,7 +299,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 
 	public void resetTanks()
 	{
-		for (int[] tankCoords : tanks)
+		for (BlockCoords tankCoords : tanks)
 		{
 			TankBlockEntity tankEntity = Utils.getTileEntityAt(worldObj, TankBlockEntity.class, tankCoords);
 			
@@ -326,7 +348,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		{
 			byteStream = new ByteArrayInputStream(data);
 			objStream = new ObjectInputStream(byteStream);
-			tanks = (ArrayList<int[]>)objStream.readObject();
+			tanks = (HashSet<BlockCoords>)objStream.readObject();
 		}
 		finally
 		{
@@ -343,7 +365,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 			int percentage = (amountToDistribute == 0) ? 0 : 100;
 			
 			// empty all tanks
-			for (int[] tankCoords : tanks)
+			for (BlockCoords tankCoords : tanks)
 			{
 				TankBlockEntity tankEntity = Utils.getTileEntityAt(worldObj, TankBlockEntity.class, tankCoords);
 				
@@ -361,6 +383,27 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	
 	private void generateTankList()
 	{
+//		/*
+		BlockCoords startCoords = new BlockCoords(xCoord, yCoord, zCoord);
+		FluidFlowNode fluidFlowRoot = new FluidFlowNode();
+		
+		ArrayList<BlockCoords> startingTanks = getAdjacentTanks(startCoords);
+		ArrayList<FluidFlowNode> fluidFlowBranches = new ArrayList<FluidFlowNode>(startingTanks.size());
+		
+		FluidFlowNode currentBranch;
+		
+		for (BlockCoords startingTank : startingTanks)
+		{
+			currentBranch = getFluidFlowBranch(startingTank);
+			
+			if (currentBranch != null)
+			{
+				fluidFlowBranches.add(currentBranch);
+			}
+		}
+//		*/
+		
+		/*
 		int[] startCoords = new int[] { xCoord, yCoord, zCoord };
 		ArrayList<int[]> lastFoundTanks = new ArrayList<int[]>();
 		ArrayList<int[]> newFoundTanks = new ArrayList<int[]>();
@@ -394,18 +437,191 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 			newFoundTanks.clear();
 		}
 		while (lastFoundTanks.size() > 0);
+		*/
 	}
 	
-	private boolean isUnlinkedTank(int ... coords)
+	private FluidFlowNode getFluidFlowBranch(BlockCoords startTank)
 	{
-		if (coords == null || coords.length < 3)
+		if (startTank == null)
+		{
+			return null;
+		}
+		
+		// TODO: generate the branch
+		
+		FluidFlowNode branchRoot = new FluidFlowNode();
+		branchRoot.tanks = getTanksInSegment(startTank);
+		
+		tanks.addAll(branchRoot.tanks);
+		
+		Stack<FluidFlowNode> segmentsToCheck = new Stack<FluidFlowNode>();
+		segmentsToCheck.push(branchRoot);
+		
+		BasicAStar aStar = new BasicAStar();
+		
+		// search mode cache
+		EnumSet<BlockSearchMode> searchAbove = EnumSet.of(BlockSearchMode.Above);
+		EnumSet<BlockSearchMode> searchBelow = EnumSet.of(BlockSearchMode.Below);
+		
+		FluidFlowNode currentSegment;
+		
+		while(!segmentsToCheck.isEmpty())
+		{
+			currentSegment = segmentsToCheck.pop();
+			
+			// get segments below
+			ArrayList<BlockCoords> tanksBelow = new ArrayList<BlockCoords>();
+			
+			for (BlockCoords tank : currentSegment.tanks)
+			{
+				 tanksBelow.addAll(getAdjacentTanks(searchBelow, tank));
+			}
+			
+			int group = 0;
+			
+			for (BlockCoords tank : tanksBelow)
+			{
+				if (tanks.contains(tank))
+				{
+					continue;
+				}
+				
+				ArrayList<BlockCoords> newSegmentTanks = getTanksInSegment(tank);
+				tanks.addAll(newSegmentTanks);
+				
+				aStar.reset(currentSegment.tanks);
+				BlockCoords firstTank = currentSegment.tanks.get(0);
+				
+				// group = shortest distance from the current segments first tank to any tank of the new segment that's directly connected to it
+				for (BlockCoords newTank : newSegmentTanks)
+				{
+					BlockCoords aboveNewTank = newTank.cloneWithOffset(0, 1);
+					
+					if (tanks.contains(aboveNewTank))
+					{
+						if (firstTank.equals(aboveNewTank))
+						{
+							group = 0;
+							break;
+						}
+						else
+						{
+							Node path = aStar.getShortestPath(firstTank, aboveNewTank);
+							group = Math.min(group, path.currentCost);
+//							LogWrapper.info("%s -> %s", firstTank, aboveNewTank);
+//							LogWrapper.info("cost: %d", path.currentCost);
+						}
+					}
+				}
+				
+				FluidFlowNode newSegment = currentSegment.addSegmentBelow(group, newSegmentTanks);
+				segmentsToCheck.push(newSegment);
+			}
+			
+			
+		}
+		
+		return branchRoot;
+	}
+	
+	private ArrayList<BlockCoords> getTanksInSegment(BlockCoords firstTank)
+	{
+		if (firstTank == null)
+		{
+			return null;
+		}
+		
+		LinkedHashSet<BlockCoords> tanksInSegment = new LinkedHashSet<BlockCoords>();
+		tanksInSegment.add(firstTank);
+		
+		ArrayList<BlockCoords> lastFoundTanks = new ArrayList<BlockCoords>();
+		ArrayList<BlockCoords> newFoundTanks = new ArrayList<BlockCoords>();
+		ArrayList<BlockCoords> adjacentTanks;
+		EnumSet<BlockSearchMode> searchFlags = EnumSet.of(BlockSearchMode.SameLevel);
+		
+		lastFoundTanks.add(firstTank);
+		
+		do
+		{
+			for (BlockCoords tank : lastFoundTanks)
+			{
+				adjacentTanks = getAdjacentTanks(searchFlags, tank);
+				
+				if (adjacentTanks != null)
+				{
+					for (BlockCoords adjacentTank : adjacentTanks)
+					{
+						if (tanksInSegment.add(adjacentTank))
+						{
+							newFoundTanks.add(adjacentTank);
+						}
+					}
+				}
+			}
+			
+			lastFoundTanks.clear();
+			lastFoundTanks.addAll(newFoundTanks);
+			newFoundTanks.clear();
+		}
+		while (!lastFoundTanks.isEmpty());
+		
+		return new ArrayList<BlockCoords>(tanksInSegment);
+	}
+	
+	private ArrayList<BlockCoords> getAdjacentTanks(BlockCoords block)
+	{
+		return getAdjacentTanks(EnumSet.allOf(BlockSearchMode.class), block);
+	}
+	
+	private ArrayList<BlockCoords> getAdjacentTanks(EnumSet<BlockSearchMode> searchFlags, BlockCoords block)
+	{
+		if (block == null || searchFlags == null)
+		{
+			return null;
+		}
+		
+		ArrayList<BlockCoords> tanks = new ArrayList<BlockCoords>();
+		ArrayList<BlockCoords> adjacentBlocks = new ArrayList<BlockCoords>();
+		
+		if (searchFlags.contains(BlockSearchMode.SameLevel))
+		{
+			adjacentBlocks.add(new BlockCoords(block.x + 1, block.y, block.z));	// X+
+			adjacentBlocks.add(new BlockCoords(block.x - 1, block.y, block.z));	// X-
+			adjacentBlocks.add(new BlockCoords(block.x, block.y, block.z + 1));	// Z+
+			adjacentBlocks.add(new BlockCoords(block.x, block.y, block.z - 1));	// Z-
+		}
+		
+		if (searchFlags.contains(BlockSearchMode.Above))
+		{
+			adjacentBlocks.add(new BlockCoords(block.x, block.y + 1, block.z));	// Y+
+		}
+		
+		if (searchFlags.contains(BlockSearchMode.Below))
+		{
+			adjacentBlocks.add(new BlockCoords(block.x, block.y - 1, block.z));	// Y-
+		}
+		
+		for (BlockCoords adjacentBlock : adjacentBlocks)
+		{
+			if (isUnlinkedTank(adjacentBlock))
+			{
+				tanks.add(adjacentBlock);
+			}
+		}
+		
+		return tanks;
+	}
+	
+	private boolean isUnlinkedTank(BlockCoords block)
+	{
+		if (block == null)
 		{
 			return false;
 		}
 		
-		if (worldObj.getBlockId(coords[0], coords[1], coords[2]) == SimpleFluidTanks.tankBlock.blockID)
+		if (worldObj.getBlockId(block.x, block.y, block.z) == SimpleFluidTanks.tankBlock.blockID)
 		{
-			TankBlockEntity tankEntity = Utils.getTileEntityAt(worldObj, TankBlockEntity.class, coords);
+			TankBlockEntity tankEntity = Utils.getTileEntityAt(worldObj, TankBlockEntity.class, block);
 			
 			if (tankEntity != null)
 			{
@@ -416,21 +632,13 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		return false;
 	}
 	
-	private boolean isLinkedTank(int ... coords)
+	private boolean isLinkedTank(BlockCoords block)
 	{
-		if (coords == null || coords.length < 3)
+		if (block == null)
 		{
 			return false;
 		}
 		
-		for (int[] linkedTankCoords : tanks)
-		{
-			if (Arrays.equals(coords, linkedTankCoords))
-			{
-				return true;
-			}
-		}
-		
-		return false;
+		return tanks.contains(block);
 	}
 }
