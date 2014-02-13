@@ -78,6 +78,11 @@ public class FluidTank implements IFluidTank
     {
     	return getCapacity() - getFluidAmount();
     }
+    
+    public boolean isFull()
+    {
+    	return getRemainingCapacity() == 0;
+    }
 
     @Override
     public FluidStack getFluid()

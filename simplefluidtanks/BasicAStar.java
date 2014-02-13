@@ -145,7 +145,7 @@ public class BasicAStar
 		return null;
 	}
 	
-	public void reset(Collection<BlockCoords> passableBlocks)
+	public void setPassableBlocks(Collection<BlockCoords> passableBlocks)
 	{
 		this.passableBlocks = new HashSet<BlockCoords>(passableBlocks);
 	}

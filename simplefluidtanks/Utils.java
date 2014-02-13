@@ -3,6 +3,7 @@ package simplefluidtanks;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map.Entry;
 import java.util.PriorityQueue;
 
 import com.google.common.collect.Multimap;
@@ -48,13 +49,13 @@ public final class Utils
 		return null;
 	}
 	
-	public static final <K, V> V getFirstValueInMap(Multimap<K, V> map)
+	public static final <K, V> V getFirstValueInMultiMap(Multimap<K, V> map)
 	{
 		if (map != null)
 		{
-			for (V value : map.values())
+			for (Entry<K, V> entry : map.entries())
 			{
-				return value;
+				return entry.getValue();
 			}
 		}
 		
