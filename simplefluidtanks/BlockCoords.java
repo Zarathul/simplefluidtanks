@@ -50,24 +50,25 @@ public class BlockCoords implements Serializable // Comparable<BlockCoords>
 		return offsetBlocks;
 	}
 	
-	public void offset(int ... offsets)
+	public BlockCoords offset(int ... offsets)
 	{
 		if (offsets == null || offsets.length < 1 || offsets.length > 3)
 		{
-			return;
+			return this;
 		}
 		
 		x += offsets[0];
 		y += (offsets.length > 1) ? offsets[1] : 0;
 		z += (offsets.length > 2) ? offsets[2] : 0;
+		
+		return this;
 	}
 	
 	public BlockCoords cloneWithOffset(int ... offsets)
 	{
 		BlockCoords newCoords = new BlockCoords(this);
-		newCoords.offset(offsets);
 		
-		return newCoords;
+		return newCoords.offset(offsets);
 	}
 	
 	public int getDistanceTo(BlockCoords block)
