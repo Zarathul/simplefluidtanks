@@ -114,35 +114,26 @@ public class BasicAStar
 			return null;
 		}
 		
-		try
+		visitedBlocks.clear();
+		unvisitedNodes.clear();
+		minCosts.clear();
+		
+		Node currentNode = new Node();
+		currentNode.block = start;
+		computeCosts(currentNode, start, goal);
+		
+		unvisitedNodes.offer(currentNode);
+		
+		while (!currentNode.block.equals(goal) && !unvisitedNodes.isEmpty())
 		{
-			visitedBlocks.clear();
-			unvisitedNodes.clear();
-			minCosts.clear();
+			currentNode = unvisitedNodes.poll();
 			
-			Node currentNode = new Node();
-			currentNode.block = start;
-			computeCosts(currentNode, start, goal);
+			visitedBlocks.add(currentNode.block);
 			
-			unvisitedNodes.offer(currentNode);
-			
-			while (!currentNode.block.equals(goal))
-			{
-				currentNode = unvisitedNodes.poll();
-				
-				visitedBlocks.add(currentNode.block);
-				
-				getAdjacentNodes(currentNode, goal);
-			}
-			
-			return currentNode;
-		}
-		catch (Exception ex)
-		{
-			ex.printStackTrace();
+			getAdjacentNodes(currentNode, goal);
 		}
 		
-		return null;
+		return (currentNode.block.equals(goal)) ? currentNode : null;
 	}
 	
 	public void setPassableBlocks(Collection<BlockCoords> passableBlocks)

@@ -94,6 +94,11 @@ public class BlockCoords implements Serializable // Comparable<BlockCoords>
 		
 		return result;
 	}
+	
+	public boolean equals(int x, int y, int z)
+	{
+		return (this.x == x && this.y == y && this.z == z);
+	}
 
 	@Override
 	public boolean equals(Object obj)
