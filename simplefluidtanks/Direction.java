@@ -4,6 +4,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.common.collect.ImmutableList;
+
+import scala.Immutable;
+
 import net.minecraftforge.common.ForgeDirection;
 
 public class Direction
@@ -15,15 +19,15 @@ public class Direction
 	public static final int ZPOS = 3;
 	public static final int ZNEG = 2;
 	
-	public static final int[] sidesToBitFlagsMappings = new int[]
-	{
+	public static final ImmutableList<Integer> sidesToBitFlagsMappings = ImmutableList.of
+	(
 		1, 	// 0	YNEG
 		2, 	// 1	YPOS
 		4, 	// 2	ZNEG
 		8, 	// 3	ZPOS
 		16,	// 4	XNEG
 		32	// 5	XPOS
-	};
+	);
 	
 	public static final Map<Integer, ForgeDirection> vanillaToForgeMapping = Collections.unmodifiableMap
 	(

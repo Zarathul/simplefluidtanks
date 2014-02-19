@@ -48,17 +48,4 @@ public final class Utils
 		
 		return null;
 	}
-	
-	public static final <K, V> V getFirstValueInMultiMap(Multimap<K, V> map)
-	{
-		if (map != null)
-		{
-			for (Entry<K, V> entry : map.entries())
-			{
-				return entry.getValue();
-			}
-		}
-		
-		return null;
-	}
 }
