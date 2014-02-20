@@ -5,6 +5,7 @@ import java.util.Random;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -12,6 +13,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -42,15 +44,7 @@ public class ValveBlock extends BlockContainer
 	@SideOnly(Side.CLIENT)
 	public Icon getIcon(int side, int meta)
 	{
-		switch (side)
-		{
-			case Direction.YPOS:
-				return iconTank;
-			case Direction.XNEG:
-				return iconIo;
-			default:
-				return icon;
-		}
+		return (side == meta) ? iconIo : (side == Direction.YPOS) ? iconTank : icon;
 	}
 	
 	@Override
@@ -69,7 +63,7 @@ public class ValveBlock extends BlockContainer
 			return iconIo;
 		}
 		
-		return getIcon(side, 0);
+		return getIcon(side, blockAccess.getBlockMetadata(x, y, z));
 	}
 
 	@Override
@@ -87,6 +81,36 @@ public class ValveBlock extends BlockContainer
 		return new ValveBlockEntity();
 	}
 	
+	@Override
+	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack items)
+	{
+		super.onBlockPlacedBy(world, x, y, z, player, items);
+		
+        int l = MathHelper.floor_double((double)(player.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
+        int direction;
+        
+        switch (l)
+        {
+        	case 1:
+        		direction = Direction.XPOS;
+        		break;
+        	
+        	case 2:
+        		direction = Direction.ZPOS;
+        		break;
+        	
+        	case 3:
+        		direction = Direction.XNEG;
+        		break;
+        		
+        	default:
+        		direction = Direction.ZNEG;
+        		break;
+        }
+        
+        world.setBlockMetadataWithNotify(x, y, z, direction, 2);
+	}
+
 	@Override
 	public void onBlockAdded(World world, int x, int y, int z)
 	{
@@ -222,12 +246,9 @@ public class ValveBlock extends BlockContainer
 	private void drainBucketIntoTank(ValveBlockEntity valveEntity, EntityPlayer player, ItemStack equippedItemStack)
 	{
 		// fill the liquid from the bucket into the tank
-//		if ((valveEntity.getFluidAmount() == 0 || valveEntity.getFluid().isFluidEqual(equippedItemStack)) && valveEntity.getCapacity() - valveEntity.getFluidAmount() >= FluidContainerRegistry.BUCKET_VOLUME)
-		if ((valveEntity.getFluidAmount() == 0 || valveEntity.getFluid().isFluidEqual(equippedItemStack)) && valveEntity.getCapacity() - valveEntity.getFluidAmount() >= FluidContainerRegistry.BUCKET_VOLUME * 8)
+		if ((valveEntity.getFluidAmount() == 0 || valveEntity.getFluid().isFluidEqual(equippedItemStack)) && valveEntity.getCapacity() - valveEntity.getFluidAmount() >= FluidContainerRegistry.BUCKET_VOLUME)
 		{
 			FluidStack fluidFromBucket = FluidContainerRegistry.getFluidForFilledItem(equippedItemStack);
-			// TODO: remove and fix line above
-			fluidFromBucket.amount *= 8;
 			
 			if (valveEntity.fill(null, fluidFromBucket, true) == FluidContainerRegistry.BUCKET_VOLUME)
 			{

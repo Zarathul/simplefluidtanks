@@ -7,7 +7,9 @@ import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeDirection;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -72,6 +74,12 @@ public class TankBlock extends BlockContainer
 	public void onBlockPreDestroy(World world, int x, int y, int z, int par5)
 	{
 		resetTanks(world, x, y, z);
+	}
+	
+	@Override
+	public boolean isBlockSolidOnSide(World world, int x, int y, int z, ForgeDirection side)
+	{
+		return true;
 	}
 
 	@Override
