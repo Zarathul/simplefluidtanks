@@ -5,6 +5,9 @@ import net.minecraft.util.Icon;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+/**
+ * {@link TankBlock} in item form.
+ */
 public class TankItem extends ItemBlock
 {
 	public TankItem(int id)

@@ -4,18 +4,44 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import simplefluidtanks.BasicAStar.Node;
+
+/**
+ * Represents the coordinates of a block in the world.
+ */
 public class BlockCoords implements Serializable // Comparable<BlockCoords>
 {
+	/**
+	 * The x-coordinate.
+	 */
 	public int x;
+	
+	/**
+	 * The y-coordinate.
+	 */
 	public int y;
+	
+	/**
+	 * The z-coordinate.
+	 */
 	public int z;
 	
-//	private static final BlockCoords origin = new BlockCoords(0, 0, 0);
-	
+	/**
+	 * Default constructor
+	 */
 	public BlockCoords()
 	{
 	}
 	
+	/**
+	 * Creates a new instance with the supplied coordinates.
+	 * @param x
+	 * The x-coordinate.
+	 * @param y
+	 * The y-coordinate.
+	 * @param z
+	 * The z-coordinate.
+	 */
 	public BlockCoords(int x, int y, int z)
 	{
 		this.x = x;
@@ -23,6 +49,11 @@ public class BlockCoords implements Serializable // Comparable<BlockCoords>
 		this.z = z;
 	}
 	
+	/**
+	 * Creates a copy of the given {@link BlockCoords}.
+	 * @param coords
+	 * The {@link BlockCoords} to copy.
+	 */
 	public BlockCoords(BlockCoords coords)
 	{
 		if (coords != null)
@@ -33,6 +64,15 @@ public class BlockCoords implements Serializable // Comparable<BlockCoords>
 		}
 	}
 	
+	/**
+	 * Copies and offsets each supplied {@link BlockCoords} instance by the supplied offsets.
+	 * @param blocks
+	 * The coordinates to offset.
+	 * @param offsets
+	 * The values by which the coordinates should be offset.
+	 * @return
+	 * An {@link ArrayList} containing the offset copies of the supplied {@link BlockCoords}.
+	 */
 	public static ArrayList<BlockCoords> cloneWithOffset(Collection<BlockCoords> blocks, int ... offsets)
 	{
 		if (blocks == null)
@@ -50,6 +90,13 @@ public class BlockCoords implements Serializable // Comparable<BlockCoords>
 		return offsetBlocks;
 	}
 	
+	/**
+	 * Offsets the coordinates of the current instance by the supplied values.
+	 * @param offsets
+	 * The values by which the coordinates should be offset.
+	 * @return
+	 * The current instance after the changes.
+	 */
 	public BlockCoords offset(int ... offsets)
 	{
 		if (offsets == null || offsets.length < 1 || offsets.length > 3)
@@ -64,6 +111,13 @@ public class BlockCoords implements Serializable // Comparable<BlockCoords>
 		return this;
 	}
 	
+	/**
+	 * Creates a copy of the current instance offset by the supplied values.
+	 * @param offsets
+	 * The values by which the coordinates should be offset.
+	 * @return
+	 * The offset copy of the current instance.
+	 */
 	public BlockCoords cloneWithOffset(int ... offsets)
 	{
 		BlockCoords newCoords = new BlockCoords(this);
@@ -71,6 +125,13 @@ public class BlockCoords implements Serializable // Comparable<BlockCoords>
 		return newCoords.offset(offsets);
 	}
 	
+	/**
+	 * Gets the distance from the current instance to the supplied coordinates.
+	 * @param block
+	 * The coordinates to get the distance to.
+	 * @return
+	 * The distance from the current instance to <code>block</code>.<br> or<br><ode>-1</code> if <code>block</code> was <code>null</code>. 
+	 */
 	public int getDistanceTo(BlockCoords block)
 	{
 		if (block == null)
@@ -125,17 +186,4 @@ public class BlockCoords implements Serializable // Comparable<BlockCoords>
 	{
 		return "[x=" + x + ", y=" + y + ", z=" + z + "]";
 	}
-	
-	
-//
-//	@Override
-//	public int compareTo(BlockCoords other)
-//	{
-//		int distanceThis = getDistanceTo(origin);
-//		int distanceOther = other.getDistanceTo(origin);
-//		
-//		int result = Integer.compare(distanceThis, distanceOther);
-//		
-//		return result;
-//	}
 }

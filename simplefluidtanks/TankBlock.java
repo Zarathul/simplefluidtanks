@@ -7,12 +7,14 @@ import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+/**
+ * Represents a tank in the mods multiblock structure.
+ */
 public class TankBlock extends BlockContainer
 {
 	public TankBlock(int blockId)
@@ -79,6 +81,7 @@ public class TankBlock extends BlockContainer
 	@Override
 	public boolean isBlockSolidOnSide(World world, int x, int y, int z, ForgeDirection side)
 	{
+		// allow torches, ladders etc. to be places on every side
 		return true;
 	}
 
@@ -136,6 +139,17 @@ public class TankBlock extends BlockContainer
 		return new TankBlockEntity();
 	}
 	
+	/**
+	 * Tells the {@link ValveBlockEntity} this {@link TankBlock} is connected to, to unlink all its connected {@link TankBlock}s.
+	 * @param world
+	 * The world.
+	 * @param x
+	 * The {@link TankBlock}s x coordinate.
+	 * @param y
+	 * The {@link TankBlock}s y coordinate.
+	 * @param z
+	 * The {@link TankBlock}s z coordinate.
+	 */
 	private void resetTanks(World world, int x, int y, int z)
 	{
 		if (!world.isRemote)

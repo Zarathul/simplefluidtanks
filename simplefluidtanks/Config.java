@@ -3,6 +3,9 @@ package simplefluidtanks;
 import net.minecraftforge.common.Configuration;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
+/**
+ * Loads settings from config file.
+ */
 public final class Config
 {
 	public static final void load(FMLPreInitializationEvent event)

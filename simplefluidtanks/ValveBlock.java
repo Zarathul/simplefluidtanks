@@ -21,6 +21,9 @@ import net.minecraftforge.fluids.FluidStack;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+/**
+ * Represents a valve in the mods multiblock structure.
+ */
 public class ValveBlock extends BlockContainer
 {
 	public ValveBlock(int blockId)
@@ -86,7 +89,7 @@ public class ValveBlock extends BlockContainer
 	{
 		super.onBlockPlacedBy(world, x, y, z, player, items);
 		
-        int l = MathHelper.floor_double((double)(player.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
+        int l = MathHelper.floor_double(player.rotationYaw * 4.0F / 360.0F + 0.5D) & 3;
         int direction;
         
         switch (l)
@@ -143,6 +146,7 @@ public class ValveBlock extends BlockContainer
 			
 			if (equippedItemStack != null)
 			{
+				// only react to registered fluid containers
 				if (FluidContainerRegistry.isContainer(equippedItemStack))
 				{
 					handleContainerClick(world, x, y, z, player, equippedItemStack);
@@ -184,8 +188,8 @@ public class ValveBlock extends BlockContainer
 		
 		if (valveEntity != null)
 		{
-			float capacity = (float)valveEntity.getCapacity();
-			float fluidAmount = (float)valveEntity.getFluidAmount();
+			float capacity = valveEntity.getCapacity();
+			float fluidAmount = valveEntity.getFluidAmount();
 			int signalStrength = ((int)Math.floor((fluidAmount / capacity)  * 14.0f)) + ((fluidAmount > 0) ? 1 : 0);
 			
 			return signalStrength;
@@ -194,6 +198,21 @@ public class ValveBlock extends BlockContainer
 		return 0;
 	}
 
+	/**
+	 * Handles items used on the {@link ValveBlock}. Currently only buckets (empty and filled) are supported,
+	 * @param world
+	 * The world.
+	 * @param x
+	 * The {@link ValveBlock}s x-coordinate.
+	 * @param y
+	 * The {@link ValveBlock}s y-coordinate.
+	 * @param z
+	 * The {@link ValveBlock}s z-coordinate.
+	 * @param player
+	 * The player using the item.
+	 * @param equippedItemStack
+	 * The item(stack) used on the {@link ValveBlock}.
+	 */
 	private void handleContainerClick(World world, int x, int y, int z, EntityPlayer player, ItemStack equippedItemStack)
 	{
 		ValveBlockEntity valveEntity = Utils.getTileEntityAt(world, ValveBlockEntity.class, x, y, z);
@@ -215,6 +234,23 @@ public class ValveBlock extends BlockContainer
 		}
 	}
 
+	/**
+	 * Fills an empty bucket with the liquid contained in the multiblock tank.
+	 * @param world
+	 * The world.
+	 * @param x
+	 * The {@link ValveBlock}s x-coordinate.
+	 * @param y
+	 * The {@link ValveBlock}s y-coordinate.
+	 * @param z
+	 * The {@link ValveBlock}s z-coordinate.
+	 * @param player
+	 * The player using the bucket.
+	 * @param equippedItemStack
+	 * The {@link ItemStack} that contains the bucket.
+	 * @param valveEntity
+	 * The affected {@link ValveBlock}s {@link TileEntity} ({@link ValveBlockEntity}).
+	 */
 	private void fillBucketFromTank(World world, int x, int y, int z, EntityPlayer player, ItemStack equippedItemStack, ValveBlockEntity valveEntity)
 	{
 		// fill empty bucket with liquid from the tank if it has stored enough
@@ -228,7 +264,7 @@ public class ValveBlock extends BlockContainer
 				// add filled bucket to player inventory or drop it to the ground if the inventory is full
 	            if (!player.inventory.addItemStackToInventory(filledBucket))
 	            {
-	                world.spawnEntityInWorld(new EntityItem(world, (double)x + 0.5D, (double)y + 1.5D, (double)z + 0.5D, filledBucket));
+	                world.spawnEntityInWorld(new EntityItem(world, x + 0.5D, y + 1.5D, z + 0.5D, filledBucket));
 	            }
 	            else if (player instanceof EntityPlayerMP)
 	            {
@@ -243,6 +279,15 @@ public class ValveBlock extends BlockContainer
 		}
 	}
 	
+	/**
+	 * Drains the contents of a bucket into the multiblock tank.
+	 * @param valveEntity
+	 * The affected {@link ValveBlock}s {@link TileEntity} ({@link ValveBlockEntity}).
+	 * @param player
+	 * The player using the bucket.
+	 * @param equippedItemStack
+	 * The {@link ItemStack} that contains the bucket.
+	 */
 	private void drainBucketIntoTank(ValveBlockEntity valveEntity, EntityPlayer player, ItemStack equippedItemStack)
 	{
 		// fill the liquid from the bucket into the tank
@@ -261,6 +306,17 @@ public class ValveBlock extends BlockContainer
 		}
 	}
 	
+	/**
+	 * Resets aka. disconnects all connected {@link TankBlock}s. 
+	 * @param world
+	 * The world.
+	 * @param x
+	 * The {@link ValveBlock}s x-coordinate.
+	 * @param y
+	 * The {@link ValveBlock}s y-coordinate.
+	 * @param z
+	 * The {@link ValveBlock}s z-coordinate.
+	 */
 	private void resetTanks(World world, int x, int y, int z)
 	{
 		if (!world.isRemote)

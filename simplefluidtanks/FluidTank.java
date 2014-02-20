@@ -7,22 +7,53 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidTank;
 
+/**
+ * Custom implementation of the {@link IFluidTank} interface.
+ */
 public class FluidTank implements IFluidTank
 {
+    /**
+     * The contained fluid.
+     */
     protected FluidStack fluid;
+    
+    /**
+     * The tanks capacity.
+     */
     protected int capacity;
 
+    /**
+     * Creates a new instance with the supplied capacity.
+     * @param capacity
+     * The capacity of the tank.
+     */
     public FluidTank(int capacity)
     {
         this(null, capacity);
     }
 
+    /**
+     * Creates a new instance with the supplied capacity and fluid.
+     * @param stack
+     * The fluid the tank should be initially filled with.
+     * @param capacity
+     * The capacity of the tank.
+     */
     public FluidTank(FluidStack stack, int capacity)
     {
         setCapacity(capacity);
         setFluid(stack);
     }
 
+    /**
+     * Creates a new instance with the supplied capacity, fluid type and amount.
+     * @param fluid
+     * The type of fluid initially contained in the tank.
+     * @param amount
+     * The initial amount of the contained fluid.
+     * @param capacity
+     * The capacity of the tank.
+     */
     public FluidTank(Fluid fluid, int amount, int capacity)
     {
         this(new FluidStack(fluid, amount), capacity);
@@ -57,6 +88,12 @@ public class FluidTank implements IFluidTank
     	return nbt;
     }
 
+    /**
+     * Sets the type and amount of fluid contained in the tank.
+     * @param fluid
+     * The fluid that should be contained in the tank.<br>
+     * Note that the amount will be limited to the tanks capacity.
+     */
     public void setFluid(FluidStack fluid)
     {
         // limit the stored fluid to the specified capacity
@@ -68,17 +105,33 @@ public class FluidTank implements IFluidTank
         this.fluid = fluid;
     }
 
+    /**
+     * Sets the capacity of the tank.
+     * @param capacity
+     * The capacity the tank should have.<br>
+     * Values smaller than 0 are ignored.
+     */
     public void setCapacity(int capacity)
     {
     	// negative capacity makes no sense
         this.capacity = (capacity >= 0) ? capacity : 0;
     }
     
+    /**
+     * Gets the remaining capacity of the tank.
+     * @return
+     * The remaining amount of fluid the tank can taken in until it is full.
+     */
     public int getRemainingCapacity()
     {
     	return getCapacity() - getFluidAmount();
     }
     
+    /**
+     * Checks if the tank is full.
+     * @return
+     * <code>true</code> if the tank is full, otherwise <code>false</code>.
+     */
     public boolean isFull()
     {
     	return getRemainingCapacity() == 0;

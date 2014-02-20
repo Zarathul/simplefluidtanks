@@ -1,6 +1,9 @@
 package simplefluidtanks;
 
 
+/**
+ * Supplies helper methods to get texture indexes for connected {@link TankBlock}s.
+ */
 public final class ConnectedTexturesHelper
 {
 	public static int getPositiveXTexture(boolean[] connections)

@@ -19,6 +19,7 @@ public class ClientProxy extends CommonProxy
 	{
 		super.init(event);
 		
+		// create and register custom renderers
 		SimpleFluidTanks.tankBlockRenderer = new TankBlockRenderer();
 		SimpleFluidTanks.tankItemRenderer = new TankItemRenderer();
 		

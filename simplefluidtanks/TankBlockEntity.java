@@ -11,14 +11,35 @@ import net.minecraft.tileentity.TileEntity;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+/**
+ * Holds {@link TileEntity} data for {@link TankBlock}s,
+ */
 public class TankBlockEntity extends TileEntity
 {
+	/**
+	 * The filling level of the tank in percent.
+	 */
 	private int fillPercentage;
+	
+	/**
+	 * Indicates if the {@link TankBlock} is part of a multiblock tank aka. connected to a {@link ValveBlock}.
+	 */
 	private boolean isPartOfTank;
+	
+	/**
+	 * The coordinates of the {@link ValveBlock} the {@link TankBlock} is connected to.
+	 */
 	private int[] valveCoords;
+	
+	/**
+	 * The ids of the textures to use when rendering.
+	 */
 	private int[] textureIds;
 	private boolean[] connections;
 	
+	/**
+	 * Default constructor.
+	 */
 	public TankBlockEntity()
 	{
 		fillPercentage = 0;
@@ -92,6 +113,13 @@ public class TankBlockEntity extends TileEntity
 		return isPartOfTank && valveCoords != null && valveCoords.length >= 3;
 	}
 	
+	/**
+	 * Gets the {@link ValveBlock}s {@link TileEntity} the {@link TankBlock} is linked to.
+	 * @return
+	 * The valves {@link TileEntity}<br>
+	 * or<br>
+	 * <code>null</code> if the {@link TankBlock} is not linked to a {@link ValveBlock}.
+	 */
 	public ValveBlockEntity getValve()
 	{
 		if (isPartOfTank())
@@ -102,6 +130,13 @@ public class TankBlockEntity extends TileEntity
 		return null;
 	}
 	
+	/**
+	 * Links the {@link TankBlock} to a {@link ValveBlock}.
+	 * @param coords
+	 * The coordinates of the {@link ValveBlock}.
+	 * @return
+	 * <code>true</code> if linking succeeded, otherwise <code>false</code>.
+	 */
 	public boolean setValve(int ... coords)
 	{
 		if (isPartOfTank() || coords == null || coords.length < 3)
@@ -123,6 +158,9 @@ public class TankBlockEntity extends TileEntity
 		return false;
 	}
 	
+	/**
+	 * Updates the {@link TankBlock}s textures.
+	 */
 	public void updateTextures()
 	{
 		determineTextureIds();
@@ -130,27 +168,23 @@ public class TankBlockEntity extends TileEntity
 		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 	}
 
+	/**
+	 * Gets the {@link TankBlock}s current filling level in percent.
+	 * @return
+	 * The {@link TankBlock}s filling level in percent.
+	 */
 	public int getFillPercentage()
 	{
 		return fillPercentage;
 	}
 	
-	public boolean[] getConnections()
-	{
-		// I'd rather return an read-only collection here. For performance reasons I'll leave it as is for now (the array is used for rendering and a list would introduce unnecessary overhead).
-		return connections;
-	}
-	
-	public int getTexture(int side)
-	{
-		if (side < 0 || side > 5)
-		{
-			return -1;
-		}
-		
-		return textureIds[side];
-	}
-	
+	/**
+	 * Gets the {@link TankBlock}s current filling level.
+	 * @param percentage
+	 * The percentage the {@link TankBlock}s filling level should be set to.
+	 * @return
+	 * <code>true</code> if the filling level was updated, otherwise <code>false</code>.
+	 */
 	public boolean setFillPercentage(int percentage)
 	{
 		if (percentage < 0 || percentage > 100 || percentage == fillPercentage)
@@ -165,6 +199,44 @@ public class TankBlockEntity extends TileEntity
 		return true;
 	}
 	
+	/**
+	 * Gets info on which side of the {@link TankBlock} is connected to another {@link TankBlock} of the same multiblock structure.
+	 * @return
+	 * A boolean array whose elements are <code>true</code> for sides with a {@link TankBlock} of the same multiblock structure.<br>
+	 * Vanilla side values are used as indexes.
+	 * @see Direction
+	 */
+	public boolean[] getConnections()
+	{
+		// I'd rather return an read-only collection here. For performance reasons I'll leave it as is for now (the array is used for rendering and a list would introduce unnecessary overhead).
+		return connections;
+	}
+	
+	/**
+	 * Gets the texture for the specified side of the {@link TankBlock}.
+	 * @param side
+	 * The side to get the texture for.
+	 * @return
+	 * The texture id or <code>-1</code> if the <code>side</code> argument was invalid.
+	 * @see Direction
+	 */
+	public int getTexture(int side)
+	{
+		if (side < 0 || side > 5)
+		{
+			return -1;
+		}
+		
+		return textureIds[side];
+	}
+	
+	/**
+	 * Checks if the {@link TankBlock} is connected to a {@link ValveBlock} at the specified coordinates.
+	 * @param coords
+	 * The {@link ValveBlock}s coordinates.
+	 * @return
+	 * <code>true</code> if the {@link TankBlock} is connected to a {@link ValveBlock} at the specified coordinates, otherwise <code>false</code>.
+	 */
 	public boolean hasValveAt(int ... coords)
 	{
 		if (!isPartOfTank() || coords == null || coords.length < 3)
@@ -175,6 +247,9 @@ public class TankBlockEntity extends TileEntity
 		return Arrays.equals(coords, valveCoords);
 	}
 	
+	/**
+	 * Gets the texture ids for the different sides of the {@link TankBlock}.
+	 */
 	private void determineTextureIds()
 	{
 		determineConnections();
@@ -187,6 +262,9 @@ public class TankBlockEntity extends TileEntity
 		textureIds[Direction.ZNEG] = ConnectedTexturesHelper.getNegativeZTexture(connections);
 	}
 	
+	/**
+	 * Builds an array that holds information on which side of the {@link TankBlock} is connected to another {@link TankBlock} of the same multiblock structure.
+	 */
 	private void determineConnections()
 	{
 		connections[Direction.XPOS] = shouldConnectTo(xCoord + 1, yCoord, zCoord);	// X+
@@ -197,6 +275,17 @@ public class TankBlockEntity extends TileEntity
 		connections[Direction.ZNEG] = shouldConnectTo(xCoord, yCoord, zCoord - 1);	// Z-
 	}
 	
+	/**
+	 * Checks if the {@link TankBlock}s textures should connect to a {@link TankBlock} at the specified coordinates.
+	 * @param x
+	 * The x-coordinate of the connection candidate.
+	 * @param y
+	 * The y-coordinate of the connection candidate.
+	 * @param z
+	 * The z-coordinate of the connection candidate.
+	 * @return
+	 * <code>true</code> if the textures should connect, otherwise <code>false</code>.
+	 */
 	private boolean shouldConnectTo(int x, int y, int z)
 	{
 		// only check adjacent blocks
@@ -218,6 +307,9 @@ public class TankBlockEntity extends TileEntity
 		return false;
 	}
 
+	/**
+	 * Resets aka. disconnects the {@link TankBlock} from a multiblock tank.
+	 */
 	public void reset()
 	{
 		isPartOfTank = false;

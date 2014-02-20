@@ -3,10 +3,24 @@ package simplefluidtanks;
 import java.util.EnumSet;
 
 
+/**
+ * Describes which blocks should be included in a search.
+ */
 public enum BlockSearchMode
 {
+	/**
+	 * Include blocks in Y+ direction.
+	 */
 	Above,
+	
+	/**
+	 * Include blocks in Y- direction.
+	 */
 	Below,
+	
+	/**
+	 * Include blocks in X+,X-,Z+,Z- directions.
+	 */
 	SameLevel;
 	
 	public static final EnumSet<BlockSearchMode> All = EnumSet.allOf(BlockSearchMode.class);

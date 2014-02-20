@@ -3,20 +3,48 @@ package simplefluidtanks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.Icon;
 
+/**
+ * Wraps minecrafts {@link TessellationManager} to make it a tiny bit more user friendly.
+ */
 public final class TessellationManager
 {
-	// The max block width, height and depth is 1f, so we divide it by 16f to get 16 "subblocks" in every dimension 
+	/**
+	 * The max block width, height and depth is 1f, so we divide it by 16f to get 16 "subblocks" in every dimension
+	 */
 	public static final double pixel = 1d / 16d;
 	
+	/**
+	 * Reference to the {@link Tessellator} instance.
+	 */
 	private static final Tessellator tr = Tessellator.instance;
-	private static double xBaseCoord;
-	private static double yBaseCoord;
-	private static double zBaseCoord;
 	
+	/**
+	 * The base x-coordinate all methods are working on.
+	 */
+	private static double xBaseCoord = 0.0;
+	
+	/**
+	 * The base y-coordinate all methods are working on.
+	 */
+	private static double yBaseCoord = 0.0;
+	
+	/**
+	 * The base z-coordinate all methods are working on.
+	 */
+	private static double zBaseCoord = 0.0;
+	
+	/**
+	 * Default constructor.
+	 */
 	private TessellationManager()
 	{
 	}
 	
+	/**
+	 * Set the base coordinates.
+	 * @param coords
+	 * The new base coordinates. 
+	 */
 	public static void setBaseCoords(double ... coords)
 	{
 		if (coords != null && coords.length >= 3)
@@ -27,11 +55,49 @@ public final class TessellationManager
 		}
 	}
 	
+	/**
+	 * Renders a cube without the inside and the offsets scaled by <code>TessellationManager.pixel</code>.
+	 * @param xOffset
+	 * The offset on the x-axis.
+	 * @param yOffset
+	 * The offset on the y-axis.
+	 * @param zOffset
+	 * The offset on the z-axis.
+	 * @param width
+	 * The cubes width.
+	 * @param height
+	 * The cubes height.
+	 * @param depth
+	 * The cubes depth.
+	 * @param icon
+	 * The cubes texture.
+	 */
 	public static void renderCube(double xOffset, double yOffset, double zOffset, double width, double height, double depth, Icon icon)
 	{
 		renderCube(xOffset, yOffset, zOffset, width, height, depth, icon, false, pixel);
 	}
 	
+	/**
+	 * Renders a cube.
+	 * @param xOffset
+	 * The offset on the x-axis.
+	 * @param yOffset
+	 * The offset on the y-axis.
+	 * @param zOffset
+	 * The offset on the z-axis.
+	 * @param width
+	 * The cubes width.
+	 * @param height
+	 * The cubes height.
+	 * @param depth
+	 * The cubes depth.
+	 * @param icon
+	 * The cubes texture.
+	 * @param renderInside
+	 * <code>true</code> if the inside should be rendered, otherwise <code>false</code>.
+	 * @param scale
+	 * The factor that is used to scale the offsets.
+	 */
 	public static void renderCube(double xOffset, double yOffset, double zOffset, double width, double height, double depth, Icon icon, boolean renderInside, double scale)
 	{
 		renderPositiveXFace(xOffset + width, yOffset, zOffset, height, depth, icon, scale);
@@ -58,16 +124,73 @@ public final class TessellationManager
 		}
 	}
 	
+	/**
+	 * Renders the face on the positive x side with offsets scaled by <code>TessellationManager.pixel</code>
+	 * @param xOffset
+	 * The offset on the x-axis.
+	 * @param yOffset
+	 * The offset on the y-axis.
+	 * @param zOffset
+	 * The offset on the z-axis.
+	 * @param height
+	 * The faces height.
+	 * @param depth
+	 * The faces depth.
+	 * @param icon
+	 * The faces texture.
+	 */
 	public static void renderPositiveXFace(double xOffset, double yOffset, double zOffset, double height, double depth, Icon icon)
 	{
 		renderPositiveXFace(xOffset, yOffset, zOffset, height, depth, 0, 0, 0, 0, icon, pixel);
 	}
 	
+	/**
+	 * Renders the face on the positive x side.
+	 * @param xOffset
+	 * The offset on the x-axis.
+	 * @param yOffset
+	 * The offset on the y-axis.
+	 * @param zOffset
+	 * The offset on the z-axis.
+	 * @param height
+	 * The faces height.
+	 * @param depth
+	 * The faces depth.
+	 * @param icon
+	 * The faces texture.
+	 * @param scale
+	 * The value to scale the offsets with.
+	 */
 	public static void renderPositiveXFace(double xOffset, double yOffset, double zOffset, double height, double depth, Icon icon, double scale)
 	{
 		renderPositiveXFace(xOffset, yOffset, zOffset, height, depth, 0, 0, 0, 0, icon, scale);
 	}
 	
+	/**
+	 * Renders the face on the positive x side with optional texture offsets.
+	 * @param xOffset
+	 * The offset on the x-axis.
+	 * @param yOffset
+	 * The offset on the y-axis.
+	 * @param zOffset
+	 * The offset on the z-axis.
+	 * @param height
+	 * The faces height.
+	 * @param depth
+	 * The faces depth.
+	 * @param uOffset
+	 * The texture offset on the u-axis.
+	 * @param vOffset
+	 * The texture offset on the v-axis.
+	 * @param uMaxOffset
+	 * The max texture offset on the u-axis.
+	 * @param vMaxOffset
+	 * The max texture offset on the v-axis.
+	 * @param icon
+	 * The faces texture.
+	 * @param scale
+	 * The value to scale the offsets with.
+	 */
 	public static void renderPositiveXFace(double xOffset, double yOffset, double zOffset, double height, double depth, double uOffset, double vOffset, double uMaxOffset, double vMaxOffset, Icon icon, double scale)
 	{
 		tr.setNormal(1f, 0f, 0f);
@@ -105,16 +228,73 @@ public final class TessellationManager
 		tr.addVertexWithUV(x, yBl, zBl, minU, maxV);
 	}
 	
+	/**
+	 * Renders the face on the negative x side with offsets scaled by <code>TessellationManager.pixel</code>
+	 * @param xOffset
+	 * The offset on the x-axis.
+	 * @param yOffset
+	 * The offset on the y-axis.
+	 * @param zOffset
+	 * The offset on the z-axis.
+	 * @param height
+	 * The faces height.
+	 * @param depth
+	 * The faces depth.
+	 * @param icon
+	 * The faces texture.
+	 */
 	public static void renderNegativeXFace(double xOffset, double yOffset, double zOffset, double height, double depth, Icon icon)
 	{
 		renderNegativeXFace(xOffset, yOffset, zOffset, height, depth, 0, 0, 0, 0, icon, pixel);
 	}
 	
+	/**
+	 * Renders the face on the negative x side.
+	 * @param xOffset
+	 * The offset on the x-axis.
+	 * @param yOffset
+	 * The offset on the y-axis.
+	 * @param zOffset
+	 * The offset on the z-axis.
+	 * @param height
+	 * The faces height.
+	 * @param depth
+	 * The faces depth.
+	 * @param icon
+	 * The faces texture.
+	 * @param scale
+	 * The value to scale the offsets with.
+	 */
 	public static void renderNegativeXFace(double xOffset, double yOffset, double zOffset, double height, double depth, Icon icon, double scale)
 	{
 		renderNegativeXFace(xOffset, yOffset, zOffset, height, depth, 0, 0, 0, 0, icon, scale);
 	}
 	
+	/**
+	 * Renders the face on the negative x side with optional texture offsets.
+	 * @param xOffset
+	 * The offset on the x-axis.
+	 * @param yOffset
+	 * The offset on the y-axis.
+	 * @param zOffset
+	 * The offset on the z-axis.
+	 * @param height
+	 * The faces height.
+	 * @param depth
+	 * The faces depth.
+	 * @param uOffset
+	 * The texture offset on the u-axis.
+	 * @param vOffset
+	 * The texture offset on the v-axis.
+	 * @param uMaxOffset
+	 * The max texture offset on the u-axis.
+	 * @param vMaxOffset
+	 * The max texture offset on the v-axis.
+	 * @param icon
+	 * The faces texture.
+	 * @param scale
+	 * The value to scale the offsets with.
+	 */
 	public static void renderNegativeXFace(double xOffset, double yOffset, double zOffset, double height, double depth, double uOffset, double vOffset, double uMaxOffset, double vMaxOffset, Icon icon, double scale)
 	{
 		tr.setNormal(-1f, 0f, 0f);
@@ -152,16 +332,73 @@ public final class TessellationManager
 		tr.addVertexWithUV(x, yTl, zTl, minU, minV);
 	}
 	
+	/**
+	 * Renders the face on the positive y side with offsets scaled by <code>TessellationManager.pixel</code>
+	 * @param xOffset
+	 * The offset on the x-axis.
+	 * @param yOffset
+	 * The offset on the y-axis.
+	 * @param zOffset
+	 * The offset on the z-axis.
+	 * @param width
+	 * The faces width.
+	 * @param depth
+	 * The faces depth.
+	 * @param icon
+	 * The faces texture.
+	 */
 	public static void renderPositiveYFace(double xOffset, double yOffset, double zOffset, double width, double depth, Icon icon)
 	{
 		renderPositiveYFace(xOffset, yOffset, zOffset, width, depth, 0, 0, 0, 0, icon, pixel);
 	}
 	
+	/**
+	 * Renders the face on the positive y side.
+	 * @param xOffset
+	 * The offset on the x-axis.
+	 * @param yOffset
+	 * The offset on the y-axis.
+	 * @param zOffset
+	 * The offset on the z-axis.
+	 * @param width
+	 * The faces width.
+	 * @param depth
+	 * The faces depth.
+	 * @param icon
+	 * The faces texture.
+	 * @param scale
+	 * The value to scale the offsets with.
+	 */
 	public static void renderPositiveYFace(double xOffset, double yOffset, double zOffset, double width, double depth, Icon icon, double scale)
 	{
 		renderPositiveYFace(xOffset, yOffset, zOffset, width, depth, 0, 0, 0, 0, icon, scale);
 	}
 	
+	/**
+	 * Renders the face on the positive y side with optional texture offsets.
+	 * @param xOffset
+	 * The offset on the x-axis.
+	 * @param yOffset
+	 * The offset on the y-axis.
+	 * @param zOffset
+	 * The offset on the z-axis.
+	 * @param width
+	 * The faces width.
+	 * @param depth
+	 * The faces depth.
+	 * @param uOffset
+	 * The texture offset on the u-axis.
+	 * @param vOffset
+	 * The texture offset on the v-axis.
+	 * @param uMaxOffset
+	 * The max texture offset on the u-axis.
+	 * @param vMaxOffset
+	 * The max texture offset on the v-axis.
+	 * @param icon
+	 * The faces texture.
+	 * @param scale
+	 * The value to scale the offsets with.
+	 */
 	public static void renderPositiveYFace(double xOffset, double yOffset, double zOffset, double width, double depth, double uOffset, double vOffset, double uMaxOffset, double vMaxOffset, Icon icon, double scale)
 	{
 		tr.setNormal(0f, 1f, 0f);
@@ -199,16 +436,73 @@ public final class TessellationManager
 		tr.addVertexWithUV(xBl, y, zBl, minU, maxV);
 	}
 	
+	/**
+	 * Renders the face on the negative y side with offsets scaled by <code>TessellationManager.pixel</code>
+	 * @param xOffset
+	 * The offset on the x-axis.
+	 * @param yOffset
+	 * The offset on the y-axis.
+	 * @param zOffset
+	 * The offset on the z-axis.
+	 * @param width
+	 * The faces width.
+	 * @param depth
+	 * The faces depth.
+	 * @param icon
+	 * The faces texture.
+	 */
 	public static void renderNegativeYFace(double xOffset, double yOffset, double zOffset, double width, double depth, Icon icon)
 	{
 		renderNegativeYFace(xOffset, yOffset, zOffset, width, depth, 0, 0, 0, 0, icon, pixel);
 	}
 	
+	/**
+	 * Renders the face on the negative y side.
+	 * @param xOffset
+	 * The offset on the x-axis.
+	 * @param yOffset
+	 * The offset on the y-axis.
+	 * @param zOffset
+	 * The offset on the z-axis.
+	 * @param width
+	 * The faces width.
+	 * @param depth
+	 * The faces depth.
+	 * @param icon
+	 * The faces texture.
+	 * @param scale
+	 * The value to scale the offsets with.
+	 */
 	public static void renderNegativeYFace(double xOffset, double yOffset, double zOffset, double width, double depth, Icon icon, double scale)
 	{
 		renderNegativeYFace(xOffset, yOffset, zOffset, width, depth, 0, 0, 0, 0, icon, scale);
 	}
 	
+	/**
+	 * Renders the face on the negative y side with optional texture offsets.
+	 * @param xOffset
+	 * The offset on the x-axis.
+	 * @param yOffset
+	 * The offset on the y-axis.
+	 * @param zOffset
+	 * The offset on the z-axis.
+	 * @param width
+	 * The faces width.
+	 * @param depth
+	 * The faces depth.
+	 * @param uOffset
+	 * The texture offset on the u-axis.
+	 * @param vOffset
+	 * The texture offset on the v-axis.
+	 * @param uMaxOffset
+	 * The max texture offset on the u-axis.
+	 * @param vMaxOffset
+	 * The max texture offset on the v-axis.
+	 * @param icon
+	 * The faces texture.
+	 * @param scale
+	 * The value to scale the offsets with.
+	 */
 	public static void renderNegativeYFace(double xOffset, double yOffset, double zOffset, double width, double depth, double uOffset, double vOffset, double uMaxOffset, double vMaxOffset, Icon icon, double scale)
 	{
 		tr.setNormal(0f, -1f, 0f);
@@ -246,16 +540,73 @@ public final class TessellationManager
 		tr.addVertexWithUV(xBr, y, zBr, maxU, maxV);
 	}
 	
+	/**
+	 * Renders the face on the positive z side with offsets scaled by <code>TessellationManager.pixel</code>
+	 * @param xOffset
+	 * The offset on the x-axis.
+	 * @param yOffset
+	 * The offset on the y-axis.
+	 * @param zOffset
+	 * The offset on the z-axis.
+	 * @param width
+	 * The faces width.
+	 * @param height
+	 * The faces height.
+	 * @param icon
+	 * The faces texture.
+	 */
 	public static void renderPositiveZFace(double xOffset, double yOffset, double zOffset, double width, double height, Icon icon)
 	{
 		renderPositiveZFace(xOffset, yOffset, zOffset, width, height, 0, 0, 0, 0, icon, pixel);
 	}
 	
+	/**
+	 * Renders the face on the positive z side.
+	 * @param xOffset
+	 * The offset on the x-axis.
+	 * @param yOffset
+	 * The offset on the y-axis.
+	 * @param zOffset
+	 * The offset on the z-axis.
+	 * @param width
+	 * The faces width.
+	 * @param height
+	 * The faces height.
+	 * @param icon
+	 * The faces texture.
+	 * @param scale
+	 * The value to scale the offsets with.
+	 */
 	public static void renderPositiveZFace(double xOffset, double yOffset, double zOffset, double width, double height, Icon icon, double scale)
 	{
 		renderPositiveZFace(xOffset, yOffset, zOffset, width, height, 0, 0, 0, 0, icon, scale);
 	}
 	
+	/**
+	 * Renders the face on the positive z side with optional texture offsets.
+	 * @param xOffset
+	 * The offset on the x-axis.
+	 * @param yOffset
+	 * The offset on the y-axis.
+	 * @param zOffset
+	 * The offset on the z-axis.
+	 * @param width
+	 * The faces width.
+	 * @param height
+	 * The faces height.
+	 * @param uOffset
+	 * The texture offset on the u-axis.
+	 * @param vOffset
+	 * The texture offset on the v-axis.
+	 * @param uMaxOffset
+	 * The max texture offset on the u-axis.
+	 * @param vMaxOffset
+	 * The max texture offset on the v-axis.
+	 * @param icon
+	 * The faces texture.
+	 * @param scale
+	 * The value to scale the offsets with.
+	 */
 	public static void renderPositiveZFace(double xOffset, double yOffset, double zOffset, double width, double height, double uOffset, double vOffset, double uMaxOffset, double vMaxOffset, Icon icon, double scale)
 	{
 		tr.setNormal(0f, 0f, 1f);
@@ -293,16 +644,73 @@ public final class TessellationManager
 		tr.addVertexWithUV(xTl, yTl, z, minU, minV);
 	}
 	
+	/**
+	 * Renders the face on the negative z side with offsets scaled by <code>TessellationManager.pixel</code>
+	 * @param xOffset
+	 * The offset on the x-axis.
+	 * @param yOffset
+	 * The offset on the y-axis.
+	 * @param zOffset
+	 * The offset on the z-axis.
+	 * @param width
+	 * The faces width.
+	 * @param height
+	 * The faces height.
+	 * @param icon
+	 * The faces texture.
+	 */
 	public static void renderNegativeZFace(double xOffset, double yOffset, double zOffset, double width, double height, Icon icon)
 	{
 		renderNegativeZFace(xOffset, yOffset, zOffset, width, height, 0, 0, 0, 0, icon, pixel);
 	}
 	
+	/**
+	 * Renders the face on the negative z side.
+	 * @param xOffset
+	 * The offset on the x-axis.
+	 * @param yOffset
+	 * The offset on the y-axis.
+	 * @param zOffset
+	 * The offset on the z-axis.
+	 * @param width
+	 * The faces width.
+	 * @param height
+	 * The faces height.
+	 * @param icon
+	 * The faces texture.
+	 * @param scale
+	 * The value to scale the offsets with.
+	 */
 	public static void renderNegativeZFace(double xOffset, double yOffset, double zOffset, double width, double height, Icon icon, double scale)
 	{
 		renderNegativeZFace(xOffset, yOffset, zOffset, width, height, 0, 0, 0, 0, icon, scale);
 	}
 	
+	/**
+	 * Renders the face on the negative z side with optional texture offsets.
+	 * @param xOffset
+	 * The offset on the x-axis.
+	 * @param yOffset
+	 * The offset on the y-axis.
+	 * @param zOffset
+	 * The offset on the z-axis.
+	 * @param width
+	 * The faces width.
+	 * @param height
+	 * The faces height.
+	 * @param uOffset
+	 * The texture offset on the u-axis.
+	 * @param vOffset
+	 * The texture offset on the v-axis.
+	 * @param uMaxOffset
+	 * The max texture offset on the u-axis.
+	 * @param vMaxOffset
+	 * The max texture offset on the v-axis.
+	 * @param icon
+	 * The faces texture.
+	 * @param scale
+	 * The value to scale the offsets with.
+	 */
 	public static void renderNegativeZFace(double xOffset, double yOffset, double zOffset, double width, double height, double uOffset, double vOffset, double uMaxOffset, double vMaxOffset, Icon icon, double scale)
 	{
 		tr.setNormal(0f, 0f, -1f);

@@ -32,16 +32,44 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.primitives.Ints;
 
+/**
+ * Holds {@link TileEntity} data for {@link ValveBlock}s,
+ */
 public class ValveBlockEntity extends TileEntity implements IFluidHandler
 {
+	/**
+	 * The {@link FluidTank} that actually holds all the fluid in the multiblock tank.
+	 */
 	private FluidTank internalTank;
+	
+	/**
+	 * The fill priorities of all connected {@link TankBlock}s.
+	 */
 	private Multimap<Integer, BlockCoords> tankPriorities;
+	
+	/**
+	 * A bitmask storing which sides of the {@link ValveBlock} face connected {@link TankBlock}s.
+	 * @see Direction
+	 */
 	private byte tankFacingSides;
 	
+	
+	/**
+	 * A temporary mapping of connected {@link TankBlock}s to their priorities.<br>
+	 * <b>Caution:</b> This will be empty after reloading the {@link ValveBlock} from nbt data.
+	 */
 	private HashMap<BlockCoords, Integer> tankToPriorityMappings;
+	
+	/**
+	 * A temporary set of all connected {@link TankBlock}s.<br>
+	 * <b>Caution:</b> This will be empty after reloading the {@link ValveBlock} from nbt data.
+	 */
 	private HashSet<BlockCoords> tanks;
 	
-	private BasicAStar aStar = new BasicAStar();
+	/**
+	 * Holds a {@link BasicAStar} instance while the tank finding algorithms are running. 
+	 */
+	private BasicAStar aStar;
 	
 	public ValveBlockEntity()
 	{
@@ -125,6 +153,19 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
     	return drain(from, null, drainAmount, doDrain);
     }
     
+    /**
+     * Drains fluid from the multiblock tank.
+     * @param from
+     * The direction the fluid is drained from.
+     * @param drainFluid
+     * The fluid type and amount to drain.
+     * @param drainAmount
+     * The amount of fluid to drain.
+     * @param doDrain
+     * Indicates whether the draining should be simulated or not.
+     * @return
+     * The type and amount of fluid drained.
+     */
     private FluidStack drain(ForgeDirection from, FluidStack drainFluid, int drainAmount, boolean doDrain)
     {
     	if (!worldObj.isRemote && hasTanks())
@@ -196,26 +237,50 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		worldObj.markBlockForRenderUpdate(xCoord, yCoord, zCoord);
 	}
 
+	/**
+	 * Gets the multiblock tanks capacity.
+	 * @return
+	 * The capacity in millibuckets.
+	 */
 	public int getCapacity()
 	{
 		return internalTank.getCapacity();
 	}
 	
+	/**
+	 * Gets the amount of fluid in the multiblock tank.
+	 * @return
+	 * The amount of fluid in millibuckets.
+	 */
 	public int getFluidAmount()
 	{
 		return internalTank.getFluidAmount();
 	}
 	
+	/**
+	 * Gets the fluid in the multiblock tank.
+	 * @return
+	 * A {@link FluidStack} representing the fluid in the multiblock tank.
+	 */
 	public FluidStack getFluid()
 	{
 		return internalTank.getFluid();
 	}
 	
+	/**
+	 * Gets the bitmask storing which sides of the {@link ValveBlock} face connected {@link TankBlock}s.
+	 * @return
+	 * A bitmask.
+	 * @see Direction
+	 */
 	public int getTankFacingSides()
 	{
 		return tankFacingSides;
 	}
 	
+	/**
+	 * Updates the bitmask storing which sides of the {@link ValveBlock} face connected {@link TankBlock}s.
+	 */
 	public void updateTankFacingSides()
 	{
 		int sides = 0;
@@ -255,6 +320,14 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		tankFacingSides = (byte)sides;
 	}
 	
+	/**
+	 * Checks if the specified side of the {@link ValveBlock} is facing a connected {@link TankBlock}.
+	 * @param side
+	 * The side to check.
+	 * @return
+	 * <code>true</code> if the {@link ValveBlock} is facing a connected {@link TankBlock} on the specified side, otherwise <code>false</code>.
+	 * @see Direction
+	 */
 	public boolean isFacingTank(int side)
 	{
 		if (side >= Byte.MIN_VALUE && side <= Byte.MAX_VALUE)
@@ -267,11 +340,20 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		return false;
 	}
 	
+	/**
+	 * Checks if the {@link ValveBlock} has connected {@link TankBlock}s.
+	 * @return
+	 * <code>true</code> if the {@link ValveBlock} has connected {@link TankBlock}s, otherwise <code>false</code>.
+	 */
 	public boolean hasTanks()
 	{
+		// the ValveBlock also counts as a tank in the multiblock structure, that is why it is " > 1" instead of " > 0"
 		return tankPriorities.size() > 1;
 	}
 	
+	/**
+	 * Finds all {@link TankBlock}s connected to the {@link ValveBlock} and computes their filling priorities.
+	 */
 	public void findTanks()
 	{
 		generateTankList();
@@ -297,11 +379,15 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 			t.updateTextures();
 		}
 		
+		// calculate and set the internal tanks capacity, note the " + 1" is needed because the ValveBlock itself is considered a tank with storage capacity
 		internalTank.setCapacity((tankEntities.size() + 1) * SimpleFluidTanks.bucketsPerTank * FluidContainerRegistry.BUCKET_VOLUME);
 		
 		worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);
 	}
 
+	/**
+	 * Resets aka. disconnects all connected {@link TankBlock}s and resets the {@link ValveBlock} itself (capacity etc.).
+	 */
 	public void resetTanks()
 	{
 		for (BlockCoords tankCoords : tankPriorities.values())
@@ -325,6 +411,13 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
     	worldObj.func_96440_m(xCoord, yCoord, zCoord, SimpleFluidTanks.valveBlock.blockID);
 	}
 	
+	/**
+	 * Serializes the <code>tankPriorities</code> Multimap into a byte array.
+	 * @return
+	 * The {@link TankBlock} priorities in serialized form.
+	 * @throws IOException
+	 * Occurs if the serialization fails.
+	 */
 	private byte[] tanksAsByteArray() throws IOException
 	{
 		byte[] data = null;
@@ -346,6 +439,15 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		return ((data != null) ? data : new byte[0]);
 	}
 	
+	/**
+	 * Deserializes the <code>tankPriorities</code> Multimap from a byte array.
+	 * @param data
+	 * The {@link TankBlock} priorities in serialized form.
+	 * @throws IOException
+	 * Occurs if the deserialization fails.
+	 * @throws ClassNotFoundException
+	 * Occurs if the deserialization fails.
+	 */
 	private void tanksFromByteArray(byte[] data) throws IOException, ClassNotFoundException
 	{
 		ByteArrayInputStream byteStream = null;
@@ -363,12 +465,15 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		}
 	}
 	
+	/**
+	 * Distributes the fluid currently held by the multiblock tank over the connected {@link TankBlock}s.
+	 */
 	private void distributeFluidToTanks()
 	{
 		// returned amount is mb(milli buckets)
 		int amountToDistribute = internalTank.getFluidAmount();
 		
-		if (amountToDistribute == 0 || amountToDistribute == internalTank.getCapacity())
+		if (amountToDistribute == 0 || amountToDistribute == internalTank.getCapacity()) // there is nothing to distribute or the internal tank is full (no fill percentage calculations needed)
 		{
 			int percentage = (amountToDistribute == 0) ? 0 : 100;
 			
@@ -384,11 +489,13 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		}
 		else
 		{
+			// get the fill priorities and sort them low to high
 			int[] priorities = Ints.toArray(tankPriorities.keySet());
 			Arrays.sort(priorities);
 			
 			Collection<BlockCoords> tanksToFill = null;
 			
+			// for each priority get all the TankBlocks and fill them evenly
 			for (int i = 0; i < priorities.length; i++)
 			{
 				tanksToFill = tankPriorities.get(priorities[i]);
@@ -406,7 +513,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 					}
 				}
 				
-				amountToDistribute -= Math.ceil((double)capacity * (double)fillPercentage / 100d);
+				amountToDistribute -= Math.ceil(capacity * fillPercentage / 100d);
 				
 				if (amountToDistribute <= 0)
 				{
@@ -416,6 +523,9 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		}
 	}
 	
+	/**
+	 * Generates a list of the coordinates of all {@link TankBlock}s connected to the {@link ValveBlock}. This list is temporary and contains no priority information.
+	 */
 	private void generateTankList()
 	{
 		tanks = new HashSet<BlockCoords>();
@@ -427,6 +537,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		
 		lastFoundTanks.add(startCoords);
 		
+		// simple flood find algorithm: get all adjacent blocks to the current one -> repeat for all blocks found until there is nothing left to find
 		do
 		{
 			for (BlockCoords tank : lastFoundTanks)
@@ -451,8 +562,12 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		while (lastFoundTanks.size() > 0);
 	}
 	
+	/**
+	 * Computes the fill priorities for all connected {@link TankBlock}s.
+	 */
 	private void computeFillPriorities()
 	{
+		aStar = new BasicAStar();
 		tankToPriorityMappings = new HashMap<BlockCoords, Integer>();
 		
 		BlockCoords startTank = new BlockCoords(xCoord, yCoord, zCoord);
@@ -470,6 +585,16 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		
 		int priority = 0;
 		int adjustedPriority;
+		
+		/* Prioritization uses two separate algorithms:
+		 * - find the closest, lowest tanks that are connected to the current one (algorithm 1)
+		 * - if the closest, lowest tank is the same as the current tank, find all tanks on the same height level that are reachable 
+		 *   without ever going over the current tanks height level and set them all to the current priority if the current priority
+		 *   is a higher value (= actual lower priority) than the priority the tanks already have (algorithm 2)
+		 * - otherwise just set the closest, lowest tanks priority to the current priority value
+		 * - in both cases add the tanks directly above the found tanks to the list of tanks that are processed in the next iteration
+		 * The order of execution is important. Tanks found by the algorithm 1 have to be prioritized before tanks found by algorithm 2.
+		 */
 		
 		do
 		{
@@ -530,8 +655,18 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 			newTanks.clear();
 		}
 		while (!currentTanks.isEmpty());
+		
+		aStar = null;
 	}
 	
+	/**
+	 * Gets a list of all tanks on the same height level that are reachable from one another without ever stepping 
+	 * over the initial tanks height level.
+	 * @param startTank
+	 * The tanks to start from.
+	 * @return
+	 * An {@link ArrayList} of found tanks.
+	 */
 	private ArrayList<BlockCoords> getTanksOnSameHeight(BlockCoords startTank)
 	{
 		if (startTank == null)
@@ -547,6 +682,11 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		ArrayList<BlockCoords> newTanks = new ArrayList<BlockCoords>();
 		ArrayList<BlockCoords> lastFoundTanks = new ArrayList<BlockCoords>();
 		lastFoundTanks.add(startTank);
+		
+		/*
+		 * Algorithm 2:
+		 * - uses basically the same flood find algorithm generateTankList() uses, only modification is the height level limit
+		 */
 		
 		do
 		{
@@ -580,6 +720,13 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		return foundTanks;
 	}
 	
+	/**
+	 * Sets or updates the priority for the {@link TankBlock} at the specified coordinates.
+	 * @param tank
+	 * The {@link TankBlock} coordinates.
+	 * @param priority
+	 * The {@link TankBlock}s priority.
+	 */
 	private void setTankPriority(BlockCoords tank, int priority)
 	{
 		if (tank == null || priority < 0)
@@ -600,6 +747,13 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		}
 	}
 	
+	/**
+	 * Gets the closes, lowest tanks reachable from the specified tank.
+	 * @param startTank
+	 * The {@link TankBlock}s coordinates to start from.
+	 * @return
+	 * An {@link ArrayList} of found tanks.
+	 */
 	private ArrayList<BlockCoords> getClosestLowestTanks(BlockCoords startTank)
 	{
 		if (startTank == null)
@@ -615,6 +769,15 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		ArrayList<BlockCoords> foundTanks = new ArrayList<BlockCoords>();
 		ArrayList<BlockCoords> currentTanks = new ArrayList<BlockCoords>();
 		currentTanks.add(startTank);
+		
+		/*
+		 * Algorithm 1:
+		 * - find all the tanks connected to the current one without going up or down, this is called a segment
+		 * - find all tanks in the segment that have tanks below them
+		 * - pick the ones that are closest to the current tank
+		 * - repeat until no tanks are found below the tanks in the current segment
+		 * - the tanks in the segments of the last iterations are the ones we are looking for
+		 */
 		
 		do
 		{
@@ -659,6 +822,17 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		return foundTanks;
 	}
 	
+	/**
+	 * Gets the {@link BlockCoords} from the specified {@link Collection} that are closest to the specified destination.
+	 * @param passableBlocks
+	 * The {@link BlockCoords} the search algorithm is allowed to move through.
+	 * @param sources
+	 * The coordinates of the source blocks whose distances to the destination is measured.
+	 * @param destination
+	 * The coordinates of the destination block.
+	 * @return
+	 * An {@link ArrayList} of the found {@link BlockCoords}.
+	 */
 	private ArrayList<BlockCoords> getClosestTanks(Collection<BlockCoords> passableBlocks, Collection<BlockCoords> sources, BlockCoords destination)
 	{
 		if (tanks == null || tanks.isEmpty() || sources == null || sources.isEmpty() || destination == null)
@@ -670,6 +844,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		Multimap<Integer, BlockCoords> distanceToTanksMappings = ArrayListMultimap.create();
 		int distance;
 		
+		// simply use my crappy A-Star implementation to measure the distances
 		aStar.setPassableBlocks(tanks);
 		
 		for (BlockCoords source : sources)
@@ -684,6 +859,14 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		return new ArrayList<BlockCoords>(distanceToTanksMappings.get(distances.get(0)));
 	}
 	
+	/**
+	 * Gets all tanks in the same segment as the specified one. Segment means all tanks 
+	 * connected without going up or down.
+	 * @param firstTank
+	 * The coordinates of the tank to start from.
+	 * @return
+	 * An {@link ArrayList} of the found {@link BlockCoords}.
+	 */
 	private ArrayList<BlockCoords> getTanksInSegment(BlockCoords firstTank)
 	{
 		if (firstTank == null)
@@ -724,36 +907,98 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		return new ArrayList<BlockCoords>(tanksInSegment);
 	}
 	
+	/**
+	 * Gets all adjacent tanks to the specified one (uses temporary tank list).
+	 * @param block
+	 * The coordinates of the tank to get the adjacent tanks for.
+	 * @return
+	 * An {@link ArrayList} of the found {@link BlockCoords}.
+	 */
 	private ArrayList<BlockCoords> getAdjacentTanks(BlockCoords block)
 	{
 		return getOrFindAdjacentTanks(block, null, BlockSearchMode.All, true);
 	}
 	
+	/**
+	 * Gets adjacent tanks to the specified one (uses temporary tank list).
+	 * @param block
+	 * The coordinates of the tank to get the adjacent tanks for.
+	 * @param mode
+	 * Specifies which adjacent tanks should be included.
+	 * @return
+	 * An {@link ArrayList} of the found {@link BlockCoords}.
+	 */
 	private ArrayList<BlockCoords> getAdjacentTanks(BlockCoords block, BlockSearchMode mode)
 	{
 		return getOrFindAdjacentTanks(block, mode, null, true);
 	}
 	
+	/**
+	 * Gets adjacent tanks to the specified one (uses temporary tank list).
+	 * @param block
+	 * The coordinates of the tank to get the adjacent tanks for.
+	 * @param searchFlags
+	 * Specifies which adjacent tanks should be included.
+	 * @return
+	 * An {@link ArrayList} of the found {@link BlockCoords}.
+	 */
 	private ArrayList<BlockCoords> getAdjacentTanks(BlockCoords block, EnumSet<BlockSearchMode> searchFlags)
 	{
 		return getOrFindAdjacentTanks(block, null, searchFlags, true);
 	}
 	
+	/**
+	 * Gets all adjacent tanks to the specified one (uses {@link TileEntity} data to determine which blocks are valid tanks).
+	 * @param block
+	 * The coordinates of the tank to get the adjacent tanks for.
+	 * @return
+	 * An {@link ArrayList} of the found {@link BlockCoords}.
+	 */
 	private ArrayList<BlockCoords> findAdjacentTanks(BlockCoords block)
 	{
 		return getOrFindAdjacentTanks(block, null, BlockSearchMode.All, false);
 	}
 	
+	/**
+	 * Gets all adjacent tanks to the specified one (uses {@link TileEntity} data to determine which blocks are valid tanks).
+	 * @param block
+	 * The coordinates of the tank to get the adjacent tanks for.
+	 * @param mode
+	 * Specifies which adjacent tanks should be included.
+	 * @return
+	 * An {@link ArrayList} of the found {@link BlockCoords}.
+	 */
 	private ArrayList<BlockCoords> findAdjacentTanks(BlockCoords block, BlockSearchMode mode)
 	{
 		return getOrFindAdjacentTanks(block, mode, null, false);
 	}
 	
+	/**
+	 * Gets all adjacent tanks to the specified one (uses {@link TileEntity} data to determine which blocks are valid tanks).
+	 * @param block
+	 * The coordinates of the tank to get the adjacent tanks for.
+	 * @param searchFlags
+	 * Specifies which adjacent tanks should be included.
+	 * @return
+	 * An {@link ArrayList} of the found {@link BlockCoords}.
+	 */
 	private ArrayList<BlockCoords> findAdjacentTanks(BlockCoords block, EnumSet<BlockSearchMode> searchFlags)
 	{
 		return getOrFindAdjacentTanks(block, null, searchFlags, false);
 	}
 	
+	/**
+	 * Gets all adjacent tanks to the specified one.
+	 * @param block
+	 * The coordinates of the tank to get the adjacent tanks for.
+	 * @param mode
+	 * Specifies which adjacent tanks should be included.
+	 * @param searchFlags
+	 * Specifies which adjacent tanks should be included.
+	 * @param useTankList
+	 * Specifies if the temporary tank list or {@link TileEntity} should be used to determine which blocks are valid tanks.
+	 * @return
+	 */
 	private ArrayList<BlockCoords> getOrFindAdjacentTanks(BlockCoords block, BlockSearchMode mode, EnumSet<BlockSearchMode> searchFlags, boolean useTankList)
 	{
 		if (block == null || (mode == null && searchFlags == null))
@@ -808,6 +1053,13 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		return foundTanks;
 	}
 	
+	/**
+	 * Checks if the block at the specified location is a {@link TankBlock} that is not connected to a {@link ValveBlock}.
+	 * @param block
+	 * The coordinates of the block to check.
+	 * @return
+	 * <code>true</code> if the specified block is a valid {@link TankBlock}, otherwise <code>false</code>.
+	 */
 	private boolean isUnlinkedTank(BlockCoords block)
 	{
 		if (block == null)
@@ -833,6 +1085,13 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		return false;
 	}
 	
+	/**
+	 * Checks if the specified coordinates are contained in the temporary tank list.
+	 * @param block
+	 * The coordinates of the block to check.
+	 * @return
+	 * <code>true</code> if the specified coordinates were found, otherwise <code>false</code>.
+	 */
 	private boolean isInTankList(BlockCoords block)
 	{
 		if (block == null)
@@ -852,6 +1111,13 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		return false;
 	}
 	
+	/**
+	 * Checks if the tank at the specified coordinates has a priority associated with it.
+	 * @param tank
+	 * The coordinates of the block to check.
+	 * @return
+	 * <code>true</code> if the tank has a priority, otherwise <code>false</code>.
+	 */
 	private boolean hasPriority(BlockCoords tank)
 	{
 		return tankPriorities.containsValue(tank);

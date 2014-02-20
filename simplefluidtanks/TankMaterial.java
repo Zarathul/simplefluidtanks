@@ -3,6 +3,9 @@ package simplefluidtanks;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 
+/**
+ * The material for {@link TankBlock}s.
+ */
 public class TankMaterial extends Material
 {
 	public static final Material tankMaterial = new TankMaterial();

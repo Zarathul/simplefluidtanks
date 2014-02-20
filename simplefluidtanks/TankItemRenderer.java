@@ -7,6 +7,9 @@ import net.minecraftforge.client.IItemRenderer;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+/**
+ * Custom renderer for {@link TankItem}.
+ */
 @SideOnly(Side.CLIENT)
 public class TankItemRenderer implements IItemRenderer
 {

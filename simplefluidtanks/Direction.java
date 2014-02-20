@@ -4,12 +4,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.common.collect.ImmutableList;
-
-import scala.Immutable;
-
 import net.minecraftforge.common.ForgeDirection;
 
+import com.google.common.collect.ImmutableList;
+
+/**
+ * Provides constants and helper methods to convert vanilla directions into {@link ForgeDirection}s and vice versa.
+ */
 public class Direction
 {
 	public static final int XPOS = 5;

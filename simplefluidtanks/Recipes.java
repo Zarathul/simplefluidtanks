@@ -5,11 +5,14 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import cpw.mods.fml.common.registry.GameRegistry;
 
+/**
+ * Provides helper methods to register the mods recipes.
+ */
 public final class Recipes
 {
 	public static final void registerRecipes()
 	{
-		// use thermal expansions hardened glass for the recipes if TE is installed otherwise use normal glass
+		// use thermal expansions hardened glass for the recipes if TE is installed, otherwise use normal glass
 		Block teHardenedGlass = GameRegistry.findBlock(SimpleFluidTanks.REGISTRY_THERMAL_EXPANSION_MOD_ID, SimpleFluidTanks.REGISTRY_THERMAL_EXPANSION_HARDENED_GLASS);
 		Block glassRecipeComponent = Block.glass;
 		int outputAmount = 2;
