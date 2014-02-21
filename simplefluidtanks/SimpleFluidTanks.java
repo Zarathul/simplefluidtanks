@@ -12,7 +12,7 @@ import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-@Mod(modid = SimpleFluidTanks.MOD_ID, name = "SimpleFluidTanks", version = "1.0.0.1")
+@Mod(modid = SimpleFluidTanks.MOD_ID, name = "SimpleFluidTanks", version = "1.0.0.2")
 @NetworkMod(serverSideRequired = true, clientSideRequired = true)
 public class SimpleFluidTanks
 {
