@@ -29,7 +29,7 @@ public class TankBlockEntity extends TileEntity
 	/**
 	 * The coordinates of the {@link ValveBlock} the {@link TankBlock} is connected to.
 	 */
-	private int[] valveCoords;
+	private BlockCoords valveCoords;
 	
 	/**
 	 * The ids of the textures to use when rendering.
@@ -44,7 +44,7 @@ public class TankBlockEntity extends TileEntity
 	{
 		fillPercentage = 0;
 		isPartOfTank = false;
-		valveCoords = new int[] { 0, 0, 0 };
+		valveCoords = null;
 		textureIds = new int[] { 0, 0, 0, 0, 0, 0 };
 		connections = new boolean[6];
 	}
@@ -65,7 +65,13 @@ public class TankBlockEntity extends TileEntity
 		
 		fillPercentage = tag.getByte("FillPercentage");
 		isPartOfTank = tag.getBoolean("isPartOfTank");
-		valveCoords = tag.getIntArray("ValveCoords");
+		
+		if (isPartOfTank)
+		{
+			int[] valveCoordsArray = tag.getIntArray("ValveCoords");
+			valveCoords = new BlockCoords(valveCoordsArray[0], valveCoordsArray[1], valveCoordsArray[2]);
+		}
+		
 		textureIds = tag.getIntArray("TextureIds");
 		connections = new boolean[6];
 		connections[Direction.XPOS] = tag.getBoolean("X+");
@@ -83,7 +89,13 @@ public class TankBlockEntity extends TileEntity
 		
 		tag.setByte("FillPercentage", (byte)fillPercentage);
 		tag.setBoolean("isPartOfTank", isPartOfTank);
-		tag.setIntArray("ValveCoords", valveCoords);
+		
+		if (valveCoords != null)
+		{
+			int[] valveCoordsArray = new int[] { valveCoords.x, valveCoords.y, valveCoords.z };
+			tag.setIntArray("ValveCoords", valveCoordsArray);
+		}
+		
 		tag.setIntArray("TextureIds", textureIds);
 		tag.setBoolean("X+", connections[Direction.XPOS]);
 		tag.setBoolean("X-", connections[Direction.XNEG]);
@@ -108,9 +120,14 @@ public class TankBlockEntity extends TileEntity
 		readFromNBT(packet.data);
 	}
 	
+	/**
+	 * Checks if the {@link TankBlock} is part of a multiblock tank.
+	 * @return
+	 * <code>true</code> if the {@link TankBlock} is part of a multiblock tank, otherwise false.
+	 */
 	public boolean isPartOfTank()
 	{
-		return isPartOfTank && valveCoords != null && valveCoords.length >= 3;
+		return isPartOfTank && valveCoords != null;
 	}
 	
 	/**
@@ -137,9 +154,9 @@ public class TankBlockEntity extends TileEntity
 	 * @return
 	 * <code>true</code> if linking succeeded, otherwise <code>false</code>.
 	 */
-	public boolean setValve(int ... coords)
+	public boolean setValve(BlockCoords coords)
 	{
-		if (isPartOfTank() || coords == null || coords.length < 3)
+		if (isPartOfTank() || coords == null)
 		{
 			return false;
 		}
@@ -237,14 +254,14 @@ public class TankBlockEntity extends TileEntity
 	 * @return
 	 * <code>true</code> if the {@link TankBlock} is connected to a {@link ValveBlock} at the specified coordinates, otherwise <code>false</code>.
 	 */
-	public boolean hasValveAt(int ... coords)
+	public boolean hasValveAt(BlockCoords coords)
 	{
-		if (!isPartOfTank() || coords == null || coords.length < 3)
+		if (!isPartOfTank() || coords == null)
 		{
 			return false;
 		}
 		
-		return Arrays.equals(coords, valveCoords);
+		return coords.equals(valveCoords);
 	}
 	
 	/**
@@ -314,7 +331,7 @@ public class TankBlockEntity extends TileEntity
 	{
 		isPartOfTank = false;
 		fillPercentage = 0;
-		Arrays.fill(valveCoords, 0);
+		valveCoords = null;
 		Arrays.fill(textureIds, 0);
 		Arrays.fill(connections, false);
 		

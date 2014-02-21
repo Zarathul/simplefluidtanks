@@ -31,6 +31,8 @@ public class SimpleFluidTanks
 	public static TankBlockRenderer tankBlockRenderer;
 	@SideOnly(Side.CLIENT)
 	public static TankItemRenderer tankItemRenderer;
+	@SideOnly(Side.CLIENT)
+	public static ValveItemRenderer valveItemRenderer;
 	
 	public static int tankBlockId;
 	public static int valveBlockId;
@@ -45,18 +47,16 @@ public class SimpleFluidTanks
 	// - registry
 	public static final String REGISTRY_TANKBLOCK_NAME = "tankBlock";
 	public static final String REGISTRY_TANKBLOCK_KEY = MOD_ID + REGISTRY_TANKBLOCK_NAME;
-	public static final String REGISTRY_TANKBLOCK_READABLE_NAME = "Fluid Tank";
 	
 	public static final String REGISTRY_TANKITEM_NAME = "tankItem";
-	public static final String REGISTRY_TANKITEM_KEY = MOD_ID + REGISTRY_TANKITEM_NAME;
-	public static final String REGISTRY_TANKITEM_READABLE_NAME = "Fluid Tank";
 	
 	public static final String REGISTRY_TANKBLOCK_ENTITY_NAME = "tankBlockEntity";
 	public static final String REGISTRY_TANKBLOCK_ENTITY_KEY = MOD_ID + REGISTRY_TANKBLOCK_ENTITY_NAME;
 	
 	public static final String REGISTRY_VALVEBLOCK_NAME = "valveBlock";
 	public static final String REGISTRY_VALVEBLOCK_KEY = MOD_ID + REGISTRY_VALVEBLOCK_NAME;
-	public static final String REGISTRY_VALVEBLOCK_READABLE_NAME = "Fluid Tank Valve";
+	
+	public static final String REGISTRY_VALVEITEM_NAME = "valveItem";
 	
 	public static final String REGISTRY_VALVEBLOCK_ENTITY_NAME = "valveBlockEntity";
 	public static final String REGISTRY_VALVEBLOCK_ENTITY_KEY = MOD_ID + REGISTRY_VALVEBLOCK_ENTITY_NAME;

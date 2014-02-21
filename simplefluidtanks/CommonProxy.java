@@ -43,7 +43,7 @@ public class CommonProxy
 		
 		// create and register ValveBlock
 		SimpleFluidTanks.valveBlock = new ValveBlock(SimpleFluidTanks.valveBlockId);
-		GameRegistry.registerBlock(SimpleFluidTanks.valveBlock, SimpleFluidTanks.REGISTRY_VALVEBLOCK_KEY);
+		GameRegistry.registerBlock(SimpleFluidTanks.valveBlock, ValveItem.class, SimpleFluidTanks.REGISTRY_VALVEBLOCK_KEY);
 		
 		// register TileEntities
 		GameRegistry.registerTileEntity(ValveBlockEntity.class, SimpleFluidTanks.REGISTRY_VALVEBLOCK_ENTITY_KEY);

@@ -22,9 +22,11 @@ public class ClientProxy extends CommonProxy
 		// create and register custom renderers
 		SimpleFluidTanks.tankBlockRenderer = new TankBlockRenderer();
 		SimpleFluidTanks.tankItemRenderer = new TankItemRenderer();
+		SimpleFluidTanks.valveItemRenderer = new ValveItemRenderer();
 		
 		ClientRegistry.bindTileEntitySpecialRenderer(TankBlockEntity.class, SimpleFluidTanks.tankBlockRenderer);
 		MinecraftForgeClient.registerItemRenderer(SimpleFluidTanks.tankBlock.blockID, SimpleFluidTanks.tankItemRenderer);
+		MinecraftForgeClient.registerItemRenderer(SimpleFluidTanks.valveBlock.blockID, SimpleFluidTanks.valveItemRenderer);
 	}
 	
 	@Override

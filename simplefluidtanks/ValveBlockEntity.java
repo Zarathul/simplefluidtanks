@@ -368,7 +368,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 			
 			if (tankEntity != null)
 			{
-				tankEntity.setValve(xCoord, yCoord, zCoord);
+				tankEntity.setValve(new BlockCoords(xCoord, yCoord, zCoord));
 				tankEntities.add(tankEntity);
 			}
 		}

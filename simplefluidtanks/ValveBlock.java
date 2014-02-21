@@ -89,7 +89,7 @@ public class ValveBlock extends BlockContainer
 	{
 		super.onBlockPlacedBy(world, x, y, z, player, items);
 		
-        int l = MathHelper.floor_double(player.rotationYaw * 4.0F / 360.0F + 0.5D) & 3;
+		int l = MathHelper.floor_double(player.rotationYaw * 4.0F / 360.0F + 0.5D) & 3;
         int direction;
         
         switch (l)
