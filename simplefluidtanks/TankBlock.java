@@ -2,20 +2,25 @@ package simplefluidtanks;
 
 import java.util.Random;
 
+import buildcraft.api.tools.IToolWrench;
+
 import net.minecraft.block.BlockContainer;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.fluids.FluidContainerRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 /**
  * Represents a tank in the mods multiblock structure.
  */
-public class TankBlock extends BlockContainer
+public class TankBlock extends WrenchableBlock
 {
 	public TankBlock(int blockId)
 	{
@@ -24,6 +29,7 @@ public class TankBlock extends BlockContainer
 		setUnlocalizedName(SimpleFluidTanks.REGISTRY_TANKBLOCK_NAME);
 		setCreativeTab(SimpleFluidTanks.creativeTab);
 		setHardness(2.5f);
+		setResistance(1000f);
 		setStepSound(soundGlassFootstep);
 	}
 
@@ -75,7 +81,7 @@ public class TankBlock extends BlockContainer
 	@Override
 	public void onBlockPreDestroy(World world, int x, int y, int z, int par5)
 	{
-		resetTanks(world, x, y, z);
+		reset(world, x, y, z);
 	}
 	
 	@Override
@@ -89,18 +95,6 @@ public class TankBlock extends BlockContainer
 	public int quantityDropped(Random par1Random)
 	{
 		return 1;
-	}
-
-	@Override
-	public float getExplosionResistance(Entity par1Entity)
-	{
-		return 1000f;
-	}
-
-	@Override
-	public float getExplosionResistance(Entity par1Entity, World world, int x, int y, int z, double explosionX, double explosionY, double explosionZ)
-	{
-		return 1000f;
 	}
 
 	@Override
@@ -138,6 +132,20 @@ public class TankBlock extends BlockContainer
 	{
 		return new TankBlockEntity();
 	}
+
+	@Override
+	protected void handleToolWrenchClick(World world, int x, int y, int z, EntityPlayer player, ItemStack equippedItemStack)
+	{
+		if (player.isSneaking())
+		{
+			// dismantle aka. instantly destroy the valve and drop the appropriate item, unlinking all connected tanks in the process
+			reset(world, x, y, z);
+			// blockId 0 is air
+			world.setBlock(x, y, z, 0);
+			// last two parameters are metadata and fortune
+			dropBlockAsItem(world, x, y, z, 0, 0);
+		}
+	}
 	
 	/**
 	 * Tells the {@link ValveBlockEntity} this {@link TankBlock} is connected to, to unlink all its connected {@link TankBlock}s.
@@ -150,7 +158,7 @@ public class TankBlock extends BlockContainer
 	 * @param z
 	 * The {@link TankBlock}s z coordinate.
 	 */
-	private void resetTanks(World world, int x, int y, int z)
+	private void reset(World world, int x, int y, int z)
 	{
 		if (!world.isRemote)
 		{
@@ -162,7 +170,7 @@ public class TankBlock extends BlockContainer
 				
 				if (valveEntity != null)
 				{
-					valveEntity.resetTanks();
+					valveEntity.reset();
 				}
 			}
 		}

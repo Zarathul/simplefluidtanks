@@ -2,7 +2,13 @@ package simplefluidtanks;
 
 import java.util.Random;
 
+import org.lwjgl.input.Keyboard;
+
+import buildcraft.api.tools.IToolWrench;
+
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
+import net.minecraft.block.BlockLadder;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -24,7 +30,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 /**
  * Represents a valve in the mods multiblock structure.
  */
-public class ValveBlock extends BlockContainer
+public class ValveBlock extends WrenchableBlock
 {
 	public ValveBlock(int blockId)
 	{
@@ -33,6 +39,7 @@ public class ValveBlock extends BlockContainer
 		setUnlocalizedName(SimpleFluidTanks.REGISTRY_VALVEBLOCK_NAME);
 		setCreativeTab(SimpleFluidTanks.creativeTab);
 		setHardness(2.5f);
+		setResistance(1000f);
 		setStepSound(soundMetalFootstep);
 	}
 
@@ -134,20 +141,21 @@ public class ValveBlock extends BlockContainer
 	@Override
 	public void onBlockPreDestroy(World world, int x, int y, int z, int par5)
 	{
-		resetTanks(world, x, y, z);
+		reset(world, x, y, z);
 	}
 
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int par6, float par7, float par8, float par9)
 	{
+		super.onBlockActivated(world, x, y, z, player, par6, par7, par8, par9);
+		
 		if (!world.isRemote)
 		{
 			ItemStack equippedItemStack = player.getCurrentEquippedItem();
 			
 			if (equippedItemStack != null)
 			{
-				// only react to registered fluid containers
-				if (FluidContainerRegistry.isContainer(equippedItemStack))
+				if (FluidContainerRegistry.isContainer(equippedItemStack))	// react to registered fluid containers
 				{
 					handleContainerClick(world, x, y, z, player, equippedItemStack);
 				}
@@ -155,18 +163,6 @@ public class ValveBlock extends BlockContainer
 		}
 		
 		return true;
-	}
-	
-	@Override
-	public float getExplosionResistance(Entity par1Entity)
-	{
-		return 1000f;
-	}
-
-	@Override
-	public float getExplosionResistance(Entity par1Entity, World world, int x, int y, int z, double explosionX, double explosionY, double explosionZ)
-	{
-		return 1000f;
 	}
 
 	@Override
@@ -197,9 +193,29 @@ public class ValveBlock extends BlockContainer
 		
 		return 0;
 	}
+	
+	@Override
+	protected void handleToolWrenchClick(World world, int x, int y, int z, EntityPlayer player, ItemStack equippedItemStack)
+	{
+		if (player.isSneaking())
+		{
+			// dismantle aka. instantly destroy the valve and drop the appropriate item, unlinking all connected tanks in the process
+			reset(world, x, y, z);
+			// blockId 0 is air
+			world.setBlock(x, y, z, 0);
+			// last two parameters are metadata and fortune
+			dropBlockAsItem(world, x, y, z, 0, 0);
+		}
+		else
+		{
+			// rebuild the tank
+			ValveBlockEntity entity = Utils.getTileEntityAt(world, ValveBlockEntity.class, x, y, z);
+			entity.rebuild();
+		}
+	}
 
 	/**
-	 * Handles items used on the {@link ValveBlock}. Currently only buckets (empty and filled) are supported,
+	 * Handles fluid containers used on the {@link ValveBlock}. Currently only buckets (empty and filled) are supported,
 	 * @param world
 	 * The world.
 	 * @param x
@@ -317,7 +333,7 @@ public class ValveBlock extends BlockContainer
 	 * @param z
 	 * The {@link ValveBlock}s z-coordinate.
 	 */
-	private void resetTanks(World world, int x, int y, int z)
+	private void reset(World world, int x, int y, int z)
 	{
 		if (!world.isRemote)
 		{
@@ -325,7 +341,7 @@ public class ValveBlock extends BlockContainer
 			
 			if (valveEntity != null)
 			{
-				valveEntity.resetTanks();
+				valveEntity.reset();
 			}
 		}
 	}

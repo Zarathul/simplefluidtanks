@@ -115,6 +115,12 @@ public class FluidTank implements IFluidTank
     {
     	// negative capacity makes no sense
         this.capacity = (capacity >= 0) ? capacity : 0;
+        
+    	// limit the fluid amount to the new capacity
+        if (fluid != null)
+        {
+        	fluid.amount = Math.min(this.capacity, fluid.amount);
+        }
     }
     
     /**

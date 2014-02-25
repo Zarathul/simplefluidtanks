@@ -53,7 +53,6 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	 */
 	private byte tankFacingSides;
 	
-	
 	/**
 	 * A temporary mapping of connected {@link TankBlock}s to their priorities.<br>
 	 * <b>Caution:</b> This will be empty after reloading the {@link ValveBlock} from nbt data.
@@ -388,7 +387,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	/**
 	 * Resets aka. disconnects all connected {@link TankBlock}s and resets the {@link ValveBlock} itself (capacity etc.).
 	 */
-	public void resetTanks()
+	public void reset()
 	{
 		for (BlockCoords tankCoords : tankPriorities.values())
 		{
@@ -402,13 +401,31 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		
 		tankPriorities.clear();
 		tankFacingSides = 0;
-		internalTank.setCapacity(0);
 		internalTank.setFluid(null);
+		internalTank.setCapacity(0);
 		
 		worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);
 		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     	// triggers onNeighborTileChange on neighboring blocks, this is needed for comparators to work
     	worldObj.func_96440_m(xCoord, yCoord, zCoord, SimpleFluidTanks.valveBlock.blockID);
+	}
+	
+	/**
+	 * Re-runs the tank searching and prioritization algorithms and redistributes the fluid. This allows for additional {@link TankBlock}s to be added to the multiblock structure.
+	 */
+	public void rebuild()
+	{
+		// store the current fluid for reinsertion
+		FluidStack fluid = internalTank.getFluid();
+		
+		// find new tanks and update the valves textures
+		reset();
+		findTanks();
+		updateTankFacingSides();
+		
+		// redistribute the fluid
+		internalTank.setFluid(fluid);
+		distributeFluidToTanks();
 	}
 	
 	/**
