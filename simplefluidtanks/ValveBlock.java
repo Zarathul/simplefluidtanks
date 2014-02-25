@@ -147,8 +147,6 @@ public class ValveBlock extends WrenchableBlock
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int par6, float par7, float par8, float par9)
 	{
-		super.onBlockActivated(world, x, y, z, player, par6, par7, par8, par9);
-		
 		if (!world.isRemote)
 		{
 			ItemStack equippedItemStack = player.getCurrentEquippedItem();
@@ -158,11 +156,13 @@ public class ValveBlock extends WrenchableBlock
 				if (FluidContainerRegistry.isContainer(equippedItemStack))	// react to registered fluid containers
 				{
 					handleContainerClick(world, x, y, z, player, equippedItemStack);
+					
+					return true;
 				}
 			}
 		}
 		
-		return true;
+		return super.onBlockActivated(world, x, y, z, player, par6, par7, par8, par9);
 	}
 
 	@Override
