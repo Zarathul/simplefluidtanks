@@ -1,6 +1,14 @@
-package simplefluidtanks;
+package simplefluidtanks.tileentities;
 
 import java.util.Arrays;
+
+import simplefluidtanks.SimpleFluidTanks;
+import simplefluidtanks.blocks.TankBlock;
+import simplefluidtanks.blocks.ValveBlock;
+import simplefluidtanks.common.BlockCoords;
+import simplefluidtanks.common.Direction;
+import simplefluidtanks.common.Utils;
+import simplefluidtanks.rendering.ConnectedTexturesHelper;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;

@@ -1,5 +1,9 @@
 package simplefluidtanks;
 
+import simplefluidtanks.rendering.TankBlockRenderer;
+import simplefluidtanks.rendering.TankItemRenderer;
+import simplefluidtanks.rendering.ValveItemRenderer;
+import simplefluidtanks.tileentities.TankBlockEntity;
 import net.minecraftforge.client.MinecraftForgeClient;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.common.event.FMLInitializationEvent;

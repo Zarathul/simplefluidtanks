@@ -1,5 +1,11 @@
 package simplefluidtanks;
 
+import simplefluidtanks.blocks.TankBlock;
+import simplefluidtanks.blocks.ValveBlock;
+import simplefluidtanks.items.TankItem;
+import simplefluidtanks.items.ValveItem;
+import simplefluidtanks.tileentities.TankBlockEntity;
+import simplefluidtanks.tileentities.ValveBlockEntity;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.common.event.FMLInitializationEvent;

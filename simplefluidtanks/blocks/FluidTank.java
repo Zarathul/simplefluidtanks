@@ -1,5 +1,5 @@
 
-package simplefluidtanks;
+package simplefluidtanks.blocks;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.Fluid;

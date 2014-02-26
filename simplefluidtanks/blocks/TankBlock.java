@@ -1,7 +1,13 @@
-package simplefluidtanks;
+package simplefluidtanks.blocks;
 
 import java.util.HashSet;
 import java.util.Random;
+
+import simplefluidtanks.SimpleFluidTanks;
+import simplefluidtanks.common.BlockCoords;
+import simplefluidtanks.common.Utils;
+import simplefluidtanks.tileentities.TankBlockEntity;
+import simplefluidtanks.tileentities.ValveBlockEntity;
 
 import buildcraft.api.tools.IToolWrench;
 

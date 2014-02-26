@@ -1,4 +1,4 @@
-package simplefluidtanks;
+package simplefluidtanks.blocks;
 
 import buildcraft.api.tools.IToolWrench;
 import net.minecraft.block.BlockContainer;

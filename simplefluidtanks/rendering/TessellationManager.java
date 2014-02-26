@@ -1,4 +1,4 @@
-package simplefluidtanks;
+package simplefluidtanks.rendering;
 
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.Icon;

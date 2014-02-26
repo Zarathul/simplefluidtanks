@@ -1,8 +1,13 @@
-package simplefluidtanks;
+package simplefluidtanks.blocks;
 
 import java.util.Random;
 
 import org.lwjgl.input.Keyboard;
+
+import simplefluidtanks.SimpleFluidTanks;
+import simplefluidtanks.common.Direction;
+import simplefluidtanks.common.Utils;
+import simplefluidtanks.tileentities.ValveBlockEntity;
 
 import buildcraft.api.tools.IToolWrench;
 

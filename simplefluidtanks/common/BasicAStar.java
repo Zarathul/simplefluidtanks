@@ -1,4 +1,4 @@
-package simplefluidtanks;
+package simplefluidtanks.common;
 
 import java.util.Collection;
 import java.util.HashMap;

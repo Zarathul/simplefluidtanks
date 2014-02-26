@@ -1,4 +1,4 @@
-package simplefluidtanks;
+package simplefluidtanks.items;
 
 import java.util.List;
 
@@ -8,6 +8,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.StatCollector;
 
 import org.lwjgl.input.Keyboard;
+
+import simplefluidtanks.SimpleFluidTanks;
+import simplefluidtanks.blocks.ValveBlock;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;

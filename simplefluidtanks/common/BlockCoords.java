@@ -1,10 +1,10 @@
-package simplefluidtanks;
+package simplefluidtanks.common;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import simplefluidtanks.BasicAStar.Node;
+import simplefluidtanks.common.BasicAStar.Node;
 
 /**
  * Represents the coordinates of a block in the world.

@@ -1,4 +1,4 @@
-package simplefluidtanks;
+package simplefluidtanks.tileentities;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -15,6 +15,16 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map.Entry;
 import java.util.Set;
+
+import simplefluidtanks.SimpleFluidTanks;
+import simplefluidtanks.blocks.FluidTank;
+import simplefluidtanks.blocks.TankBlock;
+import simplefluidtanks.blocks.ValveBlock;
+import simplefluidtanks.common.BasicAStar;
+import simplefluidtanks.common.BlockCoords;
+import simplefluidtanks.common.BlockSearchMode;
+import simplefluidtanks.common.Direction;
+import simplefluidtanks.common.Utils;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.INetworkManager;

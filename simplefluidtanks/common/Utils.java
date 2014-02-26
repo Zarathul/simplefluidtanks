@@ -1,4 +1,4 @@
-package simplefluidtanks;
+package simplefluidtanks.common;
 
 import net.minecraft.launchwrapper.LogWrapper;
 import net.minecraft.tileentity.TileEntity;

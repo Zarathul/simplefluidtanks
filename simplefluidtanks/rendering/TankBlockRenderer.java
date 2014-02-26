@@ -1,5 +1,11 @@
-package simplefluidtanks;
+package simplefluidtanks.rendering;
 
+import simplefluidtanks.blocks.TankBlock;
+import simplefluidtanks.blocks.ValveBlock;
+import simplefluidtanks.common.Direction;
+import simplefluidtanks.common.Utils;
+import simplefluidtanks.tileentities.TankBlockEntity;
+import simplefluidtanks.tileentities.ValveBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;

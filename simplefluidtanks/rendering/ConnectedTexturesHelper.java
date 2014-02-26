@@ -1,4 +1,7 @@
-package simplefluidtanks;
+package simplefluidtanks.rendering;
+
+import simplefluidtanks.blocks.TankBlock;
+import simplefluidtanks.common.Direction;
 
 
 /**
