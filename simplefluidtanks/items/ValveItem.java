@@ -11,6 +11,7 @@ import org.lwjgl.input.Keyboard;
 
 import simplefluidtanks.SimpleFluidTanks;
 import simplefluidtanks.blocks.ValveBlock;
+import simplefluidtanks.common.LocalizationHelper;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -20,12 +21,8 @@ import cpw.mods.fml.relauncher.SideOnly;
  */
 public class ValveItem extends ItemBlock
 {
-	private static final String toolTipAddonKey = "item." + SimpleFluidTanks.REGISTRY_VALVEITEM_NAME + ".toolTip";
-	private static final String toolTipAddonDetails1Key = "item." + SimpleFluidTanks.REGISTRY_VALVEITEM_NAME + ".toolTipDetails1";
-	private static final String toolTipAddonDetails2Key = "item." + SimpleFluidTanks.REGISTRY_VALVEITEM_NAME + ".toolTipDetails2";
-	private static final String toolTipAddonDetails3Key = "item." + SimpleFluidTanks.REGISTRY_VALVEITEM_NAME + ".toolTipDetails3";
-	private static final String toolTipAddonDetails4Key = "item." + SimpleFluidTanks.REGISTRY_VALVEITEM_NAME + ".toolTipDetails4";
-	private static final String toolTipAddonDetails5Key = "item." + SimpleFluidTanks.REGISTRY_VALVEITEM_NAME + ".toolTipDetails5";
+	private static final String toolTipKey = "item." + SimpleFluidTanks.REGISTRY_VALVEITEM_NAME + ".toolTip";
+	private static final String toolTipDetailsKey = "item." + SimpleFluidTanks.REGISTRY_VALVEITEM_NAME + ".toolTipDetails";
 	
 	public ValveItem(int id)
 	{
@@ -48,15 +45,11 @@ public class ValveItem extends ItemBlock
 	{
 		if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
 		{
-			list.add(StatCollector.translateToLocal(toolTipAddonDetails1Key));
-			list.add(StatCollector.translateToLocal(toolTipAddonDetails2Key));
-			list.add(StatCollector.translateToLocal(toolTipAddonDetails3Key));
-			list.add(StatCollector.translateToLocal(toolTipAddonDetails4Key));
-			list.add(StatCollector.translateToLocal(toolTipAddonDetails5Key));
+			list.addAll(LocalizationHelper.multiLineTranslateToLocal(toolTipDetailsKey));
 		}
 		else
 		{
-			list.add(StatCollector.translateToLocal(toolTipAddonKey));
+			list.add(StatCollector.translateToLocal(toolTipKey));
 		}
 	}
 }

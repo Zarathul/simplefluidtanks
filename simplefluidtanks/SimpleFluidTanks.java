@@ -67,7 +67,8 @@ public class SimpleFluidTanks
 	public static final String REGISTRY_VALVEBLOCK_ENTITY_KEY = MOD_ID + REGISTRY_VALVEBLOCK_ENTITY_NAME;
 	
 	public static String REGISTRY_THERMAL_EXPANSION_MOD_ID = "ThermalExpansion";
-	public static String REGISTRY_THERMAL_EXPANSION_HARDENED_GLASS = "Glass";
+	public static String REGISTRY_THERMAL_EXPANSION_HARDENED_GLASS = "glassHardened";
+	public static String REGISTRY_THERMAL_EXPANSION_BRONZE_INGOT = "ingotBronze";
 	
 	// - config settings
 	public static final int CONFIG_DEFAULT_TANKBLOCK_ID = 2529;
@@ -82,9 +83,11 @@ public class SimpleFluidTanks
 	public static final String CONFIG_BUCKETS_PER_TANK_COMMENT = "The amount of fluid that can be stored per tank (measured in buckets).";
 	public static final String CONFIG_CATEGORY_MOD_INTEROP = "mod interop";
 	public static final String CONFIG_TE_MOD_ID_KEY = "ThermalExpansionModId";
-	public static final String CONFIG_TE_MOD_ID_COMMENT = "The mod id for Thermal Expansion. This is used to include TE blocks and items in the recipes.";
+	public static final String CONFIG_TE_MOD_ID_COMMENT = "The mod id for Thermal Expansion. This is used to include TE items in the recipes.";
 	public static final String CONFIG_TE_MOD_HARDENED_GLASS_KEY = "TE_HardenedGlass";
-	public static final String CONFIG_TE_MOD_HARDENED_GLASS_COMMENT = "The name of Thermal Expansions hardened glass block.";
+	public static final String CONFIG_TE_MOD_HARDENED_GLASS_COMMENT = "The game registry key of Thermal Expansions hardened glass item.";
+	public static final String CONFIG_TE_MOD_BRONZE_INGOT_KEY = "TE_BronzeIngots";
+	public static final String CONFIG_TE_MOD_BRONZE_INGOT_COMMENT = "The game registry key of Thermal Expansions bronze(tinkers alloy) ingot .";
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event)

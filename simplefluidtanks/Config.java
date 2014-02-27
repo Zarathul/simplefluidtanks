@@ -48,6 +48,13 @@ public final class Config
 				SimpleFluidTanks.CONFIG_TE_MOD_HARDENED_GLASS_COMMENT
 				).getString();
 		
+		SimpleFluidTanks.REGISTRY_THERMAL_EXPANSION_BRONZE_INGOT = config.get(
+				SimpleFluidTanks.CONFIG_CATEGORY_MOD_INTEROP,
+				SimpleFluidTanks.CONFIG_TE_MOD_BRONZE_INGOT_KEY,
+				SimpleFluidTanks.REGISTRY_THERMAL_EXPANSION_BRONZE_INGOT,
+				SimpleFluidTanks.CONFIG_TE_MOD_BRONZE_INGOT_COMMENT
+				).getString();
+		
 		config.save();
 	}
 }

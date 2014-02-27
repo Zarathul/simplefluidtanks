@@ -5,7 +5,7 @@ import simplefluidtanks.common.Direction;
 
 
 /**
- * Supplies helper methods to get texture indexes for connected {@link TankBlock}s.
+ * Provides helper methods to get texture indexes for connected {@link TankBlock}s.
  */
 public final class ConnectedTexturesHelper
 {

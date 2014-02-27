@@ -137,8 +137,7 @@ public class ValveBlock extends WrenchableBlock
 			
 			if (valveEntity != null)
 			{
-				valveEntity.findTanks();
-				valveEntity.updateTankFacingSides();
+				valveEntity.rebuild();
 			}
 		}
 	}

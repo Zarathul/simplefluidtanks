@@ -1,6 +1,12 @@
 package simplefluidtanks.common;
 
+import java.util.Map.Entry;
+
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
+
 import net.minecraft.launchwrapper.LogWrapper;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 

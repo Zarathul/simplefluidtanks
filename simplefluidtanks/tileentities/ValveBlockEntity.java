@@ -42,6 +42,9 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.primitives.Ints;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 /**
  * Holds {@link TileEntity} data for {@link ValveBlock}s,
  */
@@ -51,6 +54,12 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	 * The {@link FluidTank} that actually holds all the fluid in the multiblock tank.
 	 */
 	private FluidTank internalTank;
+	
+	/**
+	 * Indicates if the {@link ValveBlock} is connected to any {@link TankBlock}s. (This is primarily used on the client side. 
+	 * This way the multimap containing the tank information does not have to be synced to clients).
+	 */
+	private boolean hasTanks;
 	
 	/**
 	 * The fill priorities of all connected {@link TankBlock}s.
@@ -86,26 +95,17 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		internalTank = new FluidTank(0);
 		tankPriorities = ArrayListMultimap.create();
 		tankFacingSides = -1;
+		hasTanks = false;
 	}
 
     @Override
     public void readFromNBT(NBTTagCompound tag)
     {
         super.readFromNBT(tag);
-        internalTank.readFromNBT(tag);
         
-        try
-        {
-			tanksFromByteArray(tag.getByteArray("TankPriorities"));
-		}
-        catch (ClassNotFoundException e)
-        {
-			e.printStackTrace();
-		}
-        catch (IOException e)
-        {
-			e.printStackTrace();
-		}
+        internalTank.readFromNBT(tag);
+        readTankPrioritiesFromNBT(tag);
+        hasTanks = (tankPriorities.size() > 1);
         
         tankFacingSides = tag.getByte("TankFacingSides");
     }
@@ -114,16 +114,9 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
     public void writeToNBT(NBTTagCompound tag)
     {
         super.writeToNBT(tag);
-        internalTank.writeToNBT(tag);
         
-        try
-        {
-			tag.setByteArray("TankPriorities", tanksAsByteArray());
-		}
-        catch (IOException e)
-        {
-			e.printStackTrace();
-		}
+        internalTank.writeToNBT(tag);
+        writeTankPrioritiesToNBT(tag);
         
         tag.setByte("TankFacingSides", tankFacingSides);
     }
@@ -234,7 +227,9 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	public Packet getDescriptionPacket()
 	{
 		NBTTagCompound tag = new NBTTagCompound();
-		writeToNBT(tag);
+		tag.setByte("TankFacingSides", tankFacingSides);
+		tag.setBoolean("HasTanks", hasTanks);
+		internalTank.writeToNBT(tag);
 		
 		return new Packet132TileEntityData(xCoord, yCoord, zCoord, -1, tag);
 	}
@@ -242,7 +237,11 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	@Override
 	public void onDataPacket(INetworkManager net, Packet132TileEntityData packet)
 	{
-		readFromNBT(packet.data);
+		NBTTagCompound tag = packet.data;
+		tankFacingSides = tag.getByte("TankFacingSides");
+		hasTanks = tag.getBoolean("HasTanks");
+		internalTank.readFromNBT(tag);
+		
 		worldObj.markBlockForRenderUpdate(xCoord, yCoord, zCoord);
 	}
 
@@ -356,14 +355,61 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	 */
 	public boolean hasTanks()
 	{
-		// the ValveBlock also counts as a tank in the multiblock structure, that is why it is " > 1" instead of " > 0"
-		return tankPriorities.size() > 1;
+		return hasTanks;
+	}
+
+	/**
+	 * Resets aka. disconnects all connected {@link TankBlock}s and resets the {@link ValveBlock} itself (capacity etc.).
+	 */
+	public void reset()
+	{
+		for (BlockCoords tankCoords : tankPriorities.values())
+		{
+			TankBlockEntity tankEntity = Utils.getTileEntityAt(worldObj, TankBlockEntity.class, tankCoords);
+			
+			if (tankEntity != null)
+			{
+				tankEntity.reset();
+			}
+		}
+		
+		tankPriorities.clear();
+		tankFacingSides = 0;
+		internalTank.setFluid(null);
+		internalTank.setCapacity(0);
+		
+		worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);
+		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+    	// triggers onNeighborTileChange on neighboring blocks, this is needed for comparators to work
+    	worldObj.func_96440_m(xCoord, yCoord, zCoord, SimpleFluidTanks.valveBlock.blockID);
+    	// the ValveBlock also counts as a tank in the multiblock structure, that is why it is " > 1" instead of " > 0"
+    	hasTanks = (tankPriorities.size() > 1);
+	}
+	
+	/**
+	 * Re-runs the tank searching and prioritization algorithms and redistributes the fluid. This allows for additional {@link TankBlock}s to be added to the multiblock structure.
+	 */
+	public void rebuild()
+	{
+		// store the current fluid for reinsertion
+		FluidStack fluid = internalTank.getFluid();
+		
+		// find new tanks and update the valves textures
+		reset();
+		findTanks();
+		updateTankFacingSides();
+		
+		// redistribute the fluid
+		internalTank.setFluid(fluid);
+		distributeFluidToTanks();
+    	// the ValveBlock also counts as a tank in the multiblock structure, that is why it is " > 1" instead of " > 0"
+    	hasTanks = (tankPriorities.size() > 1);
 	}
 	
 	/**
 	 * Finds all {@link TankBlock}s connected to the {@link ValveBlock} and computes their filling priorities.
 	 */
-	public void findTanks()
+	private void findTanks()
 	{
 		generateTankList();
 		computeFillPriorities();
@@ -392,104 +438,6 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		internalTank.setCapacity((tankEntities.size() + 1) * SimpleFluidTanks.bucketsPerTank * FluidContainerRegistry.BUCKET_VOLUME);
 		
 		worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);
-	}
-
-	/**
-	 * Resets aka. disconnects all connected {@link TankBlock}s and resets the {@link ValveBlock} itself (capacity etc.).
-	 */
-	public void reset()
-	{
-		for (BlockCoords tankCoords : tankPriorities.values())
-		{
-			TankBlockEntity tankEntity = Utils.getTileEntityAt(worldObj, TankBlockEntity.class, tankCoords);
-			
-			if (tankEntity != null)
-			{
-				tankEntity.reset();
-			}
-		}
-		
-		tankPriorities.clear();
-		tankFacingSides = 0;
-		internalTank.setFluid(null);
-		internalTank.setCapacity(0);
-		
-		worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);
-		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-    	// triggers onNeighborTileChange on neighboring blocks, this is needed for comparators to work
-    	worldObj.func_96440_m(xCoord, yCoord, zCoord, SimpleFluidTanks.valveBlock.blockID);
-	}
-	
-	/**
-	 * Re-runs the tank searching and prioritization algorithms and redistributes the fluid. This allows for additional {@link TankBlock}s to be added to the multiblock structure.
-	 */
-	public void rebuild()
-	{
-		// store the current fluid for reinsertion
-		FluidStack fluid = internalTank.getFluid();
-		
-		// find new tanks and update the valves textures
-		reset();
-		findTanks();
-		updateTankFacingSides();
-		
-		// redistribute the fluid
-		internalTank.setFluid(fluid);
-		distributeFluidToTanks();
-	}
-	
-	/**
-	 * Serializes the <code>tankPriorities</code> Multimap into a byte array.
-	 * @return
-	 * The {@link TankBlock} priorities in serialized form.
-	 * @throws IOException
-	 * Occurs if the serialization fails.
-	 */
-	private byte[] tanksAsByteArray() throws IOException
-	{
-		byte[] data = null;
-		ByteArrayOutputStream byteStream = null;
-		ObjectOutputStream objStream = null;
-		
-		try
-		{
-			byteStream = new ByteArrayOutputStream();
-			objStream = new ObjectOutputStream(byteStream);
-			objStream.writeObject(tankPriorities);
-			data = byteStream.toByteArray();
-		}
-		finally
-		{
-			objStream.close();
-		}
-		
-		return ((data != null) ? data : new byte[0]);
-	}
-	
-	/**
-	 * Deserializes the <code>tankPriorities</code> Multimap from a byte array.
-	 * @param data
-	 * The {@link TankBlock} priorities in serialized form.
-	 * @throws IOException
-	 * Occurs if the deserialization fails.
-	 * @throws ClassNotFoundException
-	 * Occurs if the deserialization fails.
-	 */
-	private void tanksFromByteArray(byte[] data) throws IOException, ClassNotFoundException
-	{
-		ByteArrayInputStream byteStream = null;
-		ObjectInputStream objStream = null;
-		
-		try
-		{
-			byteStream = new ByteArrayInputStream(data);
-			objStream = new ObjectInputStream(byteStream);
-			tankPriorities = (ArrayListMultimap<Integer, BlockCoords>)objStream.readObject();
-		}
-		finally
-		{
-			objStream.close();
-		}
 	}
 	
 	/**
@@ -1148,5 +1096,62 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	private boolean hasPriority(BlockCoords tank)
 	{
 		return tankPriorities.containsValue(tank);
+	}
+	
+	/**
+	 * Writes the tank priority map to the specified NBT tag.
+	 * @param tag
+	 * The tag to write to.
+	 * @param priorities
+	 * The tank priority map.
+	 */
+	private void writeTankPrioritiesToNBT(NBTTagCompound tag)
+	{
+		if (tag == null)
+		{
+			return;
+		}
+		
+		NBTTagCompound tankPrioritiesTag = new NBTTagCompound();
+		BlockCoords currentCoords;
+		int[] serializableEntry;
+		int i = 0;
+		
+		for (Entry<Integer, BlockCoords> entry : tankPriorities.entries())
+		{
+			currentCoords = entry.getValue();
+			serializableEntry = new int[] { entry.getKey(), currentCoords.x, currentCoords.y, currentCoords.z };
+			tankPrioritiesTag.setIntArray(Integer.toString(i), serializableEntry);
+			i++;
+		}
+		
+		tag.setCompoundTag("TankPriorities", tankPrioritiesTag);
+	}
+	
+	/**
+	 * Read the tank priority map from the specified NBT tag.
+	 * @param tag
+	 * The tag to read from.
+	 * @return
+	 * The tank priority map.
+	 */
+	private void readTankPrioritiesFromNBT(NBTTagCompound tag)
+	{
+		tankPriorities = ArrayListMultimap.create();
+		
+		if (tag != null)
+		{
+			NBTTagCompound tankPrioritiesTag = tag.getCompoundTag("TankPriorities");
+			String key;
+			int i = 0;
+			int[] serializedEntry;
+			
+			while (tankPrioritiesTag.hasKey(key = Integer.toString(i)))
+			{
+				serializedEntry = tankPrioritiesTag.getIntArray(key);
+				tankPriorities.put(serializedEntry[0], new BlockCoords(serializedEntry[1], serializedEntry[2], serializedEntry[3]));
+				i++;
+			}
+		}
 	}
 }
