@@ -2,20 +2,7 @@ package simplefluidtanks.blocks;
 
 import java.util.Random;
 
-import org.lwjgl.input.Keyboard;
-
-import simplefluidtanks.SimpleFluidTanks;
-import simplefluidtanks.common.Direction;
-import simplefluidtanks.common.Utils;
-import simplefluidtanks.tileentities.ValveBlockEntity;
-
-import buildcraft.api.tools.IToolWrench;
-
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockContainer;
-import net.minecraft.block.BlockLadder;
 import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -29,6 +16,10 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import simplefluidtanks.SimpleFluidTanks;
+import simplefluidtanks.common.Direction;
+import simplefluidtanks.common.Utils;
+import simplefluidtanks.tileentities.ValveBlockEntity;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 

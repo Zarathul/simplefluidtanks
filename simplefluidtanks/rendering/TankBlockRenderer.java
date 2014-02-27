@@ -1,11 +1,5 @@
 package simplefluidtanks.rendering;
 
-import simplefluidtanks.blocks.TankBlock;
-import simplefluidtanks.blocks.ValveBlock;
-import simplefluidtanks.common.Direction;
-import simplefluidtanks.common.Utils;
-import simplefluidtanks.tileentities.TankBlockEntity;
-import simplefluidtanks.tileentities.ValveBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -14,6 +8,12 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
+import simplefluidtanks.blocks.TankBlock;
+import simplefluidtanks.blocks.ValveBlock;
+import simplefluidtanks.common.Direction;
+import simplefluidtanks.common.Utils;
+import simplefluidtanks.tileentities.TankBlockEntity;
+import simplefluidtanks.tileentities.ValveBlockEntity;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 

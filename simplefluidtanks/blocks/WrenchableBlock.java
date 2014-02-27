@@ -1,14 +1,12 @@
 package simplefluidtanks.blocks;
 
-import buildcraft.api.tools.IToolWrench;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.FluidContainerRegistry;
+import buildcraft.api.tools.IToolWrench;
 
 /**
  * A base class for blocks that have custom behavior when a buildcraft compatible wrenches is used on them.

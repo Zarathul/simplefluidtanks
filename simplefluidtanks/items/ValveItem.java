@@ -12,7 +12,6 @@ import org.lwjgl.input.Keyboard;
 import simplefluidtanks.SimpleFluidTanks;
 import simplefluidtanks.blocks.ValveBlock;
 import simplefluidtanks.common.LocalizationHelper;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 

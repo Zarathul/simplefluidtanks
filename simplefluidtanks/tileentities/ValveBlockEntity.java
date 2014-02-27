@@ -1,10 +1,5 @@
 package simplefluidtanks.tileentities;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -15,16 +10,6 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map.Entry;
 import java.util.Set;
-
-import simplefluidtanks.SimpleFluidTanks;
-import simplefluidtanks.blocks.FluidTank;
-import simplefluidtanks.blocks.TankBlock;
-import simplefluidtanks.blocks.ValveBlock;
-import simplefluidtanks.common.BasicAStar;
-import simplefluidtanks.common.BlockCoords;
-import simplefluidtanks.common.BlockSearchMode;
-import simplefluidtanks.common.Direction;
-import simplefluidtanks.common.Utils;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.INetworkManager;
@@ -37,13 +22,19 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import simplefluidtanks.SimpleFluidTanks;
+import simplefluidtanks.blocks.FluidTank;
+import simplefluidtanks.blocks.TankBlock;
+import simplefluidtanks.blocks.ValveBlock;
+import simplefluidtanks.common.BasicAStar;
+import simplefluidtanks.common.BlockCoords;
+import simplefluidtanks.common.BlockSearchMode;
+import simplefluidtanks.common.Direction;
+import simplefluidtanks.common.Utils;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.primitives.Ints;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 /**
  * Holds {@link TileEntity} data for {@link ValveBlock}s,

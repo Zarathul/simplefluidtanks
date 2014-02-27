@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import simplefluidtanks.common.BasicAStar.Node;
-
 /**
  * Represents the coordinates of a block in the world.
  */

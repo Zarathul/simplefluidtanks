@@ -1,11 +1,11 @@
 package simplefluidtanks.rendering;
 
-import simplefluidtanks.SimpleFluidTanks;
-import simplefluidtanks.items.TankItem;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
 import net.minecraftforge.client.IItemRenderer;
+import simplefluidtanks.SimpleFluidTanks;
+import simplefluidtanks.items.TankItem;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 

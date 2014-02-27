@@ -2,6 +2,12 @@ package simplefluidtanks.tileentities;
 
 import java.util.Arrays;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.INetworkManager;
+import net.minecraft.network.packet.Packet;
+import net.minecraft.network.packet.Packet132TileEntityData;
+import net.minecraft.tileentity.TileEntity;
 import simplefluidtanks.SimpleFluidTanks;
 import simplefluidtanks.blocks.TankBlock;
 import simplefluidtanks.blocks.ValveBlock;
@@ -9,13 +15,6 @@ import simplefluidtanks.common.BlockCoords;
 import simplefluidtanks.common.Direction;
 import simplefluidtanks.common.Utils;
 import simplefluidtanks.rendering.ConnectedTexturesHelper;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.INetworkManager;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.Packet132TileEntityData;
-import net.minecraft.tileentity.TileEntity;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 

@@ -3,24 +3,18 @@ package simplefluidtanks.blocks;
 import java.util.HashSet;
 import java.util.Random;
 
-import simplefluidtanks.SimpleFluidTanks;
-import simplefluidtanks.common.BlockCoords;
-import simplefluidtanks.common.Utils;
-import simplefluidtanks.tileentities.TankBlockEntity;
-import simplefluidtanks.tileentities.ValveBlockEntity;
-
-import buildcraft.api.tools.IToolWrench;
-
-import net.minecraft.block.BlockContainer;
 import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.fluids.FluidContainerRegistry;
+import simplefluidtanks.SimpleFluidTanks;
+import simplefluidtanks.common.BlockCoords;
+import simplefluidtanks.common.Utils;
+import simplefluidtanks.tileentities.TankBlockEntity;
+import simplefluidtanks.tileentities.ValveBlockEntity;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
