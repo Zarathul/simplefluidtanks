@@ -24,7 +24,7 @@ public class SimpleFluidTanks
 	@Instance(value = "SimpleFluidTanks")
 	public static SimpleFluidTanks instance;
 
-	@SidedProxy(clientSide = "simplefluidtanks.ClientProxy", serverSide = "simplefluidtanks.ServerProxy")
+	@SidedProxy(clientSide = "net.zarathul.simplefluidtanks.ClientProxy", serverSide = "net.zarathul.simplefluidtanks.ServerProxy")
 	public static CommonProxy proxy;
 	
 	// blocks
