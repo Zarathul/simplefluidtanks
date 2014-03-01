@@ -39,10 +39,7 @@ public class CommonProxy
 		
 		// load config
 		Config.load(event);
-	}
-	
-	public void init(FMLInitializationEvent event)
-	{
+		
 		// create and register TankBlock
 		SimpleFluidTanks.tankBlock = new TankBlock(SimpleFluidTanks.tankBlockId);
 		GameRegistry.registerBlock(SimpleFluidTanks.tankBlock, TankItem.class, SimpleFluidTanks.REGISTRY_TANKBLOCK_KEY);
@@ -60,9 +57,13 @@ public class CommonProxy
 		MinecraftForge.setBlockHarvestLevel(SimpleFluidTanks.valveBlock, "pickaxe", 2);
 	}
 	
-	public void postInit(FMLPostInitializationEvent event)
+	public void init(FMLInitializationEvent event)
 	{
 		// register Recipes
 		Recipes.registerRecipes();
+	}
+	
+	public void postInit(FMLPostInitializationEvent event)
+	{
 	}
 }

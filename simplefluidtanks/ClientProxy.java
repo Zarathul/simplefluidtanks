@@ -16,12 +16,6 @@ public class ClientProxy extends CommonProxy
 	public void preInit(FMLPreInitializationEvent event)
 	{
 		super.preInit(event);
-	}
-	
-	@Override
-	public void init(FMLInitializationEvent event)
-	{
-		super.init(event);
 		
 		// create and register custom renderers
 		SimpleFluidTanks.tankBlockRenderer = new TankBlockRenderer();
@@ -31,6 +25,12 @@ public class ClientProxy extends CommonProxy
 		ClientRegistry.bindTileEntitySpecialRenderer(TankBlockEntity.class, SimpleFluidTanks.tankBlockRenderer);
 		MinecraftForgeClient.registerItemRenderer(SimpleFluidTanks.tankBlock.blockID, SimpleFluidTanks.tankItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(SimpleFluidTanks.valveBlock.blockID, SimpleFluidTanks.valveItemRenderer);
+	}
+	
+	@Override
+	public void init(FMLInitializationEvent event)
+	{
+		super.init(event);
 	}
 	
 	@Override
