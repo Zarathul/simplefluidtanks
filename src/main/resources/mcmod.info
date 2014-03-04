@@ -1,0 +1,21 @@
+{
+  "modinfoversion": 2,
+  "modlist": [{
+    "modid": "simplefluidtanks",
+    "name": "Simple Fluid Tanks",
+    "description": "Adds fluid tanks of variable size and shape.",
+    "version": "${version}",
+    "mcversion": "${mcversion}",
+    "url": "",
+    "updateUrl": "",
+    "authors": [ "Zarathul" ],
+    "credits": "Thx to Boidrix for the valve textures.",
+    "logoFile": "assets/simplefluidtanks/sft_logo.jpg",
+    "screenshots": [],
+    "parent": "",
+    "requiredMods": [ "Forge" ],
+    "dependencies": [ "Forge" ],
+    "dependants": [],
+    "useDependencyInformation": "true"
+  }]
+}
