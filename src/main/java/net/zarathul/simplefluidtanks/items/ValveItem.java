@@ -22,15 +22,15 @@ import cpw.mods.fml.relauncher.SideOnly;
  */
 public class ValveItem extends ItemBlock
 {
-	private static final String toolTipKey = "item." + Registry.getValveItemName() + ".toolTip";
-	private static final String toolTipDetailsKey = "item." + Registry.getValveItemName() + ".toolTipDetails";
+	private static final String toolTipKey = "item." + Registry.VALVEITEM_NAME + ".toolTip";
+	private static final String toolTipDetailsKey = "item." + Registry.VALVEITEM_NAME + ".toolTipDetails";
 	
 	public ValveItem(Block block)
 	{
 		super(block);
 		this.setMaxStackSize(64);
 		this.setCreativeTab(SimpleFluidTanks.creativeTab);
-		this.setUnlocalizedName(Registry.getValveItemName());
+		this.setUnlocalizedName(Registry.VALVEITEM_NAME);
 	}
 
 	@Override

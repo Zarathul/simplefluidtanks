@@ -32,7 +32,7 @@ public class TankBlock extends WrenchableBlock
 	{
 		super(TankMaterial.tankMaterial);
 		
-		setBlockName(Registry.getTankBlockName());
+		setBlockName(Registry.TANKBLOCK_NAME);
 		setCreativeTab(SimpleFluidTanks.creativeTab);
 		setHardness(2.5f);
 		setResistance(1000f);

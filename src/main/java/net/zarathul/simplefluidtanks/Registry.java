@@ -19,61 +19,21 @@ import cpw.mods.fml.common.registry.GameRegistry;
  */
 public final class Registry
 {
-	private static final String TANKBLOCK_NAME = "tankBlock";
+	public static final String TANKBLOCK_NAME = "tankBlock";
+	public static final String TANKITEM_NAME = "tankItem";
+	
+	public static final String VALVEBLOCK_NAME = "valveBlock";
+	public static final String VALVEITEM_NAME = "valveItem";
+	
 	private static final String TANKBLOCK_KEY = SimpleFluidTanks.MOD_ID + TANKBLOCK_NAME;
 	
 	private static final String TANKBLOCK_ENTITY_NAME = "tankBlockEntity";
 	private static final String TANKBLOCK_ENTITY_KEY = SimpleFluidTanks.MOD_ID + TANKBLOCK_ENTITY_NAME;
 	
-	private static final String TANKITEM_NAME = "tankItem";
-	
-	private static final String VALVEBLOCK_NAME = "valveBlock";
 	private static final String VALVEBLOCK_KEY = SimpleFluidTanks.MOD_ID + VALVEBLOCK_NAME;
 	
 	private static final String VALVEBLOCK_ENTITY_NAME = "valveBlockEntity";
 	private static final String VALVEBLOCK_ENTITY_KEY = SimpleFluidTanks.MOD_ID + VALVEBLOCK_ENTITY_NAME;
-	
-	private static final String VALVEITEM_NAME = "valveItem";
-	
-	/**
-	 * Gets the {@link TankBlock}s unlocalized name.
-	 * @return
-	 * The {@link TankBlock}s unlocalized name.
-	 */
-	public static String getTankBlockName()
-	{
-		return TANKBLOCK_NAME;
-	}
-	
-	/**
-	 * Gets the {@link TankItem}s unlocalized name.
-	 * @return
-	 * The {@link TankItem}s unlocalized name.
-	 */
-	public static String getTankItemName()
-	{
-		return TANKITEM_NAME;
-	}
-	
-	/**
-	 * Gets the {@link ValveBlock}s unlocalized name.
-	 * @return
-	 * The {@link ValveBlock}s unlocalized name.
-	 */
-	public static String getValveBlockName()
-	{
-		return VALVEBLOCK_NAME;
-	}
-	
-	/**
-	 * Gets the {@link ValveItem}s unlocalized name.
-	 * @return
-	 * The {@link ValveItem}s unlocalized name.
-	 */
-	public static String getValveItemName()
-	{
-		return VALVEITEM_NAME;
-	}
 	
 	/**
 	 * Creates and registers all blocks added by the mod.

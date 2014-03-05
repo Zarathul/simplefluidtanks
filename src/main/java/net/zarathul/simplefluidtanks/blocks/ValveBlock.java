@@ -34,7 +34,7 @@ public class ValveBlock extends WrenchableBlock
 	{
 		super(TankMaterial.tankMaterial);
 		
-		setBlockName(Registry.getValveBlockName());
+		setBlockName(Registry.VALVEBLOCK_NAME);
 		setCreativeTab(SimpleFluidTanks.creativeTab);
 		setHardness(2.5f);
 		setResistance(1000f);

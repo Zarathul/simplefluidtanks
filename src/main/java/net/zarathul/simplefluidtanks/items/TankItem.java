@@ -22,15 +22,15 @@ import cpw.mods.fml.relauncher.SideOnly;
  */
 public class TankItem extends ItemBlock
 {
-	private static final String toolTipKey = "item." + Registry.getTankItemName() + ".toolTip";
-	private static final String toolTipDetailsKey = "item." + Registry.getTankItemName() + ".toolTipDetails";
+	private static final String toolTipKey = "item." + Registry.TANKITEM_NAME + ".toolTip";
+	private static final String toolTipDetailsKey = "item." + Registry.TANKITEM_NAME + ".toolTipDetails";
 	
 	public TankItem(Block block)
 	{
 		super(block);
 		this.setMaxStackSize(64);
 		this.setCreativeTab(SimpleFluidTanks.creativeTab);
-		this.setUnlocalizedName(Registry.getTankItemName());
+		this.setUnlocalizedName(Registry.TANKITEM_NAME);
 	}
 
 	@Override
