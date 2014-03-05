@@ -747,4 +747,30 @@ public final class TessellationManager
 		// bottom left
 		tr.addVertexWithUV(xBl, yBl, z, minU, maxV);
 	}
+
+	/**
+	 * Sets up the tessellator for drawing quads.
+	 */
+	public static void startDrawingQuads()
+	{
+		tr.startDrawingQuads();
+	}
+
+	/**
+	 * Draws the data in the tessellator and resets.
+	 */
+	public static void draw()
+	{
+		tr.draw();
+	}
+
+	/**
+	 * Sets the brightness.
+	 * @param brightness
+	 * The brightness.
+	 */
+	public static void setBrightness(int brightness)
+	{
+		tr.setBrightness(brightness);
+	}
 }

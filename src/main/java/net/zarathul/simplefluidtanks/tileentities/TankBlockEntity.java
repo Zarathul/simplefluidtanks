@@ -236,14 +236,14 @@ public class TankBlockEntity extends TileEntity
 	}
 	
 	/**
-	 * Gets the texture for the specified side of the {@link TankBlock}.
+	 * Gets the texture index for the specified side of the {@link TankBlock}.
 	 * @param side
-	 * The side to get the texture for.
+	 * The side to get the index for.
 	 * @return
-	 * The texture id or <code>-1</code> if the <code>side</code> argument was invalid.
+	 * The texture index or <code>-1</code> if the <code>side</code> argument was invalid.
 	 * @see Direction
 	 */
-	public int getTexture(int side)
+	public int getTextureIndex(int side)
 	{
 		if (side < 0 || side > 5)
 		{

@@ -1,13 +1,14 @@
 package net.zarathul.simplefluidtanks.rendering;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
+import net.zarathul.simplefluidtanks.SimpleFluidTanks;
 import net.zarathul.simplefluidtanks.blocks.TankBlock;
 import net.zarathul.simplefluidtanks.blocks.ValveBlock;
 import net.zarathul.simplefluidtanks.common.Direction;
@@ -43,24 +44,16 @@ public class TankBlockRenderer extends TileEntitySpecialRenderer
 			return;
 		}
 		
-		TankBlock tank = (TankBlock)tankEntity.getBlockType();
-		
-		IIcon[] icons = tank.getIcons();
+		IIcon[] icons = SimpleFluidTanks.tankBlock.getIcons();
 		
 		TessellationManager.setBaseCoords(x, y, z);
-		Tessellator tsr = Tessellator.instance;
-		
-		int brightness = tank.getMixedBrightnessForBlock(tankEntity.getWorldObj(), tankEntity.xCoord, tankEntity.yCoord, tankEntity.zCoord);
-		tsr.setBrightness(brightness);
 		
 		// force the texture atlas that contains blocks
 		bindTexture(TextureMap.locationBlocksTexture);
 		
-		tsr.startDrawingQuads();
-		
 		if (!tankEntity.isPartOfTank())
 		{
-			renderSolid(tankEntity, icons[0]);
+			renderUnlinkedTank(tankEntity, icons[0]);
 		}
 		else
 		{
@@ -70,226 +63,161 @@ public class TankBlockRenderer extends TileEntitySpecialRenderer
 			double verticalTextureOffset = 16.0 / 100 * (100 - fillPercentage);
 			IIcon fluidIcon = getFluidTexture(tankEntity);
 			
-			renderPositiveXFace(tankEntity, connections, icons, fluidIcon, fluidHeight, verticalTextureOffset);
-			renderNegativeXFace(tankEntity, connections, icons, fluidIcon, fluidHeight, verticalTextureOffset);
-			renderPositiveZFace(tankEntity, connections, icons, fluidIcon, fluidHeight, verticalTextureOffset);
-			renderNegativeZFace(tankEntity, connections, icons, fluidIcon, fluidHeight, verticalTextureOffset);
-			renderPositiveYFace(tankEntity, connections, icons, fluidIcon, fluidHeight);
-			renderNegativeYFace(tankEntity, connections, icons, fluidIcon, fillPercentage);
+			renderFluid(tankEntity, connections, fluidIcon, fluidHeight, verticalTextureOffset);
+			renderLinkedTank(tankEntity, connections, icons);
 		}
-		
-		tsr.draw();
 	}
 	
 	/**
-	 * Renders a slightly shrinked {@link TankBlock} including the inside.
+	 * Renders a slightly shrinked {@link TankBlock} without connected textures.
 	 * @param entity
 	 * The {@link TileEntity} data for the {@link TankBlock} to render.
 	 * @param icon
 	 * The texture to use.
 	 */
-	private void renderSolid(TankBlockEntity entity, IIcon icon)
+	private void renderUnlinkedTank(TankBlockEntity entity, IIcon icon)
 	{
+		TessellationManager.startDrawingQuads();
 		TessellationManager.renderCube(1, 1, 1, 14, 14, 14, icon, true, TessellationManager.pixel);
+		TessellationManager.draw();
 	}
 	
 	/**
-	 * Renders the positive x side of the {@link TankBlock}.
+	 * Renders the {@link TankBlock} with connected textures.
 	 * @param entity
 	 * The {@link TankBlock}s {@link TileEntity}.
 	 * @param connections
 	 * The {@link TankBlock}s connected textures information.
 	 * @param icons
 	 * The {@link TankBlock}s textures.
-	 * @param fluidIcon
-	 * The fluids texture.
-	 * @param fluidHeight
-	 * The height of the fluid in the {@link TankBlock}.
-	 * @param verticalTextureOffset
-	 * The vertical offset for the fluids texture.
 	 */
-	private void renderPositiveXFace(TankBlockEntity entity, boolean[] connections, IIcon[] icons, IIcon fluidIcon, double fluidHeight, double verticalTextureOffset)
+	private void renderLinkedTank(TankBlockEntity entity, boolean[] connections, IIcon[] icons)
 	{
-		// only render this side if there isn't a tank block from the same tank in front of it 
+		TessellationManager.startDrawingQuads();
+		
 		if (!connections[Direction.XPOS])
 		{
-			if (fluidHeight > 0 && fluidIcon != null)
-			{
-				TessellationManager.renderPositiveXFace(16 - flickerOffset, 0, 0, fluidHeight, 16, 0, verticalTextureOffset, 0, 0, fluidIcon, TessellationManager.pixel);
-			}
-			
-			TessellationManager.renderPositiveXFace(16, 0, 0, 16, 16, icons[entity.getTexture(Direction.XPOS)]);
+			TessellationManager.renderPositiveXFace(16, 0, 0, 16, 16, icons[entity.getTextureIndex(Direction.XPOS)]);
 			// inner face
 			if (shouldRenderInside(entity.xCoord, entity.yCoord, entity.zCoord, Direction.XPOS))
 			{
-				TessellationManager.renderNegativeXFace(16 - flickerOffset, 0, 0, 16, 16, icons[entity.getTexture(Direction.XNEG)]);
+				TessellationManager.renderNegativeXFace(16 - flickerOffset, 0, 0, 16, 16, icons[entity.getTextureIndex(Direction.XNEG)]);
 			}
 		}
-	}
-	
-	/**
-	 * Renders the negative x side of the {@link TankBlock}.
-	 * @param entity
-	 * The {@link TankBlock}s {@link TileEntity}.
-	 * @param connections
-	 * The {@link TankBlock}s connected textures information.
-	 * @param icons
-	 * The {@link TankBlock}s textures.
-	 * @param fluidIcon
-	 * The fluids texture.
-	 * @param fluidHeight
-	 * The height of the fluid in the {@link TankBlock}.
-	 * @param verticalTextureOffset
-	 * The vertical offset for the fluids texture.
-	 */
-	private void renderNegativeXFace(TankBlockEntity entity, boolean[] connections, IIcon[] icons, IIcon fluidIcon, double fluidHeight, double verticalTextureOffset)
-	{
-		// only render this side if there isn't a tank block from the same tank in front of it 
+		
 		if (!connections[Direction.XNEG])
 		{
-			if (fluidHeight > 0 && fluidIcon != null)
-			{
-				TessellationManager.renderNegativeXFace(0 + flickerOffset, 0, 0, fluidHeight, 16, 0, verticalTextureOffset, 0, 0, fluidIcon, TessellationManager.pixel);
-			}
-			
-			TessellationManager.renderNegativeXFace(0, 0, 0, 16, 16, icons[entity.getTexture(Direction.XNEG)]);
+			TessellationManager.renderNegativeXFace(0, 0, 0, 16, 16, icons[entity.getTextureIndex(Direction.XNEG)]);
 			// inner face
 			if (shouldRenderInside(entity.xCoord, entity.yCoord, entity.zCoord, Direction.XNEG))
 			{
-				TessellationManager.renderPositiveXFace(0 + flickerOffset, 0, 0, 16, 16, icons[entity.getTexture(Direction.XPOS)]);
+				TessellationManager.renderPositiveXFace(0 + flickerOffset, 0, 0, 16, 16, icons[entity.getTextureIndex(Direction.XPOS)]);
 			}
 		}
-	}
-	
-	/**
-	 * Renders the positive z side of the {@link TankBlock}.
-	 * @param entity
-	 * The {@link TankBlock}s {@link TileEntity}.
-	 * @param connections
-	 * The {@link TankBlock}s connected textures information.
-	 * @param icons
-	 * The {@link TankBlock}s textures.
-	 * @param fluidIcon
-	 * The fluids texture.
-	 * @param fluidHeight
-	 * The height of the fluid in the {@link TankBlock}.
-	 * @param verticalTextureOffset
-	 * The vertical offset for the fluids texture.
-	 */
-	private void renderPositiveZFace(TankBlockEntity entity, boolean[] connections, IIcon[] icons, IIcon fluidIcon, double fluidHeight, double verticalTextureOffset)
-	{
-		// only render this side if there isn't a tank block from the same tank in front of it 
+		
 		if (!connections[Direction.ZPOS])
 		{
-			if (fluidHeight > 0 && fluidIcon != null)
-			{
-				TessellationManager.renderPositiveZFace(0, 0, 16 - flickerOffset, 16, fluidHeight, 0, verticalTextureOffset, 0, 0, fluidIcon, TessellationManager.pixel);
-			}
-			
-			TessellationManager.renderPositiveZFace(0, 0, 16, 16, 16, icons[entity.getTexture(Direction.ZPOS)]);
+			TessellationManager.renderPositiveZFace(0, 0, 16, 16, 16, icons[entity.getTextureIndex(Direction.ZPOS)]);
 			// inner face
 			if (shouldRenderInside(entity.xCoord, entity.yCoord, entity.zCoord, Direction.ZPOS))
 			{
-				TessellationManager.renderNegativeZFace(0, 0, 16 - flickerOffset, 16, 16, icons[entity.getTexture(Direction.ZNEG)]);
+				TessellationManager.renderNegativeZFace(0, 0, 16 - flickerOffset, 16, 16, icons[entity.getTextureIndex(Direction.ZNEG)]);
 			}
 		}
-	}
-	
-	/**
-	 * Renders the negative z side of the {@link TankBlock}.
-	 * @param entity
-	 * The {@link TankBlock}s {@link TileEntity}.
-	 * @param connections
-	 * The {@link TankBlock}s connected textures information.
-	 * @param icons
-	 * The {@link TankBlock}s textures.
-	 * @param fluidIcon
-	 * The fluids texture.
-	 * @param fluidHeight
-	 * The height of the fluid in the {@link TankBlock}.
-	 * @param verticalTextureOffset
-	 * The vertical offset for the fluids texture.
-	 */
-	private void renderNegativeZFace(TankBlockEntity entity, boolean[] connections, IIcon[] icons, IIcon fluidIcon, double fluidHeight, double verticalTextureOffset)
-	{
-		// only render this side if there isn't a tank block from the same tank in front of it 
+		
 		if (!connections[Direction.ZNEG])
 		{
-			if (fluidHeight > 0 && fluidIcon != null)
-			{
-				TessellationManager.renderNegativeZFace(0, 0, 0 + flickerOffset, 16, fluidHeight, 0, verticalTextureOffset, 0, 0, fluidIcon, TessellationManager.pixel);
-			}
-			
-			TessellationManager.renderNegativeZFace(0, 0, 0, 16, 16, icons[entity.getTexture(Direction.ZNEG)]);
+			TessellationManager.renderNegativeZFace(0, 0, 0, 16, 16, icons[entity.getTextureIndex(Direction.ZNEG)]);
 			// inner face
 			if (shouldRenderInside(entity.xCoord, entity.yCoord, entity.zCoord, Direction.ZNEG))
 			{
-				TessellationManager.renderPositiveZFace(0, 0, 0 + flickerOffset, 16, 16, icons[entity.getTexture(Direction.ZPOS)]);
+				TessellationManager.renderPositiveZFace(0, 0, 0 + flickerOffset, 16, 16, icons[entity.getTextureIndex(Direction.ZPOS)]);
 			}
 		}
-	}
-	
-	/**
-	 * Renders the positive y side of the {@link TankBlock}.
-	 * @param entity
-	 * The {@link TankBlock}s {@link TileEntity}.
-	 * @param connections
-	 * The {@link TankBlock}s connected textures information.
-	 * @param icons
-	 * The {@link TankBlock}s textures.
-	 * @param fluidIcon
-	 * The fluids texture.
-	 * @param fluidHeight
-	 * The height of the fluid in the {@link TankBlock}.
-	 */
-	private void renderPositiveYFace(TankBlockEntity entity, boolean[] connections, IIcon[] icons, IIcon fluidIcon, double fluidHeight)
-	{
-		if (fluidHeight > 0 && fluidIcon != null)
-		{
-			TessellationManager.renderPositiveYFace(0, fluidHeight - flickerOffset, 0, 16, 16, fluidIcon);
-		}
 		
-		// only render this side if there isn't a tank block from the same tank in front of it 
 		if (!connections[Direction.YPOS])
 		{
-			TessellationManager.renderPositiveYFace(0, 16, 0, 16, 16, icons[entity.getTexture(Direction.YPOS)]);
+			TessellationManager.renderPositiveYFace(0, 16, 0, 16, 16, icons[entity.getTextureIndex(Direction.YPOS)]);
 			// inner face
 			if (shouldRenderInside(entity.xCoord, entity.yCoord, entity.zCoord, Direction.YPOS))
 			{
-				TessellationManager.renderNegativeYFace(0, 16 - flickerOffset, 0, 16, 16, icons[entity.getTexture(Direction.YNEG)]);
+				TessellationManager.renderNegativeYFace(0, 16 - flickerOffset, 0, 16, 16, icons[entity.getTextureIndex(Direction.YNEG)]);
 			}
-		}
-	}
-	
-	/**
-	 * Renders the negative y side of the {@link TankBlock}.
-	 * @param entity
-	 * The {@link TankBlock}s {@link TileEntity}.
-	 * @param connections
-	 * The {@link TankBlock}s connected textures information.
-	 * @param icons
-	 * The {@link TankBlock}s textures.
-	 * @param fluidIcon
-	 * The fluids texture.
-	 * @param fillPercentage
-	 * The {@link TankBlock}s filling level.
-	 */
-	private void renderNegativeYFace(TankBlockEntity entity, boolean[] connections, IIcon[] icons, IIcon fluidIcon, int fillPercentage)
-	{
-		// only render this side if there isn't a tank block from the same tank in front of it 
-		if (fillPercentage > 0 && fluidIcon != null && !connections[Direction.YNEG])
-		{
-			TessellationManager.renderNegativeYFace(0, 0 + flickerOffset, 0, 16, 16, fluidIcon);
 		}
 		
 		if (!connections[Direction.YNEG])
 		{
-			TessellationManager.renderNegativeYFace(0, 0, 0, 16, 16, icons[entity.getTexture(Direction.YNEG)]);
+			TessellationManager.renderNegativeYFace(0, 0, 0, 16, 16, icons[entity.getTextureIndex(Direction.YNEG)]);
 			// inner face
 			if (shouldRenderInside(entity.xCoord, entity.yCoord, entity.zCoord, Direction.YNEG))
 			{
-				TessellationManager.renderPositiveYFace(0, 0 + flickerOffset, 0, 16, 16, icons[entity.getTexture(Direction.YPOS)]);
+				TessellationManager.renderPositiveYFace(0, 0 + flickerOffset, 0, 16, 16, icons[entity.getTextureIndex(Direction.YPOS)]);
 			}
+		}
+		
+		TessellationManager.draw();
+	}
+	
+	/**
+	 * Renders the fluid in the {@link TankBlock}.
+	 * @param entity
+	 * The {@link TankBlock}s {@link TileEntity}.
+	 * @param connections
+	 * The {@link TankBlock}s connected textures information.
+	 * @param fluidIcon
+	 * The fluids texture.
+	 * @param fluidHeight
+	 * The height of the fluid in the {@link TankBlock}.
+	 * @param verticalTextureOffset
+	 * The vertical offset for the fluids texture.
+	 */
+	private void renderFluid(TankBlockEntity entity, boolean[] connections, IIcon fluidIcon, double fluidHeight, double verticalTextureOffset)
+	{
+		if (fluidHeight > 0 && fluidIcon != null)
+		{
+	        TessellationManager.startDrawingQuads();
+			
+			IBlockAccess world = entity.getWorldObj();
+			
+	        if (!connections[Direction.XPOS])
+			{
+	        	TessellationManager.setBrightness(SimpleFluidTanks.tankBlock.getMixedBrightnessForBlock(world, entity.xCoord + 1, entity.yCoord, entity.zCoord));
+				TessellationManager.renderPositiveXFace(16 - flickerOffset, 0, 0, fluidHeight, 16, 0, verticalTextureOffset, 0, 0, fluidIcon, TessellationManager.pixel);
+			}
+			
+			if (!connections[Direction.XNEG])
+			{
+				TessellationManager.setBrightness(SimpleFluidTanks.tankBlock.getMixedBrightnessForBlock(world, entity.xCoord - 1, entity.yCoord, entity.zCoord));
+				TessellationManager.renderNegativeXFace(0 + flickerOffset, 0, 0, fluidHeight, 16, 0, verticalTextureOffset, 0, 0, fluidIcon, TessellationManager.pixel);
+			}
+			
+			if (!connections[Direction.ZPOS])
+			{
+				TessellationManager.setBrightness(SimpleFluidTanks.tankBlock.getMixedBrightnessForBlock(world, entity.xCoord, entity.yCoord, entity.zCoord + 1));
+				TessellationManager.renderPositiveZFace(0, 0, 16 - flickerOffset, 16, fluidHeight, 0, verticalTextureOffset, 0, 0, fluidIcon, TessellationManager.pixel);
+			}
+			
+			if (!connections[Direction.ZNEG])
+			{
+				TessellationManager.setBrightness(SimpleFluidTanks.tankBlock.getMixedBrightnessForBlock(world, entity.xCoord, entity.yCoord, entity.zCoord - 1));
+				TessellationManager.renderNegativeZFace(0, 0, 0 + flickerOffset, 16, fluidHeight, 0, verticalTextureOffset, 0, 0, fluidIcon, TessellationManager.pixel);
+			}
+			
+			TankBlockEntity tankAbove = Utils.getTileEntityAt(world, TankBlockEntity.class, entity.xCoord, entity.yCoord + 1, entity.zCoord);
+			
+			if (!connections[Direction.YPOS] || tankAbove == null || tankAbove.getFillPercentage() == 0)
+			{
+				TessellationManager.setBrightness(SimpleFluidTanks.tankBlock.getMixedBrightnessForBlock(world, entity.xCoord, entity.yCoord + 1, entity.zCoord));
+				TessellationManager.renderPositiveYFace(0, fluidHeight - flickerOffset, 0, 16, 16, fluidIcon);
+			}
+			
+			if (!connections[Direction.YNEG])
+			{
+				TessellationManager.setBrightness(SimpleFluidTanks.tankBlock.getMixedBrightnessForBlock(world, entity.xCoord, entity.yCoord - 1, entity.zCoord));
+				TessellationManager.renderNegativeYFace(0, 0 + flickerOffset, 0, 16, 16, fluidIcon);
+			}
+			
+			TessellationManager.draw();
 		}
 	}
 	
