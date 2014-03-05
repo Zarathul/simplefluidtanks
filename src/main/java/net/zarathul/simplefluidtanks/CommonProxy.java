@@ -19,43 +19,12 @@ public class CommonProxy
 {
 	public void preInit(FMLPreInitializationEvent event)
 	{
-		// create creative tab
-		SimpleFluidTanks.creativeTab = new CreativeTabs("Simple Fluid Tanks")
-		{
-			@Override
-			@SideOnly(Side.CLIENT)
-			public String getTranslatedTabLabel()
-			{
-				return this.getTabLabel();
-			}
-
-			@Override
-			@SideOnly(Side.CLIENT)
-			public Item getTabIconItem()
-			{
-				return Item.getItemFromBlock(SimpleFluidTanks.tankBlock);
-			}
-		};
-		
-		// load config
-		Config.load(event);
-		
-		// create and register TankBlock
-		SimpleFluidTanks.tankBlock = new TankBlock(SimpleFluidTanks.tankBlockId);
-		GameRegistry.registerBlock(SimpleFluidTanks.tankBlock, TankItem.class, SimpleFluidTanks.REGISTRY_TANKBLOCK_KEY);
-		
-		// create and register ValveBlock
-		SimpleFluidTanks.valveBlock = new ValveBlock(SimpleFluidTanks.valveBlockId);
-		GameRegistry.registerBlock(SimpleFluidTanks.valveBlock, ValveItem.class, SimpleFluidTanks.REGISTRY_VALVEBLOCK_KEY);
-		
-		// register TileEntities
-		GameRegistry.registerTileEntity(ValveBlockEntity.class, SimpleFluidTanks.REGISTRY_VALVEBLOCK_ENTITY_KEY);
-		GameRegistry.registerTileEntity(TankBlockEntity.class, SimpleFluidTanks.REGISTRY_TANKBLOCK_ENTITY_KEY);
+		Config.load(event.getSuggestedConfigurationFile());
+		Registry.registerBlocks();
 	}
 	
 	public void init(FMLInitializationEvent event)
 	{
-		// register Recipes
 		Recipes.registerRecipes();
 	}
 	

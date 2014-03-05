@@ -17,6 +17,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.zarathul.simplefluidtanks.Registry;
 import net.zarathul.simplefluidtanks.SimpleFluidTanks;
 import net.zarathul.simplefluidtanks.common.Direction;
 import net.zarathul.simplefluidtanks.common.Utils;
@@ -29,11 +30,11 @@ import cpw.mods.fml.relauncher.SideOnly;
  */
 public class ValveBlock extends WrenchableBlock
 {
-	public ValveBlock(int blockId)
+	public ValveBlock()
 	{
 		super(TankMaterial.tankMaterial);
 		
-		setBlockName(SimpleFluidTanks.REGISTRY_VALVEBLOCK_NAME);
+		setBlockName(Registry.getValveBlockName());
 		setCreativeTab(SimpleFluidTanks.creativeTab);
 		setHardness(2.5f);
 		setResistance(1000f);

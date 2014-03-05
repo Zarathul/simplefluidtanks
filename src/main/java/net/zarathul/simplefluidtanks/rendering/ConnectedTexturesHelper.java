@@ -9,6 +9,13 @@ import net.zarathul.simplefluidtanks.common.Direction;
  */
 public final class ConnectedTexturesHelper
 {
+	/**
+	 * Get the icon index for the positive x side of a {@link TankBlock} with the specified connections.
+	 * @param connections
+	 * The sides the {@link TankBlock} is connected to other blocks of it's kind.
+	 * @return
+	 * The icon index.
+	 */
 	public static int getPositiveXTexture(boolean[] connections)
 	{
 		int textureIndex = 0;
@@ -77,6 +84,13 @@ public final class ConnectedTexturesHelper
 		return textureIndex;
 	}
 	
+	/**
+	 * Get the icon index for the negative x side of a {@link TankBlock} with the specified connections.
+	 * @param connections
+	 * The sides the {@link TankBlock} is connected to other blocks of it's kind.
+	 * @return
+	 * The icon index.
+	 */
 	public static int getNegativeXTexture(boolean[] connections)
 	{
 		int textureIndex = 0;
@@ -145,6 +159,13 @@ public final class ConnectedTexturesHelper
 		return textureIndex;
 	}
 	
+	/**
+	 * Get the icon index for the positive z side of a {@link TankBlock} with the specified connections.
+	 * @param connections
+	 * The sides the {@link TankBlock} is connected to other blocks of it's kind.
+	 * @return
+	 * The icon index.
+	 */
 	public static int getPositiveZTexture(boolean[] connections)
 	{
 		int textureIndex = 0;
@@ -213,6 +234,13 @@ public final class ConnectedTexturesHelper
 		return textureIndex;
 	}
 	
+	/**
+	 * Get the icon index for the negative z side of a {@link TankBlock} with the specified connections.
+	 * @param connections
+	 * The sides the {@link TankBlock} is connected to other blocks of it's kind.
+	 * @return
+	 * The icon index.
+	 */
 	public static int getNegativeZTexture(boolean[] connections)
 	{
 		int textureIndex = 0;
@@ -281,6 +309,13 @@ public final class ConnectedTexturesHelper
 		return textureIndex;
 	}
 	
+	/**
+	 * Get the icon index for the positive y side of a {@link TankBlock} with the specified connections.
+	 * @param connections
+	 * The sides the {@link TankBlock} is connected to other blocks of it's kind.
+	 * @return
+	 * The icon index.
+	 */
 	public static int getPositiveYTexture(boolean[] connections)
 	{
 		int textureIndex = 0;
@@ -349,6 +384,13 @@ public final class ConnectedTexturesHelper
 		return textureIndex;
 	}
 	
+	/**
+	 * Get the icon index for the negative y side of a {@link TankBlock} with the specified connections.
+	 * @param connections
+	 * The sides the {@link TankBlock} is connected to other blocks of it's kind.
+	 * @return
+	 * The icon index.
+	 */
 	public static int getNegativeYTexture(boolean[] connections)
 	{
 		int textureIndex = 0;

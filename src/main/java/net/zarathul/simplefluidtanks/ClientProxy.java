@@ -1,5 +1,6 @@
 package net.zarathul.simplefluidtanks;
 
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.zarathul.simplefluidtanks.rendering.TankBlockRenderer;
@@ -10,22 +11,19 @@ import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class ClientProxy extends CommonProxy
 {
 	@Override
 	public void preInit(FMLPreInitializationEvent event)
 	{
+		addCreativeTab();
+		
 		super.preInit(event);
 		
-		// create and register custom renderers
-		SimpleFluidTanks.tankBlockRenderer = new TankBlockRenderer();
-		SimpleFluidTanks.tankItemRenderer = new TankItemRenderer();
-		SimpleFluidTanks.valveItemRenderer = new ValveItemRenderer();
-		
-		ClientRegistry.bindTileEntitySpecialRenderer(TankBlockEntity.class, SimpleFluidTanks.tankBlockRenderer);
-		MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(SimpleFluidTanks.tankBlock), SimpleFluidTanks.tankItemRenderer);
-		MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(SimpleFluidTanks.valveBlock), SimpleFluidTanks.valveItemRenderer);
+		Registry.registerCustomRenderers();
 	}
 	
 	@Override
@@ -38,5 +36,25 @@ public class ClientProxy extends CommonProxy
 	public void postInit(FMLPostInitializationEvent event)
 	{
 		super.postInit(event);
+	}
+	
+	private void addCreativeTab()
+	{
+		SimpleFluidTanks.creativeTab = new CreativeTabs("Simple Fluid Tanks")
+		{
+			@Override
+			@SideOnly(Side.CLIENT)
+			public String getTranslatedTabLabel()
+			{
+				return this.getTabLabel();
+			}
+
+			@Override
+			@SideOnly(Side.CLIENT)
+			public Item getTabIconItem()
+			{
+				return Item.getItemFromBlock(SimpleFluidTanks.tankBlock);
+			}
+		};
 	}
 }

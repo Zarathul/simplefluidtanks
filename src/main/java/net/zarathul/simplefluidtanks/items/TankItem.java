@@ -7,6 +7,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.StatCollector;
+import net.zarathul.simplefluidtanks.Registry;
 import net.zarathul.simplefluidtanks.SimpleFluidTanks;
 import net.zarathul.simplefluidtanks.blocks.TankBlock;
 import net.zarathul.simplefluidtanks.common.LocalizationHelper;
@@ -21,15 +22,15 @@ import cpw.mods.fml.relauncher.SideOnly;
  */
 public class TankItem extends ItemBlock
 {
-	private static final String toolTipKey = "item." + SimpleFluidTanks.REGISTRY_TANKITEM_NAME + ".toolTip";
-	private static final String toolTipDetailsKey = "item." + SimpleFluidTanks.REGISTRY_TANKITEM_NAME + ".toolTipDetails";
+	private static final String toolTipKey = "item." + Registry.getTankItemName() + ".toolTip";
+	private static final String toolTipDetailsKey = "item." + Registry.getTankItemName() + ".toolTipDetails";
 	
 	public TankItem(Block block)
 	{
 		super(block);
 		this.setMaxStackSize(64);
 		this.setCreativeTab(SimpleFluidTanks.creativeTab);
-		this.setUnlocalizedName(SimpleFluidTanks.REGISTRY_TANKITEM_NAME);
+		this.setUnlocalizedName(Registry.getTankItemName());
 	}
 
 	@Override

@@ -7,6 +7,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.StatCollector;
+import net.zarathul.simplefluidtanks.Registry;
 import net.zarathul.simplefluidtanks.SimpleFluidTanks;
 import net.zarathul.simplefluidtanks.blocks.ValveBlock;
 import net.zarathul.simplefluidtanks.common.LocalizationHelper;
@@ -21,15 +22,15 @@ import cpw.mods.fml.relauncher.SideOnly;
  */
 public class ValveItem extends ItemBlock
 {
-	private static final String toolTipKey = "item." + SimpleFluidTanks.REGISTRY_VALVEITEM_NAME + ".toolTip";
-	private static final String toolTipDetailsKey = "item." + SimpleFluidTanks.REGISTRY_VALVEITEM_NAME + ".toolTipDetails";
+	private static final String toolTipKey = "item." + Registry.getValveItemName() + ".toolTip";
+	private static final String toolTipDetailsKey = "item." + Registry.getValveItemName() + ".toolTipDetails";
 	
 	public ValveItem(Block block)
 	{
 		super(block);
 		this.setMaxStackSize(64);
 		this.setCreativeTab(SimpleFluidTanks.creativeTab);
-		this.setUnlocalizedName(SimpleFluidTanks.REGISTRY_VALVEITEM_NAME);
+		this.setUnlocalizedName(Registry.getValveItemName());
 	}
 
 	@Override

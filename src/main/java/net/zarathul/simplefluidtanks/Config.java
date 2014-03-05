@@ -1,58 +1,62 @@
 package net.zarathul.simplefluidtanks;
 
+import java.io.File;
+
 import net.minecraftforge.common.config.Configuration;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
 /**
- * Loads settings from config file.
+ * Provides helper methods to load the mods config.
  */
 public final class Config
 {
-	public static final void load(FMLPreInitializationEvent event)
+	private static final String CATEGORY_MAIN = "simple fluid tanks";
+	private static final String BUCKETS_PER_TANK_KEY = "BucketsPerTank";
+	private static final String BUCKETS_PER_TANK_COMMENT = "The amount of fluid that can be stored per tank (measured in buckets).";
+	private static final String CATEGORY_MOD_INTEROP = "mod interop";
+	private static final String TE_MOD_ID_KEY = "ThermalExpansionModId";
+	private static final String TE_MOD_ID_COMMENT = "The mod id for Thermal Expansion. This is used to include TE items in the recipes.";
+	private static final String TE_MOD_HARDENED_GLASS_KEY = "TE_HardenedGlass";
+	private static final String TE_MOD_HARDENED_GLASS_COMMENT = "The game registry key of Thermal Expansions hardened glass item.";
+	private static final String TE_MOD_BRONZE_INGOT_KEY = "TE_BronzeIngots";
+	private static final String TE_MOD_BRONZE_INGOT_COMMENT = "The game registry key of Thermal Expansions bronze(tinkers alloy) ingot .";
+	
+	/**
+	 * Loads the mods settings from the specified file.
+	 * @param configFile
+	 * The file to load the settings from.
+	 */
+	public static final void load(File configFile)
 	{
-		Configuration config = new Configuration(event.getSuggestedConfigurationFile());
+		Configuration config = new Configuration(configFile);
 		config.load();
 		
-		SimpleFluidTanks.tankBlockId = config.get(
-				SimpleFluidTanks.CONFIG_CATEGORY_MAIN,
-				SimpleFluidTanks.CONFIG_TANKBLOCK_ID_KEY,
-				SimpleFluidTanks.CONFIG_DEFAULT_TANKBLOCK_ID,
-				SimpleFluidTanks.CONFIG_TANKBLOCK_ID_COMMENT
-				).getInt();
-		
-		SimpleFluidTanks.valveBlockId = config.get(
-				SimpleFluidTanks.CONFIG_CATEGORY_MAIN,
-				SimpleFluidTanks.CONFIG_VALVEBLOCK_ID_KEY,
-				SimpleFluidTanks.CONFIG_DEFAULT_VALVEBLOCK_ID,
-				SimpleFluidTanks.CONFIG_VALVEBLOCK_ID_COMMENT
-				).getInt();
-		
 		SimpleFluidTanks.bucketsPerTank = config.get(
-				SimpleFluidTanks.CONFIG_CATEGORY_MAIN,
-				SimpleFluidTanks.CONFIG_BUCKETS_PER_TANK_KEY,
-				SimpleFluidTanks.CONFIG_DEFAULT_BUCKETS_PER_TANK,
-				SimpleFluidTanks.CONFIG_BUCKETS_PER_TANK_COMMENT
+				Config.CATEGORY_MAIN,
+				Config.BUCKETS_PER_TANK_KEY,
+				SimpleFluidTanks.bucketsPerTank,
+				Config.BUCKETS_PER_TANK_COMMENT
 				).getInt();
 		
-		SimpleFluidTanks.REGISTRY_THERMAL_EXPANSION_MOD_ID = config.get(
-				SimpleFluidTanks.CONFIG_CATEGORY_MOD_INTEROP,
-				SimpleFluidTanks.CONFIG_TE_MOD_ID_KEY,
-				SimpleFluidTanks.REGISTRY_THERMAL_EXPANSION_MOD_ID,
-				SimpleFluidTanks.CONFIG_TE_MOD_ID_COMMENT
+		SimpleFluidTanks.thermalExpansionModId = config.get(
+				Config.CATEGORY_MOD_INTEROP,
+				Config.TE_MOD_ID_KEY,
+				SimpleFluidTanks.thermalExpansionModId,
+				Config.TE_MOD_ID_COMMENT
 				).getString();
 		
-		SimpleFluidTanks.REGISTRY_THERMAL_EXPANSION_HARDENED_GLASS = config.get(
-				SimpleFluidTanks.CONFIG_CATEGORY_MOD_INTEROP,
-				SimpleFluidTanks.CONFIG_TE_MOD_HARDENED_GLASS_KEY,
-				SimpleFluidTanks.REGISTRY_THERMAL_EXPANSION_HARDENED_GLASS,
-				SimpleFluidTanks.CONFIG_TE_MOD_HARDENED_GLASS_COMMENT
+		SimpleFluidTanks.thermalExpansionHardenedGlass = config.get(
+				Config.CATEGORY_MOD_INTEROP,
+				Config.TE_MOD_HARDENED_GLASS_KEY,
+				SimpleFluidTanks.thermalExpansionHardenedGlass,
+				Config.TE_MOD_HARDENED_GLASS_COMMENT
 				).getString();
 		
-		SimpleFluidTanks.REGISTRY_THERMAL_EXPANSION_BRONZE_INGOT = config.get(
-				SimpleFluidTanks.CONFIG_CATEGORY_MOD_INTEROP,
-				SimpleFluidTanks.CONFIG_TE_MOD_BRONZE_INGOT_KEY,
-				SimpleFluidTanks.REGISTRY_THERMAL_EXPANSION_BRONZE_INGOT,
-				SimpleFluidTanks.CONFIG_TE_MOD_BRONZE_INGOT_COMMENT
+		SimpleFluidTanks.thermalExpansionBronzeIngot = config.get(
+				Config.CATEGORY_MOD_INTEROP,
+				Config.TE_MOD_BRONZE_INGOT_KEY,
+				SimpleFluidTanks.thermalExpansionBronzeIngot,
+				Config.TE_MOD_BRONZE_INGOT_COMMENT
 				).getString();
 		
 		config.save();

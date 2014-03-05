@@ -13,13 +13,39 @@ import com.google.common.collect.ImmutableList;
  */
 public class Direction
 {
+	/**
+	 * The vanilla minecraft value for the direction along the positive x axis.
+	 */
 	public static final int XPOS = 5;
+	
+	/**
+	 * The vanilla minecraft value for the direction along the negative x axis.
+	 */
 	public static final int XNEG = 4;
+	
+	/**
+	 * The vanilla minecraft value for the direction along the positive y axis.
+	 */
 	public static final int YPOS = 1;
+	
+	/**
+	 * The vanilla minecraft value for the direction along the negative y axis.
+	 */
 	public static final int YNEG = 0;
+	
+	/**
+	 * The vanilla minecraft value for the direction along the positive z axis.
+	 */
 	public static final int ZPOS = 3;
+	
+	/**
+	 * The vanilla minecraft value for the direction along the negative z axis.
+	 */
 	public static final int ZNEG = 2;
 	
+	/**
+	 * Maps bitflags to vanilla minecraft direction values.
+	 */
 	public static final ImmutableList<Integer> sidesToBitFlagsMappings = ImmutableList.of
 	(
 		1, 	// 0	YNEG
@@ -30,6 +56,9 @@ public class Direction
 		32	// 5	XPOS
 	);
 	
+	/**
+	 * Maps vanilla minecraft direction values to Forge directions.
+	 */
 	public static final Map<Integer, ForgeDirection> vanillaToForgeMapping = Collections.unmodifiableMap
 	(
 		new HashMap<Integer, ForgeDirection>()
@@ -43,6 +72,9 @@ public class Direction
 		}}
 	);
 	
+	/**
+	 * Maps Forge directions to vanilla minecraft direction values.
+	 */
 	public static final Map<ForgeDirection, Integer> forgeToVanillaMapping = Collections.unmodifiableMap
 	(
 		new HashMap<ForgeDirection, Integer>()
@@ -56,6 +88,13 @@ public class Direction
 		}}
 	);
 	
+	/**
+	 * Converts a {@link ForgeDirection} into a vanilla minecraft direction value.
+	 * @param direction
+	 * The direction to convert.
+	 * @return
+	 * <code>0-5</code> or <code>-1</code> for ForgeDirection.UNKNOWN
+	 */
 	public static int fromForge(ForgeDirection direction)
 	{
 		if (direction == ForgeDirection.UNKNOWN)
@@ -66,6 +105,13 @@ public class Direction
 		return forgeToVanillaMapping.get(direction);
 	}
 	
+	/**
+	 * Converts a vanilla minecraft direction value into a {@link ForgeDirection}.
+	 * @param side
+	 * The vanilla minecraft direction value to convert.
+	 * @return
+	 * The corresponding {@link ForgeDirection}.
+	 */
 	public static ForgeDirection toForge(int side)
 	{
 		if (side >= 0 && side <= 5)

@@ -59,18 +59,18 @@ public class BasicAStar
 			parent = other.parent;
 		}
 		
-		
 		/**
+		 * Indicates if this {@link Node} has a parent or not.
 		 * @return
-		 * <code>true</code> if this {@link Node} has a parent.
+		 * <code>true</code> if this {@link Node} has a parent, otherwise <code>false</code>.
 		 */
 		public boolean hasParent()
 		{
 			return parent != null;
 		}
 		
-		
 		/**
+		 * Finds the first {@link Node} in the hierarchy.
 		 * @return
 		 * The first {@link Node} in the hierarchy.
 		 */
@@ -158,8 +158,9 @@ public class BasicAStar
 	}
 	
 	/**
+	 * Creates a new instance of the algorithm that can perform searches within the specified bounds.
 	 * @param passableBlocks
-	 * A {@link Set} of {@link BlockCoords} the algorithm can move through.
+	 * A {@link Collection} of {@link BlockCoords} the algorithm can move through.
 	 */
 	public BasicAStar(Collection<BlockCoords> passableBlocks)
 	{

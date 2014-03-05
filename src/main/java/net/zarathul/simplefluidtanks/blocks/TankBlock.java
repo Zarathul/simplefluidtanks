@@ -9,7 +9,10 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
+import net.zarathul.simplefluidtanks.Registry;
 import net.zarathul.simplefluidtanks.SimpleFluidTanks;
 import net.zarathul.simplefluidtanks.common.BlockCoords;
 import net.zarathul.simplefluidtanks.common.Utils;
@@ -25,11 +28,11 @@ public class TankBlock extends WrenchableBlock
 {
 	private HashSet<BlockCoords> ignorePreDestroyEvent;
 
-	public TankBlock(int blockId)
+	public TankBlock()
 	{
 		super(TankMaterial.tankMaterial);
 		
-		setBlockName(SimpleFluidTanks.REGISTRY_TANKBLOCK_NAME);
+		setBlockName(Registry.getTankBlockName());
 		setCreativeTab(SimpleFluidTanks.creativeTab);
 		setHardness(2.5f);
 		setResistance(1000f);
@@ -99,11 +102,12 @@ public class TankBlock extends WrenchableBlock
 		reset(world, x, y, z);
 	}
 	
-//	@Override
-//	public boolean isBlockSolid(IBlockAccess blockAccess, int x, int y, int z, int meta)
-//	{
-//		return true;
-//	}
+	@Override
+	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side)
+	{
+		// allow torches, ladders etc. to be places on every side
+		return true;
+	}
 
 	@Override
 	public int quantityDropped(Random par1Random)

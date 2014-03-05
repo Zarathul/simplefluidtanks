@@ -10,11 +10,14 @@ import cpw.mods.fml.common.registry.GameRegistry;
  */
 public final class Recipes
 {
+	/**
+	 * Registers the mods recipes.
+	 */
 	public static final void registerRecipes()
 	{
 		// use thermal expansions hardened glass and bronze(tinkers alloy) ingots for the recipes if TE is installed, otherwise use normal glass and iron
-		ItemStack teHardenedGlass = GameRegistry.findItemStack(SimpleFluidTanks.REGISTRY_THERMAL_EXPANSION_MOD_ID, SimpleFluidTanks.REGISTRY_THERMAL_EXPANSION_HARDENED_GLASS, 1);
-		ItemStack teBronzeIngots = GameRegistry.findItemStack(SimpleFluidTanks.REGISTRY_THERMAL_EXPANSION_MOD_ID, SimpleFluidTanks.REGISTRY_THERMAL_EXPANSION_BRONZE_INGOT, 1);
+		ItemStack teHardenedGlass = GameRegistry.findItemStack(SimpleFluidTanks.thermalExpansionModId, SimpleFluidTanks.thermalExpansionHardenedGlass, 1);
+		ItemStack teBronzeIngots = GameRegistry.findItemStack(SimpleFluidTanks.thermalExpansionModId, SimpleFluidTanks.thermalExpansionBronzeIngot, 1);
 		ItemStack glassRecipeComponent = new ItemStack(Blocks.glass);
 		ItemStack ingotRecipeComponent = (teBronzeIngots != null) ? teBronzeIngots : new ItemStack(Items.iron_ingot);
 		int tankRecipeOutputAmount = 2;
