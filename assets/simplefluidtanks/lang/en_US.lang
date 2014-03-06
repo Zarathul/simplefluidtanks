@@ -16,3 +16,12 @@ item.valveItem.toolTipDetails2=without loosing any fluid. Note that the
 item.valveItem.toolTipDetails3=Valve counts as a tank towards the total
 item.valveItem.toolTipDetails4=capacity and emits a redstone signal in
 item.valveItem.toolTipDetails5=conjunction with a comparator.
+# Waila option labels
+waila.tankCount=Tank count
+waila.totalCapacity=Total capacity
+waila.linkStatus=Link status
+waila.tankCapacity=Tank capacity
+waila.capacityInMb=Capacities in mB
+waila.toolTip.isLinked=isLinked: §c%s
+waila.toolTip.capacity=Capacity: §b%d%s%d§r%s
+waila.toolTip.tanks=Tanks: §b%d
