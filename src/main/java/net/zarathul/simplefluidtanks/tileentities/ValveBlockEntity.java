@@ -47,10 +47,10 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	private FluidTank internalTank;
 	
 	/**
-	 * Indicates if the {@link ValveBlock} is connected to any {@link TankBlock}s. (This is primarily used on the client side. 
+	 * Holds the number of {@link TankBlock}s that are linked to this {@link ValveBlock}. (This is primarily used on the client side. 
 	 * This way the multimap containing the tank information does not have to be synced to clients).
 	 */
-	private boolean hasTanks;
+	private int linkedTankCount;
 	
 	/**
 	 * The fill priorities of all connected {@link TankBlock}s.
@@ -86,7 +86,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		internalTank = new FluidTank(0);
 		tankPriorities = ArrayListMultimap.create();
 		tankFacingSides = -1;
-		hasTanks = false;
+		linkedTankCount = 0;
 	}
 
     @Override
@@ -96,7 +96,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
         
         internalTank.readFromNBT(tag);
         readTankPrioritiesFromNBT(tag);
-        hasTanks = (tankPriorities.size() > 1);
+        linkedTankCount = Math.max(tankPriorities.size() - 1, 0);
         
         tankFacingSides = tag.getByte("TankFacingSides");
     }
@@ -219,7 +219,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	{
 		NBTTagCompound tag = new NBTTagCompound();
 		tag.setByte("TankFacingSides", tankFacingSides);
-		tag.setBoolean("HasTanks", hasTanks);
+		tag.setInteger("LinkedTankCount", linkedTankCount);
 		internalTank.writeToNBT(tag);
 		
 		return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 1, tag);
@@ -230,7 +230,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	{
 		NBTTagCompound tag = packet.func_148857_g();
 		tankFacingSides = tag.getByte("TankFacingSides");
-		hasTanks = tag.getBoolean("HasTanks");
+		linkedTankCount = tag.getInteger("LinkedTankCount");
 		internalTank.readFromNBT(tag);
 		
 		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
@@ -346,7 +346,17 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	 */
 	public boolean hasTanks()
 	{
-		return hasTanks;
+		return linkedTankCount > 0;
+	}
+	
+	/**
+	 * Gets the number of linked {@link TankBlock}s.
+	 * @return
+	 * The number of linked {@link TankBlock}s.
+	 */
+	public int getLinkedTankCount()
+	{
+		return linkedTankCount;
 	}
 
 	/**
@@ -374,7 +384,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
     	// triggers onNeighborTileChange on neighboring blocks, this is needed for comparators to work
 		worldObj.notifyBlockChange(xCoord, yCoord, zCoord, SimpleFluidTanks.valveBlock);
     	// the ValveBlock also counts as a tank in the multiblock structure, that is why it is " > 1" instead of " > 0"
-    	hasTanks = (tankPriorities.size() > 1);
+    	linkedTankCount = Math.max(tankPriorities.size() - 1, 0);
 	}
 	
 	/**
@@ -394,7 +404,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		internalTank.setFluid(fluid);
 		distributeFluidToTanks();
     	// the ValveBlock also counts as a tank in the multiblock structure, that is why it is " > 1" instead of " > 0"
-    	hasTanks = (tankPriorities.size() > 1);
+    	linkedTankCount = Math.max(tankPriorities.size() - 1, 0);
 	}
 	
 	/**
