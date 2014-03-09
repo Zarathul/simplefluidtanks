@@ -5,8 +5,6 @@ import net.minecraft.item.Item;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class ClientProxy extends CommonProxy
 {
@@ -41,14 +39,12 @@ public class ClientProxy extends CommonProxy
 		SimpleFluidTanks.creativeTab = new CreativeTabs("Simple Fluid Tanks")
 		{
 			@Override
-			@SideOnly(Side.CLIENT)
 			public String getTranslatedTabLabel()
 			{
 				return this.getTabLabel();
 			}
 
 			@Override
-			@SideOnly(Side.CLIENT)
 			public Item getTabIconItem()
 			{
 				return Item.getItemFromBlock(SimpleFluidTanks.tankBlock);

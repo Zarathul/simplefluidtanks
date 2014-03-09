@@ -18,6 +18,8 @@ import net.zarathul.simplefluidtanks.waila.ValveBlockDataProvider;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 /**
  * Provides helper methods to register blocks and custom renderers.
@@ -86,6 +88,7 @@ public final class Registry
 	/**
 	 * Creates and registers the mods custom renderers.
 	 */
+	@SideOnly(Side.CLIENT)
 	public static void registerCustomRenderers()
 	{
 		SimpleFluidTanks.tankBlockRenderer = new TankBlockRenderer();
@@ -100,6 +103,7 @@ public final class Registry
 	/**
 	 * Registers with Waila, if installed.
 	 */
+	@SideOnly(Side.CLIENT)
 	public static final void registerWithWaila()
 	{
 		FMLInterModComms.sendMessage("Waila", "register", "net.zarathul.simplefluidtanks.Registry.wailaCallback");
