@@ -2,14 +2,7 @@ package net.zarathul.simplefluidtanks;
 
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
-import net.minecraftforge.client.MinecraftForgeClient;
-import net.zarathul.simplefluidtanks.rendering.TankBlockRenderer;
-import net.zarathul.simplefluidtanks.rendering.TankItemRenderer;
-import net.zarathul.simplefluidtanks.rendering.ValveItemRenderer;
-import net.zarathul.simplefluidtanks.tileentities.TankBlockEntity;
-import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.relauncher.Side;

@@ -3,7 +3,6 @@ package net.zarathul.simplefluidtanks;
 import java.io.File;
 
 import net.minecraftforge.common.config.Configuration;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
 /**
  * Provides helper methods to load the mods config.

@@ -41,7 +41,7 @@ public class SimpleFluidTanks
 	
 	// constants
 	public static final String MOD_ID = "simplefluidtanks";
-	public static final String VERSION = "1.1.0.3";
+	public static final String VERSION = "1.1.0.4";
 	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event)
