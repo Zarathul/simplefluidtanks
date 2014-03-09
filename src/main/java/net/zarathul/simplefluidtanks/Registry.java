@@ -16,6 +16,7 @@ import net.zarathul.simplefluidtanks.tileentities.ValveBlockEntity;
 import net.zarathul.simplefluidtanks.waila.TankBlockDataProvider;
 import net.zarathul.simplefluidtanks.waila.ValveBlockDataProvider;
 import cpw.mods.fml.client.registry.ClientRegistry;
+import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.registry.GameRegistry;
 
 /**
@@ -39,18 +40,18 @@ public final class Registry
 	private static final String VALVEBLOCK_ENTITY_NAME = "valveBlockEntity";
 	private static final String VALVEBLOCK_ENTITY_KEY = SimpleFluidTanks.MOD_ID + VALVEBLOCK_ENTITY_NAME;
 	
-	// Waila support
+	// Waila 
 	private static final String WAILA_TANK_COUNT = "tankCount";
 	private static final String WAILA_TOTAL_CAPACITY = "totalCapacity";
 	private static final String WAILA_TANK_CAPACITY = "tankCapacity";
 	private static final String WAILA_TANK_LINKED = "linkStatus";
 	private static final String WAILA_CAPACITY_IN_MILLIBUCKETS = "capacityInMb";
 	
-	public static final String WAILA_TANK_COUNT_KEY = SimpleFluidTanks.MOD_ID + ".tankCount";
-	public static final String WAILA_TOTAL_CAPACITY_KEY = SimpleFluidTanks.MOD_ID + ".totalCapacity";
-	public static final String WAILA_TANK_CAPACITY_KEY = SimpleFluidTanks.MOD_ID + ".tankCapacity";
-	public static final String WAILA_TANK_LINKED_KEY = SimpleFluidTanks.MOD_ID + ".linkStatus";
-	public static final String WAILA_CAPACITY_IN_MILLIBUCKETS_KEY = SimpleFluidTanks.MOD_ID + ".capacityInMb";
+	public static final String WAILA_TANK_COUNT_KEY = SimpleFluidTanks.MOD_ID + WAILA_TANK_COUNT;
+	public static final String WAILA_TOTAL_CAPACITY_KEY = SimpleFluidTanks.MOD_ID + WAILA_TOTAL_CAPACITY;
+	public static final String WAILA_TANK_CAPACITY_KEY = SimpleFluidTanks.MOD_ID + WAILA_TANK_CAPACITY;
+	public static final String WAILA_TANK_LINKED_KEY = SimpleFluidTanks.MOD_ID + WAILA_TANK_LINKED;
+	public static final String WAILA_CAPACITY_IN_MILLIBUCKETS_KEY = SimpleFluidTanks.MOD_ID + WAILA_CAPACITY_IN_MILLIBUCKETS;
 	
 	private static final String WAILA = "waila.";
 	private static final String WAILA_TANK_COUNT_LOCA = WAILA + WAILA_TANK_COUNT;
@@ -63,7 +64,6 @@ public final class Registry
 	public static final String WAILA_TOOLTIP_CAPACITY = WAILA_TOOLTIP + "capacity";
 	public static final String WAILA_TOOLTIP_ISLINKED = WAILA_TOOLTIP + "isLinked";
 	public static final String WAILA_TOOLTIP_TANKS = WAILA_TOOLTIP + "tanks";
-	
 	
 	/**
 	 * Creates and registers all blocks added by the mod.
@@ -97,7 +97,20 @@ public final class Registry
 		MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(SimpleFluidTanks.valveBlock), SimpleFluidTanks.valveItemRenderer);
 	}
 	
-	public static final void registerWithWaila(IWailaRegistrar registrar)
+	/**
+	 * Registers with Waila, if installed.
+	 */
+	public static final void registerWithWaila()
+	{
+		FMLInterModComms.sendMessage("Waila", "register", "net.zarathul.simplefluidtanks.Registry.wailaCallback");
+	}
+	
+	/**
+	 * Registers config options and tooltip providers for Waila. (Only called by Waila, don't call this method directly).
+	 * @param registrar
+	 * The registration interface provided by Waila.
+	 */
+	public static final void wailaCallback(IWailaRegistrar registrar)
 	{
 		registrar.addConfig("Simple Fluid Tanks", WAILA_TANK_COUNT_KEY, StatCollector.translateToLocal(WAILA_TANK_COUNT_LOCA));
 		registrar.addConfig("Simple Fluid Tanks", WAILA_TOTAL_CAPACITY_KEY, StatCollector.translateToLocal(WAILA_TOTAL_CAPACITY_LOCA));

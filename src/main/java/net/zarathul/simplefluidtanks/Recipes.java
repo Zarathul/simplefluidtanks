@@ -16,12 +16,13 @@ public final class Recipes
 	public static final void registerRecipes()
 	{
 		// use thermal expansions hardened glass and bronze(tinkers alloy) ingots for the recipes if TE is installed, otherwise use normal glass and iron
-		ItemStack teHardenedGlass = GameRegistry.findItemStack(SimpleFluidTanks.thermalExpansionModId, SimpleFluidTanks.thermalExpansionHardenedGlass, 1);
-		ItemStack teBronzeIngots = GameRegistry.findItemStack(SimpleFluidTanks.thermalExpansionModId, SimpleFluidTanks.thermalExpansionBronzeIngot, 1);
+		ItemStack teHardenedGlass = GameRegistry.findItemStack(Config.thermalExpansionModId, Config.thermalExpansionHardenedGlass, 1);
+		ItemStack teBronzeIngots = GameRegistry.findItemStack(Config.thermalExpansionModId, Config.thermalExpansionBronzeIngot, 1);
 		ItemStack glassRecipeComponent = new ItemStack(Blocks.glass);
 		ItemStack ingotRecipeComponent = (teBronzeIngots != null) ? teBronzeIngots : new ItemStack(Items.iron_ingot);
 		int tankRecipeOutputAmount = 2;
 		
+		// the thermal expansion recipe for tanks yields 4 instead of 2 tanks
 		if (teHardenedGlass != null)
 		{
 			glassRecipeComponent = teHardenedGlass;

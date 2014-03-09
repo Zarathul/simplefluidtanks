@@ -7,7 +7,7 @@
     "mcversion": "${mcversion}",
     "url": "http://minecraft.curseforge.com/mc-mods/simplefluidtanks/",
     "updateUrl": "",
-    "authors": [ "Zarathul" ],
+    "authorList": [ "Zarathul" ],
     "credits": "Thx to Boidrix for the valve textures.",
     "logoFile": "assets/simplefluidtanks/sft_logo.jpg",
     "screenshots": [],

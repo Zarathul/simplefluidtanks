@@ -22,6 +22,7 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import net.zarathul.simplefluidtanks.Config;
 import net.zarathul.simplefluidtanks.SimpleFluidTanks;
 import net.zarathul.simplefluidtanks.blocks.FluidTank;
 import net.zarathul.simplefluidtanks.blocks.TankBlock;
@@ -222,7 +223,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		tag.setInteger("LinkedTankCount", linkedTankCount);
 		internalTank.writeToNBT(tag);
 		
-		return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 1, tag);
+		return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, -1, tag);
 	}
 
 	@Override
@@ -436,7 +437,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		}
 		
 		// calculate and set the internal tanks capacity, note the " + 1" is needed because the ValveBlock itself is considered a tank with storage capacity
-		internalTank.setCapacity((tankEntities.size() + 1) * SimpleFluidTanks.bucketsPerTank * FluidContainerRegistry.BUCKET_VOLUME);
+		internalTank.setCapacity((tankEntities.size() + 1) * Config.bucketsPerTank * FluidContainerRegistry.BUCKET_VOLUME);
 		
 		worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);
 	}
@@ -476,7 +477,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 			{
 				tanksToFill = tankPriorities.get(priorities[i]);
 				
-				int capacity = tanksToFill.size() * SimpleFluidTanks.bucketsPerTank * FluidContainerRegistry.BUCKET_VOLUME;
+				int capacity = tanksToFill.size() * Config.bucketsPerTank * FluidContainerRegistry.BUCKET_VOLUME;
 				double fillPercentage = Math.min((double)amountToDistribute / (double)capacity * 100d, 100d);
 				
 				for (BlockCoords tank : tanksToFill)

@@ -68,10 +68,9 @@ public class TankItemRenderer implements IItemRenderer
 		double[] baseCoords = (type == ItemRenderType.ENTITY || type == ItemRenderType.INVENTORY) ? new double[] { -0.5, -0.5, -0.5 } : new double[]{ 0, 0, 0 };
 		IIcon icon = SimpleFluidTanks.tankBlock.getIcon(0, 0);
 		
-		Tessellator tessellator = Tessellator.instance;
 		TessellationManager.setBaseCoords(baseCoords);
-		tessellator.startDrawingQuads();
+		TessellationManager.startDrawingQuads();
 		TessellationManager.renderCube(0, 0, 0, 1, 1, 1, icon, false, 1);
-		tessellator.draw();
+		TessellationManager.draw();
 	}
 }

@@ -42,7 +42,7 @@ public abstract class WrenchableBlock extends BlockContainer
 	}
 	
 	/**
-	 * Handles Buildcraft ToolWrenches used on the {@link ValveBlock}.
+	 * Handles Buildcraft ToolWrenches used on the {@link BlockContainer}.
 	 * @param world
 	 * The world.
 	 * @param x

@@ -25,8 +25,7 @@ public class ClientProxy extends CommonProxy
 		super.preInit(event);
 		
 		Registry.registerCustomRenderers();
-		
-		FMLInterModComms.sendMessage("Waila", "register", "net.zarathul.simplefluidtanks.Registry.registerWithWaila");
+		Registry.registerWithWaila();
 	}
 	
 	@Override
@@ -41,6 +40,9 @@ public class ClientProxy extends CommonProxy
 		super.postInit(event);
 	}
 	
+	/**
+	 * Adds a tab in creative mode for the mod.
+	 */
 	private void addCreativeTab()
 	{
 		SimpleFluidTanks.creativeTab = new CreativeTabs("Simple Fluid Tanks")

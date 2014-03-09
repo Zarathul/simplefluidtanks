@@ -8,10 +8,13 @@ import mcp.mobius.waila.api.IWailaDataProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.StatCollector;
+import net.zarathul.simplefluidtanks.Config;
 import net.zarathul.simplefluidtanks.Registry;
-import net.zarathul.simplefluidtanks.SimpleFluidTanks;
 import net.zarathul.simplefluidtanks.tileentities.TankBlockEntity;
 
+/**
+ * Provides Waila with tooltip information for {@link TankBlock}s.
+ */
 public final class TankBlockDataProvider implements IWailaDataProvider
 {
 	public static final TankBlockDataProvider instance = new TankBlockDataProvider();
@@ -52,11 +55,11 @@ public final class TankBlockDataProvider implements IWailaDataProvider
 			{
 				if (config.getConfig(Registry.WAILA_CAPACITY_IN_MILLIBUCKETS_KEY))
 				{
-					currenttip.add(StatCollector.translateToLocalFormatted(Registry.WAILA_TOOLTIP_CAPACITY, SimpleFluidTanks.bucketsPerTank * 1000, "", "", " mB") );
+					currenttip.add(StatCollector.translateToLocalFormatted(Registry.WAILA_TOOLTIP_CAPACITY, Config.bucketsPerTank * 1000, "", "", " mB") );
 				}
 				else
 				{
-					currenttip.add(StatCollector.translateToLocalFormatted(Registry.WAILA_TOOLTIP_CAPACITY, SimpleFluidTanks.bucketsPerTank, "", "", " B"));
+					currenttip.add(StatCollector.translateToLocalFormatted(Registry.WAILA_TOOLTIP_CAPACITY, Config.bucketsPerTank, "", "", " B"));
 				}
 			}
 		}
