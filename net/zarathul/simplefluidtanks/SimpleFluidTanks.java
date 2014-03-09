@@ -48,7 +48,7 @@ public class SimpleFluidTanks
 	
 	// constants
 	public static final String MOD_ID = "simplefluidtanks";
-	public static final String VERSION = "1.0.0.4";
+	public static final String VERSION = "1.0.0.5";
 	
 	// - registry
 	public static final String REGISTRY_TANKBLOCK_NAME = "tankBlock";
