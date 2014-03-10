@@ -77,7 +77,7 @@ public class BlockCoords
 			return null;
 		}
 		
-		ArrayList<BlockCoords> offsetBlocks = new ArrayList<BlockCoords>();
+		ArrayList<BlockCoords> offsetBlocks = new ArrayList<BlockCoords>(blocks.size());
 		
 		for (BlockCoords block : blocks)
 		{
