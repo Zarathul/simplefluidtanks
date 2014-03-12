@@ -7,7 +7,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -199,7 +198,7 @@ public class ValveBlock extends WrenchableBlock
 		{
 			// dismantle aka. instantly destroy the valve and drop the appropriate item, unlinking all connected tanks in the process
 			reset(world, x, y, z);
-			world.setBlock(x, y, z, Blocks.air);
+			world.setBlockToAir(x, y, z);
 			// last two parameters are metadata and fortune
 			dropBlockAsItem(world, x, y, z, 0, 0);
 		}

@@ -1,6 +1,7 @@
 package net.zarathul.simplefluidtanks;
 
 import mcp.mobius.waila.api.IWailaRegistrar;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.util.StatCollector;
 import net.minecraftforge.client.MinecraftForgeClient;
@@ -114,6 +115,7 @@ public final class Registry
 	 * @param registrar
 	 * The registration interface provided by Waila.
 	 */
+	@SideOnly(Side.CLIENT)
 	public static final void wailaCallback(IWailaRegistrar registrar)
 	{
 		registrar.addConfig("Simple Fluid Tanks", WAILA_TANK_COUNT_KEY, StatCollector.translateToLocal(WAILA_TANK_COUNT_LOCA));
@@ -124,5 +126,27 @@ public final class Registry
 		
 		registrar.registerBodyProvider(ValveBlockDataProvider.instance, ValveBlockEntity.class);
 		registrar.registerBodyProvider(TankBlockDataProvider.instance, TankBlockEntity.class);
+	}
+	
+	/**
+	 * Adds a tab in creative mode for the mod.
+	 */
+	@SideOnly(Side.CLIENT)
+	public static final void addCreativeTab()
+	{
+		SimpleFluidTanks.creativeTab = new CreativeTabs("Simple Fluid Tanks")
+		{
+			@Override
+			public String getTranslatedTabLabel()
+			{
+				return this.getTabLabel();
+			}
+
+			@Override
+			public Item getTabIconItem()
+			{
+				return Item.getItemFromBlock(SimpleFluidTanks.tankBlock);
+			}
+		};
 	}
 }

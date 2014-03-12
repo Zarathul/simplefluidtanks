@@ -61,7 +61,7 @@ public class TankBlockRenderer extends TileEntitySpecialRenderer
 			int fillPercentage = tankEntity.getFillPercentage();
 			double fluidHeight = 16.0 / 100 * fillPercentage;
 			double verticalTextureOffset = 16.0 / 100 * (100 - fillPercentage);
-			IIcon fluidIcon = getFluidTexture(tankEntity);
+			IIcon fluidIcon = getFluidIcon(tankEntity);
 			
 			renderFluid(tankEntity, connections, fluidIcon, fluidHeight, verticalTextureOffset);
 			renderLinkedTank(tankEntity, connections, icons);
@@ -258,13 +258,13 @@ public class TankBlockRenderer extends TileEntitySpecialRenderer
 	}
 	
 	/**
-	 * Gets the texture of the fluid inside the multiblock tank structure.
+	 * Gets the icon for the fluid inside the multiblock tank structure.
 	 * @param entity
-	 * The {@link TankBlock}s {@link TileEntity} to get the texture for.
+	 * The {@link TankBlock}s {@link TileEntity} to get the icon for.
 	 * @return
-	 * The fluids texture or <code>null</code> if the {@link TankBlock} is not linked to a {@link ValveBlock} or the multiblock tank is empty.
+	 * The fluids icon or <code>null</code> if the {@link TankBlock} is not linked to a {@link ValveBlock} or the multiblock tank is empty.
 	 */
-	private IIcon getFluidTexture(TankBlockEntity entity)
+	private IIcon getFluidIcon(TankBlockEntity entity)
 	{
 		ValveBlockEntity valve = entity.getValve();
 		

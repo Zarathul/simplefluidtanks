@@ -22,7 +22,7 @@ group= "net.zarathul.simplefluidtanks" // http://maven.apache.org/guides/mini/gu
 archivesBaseName = "simplefluidtanks"
 
 minecraft {
-    version = "1.7.2-10.12.0.1039"
+    version = "1.7.2-10.12.0.1046"
     assetDir = "eclipse/assets"
 }
 processResources

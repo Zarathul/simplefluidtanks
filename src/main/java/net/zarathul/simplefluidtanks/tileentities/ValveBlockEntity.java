@@ -112,6 +112,28 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
         
         tag.setByte("TankFacingSides", tankFacingSides);
     }
+	
+	@Override
+	public Packet getDescriptionPacket()
+	{
+		NBTTagCompound tag = new NBTTagCompound();
+		tag.setByte("TankFacingSides", tankFacingSides);
+		tag.setInteger("LinkedTankCount", linkedTankCount);
+		internalTank.writeToNBT(tag);
+		
+		return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, -1, tag);
+	}
+
+	@Override
+	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet)
+	{
+		NBTTagCompound tag = packet.func_148857_g();
+		tankFacingSides = tag.getByte("TankFacingSides");
+		linkedTankCount = tag.getInteger("LinkedTankCount");
+		internalTank.readFromNBT(tag);
+		
+		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+	}
 
     @Override
     public int fill(ForgeDirection from, FluidStack drainFluid, boolean doFill)
@@ -214,28 +236,6 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
     {
         return new FluidTankInfo[] { internalTank.getInfo() };
     }
-	
-	@Override
-	public Packet getDescriptionPacket()
-	{
-		NBTTagCompound tag = new NBTTagCompound();
-		tag.setByte("TankFacingSides", tankFacingSides);
-		tag.setInteger("LinkedTankCount", linkedTankCount);
-		internalTank.writeToNBT(tag);
-		
-		return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, -1, tag);
-	}
-
-	@Override
-	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet)
-	{
-		NBTTagCompound tag = packet.func_148857_g();
-		tankFacingSides = tag.getByte("TankFacingSides");
-		linkedTankCount = tag.getInteger("LinkedTankCount");
-		internalTank.readFromNBT(tag);
-		
-		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-	}
 
 	/**
 	 * Gets the multiblock tanks capacity.
@@ -384,7 +384,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     	// triggers onNeighborTileChange on neighboring blocks, this is needed for comparators to work
 		worldObj.notifyBlockChange(xCoord, yCoord, zCoord, SimpleFluidTanks.valveBlock);
-    	// the ValveBlock also counts as a tank in the multiblock structure, that is why it is " > 1" instead of " > 0"
+    	// the ValveBlock also counts as a tank in the multiblock structure
     	linkedTankCount = Math.max(tankPriorities.size() - 1, 0);
 	}
 	
@@ -404,7 +404,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		// redistribute the fluid
 		internalTank.setFluid(fluid);
 		distributeFluidToTanks();
-    	// the ValveBlock also counts as a tank in the multiblock structure, that is why it is " > 1" instead of " > 0"
+    	// the ValveBlock also counts as a tank in the multiblock structure
     	linkedTankCount = Math.max(tankPriorities.size() - 1, 0);
 	}
 	
@@ -478,7 +478,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 				tanksToFill = tankPriorities.get(priorities[i]);
 				
 				int capacity = tanksToFill.size() * Config.bucketsPerTank * FluidContainerRegistry.BUCKET_VOLUME;
-				double fillPercentage = Math.min((double)amountToDistribute / (double)capacity * 100d, 100d);
+				int fillPercentage = Math.max(Math.min((int)Math.ceil((double)amountToDistribute / (double)capacity * 100d), 100), 0);
 				
 				for (BlockCoords tank : tanksToFill)
 				{
@@ -486,16 +486,11 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 					
 					if (tankEntity != null)
 					{
-						tankEntity.setFillPercentage((int)fillPercentage);
+						tankEntity.setFillPercentage(fillPercentage);
 					}
 				}
 				
-				amountToDistribute -= Math.ceil(capacity * fillPercentage / 100d);
-				
-				if (amountToDistribute <= 0)
-				{
-					break;
-				}
+				amountToDistribute -= Math.min(capacity, amountToDistribute);
 			}
 		}
 	}

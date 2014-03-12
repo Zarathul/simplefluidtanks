@@ -5,7 +5,6 @@ import java.util.Random;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
@@ -116,6 +115,7 @@ public class TankBlock extends WrenchableBlock
 	}
 
 	@Override
+	@SideOnly(Side.CLIENT)
 	public int getRenderType()
 	{
 		return -1;
@@ -126,12 +126,6 @@ public class TankBlock extends WrenchableBlock
 	{
 		return 1;
 	}
-
-	@Override
-	public boolean isOpaqueCube()
-	{
-		return false;
-	}
 	
 	@Override
 	public boolean canRenderInPass(int pass)
@@ -141,6 +135,12 @@ public class TankBlock extends WrenchableBlock
 
 	@Override
 	public boolean renderAsNormalBlock()
+	{
+		return false;
+	}
+
+	@Override
+	public boolean isOpaqueCube()
 	{
 		return false;
 	}
@@ -167,8 +167,8 @@ public class TankBlock extends WrenchableBlock
 				ignorePreDestroyEvent.add(new BlockCoords(x, y, z));
 			}
 			
-			// destroy the tankblock (blockId 0 is air)
-			world.setBlock(x, y, z, Blocks.air);
+			// destroy the tankblock
+			world.setBlockToAir(x, y, z);
 			// last two parameters are metadata and fortune
 			dropBlockAsItem(world, x, y, z, 0, 0);
 			
@@ -178,7 +178,7 @@ public class TankBlock extends WrenchableBlock
 			}
 		}
 	}
-	
+
 	/**
 	 * Tells the {@link ValveBlockEntity} this {@link TankBlock} is connected to, to unlink all its connected {@link TankBlock}s.
 	 * @param world

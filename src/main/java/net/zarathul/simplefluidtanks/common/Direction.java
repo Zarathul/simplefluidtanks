@@ -57,6 +57,22 @@ public class Direction
 	);
 	
 	/**
+	 * Maps each vanilla minecraft side to its opposite side.
+	 */
+	public static final Map<Integer, Integer> vanillaSideOpposites = Collections.unmodifiableMap
+	(
+		new HashMap<Integer, Integer>()
+		{{
+			put(YPOS, YNEG);
+			put(YNEG, YPOS);
+			put(XPOS, XNEG);
+			put(XNEG, XPOS);
+			put(ZPOS, ZNEG);
+			put(ZNEG, ZPOS);
+		}}
+	);
+	
+	/**
 	 * Maps vanilla minecraft direction values to Forge directions.
 	 */
 	public static final Map<Integer, ForgeDirection> vanillaToForgeMapping = Collections.unmodifiableMap
