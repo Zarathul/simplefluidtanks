@@ -9,7 +9,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.StatCollector;
 import net.zarathul.simplefluidtanks.Config;
-import net.zarathul.simplefluidtanks.Registry;
 import net.zarathul.simplefluidtanks.tileentities.TankBlockEntity;
 
 /**

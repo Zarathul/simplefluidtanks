@@ -13,7 +13,7 @@
     "screenshots": [],
     "parent": "",
     "requiredMods": [ "Forge" ],
-    "dependencies": [ "Forge" ],
+    "dependencies": [ "Forge", "Waila" ],
     "dependants": [],
     "useDependencyInformation": "true"
 }

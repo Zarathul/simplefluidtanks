@@ -122,18 +122,6 @@ public class TankBlock extends WrenchableBlock
 	}
 
 	@Override
-	public int getRenderBlockPass()
-	{
-		return 1;
-	}
-	
-	@Override
-	public boolean canRenderInPass(int pass)
-	{
-		return (pass == 1);
-	}
-
-	@Override
 	public boolean renderAsNormalBlock()
 	{
 		return false;
