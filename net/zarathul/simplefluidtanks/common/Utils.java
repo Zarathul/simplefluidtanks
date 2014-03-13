@@ -50,4 +50,22 @@ public final class Utils
 		
 		return null;
 	}
+	
+	/**
+	 * Limits the specified value to the specified bounds.
+	 * @param x
+	 * The value to limit.
+	 * @param min
+	 * The lower bound.
+	 * @param max
+	 * The upper bound.
+	 * @return
+	 * <code>min</code> if <code>x</code> is smaller than <code>min</code>,<br>
+	 * <code>max</code> if <code>x</code> is greater than <code>max</code>,<br>
+	 * otherwise <code>x</code>
+	 */
+	public static int limit(int x, int min, int max)
+	{
+		return (x < min) ? min : (x > max) ? max : x;
+	}
 }

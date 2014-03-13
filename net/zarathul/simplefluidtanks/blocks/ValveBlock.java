@@ -196,8 +196,8 @@ public class ValveBlock extends WrenchableBlock
 		{
 			// dismantle aka. instantly destroy the valve and drop the appropriate item, unlinking all connected tanks in the process
 			reset(world, x, y, z);
-			// blockId 0 is air
-			world.setBlock(x, y, z, 0);
+			// destroy the valve block
+			world.setBlockToAir(x, y, z);
 			// last two parameters are metadata and fortune
 			dropBlockAsItem(world, x, y, z, 0, 0);
 		}

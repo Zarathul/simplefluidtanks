@@ -477,7 +477,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 				tanksToFill = tankPriorities.get(priorities[i]);
 				
 				int capacity = tanksToFill.size() * SimpleFluidTanks.bucketsPerTank * FluidContainerRegistry.BUCKET_VOLUME;
-				double fillPercentage = Math.min((double)amountToDistribute / (double)capacity * 100d, 100d);
+				int fillPercentage = Math.max(Math.min((int)Math.ceil((double)amountToDistribute / (double)capacity * 100d), 100), 0);
 				
 				for (BlockCoords tank : tanksToFill)
 				{
@@ -485,16 +485,11 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 					
 					if (tankEntity != null)
 					{
-						tankEntity.setFillPercentage((int)fillPercentage);
+						tankEntity.setFillPercentage(fillPercentage);
 					}
 				}
 				
-				amountToDistribute -= Math.ceil(capacity * fillPercentage / 100d);
-				
-				if (amountToDistribute <= 0)
-				{
-					break;
-				}
+				amountToDistribute -= Math.min(capacity, amountToDistribute);
 			}
 		}
 	}

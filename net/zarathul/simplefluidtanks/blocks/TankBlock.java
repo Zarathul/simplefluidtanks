@@ -119,21 +119,9 @@ public class TankBlock extends WrenchableBlock
 	}
 
 	@Override
-	public int getRenderBlockPass()
-	{
-		return 1;
-	}
-
-	@Override
 	public boolean isOpaqueCube()
 	{
 		return false;
-	}
-	
-	@Override
-	public boolean canRenderInPass(int pass)
-	{
-		return (pass == 1);
 	}
 
 	@Override
@@ -164,8 +152,8 @@ public class TankBlock extends WrenchableBlock
 				ignorePreDestroyEvent.add(new BlockCoords(x, y, z));
 			}
 			
-			// destroy the tankblock (blockId 0 is air)
-			world.setBlock(x, y, z, 0);
+			// destroy the tankblock
+			world.setBlockToAir(x, y, z);
 			// last two parameters are metadata and fortune
 			dropBlockAsItem(world, x, y, z, 0, 0);
 			

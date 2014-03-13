@@ -4,7 +4,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.Icon;
 
 /**
- * Wraps minecrafts {@link TessellationManager} to make it a tiny bit more user friendly.
+ * Wraps minecrafts {@link Tessellator} to make it a tiny bit more user friendly.
  */
 public final class TessellationManager
 {

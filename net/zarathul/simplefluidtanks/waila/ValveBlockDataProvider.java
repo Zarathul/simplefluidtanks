@@ -8,6 +8,8 @@ import mcp.mobius.waila.api.IWailaDataProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.StatCollector;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
 import net.zarathul.simplefluidtanks.SimpleFluidTanks;
 import net.zarathul.simplefluidtanks.tileentities.ValveBlockEntity;
 
@@ -40,8 +42,6 @@ public final class ValveBlockDataProvider implements IWailaDataProvider
 		{
 			ValveBlockEntity valveEntity = (ValveBlockEntity)entity;
 			
-			currenttip.clear();
-			
 			if (config.getConfig(WailaRegistrar.WAILA_TANK_COUNT_KEY))
 			{
 				currenttip.add(StatCollector.translateToLocalFormatted(WailaRegistrar.WAILA_TOOLTIP_TANKS, valveEntity.getLinkedTankCount()));
@@ -57,6 +57,24 @@ public final class ValveBlockDataProvider implements IWailaDataProvider
 				{
 					currenttip.add(StatCollector.translateToLocalFormatted(WailaRegistrar.WAILA_TOOLTIP_CAPACITY, valveEntity.getFluidAmount() / 1000, "/", valveEntity.getCapacity() / 1000, " B" ));
 				}
+			}
+			
+			if (config.getConfig(WailaRegistrar.WAILA_FLUID_NAME_KEY))
+			{
+				String fluidName = StatCollector.translateToLocal(WailaRegistrar.WAILA_TOOLTIP_FLUID_EMPTY);
+				FluidStack fluidStack = valveEntity.getFluid();
+				
+				if (fluidStack != null)
+				{
+					Fluid fluid = fluidStack.getFluid();
+					
+					if (fluid != null)
+					{
+						fluidName = fluid.getLocalizedName();
+					}
+				}
+				
+				currenttip.add(StatCollector.translateToLocalFormatted(WailaRegistrar.WAILA_TOOLTIP_FLUID, fluidName));
 			}
 		}
 		

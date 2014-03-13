@@ -118,13 +118,15 @@ public class TankBlockEntity extends TileEntity
 		NBTTagCompound tag = new NBTTagCompound();
 		writeToNBT(tag);
 		
-		return new Packet132TileEntityData(xCoord, yCoord, zCoord, 1, tag);
+		return new Packet132TileEntityData(xCoord, yCoord, zCoord, -1, tag);
 	}
 
 	@Override
 	public void onDataPacket(INetworkManager net, Packet132TileEntityData packet)
 	{
 		readFromNBT(packet.data);
+		
+		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 	}
 	
 	/**
@@ -211,7 +213,9 @@ public class TankBlockEntity extends TileEntity
 	 */
 	public boolean setFillPercentage(int percentage)
 	{
-		if (percentage < 0 || percentage > 100 || percentage == fillPercentage)
+		percentage = Utils.limit(percentage, 0, 100);
+		
+		if (percentage == fillPercentage)
 		{
 			return false;
 		}
