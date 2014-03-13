@@ -43,8 +43,6 @@ public final class TankBlockDataProvider implements IWailaDataProvider
 		{
 			TankBlockEntity tankEntity = (TankBlockEntity)entity;
 			
-			currenttip.clear();
-			
 			if (config.getConfig(Registry.WAILA_TANK_LINKED_KEY))
 			{
 				currenttip.add(StatCollector.translateToLocalFormatted(Registry.WAILA_TOOLTIP_ISLINKED, tankEntity.isPartOfTank()));
