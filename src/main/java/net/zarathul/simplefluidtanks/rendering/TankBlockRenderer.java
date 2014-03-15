@@ -7,14 +7,12 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.Fluid;
 import net.zarathul.simplefluidtanks.SimpleFluidTanks;
 import net.zarathul.simplefluidtanks.blocks.TankBlock;
-import net.zarathul.simplefluidtanks.blocks.ValveBlock;
 import net.zarathul.simplefluidtanks.common.Direction;
 import net.zarathul.simplefluidtanks.common.Utils;
 import net.zarathul.simplefluidtanks.tileentities.TankBlockEntity;
-import net.zarathul.simplefluidtanks.tileentities.ValveBlockEntity;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -24,7 +22,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class TankBlockRenderer extends TileEntitySpecialRenderer
 {
-	public static final double flickerOffset = 0.001;
+	private static final double flickerOffset = 0.001;
 	
 	/**
 	 * Default constructor.
@@ -59,9 +57,10 @@ public class TankBlockRenderer extends TileEntitySpecialRenderer
 		{
 			boolean[] connections = tankEntity.getConnections();
 			int fillPercentage = tankEntity.getFillPercentage();
-			double fluidHeight = 16.0 / 100 * fillPercentage;
-			double verticalTextureOffset = 16.0 / 100 * (100 - fillPercentage);
-			IIcon fluidIcon = getFluidIcon(tankEntity);
+			double fluidHeight = (16.0 / 100) * fillPercentage;
+			double verticalTextureOffset = (16.0 / 100) * (100 - fillPercentage);
+			Fluid fluid = tankEntity.getFluid();
+			IIcon fluidIcon = (fluid != null) ? fluid.getStillIcon() : null;
 			
 			renderFluid(tankEntity, connections, fluidIcon, fluidHeight, verticalTextureOffset);
 			renderLinkedTank(tankEntity, connections, icons);
@@ -95,43 +94,13 @@ public class TankBlockRenderer extends TileEntitySpecialRenderer
 	{
 		TessellationManager.startDrawingQuads();
 		
-		if (!connections[Direction.XPOS])
+		if (!connections[Direction.YNEG])
 		{
-			TessellationManager.renderPositiveXFace(16, 0, 0, 16, 16, icons[entity.getTextureIndex(Direction.XPOS)]);
+			TessellationManager.renderNegativeYFace(0, 0, 0, 16, 16, icons[entity.getTextureIndex(Direction.YNEG)]);
 			// inner face
-			if (shouldRenderInside(entity.xCoord, entity.yCoord, entity.zCoord, Direction.XPOS))
+			if (shouldRenderInside(entity.xCoord, entity.yCoord, entity.zCoord, Direction.YNEG))
 			{
-				TessellationManager.renderNegativeXFace(16 - flickerOffset, 0, 0, 16, 16, icons[entity.getTextureIndex(Direction.XNEG)]);
-			}
-		}
-		
-		if (!connections[Direction.XNEG])
-		{
-			TessellationManager.renderNegativeXFace(0, 0, 0, 16, 16, icons[entity.getTextureIndex(Direction.XNEG)]);
-			// inner face
-			if (shouldRenderInside(entity.xCoord, entity.yCoord, entity.zCoord, Direction.XNEG))
-			{
-				TessellationManager.renderPositiveXFace(0 + flickerOffset, 0, 0, 16, 16, icons[entity.getTextureIndex(Direction.XPOS)]);
-			}
-		}
-		
-		if (!connections[Direction.ZPOS])
-		{
-			TessellationManager.renderPositiveZFace(0, 0, 16, 16, 16, icons[entity.getTextureIndex(Direction.ZPOS)]);
-			// inner face
-			if (shouldRenderInside(entity.xCoord, entity.yCoord, entity.zCoord, Direction.ZPOS))
-			{
-				TessellationManager.renderNegativeZFace(0, 0, 16 - flickerOffset, 16, 16, icons[entity.getTextureIndex(Direction.ZNEG)]);
-			}
-		}
-		
-		if (!connections[Direction.ZNEG])
-		{
-			TessellationManager.renderNegativeZFace(0, 0, 0, 16, 16, icons[entity.getTextureIndex(Direction.ZNEG)]);
-			// inner face
-			if (shouldRenderInside(entity.xCoord, entity.yCoord, entity.zCoord, Direction.ZNEG))
-			{
-				TessellationManager.renderPositiveZFace(0, 0, 0 + flickerOffset, 16, 16, icons[entity.getTextureIndex(Direction.ZPOS)]);
+				TessellationManager.renderPositiveYFace(0, 0 + flickerOffset, 0, 16, 16, icons[entity.getTextureIndex(Direction.YPOS)]);
 			}
 		}
 		
@@ -145,13 +114,43 @@ public class TankBlockRenderer extends TileEntitySpecialRenderer
 			}
 		}
 		
-		if (!connections[Direction.YNEG])
+		if (!connections[Direction.ZNEG])
 		{
-			TessellationManager.renderNegativeYFace(0, 0, 0, 16, 16, icons[entity.getTextureIndex(Direction.YNEG)]);
+			TessellationManager.renderNegativeZFace(0, 0, 0, 16, 16, icons[entity.getTextureIndex(Direction.ZNEG)]);
 			// inner face
-			if (shouldRenderInside(entity.xCoord, entity.yCoord, entity.zCoord, Direction.YNEG))
+			if (shouldRenderInside(entity.xCoord, entity.yCoord, entity.zCoord, Direction.ZNEG))
 			{
-				TessellationManager.renderPositiveYFace(0, 0 + flickerOffset, 0, 16, 16, icons[entity.getTextureIndex(Direction.YPOS)]);
+				TessellationManager.renderPositiveZFace(0, 0, 0 + flickerOffset, 16, 16, icons[entity.getTextureIndex(Direction.ZPOS)]);
+			}
+		}
+		
+		if (!connections[Direction.ZPOS])
+		{
+			TessellationManager.renderPositiveZFace(0, 0, 16, 16, 16, icons[entity.getTextureIndex(Direction.ZPOS)]);
+			// inner face
+			if (shouldRenderInside(entity.xCoord, entity.yCoord, entity.zCoord, Direction.ZPOS))
+			{
+				TessellationManager.renderNegativeZFace(0, 0, 16 - flickerOffset, 16, 16, icons[entity.getTextureIndex(Direction.ZNEG)]);
+			}
+		}
+		
+		if (!connections[Direction.XNEG])
+		{
+			TessellationManager.renderNegativeXFace(0, 0, 0, 16, 16, icons[entity.getTextureIndex(Direction.XNEG)]);
+			// inner face
+			if (shouldRenderInside(entity.xCoord, entity.yCoord, entity.zCoord, Direction.XNEG))
+			{
+				TessellationManager.renderPositiveXFace(0 + flickerOffset, 0, 0, 16, 16, icons[entity.getTextureIndex(Direction.XPOS)]);
+			}
+		}
+		
+		if (!connections[Direction.XPOS])
+		{
+			TessellationManager.renderPositiveXFace(16, 0, 0, 16, 16, icons[entity.getTextureIndex(Direction.XPOS)]);
+			// inner face
+			if (shouldRenderInside(entity.xCoord, entity.yCoord, entity.zCoord, Direction.XPOS))
+			{
+				TessellationManager.renderNegativeXFace(16 - flickerOffset, 0, 0, 16, 16, icons[entity.getTextureIndex(Direction.XNEG)]);
 			}
 		}
 		
@@ -179,28 +178,10 @@ public class TankBlockRenderer extends TileEntitySpecialRenderer
 			
 			IBlockAccess world = entity.getWorldObj();
 			
-	        if (!connections[Direction.XPOS])
+			if (!connections[Direction.YNEG])
 			{
-	        	TessellationManager.setBrightness(SimpleFluidTanks.tankBlock.getMixedBrightnessForBlock(world, entity.xCoord + 1, entity.yCoord, entity.zCoord));
-				TessellationManager.renderPositiveXFace(16 - flickerOffset, 0, 0, fluidHeight, 16, 0, verticalTextureOffset, 0, 0, fluidIcon, TessellationManager.pixel);
-			}
-			
-			if (!connections[Direction.XNEG])
-			{
-				TessellationManager.setBrightness(SimpleFluidTanks.tankBlock.getMixedBrightnessForBlock(world, entity.xCoord - 1, entity.yCoord, entity.zCoord));
-				TessellationManager.renderNegativeXFace(0 + flickerOffset, 0, 0, fluidHeight, 16, 0, verticalTextureOffset, 0, 0, fluidIcon, TessellationManager.pixel);
-			}
-			
-			if (!connections[Direction.ZPOS])
-			{
-				TessellationManager.setBrightness(SimpleFluidTanks.tankBlock.getMixedBrightnessForBlock(world, entity.xCoord, entity.yCoord, entity.zCoord + 1));
-				TessellationManager.renderPositiveZFace(0, 0, 16 - flickerOffset, 16, fluidHeight, 0, verticalTextureOffset, 0, 0, fluidIcon, TessellationManager.pixel);
-			}
-			
-			if (!connections[Direction.ZNEG])
-			{
-				TessellationManager.setBrightness(SimpleFluidTanks.tankBlock.getMixedBrightnessForBlock(world, entity.xCoord, entity.yCoord, entity.zCoord - 1));
-				TessellationManager.renderNegativeZFace(0, 0, 0 + flickerOffset, 16, fluidHeight, 0, verticalTextureOffset, 0, 0, fluidIcon, TessellationManager.pixel);
+				TessellationManager.setBrightness(SimpleFluidTanks.tankBlock.getMixedBrightnessForBlock(world, entity.xCoord, entity.yCoord - 1, entity.zCoord));
+				TessellationManager.renderNegativeYFace(0, 0 + flickerOffset, 0, 16, 16, fluidIcon);
 			}
 			
 			TankBlockEntity tankAbove = Utils.getTileEntityAt(world, TankBlockEntity.class, entity.xCoord, entity.yCoord + 1, entity.zCoord);
@@ -211,10 +192,28 @@ public class TankBlockRenderer extends TileEntitySpecialRenderer
 				TessellationManager.renderPositiveYFace(0, fluidHeight - flickerOffset, 0, 16, 16, fluidIcon);
 			}
 			
-			if (!connections[Direction.YNEG])
+			if (!connections[Direction.ZNEG])
 			{
-				TessellationManager.setBrightness(SimpleFluidTanks.tankBlock.getMixedBrightnessForBlock(world, entity.xCoord, entity.yCoord - 1, entity.zCoord));
-				TessellationManager.renderNegativeYFace(0, 0 + flickerOffset, 0, 16, 16, fluidIcon);
+				TessellationManager.setBrightness(SimpleFluidTanks.tankBlock.getMixedBrightnessForBlock(world, entity.xCoord, entity.yCoord, entity.zCoord - 1));
+				TessellationManager.renderNegativeZFace(0, 0, 0 + flickerOffset, 16, fluidHeight, 0, verticalTextureOffset, 0, 0, fluidIcon, TessellationManager.pixel);
+			}
+			
+			if (!connections[Direction.ZPOS])
+			{
+				TessellationManager.setBrightness(SimpleFluidTanks.tankBlock.getMixedBrightnessForBlock(world, entity.xCoord, entity.yCoord, entity.zCoord + 1));
+				TessellationManager.renderPositiveZFace(0, 0, 16 - flickerOffset, 16, fluidHeight, 0, verticalTextureOffset, 0, 0, fluidIcon, TessellationManager.pixel);
+			}
+			
+			if (!connections[Direction.XNEG])
+			{
+				TessellationManager.setBrightness(SimpleFluidTanks.tankBlock.getMixedBrightnessForBlock(world, entity.xCoord - 1, entity.yCoord, entity.zCoord));
+				TessellationManager.renderNegativeXFace(0 + flickerOffset, 0, 0, fluidHeight, 16, 0, verticalTextureOffset, 0, 0, fluidIcon, TessellationManager.pixel);
+			}
+			
+	        if (!connections[Direction.XPOS])
+			{
+	        	TessellationManager.setBrightness(SimpleFluidTanks.tankBlock.getMixedBrightnessForBlock(world, entity.xCoord + 1, entity.yCoord, entity.zCoord));
+				TessellationManager.renderPositiveXFace(16 - flickerOffset, 0, 0, fluidHeight, 16, 0, verticalTextureOffset, 0, 0, fluidIcon, TessellationManager.pixel);
 			}
 			
 			TessellationManager.draw();
@@ -255,29 +254,5 @@ public class TankBlockRenderer extends TileEntitySpecialRenderer
 			default:
 				return false;
 		}
-	}
-	
-	/**
-	 * Gets the icon for the fluid inside the multiblock tank structure.
-	 * @param entity
-	 * The {@link TankBlock}s {@link TileEntity} to get the icon for.
-	 * @return
-	 * The fluids icon or <code>null</code> if the {@link TankBlock} is not linked to a {@link ValveBlock} or the multiblock tank is empty.
-	 */
-	private IIcon getFluidIcon(TankBlockEntity entity)
-	{
-		ValveBlockEntity valve = entity.getValve();
-		
-		if (valve != null)
-		{
-			FluidStack fluidStack = valve.getFluid();
-			
-			if (fluidStack != null)
-			{
-				return fluidStack.getFluid().getIcon();
-			}
-		}
-		
-		return null;
 	}
 }

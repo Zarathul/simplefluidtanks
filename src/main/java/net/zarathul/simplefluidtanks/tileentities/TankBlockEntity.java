@@ -2,20 +2,19 @@ package net.zarathul.simplefluidtanks.tileentities;
 
 import java.util.Arrays;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
 import net.zarathul.simplefluidtanks.blocks.TankBlock;
 import net.zarathul.simplefluidtanks.blocks.ValveBlock;
 import net.zarathul.simplefluidtanks.common.BlockCoords;
 import net.zarathul.simplefluidtanks.common.Direction;
 import net.zarathul.simplefluidtanks.common.Utils;
 import net.zarathul.simplefluidtanks.rendering.ConnectedTexturesHelper;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 /**
  * Holds {@link TileEntity} data for {@link TankBlock}s,
@@ -53,15 +52,6 @@ public class TankBlockEntity extends TileEntity
 		valveCoords = null;
 		textureIds = new int[] { 0, 0, 0, 0, 0, 0 };
 		connections = new boolean[6];
-	}
-	
-	@Override
-	@SideOnly(Side.CLIENT)
-	public double getMaxRenderDistanceSquared()
-	{
-		int renderDistance = Minecraft.getMinecraft().gameSettings.renderDistanceChunks;
-		
-		return Math.max(400, Math.pow(64, (3 - renderDistance)));
 	}
 
 	@Override
@@ -224,6 +214,28 @@ public class TankBlockEntity extends TileEntity
 		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 		
 		return true;
+	}
+	
+	/**
+	 * Gets the {@link Fluid} inside the multiblock tank structure.
+	 * @return
+	 * The fluid or <code>null</code> if the {@link TankBlock} is not linked to a {@link ValveBlock} or the multiblock tank is empty.
+	 */
+	public Fluid getFluid()
+	{
+		ValveBlockEntity valve = getValve();
+		
+		if (valve != null)
+		{
+			FluidStack fluidStack = valve.getFluid();
+			
+			if (fluidStack != null)
+			{
+				return fluidStack.getFluid();
+			}
+		}
+		
+		return null;
 	}
 	
 	/**

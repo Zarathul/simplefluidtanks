@@ -23,7 +23,7 @@ buildscript
 
 apply plugin: 'forge'
 
-version = "1.7.2-1.1.0.5"
+version = "1.7.2-1.1.0.6"
 group= "net.zarathul.simplefluidtanks" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "simplefluidtanks"
 
@@ -50,11 +50,5 @@ processResources
                 
         // replace version and mcversion
         expand 'version':project.version, 'mcversion':project.minecraft.version
-    }
-        
-    // copy everything else, thats not the mcmod.info
-    from(sourceSets.main.resources.srcDirs)
-    {
-        exclude 'mcmod.info'
     }
 }
