@@ -3,6 +3,7 @@ package net.zarathul.simplefluidtanks;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.MinecraftForgeClient;
+import net.zarathul.simplefluidtanks.blocks.FakeFluidBlock;
 import net.zarathul.simplefluidtanks.blocks.TankBlock;
 import net.zarathul.simplefluidtanks.blocks.ValveBlock;
 import net.zarathul.simplefluidtanks.items.TankItem;
@@ -12,7 +13,7 @@ import net.zarathul.simplefluidtanks.rendering.TankItemRenderer;
 import net.zarathul.simplefluidtanks.rendering.ValveItemRenderer;
 import net.zarathul.simplefluidtanks.tileentities.TankBlockEntity;
 import net.zarathul.simplefluidtanks.tileentities.ValveBlockEntity;
-import cpw.mods.fml.client.registry.ClientRegistry;
+import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
@@ -47,6 +48,7 @@ public final class Registry
 		// TankBlock
 		SimpleFluidTanks.tankBlock = new TankBlock();
 		GameRegistry.registerBlock(SimpleFluidTanks.tankBlock, TankItem.class, TANKBLOCK_KEY);
+		SimpleFluidTanks.fakeFluidBlock = new FakeFluidBlock();
 		
 		// ValveBlock
 		SimpleFluidTanks.valveBlock = new ValveBlock();
@@ -63,13 +65,9 @@ public final class Registry
 	@SideOnly(Side.CLIENT)
 	public static void registerCustomRenderers()
 	{
-		SimpleFluidTanks.tankBlockRenderer = new TankBlockRenderer();
-		SimpleFluidTanks.tankItemRenderer = new TankItemRenderer();
-		SimpleFluidTanks.valveItemRenderer = new ValveItemRenderer();
-		
-		ClientRegistry.bindTileEntitySpecialRenderer(TankBlockEntity.class, SimpleFluidTanks.tankBlockRenderer);
-		MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(SimpleFluidTanks.tankBlock), SimpleFluidTanks.tankItemRenderer);
-		MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(SimpleFluidTanks.valveBlock), SimpleFluidTanks.valveItemRenderer);
+		RenderingRegistry.registerBlockHandler(new TankBlockRenderer());
+		MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(SimpleFluidTanks.tankBlock), new TankItemRenderer());
+		MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(SimpleFluidTanks.valveBlock), new ValveItemRenderer());
 	}
 	
 	/**

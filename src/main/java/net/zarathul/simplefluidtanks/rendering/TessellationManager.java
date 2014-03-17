@@ -119,7 +119,7 @@ public final class TessellationManager
 			renderPositiveYFace(xOffset, yOffset, zOffset, width, depth, icon, scale);
 			// positive z back side
 			renderNegativeZFace(xOffset, yOffset, zOffset + depth, width, height, icon, scale);
-			// negative back side
+			// negative z back side
 			renderPositiveZFace(xOffset, yOffset, zOffset, width, height, icon, scale);
 		}
 	}
@@ -772,5 +772,19 @@ public final class TessellationManager
 	public static void setBrightness(int brightness)
 	{
 		tr.setBrightness(brightness);
+	}
+	
+	/**
+	 * Sets the lights color.
+	 * @param r
+	 * The red channel.
+	 * @param g
+	 * The green channel.
+	 * @param b
+	 * The blue channel.
+	 */
+	public static void setColorOpaque(float r, float g, float b)
+	{
+		tr.setColorOpaque_F(r, g, b);
 	}
 }

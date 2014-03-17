@@ -1,11 +1,9 @@
 package net.zarathul.simplefluidtanks;
 
 import net.minecraft.creativetab.CreativeTabs;
+import net.zarathul.simplefluidtanks.blocks.FakeFluidBlock;
 import net.zarathul.simplefluidtanks.blocks.TankBlock;
 import net.zarathul.simplefluidtanks.blocks.ValveBlock;
-import net.zarathul.simplefluidtanks.rendering.TankBlockRenderer;
-import net.zarathul.simplefluidtanks.rendering.TankItemRenderer;
-import net.zarathul.simplefluidtanks.rendering.ValveItemRenderer;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -13,8 +11,6 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 @Mod(modid = SimpleFluidTanks.MOD_ID, name = "SimpleFluidTanks", version = SimpleFluidTanks.VERSION)
 public class SimpleFluidTanks
@@ -28,14 +24,7 @@ public class SimpleFluidTanks
 	// blocks
 	public static TankBlock tankBlock;
 	public static ValveBlock valveBlock;
-	
-	// custom renderers
-	@SideOnly(Side.CLIENT)
-	public static TankBlockRenderer tankBlockRenderer;
-	@SideOnly(Side.CLIENT)
-	public static TankItemRenderer tankItemRenderer;
-	@SideOnly(Side.CLIENT)
-	public static ValveItemRenderer valveItemRenderer;
+	public static FakeFluidBlock fakeFluidBlock;
 	
 	public static CreativeTabs creativeTab;
 	

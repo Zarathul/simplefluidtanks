@@ -129,6 +129,16 @@ public class TankBlockEntity extends TileEntity
 	}
 	
 	/**
+	 * Checks if the {@link TankBlock} is empty.
+	 * @return
+	 * <code>true</code> if the {@link TankBlock} is empty, otherwise false.
+	 */
+	public boolean isEmpty()
+	{
+		return fillPercentage == 0;
+	}
+	
+	/**
 	 * Gets the {@link ValveBlock}s {@link TileEntity} the {@link TankBlock} is linked to.
 	 * @return
 	 * The valves {@link TileEntity}<br>

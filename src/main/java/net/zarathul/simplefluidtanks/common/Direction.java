@@ -14,14 +14,9 @@ import com.google.common.collect.ImmutableList;
 public class Direction
 {
 	/**
-	 * The vanilla minecraft value for the direction along the positive x axis.
+	 * The vanilla minecraft value for the direction along the negative y axis.
 	 */
-	public static final int XPOS = 5;
-	
-	/**
-	 * The vanilla minecraft value for the direction along the negative x axis.
-	 */
-	public static final int XNEG = 4;
+	public static final int YNEG = 0;
 	
 	/**
 	 * The vanilla minecraft value for the direction along the positive y axis.
@@ -29,9 +24,9 @@ public class Direction
 	public static final int YPOS = 1;
 	
 	/**
-	 * The vanilla minecraft value for the direction along the negative y axis.
+	 * The vanilla minecraft value for the direction along the negative z axis.
 	 */
-	public static final int YNEG = 0;
+	public static final int ZNEG = 2;
 	
 	/**
 	 * The vanilla minecraft value for the direction along the positive z axis.
@@ -39,9 +34,14 @@ public class Direction
 	public static final int ZPOS = 3;
 	
 	/**
-	 * The vanilla minecraft value for the direction along the negative z axis.
+	 * The vanilla minecraft value for the direction along the negative x axis.
 	 */
-	public static final int ZNEG = 2;
+	public static final int XNEG = 4;
+	
+	/**
+	 * The vanilla minecraft value for the direction along the positive x axis.
+	 */
+	public static final int XPOS = 5;
 	
 	/**
 	 * Maps bitflags to vanilla minecraft direction values.
@@ -63,12 +63,28 @@ public class Direction
 	(
 		new HashMap<Integer, Integer>()
 		{{
-			put(YPOS, YNEG);
 			put(YNEG, YPOS);
-			put(XPOS, XNEG);
-			put(XNEG, XPOS);
-			put(ZPOS, ZNEG);
+			put(YPOS, YNEG);
 			put(ZNEG, ZPOS);
+			put(ZPOS, ZNEG);
+			put(XNEG, XPOS);
+			put(XPOS, XNEG);
+		}}
+	);
+	
+	/**
+	 * Maps directional offsets to their respective vanilla sides.
+	 */
+	public static final Map<Integer, DirectionalOffset> vanillaSideOffsets = Collections.unmodifiableMap
+	(
+		new HashMap<Integer, DirectionalOffset>()
+		{{
+			put(YNEG, DirectionalOffset.YNEG);
+			put(YPOS, DirectionalOffset.YPOS);
+			put(ZNEG, DirectionalOffset.ZNEG);
+			put(ZPOS, DirectionalOffset.ZPOS);
+			put(XNEG, DirectionalOffset.XNEG);
+			put(XPOS, DirectionalOffset.XPOS);
 		}}
 	);
 	
@@ -79,12 +95,12 @@ public class Direction
 	(
 		new HashMap<Integer, ForgeDirection>()
 		{{
-			put(YPOS, ForgeDirection.UP);
 			put(YNEG, ForgeDirection.DOWN);
-			put(XPOS, ForgeDirection.EAST);
-			put(XNEG, ForgeDirection.WEST);
-			put(ZPOS, ForgeDirection.SOUTH);
+			put(YPOS, ForgeDirection.UP);
 			put(ZNEG, ForgeDirection.NORTH);
+			put(ZPOS, ForgeDirection.SOUTH);
+			put(XNEG, ForgeDirection.WEST);
+			put(XPOS, ForgeDirection.EAST);
 		}}
 	);
 	
@@ -136,5 +152,38 @@ public class Direction
 		}
 		
 		return ForgeDirection.UNKNOWN;
+	}
+	
+	/**
+	 * Defines offsets for different directions.
+	 */
+	public enum DirectionalOffset
+	{
+		YNEG(0, -1, 0),
+		YPOS(0, 1, 0),
+		ZNEG(0, 0, -1),
+		ZPOS(0, 0, 1),
+		XNEG(-1, 0, 0),
+		XPOS(1, 0, 0);
+		
+		/**
+		 * The offset for the x-axis.
+		 */
+		public final int x;
+		/**
+		 * The offset for the y-axis.
+		 */
+		public final int y;
+		/**
+		 * The offset for the z-axis.
+		 */
+		public final int z;
+		
+		private DirectionalOffset(int x, int y, int z)
+		{
+			this.x = x;
+			this.y = y;
+			this.z = z;
+		}
 	}
 }

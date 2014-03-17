@@ -15,6 +15,7 @@ import net.zarathul.simplefluidtanks.Registry;
 import net.zarathul.simplefluidtanks.SimpleFluidTanks;
 import net.zarathul.simplefluidtanks.common.BlockCoords;
 import net.zarathul.simplefluidtanks.common.Utils;
+import net.zarathul.simplefluidtanks.rendering.TankBlockRenderer;
 import net.zarathul.simplefluidtanks.tileentities.TankBlockEntity;
 import net.zarathul.simplefluidtanks.tileentities.ValveBlockEntity;
 import cpw.mods.fml.relauncher.Side;
@@ -116,9 +117,22 @@ public class TankBlock extends WrenchableBlock
 
 	@Override
 	@SideOnly(Side.CLIENT)
+	public int getRenderBlockPass()
+	{
+		return 1;
+	}
+
+	@Override
+	public boolean canRenderInPass(int pass)
+	{
+		return (pass == 1);
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
 	public int getRenderType()
 	{
-		return -1;
+		return TankBlockRenderer.id;
 	}
 
 	@Override
@@ -132,7 +146,7 @@ public class TankBlock extends WrenchableBlock
 	{
 		return false;
 	}
-	
+
 	@Override
 	public TileEntity createNewTileEntity(World world, int unknown)
 	{
