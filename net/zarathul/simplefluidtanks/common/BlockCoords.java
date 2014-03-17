@@ -1,13 +1,14 @@
 package net.zarathul.simplefluidtanks.common;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+
+import net.zarathul.simplefluidtanks.common.Direction.DirectionalOffset;
 
 /**
  * Represents the coordinates of a block in the world.
  */
-public class BlockCoords implements Serializable // Comparable<BlockCoords>
+public class BlockCoords
 {
 	/**
 	 * The x-coordinate.
@@ -78,7 +79,7 @@ public class BlockCoords implements Serializable // Comparable<BlockCoords>
 			return null;
 		}
 		
-		ArrayList<BlockCoords> offsetBlocks = new ArrayList<BlockCoords>();
+		ArrayList<BlockCoords> offsetBlocks = new ArrayList<BlockCoords>(blocks.size());
 		
 		for (BlockCoords block : blocks)
 		{
@@ -86,6 +87,27 @@ public class BlockCoords implements Serializable // Comparable<BlockCoords>
 		}
 		
 		return offsetBlocks;
+	}
+	
+	/**
+	 * Creates a {@link BlockCoords} instance from the supplied coordinates, offset in the specified direction by the specified amount.
+	 * @param direction
+	 * The direction the offset is relative to.
+	 * @param amount
+	 * The amount by which the coordinates should be offset.
+	 * @param coords
+	 * The coordinates.
+	 * @return
+	 * The offset {@link BlockCoords} instance or <code>null</code> if no coordinates were specified.
+	 */
+	public static BlockCoords offsetBy(int direction, int amount, int ... coords)
+	{
+		if (coords == null || coords.length != 3)
+		{
+			return null;
+		}
+		
+		return new BlockCoords(coords[0], coords[1], coords[2]).offsetBy(direction, amount);
 	}
 	
 	/**
@@ -105,6 +127,30 @@ public class BlockCoords implements Serializable // Comparable<BlockCoords>
 		x += offsets[0];
 		y += (offsets.length > 1) ? offsets[1] : 0;
 		z += (offsets.length > 2) ? offsets[2] : 0;
+		
+		return this;
+	}
+	
+	
+	/**
+	 * Offsets the coordinates of the current instance by the supplied amount, in the specified direction.
+	 * @param direction
+	 * The direction the offset is relative to.
+	 * @param amount
+	 * The amount by which the coordinates should be offset.
+	 * @return
+	 * The current instance after the changes.
+	 */
+	public BlockCoords offsetBy(int direction, int amount)
+	{
+		DirectionalOffset offset = Direction.vanillaSideOffsets.get(direction);
+		
+		if (offset != null)
+		{
+			x += offset.x * amount;
+			y += offset.y * amount;
+			z += offset.z * amount;
+		}
 		
 		return this;
 	}

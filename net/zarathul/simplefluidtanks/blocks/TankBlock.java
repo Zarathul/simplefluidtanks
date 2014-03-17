@@ -8,11 +8,14 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import net.zarathul.simplefluidtanks.SimpleFluidTanks;
 import net.zarathul.simplefluidtanks.common.BlockCoords;
+import net.zarathul.simplefluidtanks.common.Direction;
 import net.zarathul.simplefluidtanks.common.Utils;
+import net.zarathul.simplefluidtanks.rendering.TankBlockRenderer;
 import net.zarathul.simplefluidtanks.tileentities.TankBlockEntity;
 import net.zarathul.simplefluidtanks.tileentities.ValveBlockEntity;
 import cpw.mods.fml.relauncher.Side;
@@ -111,11 +114,25 @@ public class TankBlock extends WrenchableBlock
 	{
 		return 1;
 	}
+	
+	@Override
+	@SideOnly(Side.CLIENT)
+	public int getRenderBlockPass()
+	{
+		return 1;
+	}
+
+	@Override
+	public boolean canRenderInPass(int pass)
+	{
+		TankBlockRenderer.pass = pass;
+		return (pass == 0 || pass == 1);
+	}
 
 	@Override
 	public int getRenderType()
 	{
-		return -1;
+		return TankBlockRenderer.id;
 	}
 
 	@Override
@@ -128,6 +145,37 @@ public class TankBlock extends WrenchableBlock
 	public boolean renderAsNormalBlock()
 	{
 		return false;
+	}
+	
+	@Override
+	@SideOnly(Side.CLIENT)
+	public boolean shouldSideBeRendered(IBlockAccess blockAccess, int x, int y, int z, int side)
+	{
+		int shiftDir = Direction.vanillaSideOpposites.get(side);
+		BlockCoords tankCoords = BlockCoords.offsetBy(shiftDir, 1, x, y, z);
+		
+		TankBlockEntity tankEntity = Utils.getTileEntityAt(blockAccess, TankBlockEntity.class, tankCoords);
+		
+		if (tankEntity == null)
+		{
+			return true;
+		}
+		
+		boolean[] connections = tankEntity.getConnections();
+		
+		if (side == Direction.YPOS)
+		{
+			if (!connections[Direction.YPOS])
+			{
+				return true;
+			}
+			
+			TankBlockEntity tankAbove = Utils.getTileEntityAt(blockAccess, TankBlockEntity.class, x, y, z);
+			
+			return (tankAbove == null || tankAbove.isEmpty());
+		}
+		
+		return !connections[side];
 	}
 
 	@Override

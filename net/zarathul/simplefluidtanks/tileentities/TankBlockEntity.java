@@ -8,6 +8,8 @@ import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
 import net.zarathul.simplefluidtanks.SimpleFluidTanks;
 import net.zarathul.simplefluidtanks.blocks.TankBlock;
 import net.zarathul.simplefluidtanks.blocks.ValveBlock;
@@ -140,6 +142,16 @@ public class TankBlockEntity extends TileEntity
 	}
 	
 	/**
+	 * Checks if the {@link TankBlock} is empty.
+	 * @return
+	 * <code>true</code> if the {@link TankBlock} is empty, otherwise false.
+	 */
+	public boolean isEmpty()
+	{
+		return fillPercentage == 0;
+	}
+	
+	/**
 	 * Gets the {@link ValveBlock}s {@link TileEntity} the {@link TankBlock} is linked to.
 	 * @return
 	 * The valves {@link TileEntity}<br>
@@ -228,6 +240,28 @@ public class TankBlockEntity extends TileEntity
 	}
 	
 	/**
+	 * Gets the {@link Fluid} inside the multiblock tank structure.
+	 * @return
+	 * The fluid or <code>null</code> if the {@link TankBlock} is not linked to a {@link ValveBlock} or the multiblock tank is empty.
+	 */
+	public Fluid getFluid()
+	{
+		ValveBlockEntity valve = getValve();
+		
+		if (valve != null)
+		{
+			FluidStack fluidStack = valve.getFluid();
+			
+			if (fluidStack != null)
+			{
+				return fluidStack.getFluid();
+			}
+		}
+		
+		return null;
+	}
+	
+	/**
 	 * Gets info on which side of the {@link TankBlock} is connected to another {@link TankBlock} of the same multiblock structure.
 	 * @return
 	 * A boolean array whose elements are <code>true</code> for sides with a {@link TankBlock} of the same multiblock structure.<br>
@@ -241,14 +275,14 @@ public class TankBlockEntity extends TileEntity
 	}
 	
 	/**
-	 * Gets the texture for the specified side of the {@link TankBlock}.
+	 * Gets the texture index for the specified side of the {@link TankBlock}.
 	 * @param side
-	 * The side to get the texture for.
+	 * The side to get the index for.
 	 * @return
-	 * The texture id or <code>-1</code> if the <code>side</code> argument was invalid.
+	 * The texture index or <code>-1</code> if the <code>side</code> argument was invalid.
 	 * @see Direction
 	 */
-	public int getTexture(int side)
+	public int getTextureIndex(int side)
 	{
 		if (side < 0 || side > 5)
 		{

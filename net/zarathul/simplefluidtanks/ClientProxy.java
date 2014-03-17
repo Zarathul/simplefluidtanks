@@ -7,6 +7,7 @@ import net.zarathul.simplefluidtanks.rendering.ValveItemRenderer;
 import net.zarathul.simplefluidtanks.tileentities.TankBlockEntity;
 import net.zarathul.simplefluidtanks.waila.WailaRegistrar;
 import cpw.mods.fml.client.registry.ClientRegistry;
+import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
@@ -24,7 +25,7 @@ public class ClientProxy extends CommonProxy
 		SimpleFluidTanks.tankItemRenderer = new TankItemRenderer();
 		SimpleFluidTanks.valveItemRenderer = new ValveItemRenderer();
 		
-		ClientRegistry.bindTileEntitySpecialRenderer(TankBlockEntity.class, SimpleFluidTanks.tankBlockRenderer);
+		RenderingRegistry.registerBlockHandler(new TankBlockRenderer());
 		MinecraftForgeClient.registerItemRenderer(SimpleFluidTanks.tankBlock.blockID, SimpleFluidTanks.tankItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(SimpleFluidTanks.valveBlock.blockID, SimpleFluidTanks.valveItemRenderer);
 	}
