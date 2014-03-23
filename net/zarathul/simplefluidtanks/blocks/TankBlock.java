@@ -130,6 +130,7 @@ public class TankBlock extends WrenchableBlock
 	}
 
 	@Override
+	@SideOnly(Side.CLIENT)
 	public int getRenderType()
 	{
 		return TankBlockRenderer.id;
