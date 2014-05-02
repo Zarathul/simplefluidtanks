@@ -175,7 +175,6 @@ public class TankBlockEntity extends TileEntity
 		{
 			valveCoords = coords;
 			isPartOfTank = true;
-			worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);
 			
 			return true;
 		}
@@ -184,13 +183,18 @@ public class TankBlockEntity extends TileEntity
 	}
 	
 	/**
-	 * Updates the {@link TankBlock}s textures.
+	 * Updates the texture ids for the different sides of the {@link TankBlock}.
 	 */
 	public void updateTextures()
 	{
-		determineTextureIds();
-		worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);
-		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+		updateConnections();
+		
+		textureIds[Direction.XPOS] = ConnectedTexturesHelper.getPositiveXTexture(connections);
+		textureIds[Direction.XNEG] = ConnectedTexturesHelper.getNegativeXTexture(connections);
+		textureIds[Direction.YPOS] = ConnectedTexturesHelper.getPositiveYTexture(connections);
+		textureIds[Direction.YNEG] = ConnectedTexturesHelper.getNegativeYTexture(connections);
+		textureIds[Direction.ZPOS] = ConnectedTexturesHelper.getPositiveZTexture(connections);
+		textureIds[Direction.ZNEG] = ConnectedTexturesHelper.getNegativeZTexture(connections);
 	}
 
 	/**
@@ -204,26 +208,29 @@ public class TankBlockEntity extends TileEntity
 	}
 	
 	/**
-	 * Gets the {@link TankBlock}s current filling level.
+	 * Sets the {@link TankBlock}s current filling level in percent.
 	 * @param percentage
 	 * The percentage the {@link TankBlock}s filling level should be set to.
+	 * @param forceBlockUpdate
+	 * Specifies if a block update should be forced.
 	 * @return
 	 * <code>true</code> if the filling level was updated, otherwise <code>false</code>.
 	 */
-	public boolean setFillPercentage(int percentage)
+	public boolean setFillPercentage(int percentage, boolean forceBlockUpdate)
 	{
 		percentage = Utils.limit(percentage, 0, 100);
 		
-		if (percentage == fillPercentage)
-		{
-			return false;
-		}
+		boolean percentageChanged = (percentage != fillPercentage);
 		
 		fillPercentage = percentage;
-		worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);
-		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 		
-		return true;
+		if (percentageChanged || forceBlockUpdate)
+		{
+			worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);
+			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+		}
+		
+		return percentageChanged;
 	}
 	
 	/**
@@ -297,24 +304,9 @@ public class TankBlockEntity extends TileEntity
 	}
 	
 	/**
-	 * Gets the texture ids for the different sides of the {@link TankBlock}.
-	 */
-	private void determineTextureIds()
-	{
-		determineConnections();
-		
-		textureIds[Direction.XPOS] = ConnectedTexturesHelper.getPositiveXTexture(connections);
-		textureIds[Direction.XNEG] = ConnectedTexturesHelper.getNegativeXTexture(connections);
-		textureIds[Direction.YPOS] = ConnectedTexturesHelper.getPositiveYTexture(connections);
-		textureIds[Direction.YNEG] = ConnectedTexturesHelper.getNegativeYTexture(connections);
-		textureIds[Direction.ZPOS] = ConnectedTexturesHelper.getPositiveZTexture(connections);
-		textureIds[Direction.ZNEG] = ConnectedTexturesHelper.getNegativeZTexture(connections);
-	}
-	
-	/**
 	 * Builds an array that holds information on which side of the {@link TankBlock} is connected to another {@link TankBlock} of the same multiblock structure.
 	 */
-	private void determineConnections()
+	private void updateConnections()
 	{
 		connections[Direction.XPOS] = shouldConnectTo(xCoord + 1, yCoord, zCoord);	// X+
 		connections[Direction.XNEG] = shouldConnectTo(xCoord - 1, yCoord, zCoord);	// X-
@@ -357,9 +349,11 @@ public class TankBlockEntity extends TileEntity
 	}
 
 	/**
-	 * Resets aka. disconnects the {@link TankBlock} from a multiblock tank.
+	 * Disconnects the {@link TankBlock} from a multiblock tank.
+	 * @param suppressBlockUpdates
+	 * Specifies if block updates should be suppressed.
 	 */
-	public void reset()
+	public void disconnect(boolean suppressBlockUpdates)
 	{
 		isPartOfTank = false;
 		fillPercentage = 0;
@@ -367,7 +361,10 @@ public class TankBlockEntity extends TileEntity
 		Arrays.fill(textureIds, 0);
 		Arrays.fill(connections, false);
 		
-		worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);
-		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+		if (!suppressBlockUpdates)
+		{
+			worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);
+			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+		}
 	}
 }

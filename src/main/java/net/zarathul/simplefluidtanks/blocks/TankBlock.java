@@ -89,17 +89,25 @@ public class TankBlock extends WrenchableBlock
 	@Override
 	public void onBlockPreDestroy(World world, int x, int y, int z, int par5)
 	{
-		BlockCoords tankCoords = new BlockCoords(x, y, z);
-		
-		// ignore the event if the tanks coordinates are on the ignore list
-		if (ignorePreDestroyEvent.contains(tankCoords))
+		if (!world.isRemote)
 		{
-			ignorePreDestroyEvent.remove(tankCoords);
-			
-			return;
+			BlockCoords tankCoords = new BlockCoords(x, y, z);
+
+			// ignore the event if the tanks coordinates are on the ignore list
+			if (ignorePreDestroyEvent.contains(tankCoords))
+			{
+				ignorePreDestroyEvent.remove(tankCoords);
+
+				return;
+			}
+
+			ValveBlockEntity valveEntity = getValve(world, x, y, z);
+
+			if (valveEntity != null)
+			{
+				valveEntity.disbandMultiblock();
+			}
 		}
-		
-		reset(world, x, y, z);
 	}
 	
 	@Override
@@ -156,75 +164,29 @@ public class TankBlock extends WrenchableBlock
 	@Override
 	protected void handleToolWrenchClick(World world, int x, int y, int z, EntityPlayer player, ItemStack equippedItemStack)
 	{
-		// dismantle aka. instantly destroy the tank and drop the appropriate item, telling the connected valve to rebuild in the process
+		// dismantle aka. instantly destroy the tank and drop the
+		// appropriate item, telling the connected valve to rebuild in the process
 		if (player.isSneaking())
 		{
 			TankBlockEntity tankEntity = Utils.getTileEntityAt(world, TankBlockEntity.class, x, y, z);
 			ValveBlockEntity valveEntity = null;
-			
-			if (tankEntity.isPartOfTank())
+
+			if (tankEntity != null && tankEntity.isPartOfTank())
 			{
 				valveEntity = tankEntity.getValve();
-				// makes the tankblock ignore its preDestroy event, this way there will be no reset of the whole tank
+				// makes the tankblock ignore its preDestroy event, this way
+				// there will be no reset of the whole tank
 				ignorePreDestroyEvent.add(new BlockCoords(x, y, z));
 			}
-			
+
 			// destroy the tankblock
 			world.setBlockToAir(x, y, z);
 			// last two parameters are metadata and fortune
 			dropBlockAsItem(world, x, y, z, 0, 0);
-			
-			if (valveEntity != null)
-			{
-				rebuild(world, valveEntity.xCoord, valveEntity.yCoord, valveEntity.zCoord);
-			}
-		}
-	}
 
-	/**
-	 * Tells the {@link ValveBlockEntity} this {@link TankBlock} is connected to, to unlink all its connected {@link TankBlock}s.
-	 * @param world
-	 * The world.
-	 * @param x
-	 * The {@link TankBlock}s x-coordinate.
-	 * @param y
-	 * The {@link TankBlock}s y-coordinate.
-	 * @param z
-	 * The {@link TankBlock}s z-coordinate.
-	 */
-	private void reset(World world, int x, int y, int z)
-	{
-		if (!world.isRemote)
-		{
-			ValveBlockEntity valveEntity = getValve(world, x, y, z);
-			
 			if (valveEntity != null)
 			{
-				valveEntity.reset();
-			}
-		}
-	}
-	
-	/**
-	 * Tells the {@link ValveBlockEntity} to rebuild.
-	 * @param world
-	 * The world.
-	 * @param x
-	 * The {@link ValveBlock}s x-coordinate.
-	 * @param y
-	 * The {@link ValveBlock}s y-coordinate.
-	 * @param z
-	 * The {@link ValveBlock}s z-coordinate.
-	 */
-	private void rebuild(World world, int x, int y, int z)
-	{
-		if (!world.isRemote)
-		{
-			ValveBlockEntity valveEntity = Utils.getTileEntityAt(world, ValveBlockEntity.class, x, y, z);
-			
-			if (valveEntity != null)
-			{
-				valveEntity.rebuild();
+				valveEntity.formMultiblock();
 			}
 		}
 	}

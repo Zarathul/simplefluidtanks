@@ -13,7 +13,7 @@ public final class Recipes
 	/**
 	 * Registers the mods recipes.
 	 */
-	public static final void registerRecipes()
+	public static final void register()
 	{
 		// use thermal expansions hardened glass and bronze(tinkers alloy) ingots for the recipes if TE is installed, otherwise use normal glass and iron
 		ItemStack teHardenedGlass = GameRegistry.findItemStack(Config.thermalExpansionModId, Config.thermalExpansionHardenedGlass, 1);

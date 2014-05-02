@@ -39,6 +39,8 @@ public final class Registry
 	public static final String WAILA_TOOLTIP_TANKS = WAILA_TOOLTIP + "tanks";
 	public static final String WAILA_TOOLTIP_FLUID = WAILA_TOOLTIP + "fluid";
 	public static final String WAILA_TOOLTIP_FLUID_EMPTY = WAILA_TOOLTIP + "fluidEmpty";
+	public static final String WAILA_TOOLTIP_YES = WAILA_TOOLTIP + "yes";
+	public static final String WAILA_TOOLTIP_NO = WAILA_TOOLTIP + "no";
 	
 	/**
 	 * Registers config options and tooltip providers for Waila. (Only called by Waila, don't call this method directly).

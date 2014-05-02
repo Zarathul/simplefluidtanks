@@ -94,29 +94,32 @@ public class ValveBlock extends WrenchableBlock
 	{
 		super.onBlockPlacedBy(world, x, y, z, player, items);
 		
-		int l = MathHelper.floor_double(player.rotationYaw * 4.0F / 360.0F + 0.5D) & 3;
-        int direction;
-        
-        switch (l)
-        {
-        	case 1:
-        		direction = Direction.XPOS;
-        		break;
-        	
-        	case 2:
-        		direction = Direction.ZPOS;
-        		break;
-        	
-        	case 3:
-        		direction = Direction.XNEG;
-        		break;
-        		
-        	default:
-        		direction = Direction.ZNEG;
-        		break;
-        }
-        
-        world.setBlockMetadataWithNotify(x, y, z, direction, 2);
+		if (!world.isRemote)
+		{
+			int l = MathHelper.floor_double(player.rotationYaw * 4.0F / 360.0F + 0.5D) & 3;
+	        int direction;
+	        
+	        switch (l)
+	        {
+	        	case 1:
+	        		direction = Direction.XPOS;
+	        		break;
+	        	
+	        	case 2:
+	        		direction = Direction.ZPOS;
+	        		break;
+	        	
+	        	case 3:
+	        		direction = Direction.XNEG;
+	        		break;
+	        		
+	        	default:
+	        		direction = Direction.ZNEG;
+	        		break;
+	        }
+	        
+	        world.setBlockMetadataWithNotify(x, y, z, direction, 2);
+		}
 	}
 
 	@Override
@@ -130,7 +133,7 @@ public class ValveBlock extends WrenchableBlock
 			
 			if (valveEntity != null)
 			{
-				valveEntity.rebuild();
+				valveEntity.formMultiblock();
 			}
 		}
 	}
@@ -138,7 +141,15 @@ public class ValveBlock extends WrenchableBlock
 	@Override
 	public void onBlockPreDestroy(World world, int x, int y, int z, int par5)
 	{
-		reset(world, x, y, z);
+		if (!world.isRemote)
+		{
+			ValveBlockEntity valveEntity = Utils.getTileEntityAt(world, ValveBlockEntity.class, x, y, z);
+			
+			if (valveEntity != null)
+			{
+				valveEntity.disbandMultiblock();
+			}
+		}
 	}
 
 	@Override
@@ -194,19 +205,25 @@ public class ValveBlock extends WrenchableBlock
 	@Override
 	protected void handleToolWrenchClick(World world, int x, int y, int z, EntityPlayer player, ItemStack equippedItemStack)
 	{
+		// on sneak use: disband the multiblock | on use: rebuild the multiblock
+		
+		ValveBlockEntity valveEntity = Utils.getTileEntityAt(world, ValveBlockEntity.class, x, y, z);
+		
 		if (player.isSneaking())
 		{
-			// dismantle aka. instantly destroy the valve and drop the appropriate item, unlinking all connected tanks in the process
-			reset(world, x, y, z);
+			if (valveEntity != null)
+			{
+				valveEntity.disbandMultiblock();
+			}
+			
 			world.setBlockToAir(x, y, z);
 			// last two parameters are metadata and fortune
 			dropBlockAsItem(world, x, y, z, 0, 0);
 		}
-		else
+		else if (valveEntity != null)
 		{
 			// rebuild the tank
-			ValveBlockEntity entity = Utils.getTileEntityAt(world, ValveBlockEntity.class, x, y, z);
-			entity.rebuild();
+			valveEntity.formMultiblock();
 		}
 	}
 
@@ -314,30 +331,6 @@ public class ValveBlock extends WrenchableBlock
                 {
                     player.inventory.setInventorySlotContents(player.inventory.currentItem, new ItemStack(Items.bucket));
                 }
-			}
-		}
-	}
-	
-	/**
-	 * Resets aka. disconnects all connected {@link TankBlock}s. 
-	 * @param world
-	 * The world.
-	 * @param x
-	 * The {@link ValveBlock}s x-coordinate.
-	 * @param y
-	 * The {@link ValveBlock}s y-coordinate.
-	 * @param z
-	 * The {@link ValveBlock}s z-coordinate.
-	 */
-	private void reset(World world, int x, int y, int z)
-	{
-		if (!world.isRemote)
-		{
-			ValveBlockEntity valveEntity = Utils.getTileEntityAt(world, ValveBlockEntity.class, x, y, z);
-			
-			if (valveEntity != null)
-			{
-				valveEntity.reset();
 			}
 		}
 	}
