@@ -9,7 +9,7 @@ import net.minecraft.block.material.Material;
 public class TankMaterial extends Material
 {
 	public static final Material tankMaterial = new TankMaterial();
-	
+
 	public TankMaterial()
 	{
 		super(MapColor.airColor);

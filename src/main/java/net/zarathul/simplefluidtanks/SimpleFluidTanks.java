@@ -20,18 +20,18 @@ public class SimpleFluidTanks
 
 	@SidedProxy(clientSide = "net.zarathul.simplefluidtanks.ClientProxy", serverSide = "net.zarathul.simplefluidtanks.ServerProxy")
 	public static CommonProxy proxy;
-	
+
 	// blocks
 	public static TankBlock tankBlock;
 	public static ValveBlock valveBlock;
 	public static FakeFluidBlock fakeFluidBlock;
-	
+
 	public static CreativeTabs creativeTab;
-	
+
 	// constants
 	public static final String MOD_ID = "simplefluidtanks";
 	public static final String VERSION = "@VERSION@";
-	
+
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event)
 	{

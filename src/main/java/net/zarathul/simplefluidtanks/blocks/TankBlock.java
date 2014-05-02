@@ -31,7 +31,7 @@ public class TankBlock extends WrenchableBlock
 	public TankBlock()
 	{
 		super(TankMaterial.tankMaterial);
-		
+
 		setBlockName(Registry.TANKBLOCK_NAME);
 		setCreativeTab(SimpleFluidTanks.creativeTab);
 		setHardness(2.5f);
@@ -40,7 +40,7 @@ public class TankBlock extends WrenchableBlock
 		setHarvestLevel("pickaxe", 2);
 		ignorePreDestroyEvent = new HashSet<BlockCoords>();
 	}
-	
+
 	@SideOnly(Side.CLIENT)
 	private IIcon[] icons;
 
@@ -49,7 +49,7 @@ public class TankBlock extends WrenchableBlock
 	{
 		return icons;
 	}
-	
+
 	@Override
 	@SideOnly(Side.CLIENT)
 	public IIcon getIcon(int side, int meta)
@@ -61,28 +61,26 @@ public class TankBlock extends WrenchableBlock
 	@SideOnly(Side.CLIENT)
 	public void registerBlockIcons(IIconRegister iconRegister)
 	{
-		icons = new IIcon[]
-		{
-			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_closed"),				//  0
-			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_open"),					//  1
+		icons = new IIcon[] { iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_closed"),				// 0
+		iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_open"),					// 1
 
-			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_top_bottom"),			//  2
-			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_left_right"),			//  3
+		iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_top_bottom"),			// 2
+		iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_left_right"),			// 3
 
-			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_top_right"),				//  4
-			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_bottom_right"),			//  5
-			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_bottom_left"),			//  6
-			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_top_left"),				//  7
+		iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_top_right"),				// 4
+		iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_bottom_right"),			// 5
+		iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_bottom_left"),			// 6
+		iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_top_left"),				// 7
 
-			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_left_right_top"),		//  8
-			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_top_bottom_right"),		//  9
-			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_left_right_bottom"),		// 10
-			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_top_bottom_left"),		// 11
-				
-			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_top"),					// 12
-			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_bottom"),				// 13
-			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_left"),					// 14
-			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_right")					// 15
+		iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_left_right_top"),		// 8
+		iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_top_bottom_right"),		// 9
+		iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_left_right_bottom"),		// 10
+		iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_top_bottom_left"),		// 11
+
+		iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_top"),					// 12
+		iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_bottom"),				// 13
+		iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_left"),					// 14
+		iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_right")					// 15
 		};
 	}
 
@@ -109,7 +107,7 @@ public class TankBlock extends WrenchableBlock
 			}
 		}
 	}
-	
+
 	@Override
 	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side)
 	{
@@ -190,11 +188,11 @@ public class TankBlock extends WrenchableBlock
 			}
 		}
 	}
-	
+
 	/**
 	 * Gets the {@link ValveBlock}s {@link TileEntity} the {@link TankBlock} is linked to.
-	 * @return
-	 * The valves {@link ValveBlockEntity}<br>
+	 * 
+	 * @return The valves {@link ValveBlockEntity}<br>
 	 * or<br>
 	 * <code>null</code> if the {@link TankBlock} is not linked to a {@link ValveBlock}.
 	 * @param world
@@ -209,17 +207,17 @@ public class TankBlock extends WrenchableBlock
 	private ValveBlockEntity getValve(World world, int x, int y, int z)
 	{
 		TankBlockEntity tankEntity = Utils.getTileEntityAt(world, TankBlockEntity.class, x, y, z);
-		
+
 		if (tankEntity != null)
 		{
 			ValveBlockEntity valveEntity = tankEntity.getValve();
-			
+
 			if (valveEntity != null)
 			{
 				return valveEntity;
 			}
 		}
-		
+
 		return null;
 	}
 }

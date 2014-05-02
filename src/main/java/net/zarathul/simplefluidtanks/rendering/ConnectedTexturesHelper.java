@@ -3,7 +3,6 @@ package net.zarathul.simplefluidtanks.rendering;
 import net.zarathul.simplefluidtanks.blocks.TankBlock;
 import net.zarathul.simplefluidtanks.common.Direction;
 
-
 /**
  * Provides helper methods to get texture indexes for connected {@link TankBlock}s.
  */
@@ -11,15 +10,15 @@ public final class ConnectedTexturesHelper
 {
 	/**
 	 * Get the icon index for the positive x side of a {@link TankBlock} with the specified connections.
+	 * 
 	 * @param connections
 	 * The sides the {@link TankBlock} is connected to other blocks of it's kind.
-	 * @return
-	 * The icon index.
+	 * @return The icon index.
 	 */
 	public static int getPositiveXTexture(boolean[] connections)
 	{
 		int textureIndex = 0;
-		
+
 		if (connections[Direction.YPOS] && connections[Direction.YNEG] && connections[Direction.ZPOS] && connections[Direction.ZNEG])
 		{
 			textureIndex = 1;
@@ -80,21 +79,21 @@ public final class ConnectedTexturesHelper
 		{
 			textureIndex = 15;
 		}
-		
+
 		return textureIndex;
 	}
-	
+
 	/**
 	 * Get the icon index for the negative x side of a {@link TankBlock} with the specified connections.
+	 * 
 	 * @param connections
 	 * The sides the {@link TankBlock} is connected to other blocks of it's kind.
-	 * @return
-	 * The icon index.
+	 * @return The icon index.
 	 */
 	public static int getNegativeXTexture(boolean[] connections)
 	{
 		int textureIndex = 0;
-		
+
 		if (connections[Direction.YPOS] && connections[Direction.YNEG] && connections[Direction.ZPOS] && connections[Direction.ZNEG])
 		{
 			textureIndex = 1;
@@ -155,21 +154,21 @@ public final class ConnectedTexturesHelper
 		{
 			textureIndex = 14;
 		}
-		
+
 		return textureIndex;
 	}
-	
+
 	/**
 	 * Get the icon index for the positive z side of a {@link TankBlock} with the specified connections.
+	 * 
 	 * @param connections
 	 * The sides the {@link TankBlock} is connected to other blocks of it's kind.
-	 * @return
-	 * The icon index.
+	 * @return The icon index.
 	 */
 	public static int getPositiveZTexture(boolean[] connections)
 	{
 		int textureIndex = 0;
-		
+
 		if (connections[Direction.YPOS] && connections[Direction.YNEG] && connections[Direction.XPOS] && connections[Direction.XNEG])
 		{
 			textureIndex = 1;
@@ -230,21 +229,21 @@ public final class ConnectedTexturesHelper
 		{
 			textureIndex = 14;
 		}
-		
+
 		return textureIndex;
 	}
-	
+
 	/**
 	 * Get the icon index for the negative z side of a {@link TankBlock} with the specified connections.
+	 * 
 	 * @param connections
 	 * The sides the {@link TankBlock} is connected to other blocks of it's kind.
-	 * @return
-	 * The icon index.
+	 * @return The icon index.
 	 */
 	public static int getNegativeZTexture(boolean[] connections)
 	{
 		int textureIndex = 0;
-		
+
 		if (connections[Direction.YPOS] && connections[Direction.YNEG] && connections[Direction.XPOS] && connections[Direction.XNEG])
 		{
 			textureIndex = 1;
@@ -305,21 +304,21 @@ public final class ConnectedTexturesHelper
 		{
 			textureIndex = 15;
 		}
-		
+
 		return textureIndex;
 	}
-	
+
 	/**
 	 * Get the icon index for the positive y side of a {@link TankBlock} with the specified connections.
+	 * 
 	 * @param connections
 	 * The sides the {@link TankBlock} is connected to other blocks of it's kind.
-	 * @return
-	 * The icon index.
+	 * @return The icon index.
 	 */
 	public static int getPositiveYTexture(boolean[] connections)
 	{
 		int textureIndex = 0;
-		
+
 		if (connections[Direction.XPOS] && connections[Direction.XNEG] && connections[Direction.ZPOS] && connections[Direction.ZNEG])
 		{
 			textureIndex = 1;
@@ -380,21 +379,21 @@ public final class ConnectedTexturesHelper
 		{
 			textureIndex = 13;
 		}
-		
+
 		return textureIndex;
 	}
-	
+
 	/**
 	 * Get the icon index for the negative y side of a {@link TankBlock} with the specified connections.
+	 * 
 	 * @param connections
 	 * The sides the {@link TankBlock} is connected to other blocks of it's kind.
-	 * @return
-	 * The icon index.
+	 * @return The icon index.
 	 */
 	public static int getNegativeYTexture(boolean[] connections)
 	{
 		int textureIndex = 0;
-		
+
 		if (connections[Direction.XPOS] && connections[Direction.XNEG] && connections[Direction.ZPOS] && connections[Direction.ZNEG])
 		{
 			textureIndex = 1;
@@ -455,7 +454,7 @@ public final class ConnectedTexturesHelper
 		{
 			textureIndex = 12;
 		}
-		
+
 		return textureIndex;
 	}
 }

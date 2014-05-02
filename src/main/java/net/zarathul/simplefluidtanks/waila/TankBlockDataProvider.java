@@ -17,11 +17,11 @@ import net.zarathul.simplefluidtanks.tileentities.TankBlockEntity;
 public final class TankBlockDataProvider implements IWailaDataProvider
 {
 	public static final TankBlockDataProvider instance = new TankBlockDataProvider();
-	
+
 	private TankBlockDataProvider()
 	{
 	}
-	
+
 	@Override
 	public ItemStack getWailaStack(IWailaDataAccessor accessor, IWailaConfigHandler config)
 	{
@@ -38,22 +38,22 @@ public final class TankBlockDataProvider implements IWailaDataProvider
 	public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config)
 	{
 		TileEntity entity = accessor.getTileEntity();
-		
+
 		if (entity != null && entity instanceof TankBlockEntity)
 		{
-			TankBlockEntity tankEntity = (TankBlockEntity)entity;
-			
+			TankBlockEntity tankEntity = (TankBlockEntity) entity;
+
 			if (config.getConfig(Registry.WAILA_TANK_LINKED_KEY))
 			{
 				String readableFlag = StatCollector.translateToLocal((tankEntity.isPartOfTank()) ? Registry.WAILA_TOOLTIP_YES : Registry.WAILA_TOOLTIP_NO);
 				currenttip.add(StatCollector.translateToLocalFormatted(Registry.WAILA_TOOLTIP_ISLINKED, readableFlag));
 			}
-			
+
 			if (config.getConfig(Registry.WAILA_TANK_CAPACITY_KEY))
 			{
 				if (config.getConfig(Registry.WAILA_CAPACITY_IN_MILLIBUCKETS_KEY))
 				{
-					currenttip.add(StatCollector.translateToLocalFormatted(Registry.WAILA_TOOLTIP_CAPACITY, Config.bucketsPerTank * 1000, "", "", " mB") );
+					currenttip.add(StatCollector.translateToLocalFormatted(Registry.WAILA_TOOLTIP_CAPACITY, Config.bucketsPerTank * 1000, "", "", " mB"));
 				}
 				else
 				{
@@ -61,7 +61,7 @@ public final class TankBlockDataProvider implements IWailaDataProvider
 				}
 			}
 		}
-		
+
 		return currenttip;
 	}
 

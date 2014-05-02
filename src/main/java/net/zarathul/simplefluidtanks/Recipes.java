@@ -21,31 +21,36 @@ public final class Recipes
 		ItemStack glassRecipeComponent = new ItemStack(Blocks.glass);
 		ItemStack ingotRecipeComponent = (teBronzeIngots != null) ? teBronzeIngots : new ItemStack(Items.iron_ingot);
 		int tankRecipeOutputAmount = 2;
-		
+
 		// the thermal expansion recipe for tanks yields 4 instead of 2 tanks
 		if (teHardenedGlass != null)
 		{
 			glassRecipeComponent = teHardenedGlass;
 			tankRecipeOutputAmount = 4;
 		}
-		
+
 		// tank recipe
-		GameRegistry.addShapedRecipe(new ItemStack(SimpleFluidTanks.tankBlock, tankRecipeOutputAmount),
-			"IGI",
-			"G G",
-			"IGI",
-			'I', ingotRecipeComponent,
-			'G', glassRecipeComponent
-		);
-		
+		GameRegistry.addShapedRecipe(
+				new ItemStack(SimpleFluidTanks.tankBlock, tankRecipeOutputAmount),
+				"IGI",
+				"G G",
+				"IGI",
+				'I',
+				ingotRecipeComponent,
+				'G',
+				glassRecipeComponent);
+
 		// valve recipe
-		GameRegistry.addShapedRecipe(new ItemStack(SimpleFluidTanks.valveBlock, 1),
-			"ISI",
-			"STS",
-			"ISI",
-			'I', ingotRecipeComponent,
-			'T', SimpleFluidTanks.tankBlock,
-			'S', Items.slime_ball
-		);
+		GameRegistry.addShapedRecipe(
+				new ItemStack(SimpleFluidTanks.valveBlock, 1),
+				"ISI",
+				"STS",
+				"ISI",
+				'I',
+				ingotRecipeComponent,
+				'T',
+				SimpleFluidTanks.tankBlock,
+				'S',
+				Items.slime_ball);
 	}
 }

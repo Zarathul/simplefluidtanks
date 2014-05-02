@@ -12,37 +12,38 @@ import buildcraft.api.tools.IToolWrench;
  */
 public abstract class WrenchableBlock extends BlockContainer
 {
-	
+
 	protected WrenchableBlock(Material material)
 	{
 		super(material);
 	}
-	
+
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int par6, float par7, float par8, float par9)
 	{
 		if (!world.isRemote)
 		{
 			ItemStack equippedItemStack = player.getCurrentEquippedItem();
-			
+
 			if (equippedItemStack != null)
 			{
 				if (equippedItemStack.getItem() instanceof IToolWrench)	// react to Buildcraft Api ToolWrench
 				{
 					handleToolWrenchClick(world, x, y, z, player, equippedItemStack);
-					
+
 					return true;
 				}
 			}
-			
+
 			return false;
 		}
-		
+
 		return true;
 	}
-	
+
 	/**
 	 * Handles Buildcraft ToolWrenches used on the {@link BlockContainer}.
+	 * 
 	 * @param world
 	 * The world.
 	 * @param x

@@ -19,11 +19,11 @@ import net.zarathul.simplefluidtanks.tileentities.ValveBlockEntity;
 public final class ValveBlockDataProvider implements IWailaDataProvider
 {
 	public static final ValveBlockDataProvider instance = new ValveBlockDataProvider();
-	
+
 	private ValveBlockDataProvider()
 	{
 	}
-	
+
 	@Override
 	public ItemStack getWailaStack(IWailaDataAccessor accessor, IWailaConfigHandler config)
 	{
@@ -40,11 +40,11 @@ public final class ValveBlockDataProvider implements IWailaDataProvider
 	public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config)
 	{
 		TileEntity entity = accessor.getTileEntity();
-		
+
 		if (entity != null && entity instanceof ValveBlockEntity)
 		{
-			ValveBlockEntity valveEntity = (ValveBlockEntity)entity;
-			
+			ValveBlockEntity valveEntity = (ValveBlockEntity) entity;
+
 			if (config.getConfig(Registry.WAILA_TANK_COUNT_KEY))
 			{
 				currenttip.add(StatCollector.translateToLocalFormatted(Registry.WAILA_TOOLTIP_TANKS, valveEntity.getLinkedTankCount()));
@@ -58,29 +58,29 @@ public final class ValveBlockDataProvider implements IWailaDataProvider
 				}
 				else
 				{
-					currenttip.add(StatCollector.translateToLocalFormatted(Registry.WAILA_TOOLTIP_CAPACITY, valveEntity.getFluidAmount() / 1000, "/", valveEntity.getCapacity() / 1000, " B" ));
+					currenttip.add(StatCollector.translateToLocalFormatted(Registry.WAILA_TOOLTIP_CAPACITY, valveEntity.getFluidAmount() / 1000, "/", valveEntity.getCapacity() / 1000, " B"));
 				}
 			}
-			
+
 			if (config.getConfig(Registry.WAILA_FLUID_NAME_KEY))
 			{
 				String fluidName = StatCollector.translateToLocal(Registry.WAILA_TOOLTIP_FLUID_EMPTY);
 				FluidStack fluidStack = valveEntity.getFluid();
-				
+
 				if (fluidStack != null)
 				{
 					Fluid fluid = fluidStack.getFluid();
-					
+
 					if (fluid != null)
 					{
 						fluidName = fluid.getLocalizedName();
 					}
 				}
-				
+
 				currenttip.add(StatCollector.translateToLocalFormatted(Registry.WAILA_TOOLTIP_FLUID, fluidName));
 			}
 		}
-		
+
 		return currenttip;
 	}
 

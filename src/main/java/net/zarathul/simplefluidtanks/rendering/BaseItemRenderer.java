@@ -13,7 +13,7 @@ public abstract class BaseItemRenderer implements IItemRenderer
 {
 	protected final double[] defaultOrigin = new double[] { -0.5, -0.5, -0.5 };
 	protected final double[] equippedOrigin = new double[] { 0, 0, 0 };
-	
+
 	@Override
 	public boolean handleRenderType(ItemStack item, ItemRenderType type)
 	{
@@ -36,14 +36,11 @@ public abstract class BaseItemRenderer implements IItemRenderer
 		{
 			case ENTITY:
 			{
-		        return (helper == ItemRendererHelper.ENTITY_BOBBING ||
-		                helper == ItemRendererHelper.ENTITY_ROTATION ||
-		                helper == ItemRendererHelper.BLOCK_3D);
+				return (helper == ItemRendererHelper.ENTITY_BOBBING || helper == ItemRendererHelper.ENTITY_ROTATION || helper == ItemRendererHelper.BLOCK_3D);
 			}
 			case EQUIPPED:
 			{
-		        return (helper == ItemRendererHelper.BLOCK_3D ||
-		                helper == ItemRendererHelper.EQUIPPED_BLOCK);
+				return (helper == ItemRendererHelper.BLOCK_3D || helper == ItemRendererHelper.EQUIPPED_BLOCK);
 			}
 			case EQUIPPED_FIRST_PERSON:
 			{

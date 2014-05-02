@@ -11,12 +11,12 @@ public class CommonProxy
 		Config.load(event.getSuggestedConfigurationFile());
 		Registry.registerBlocks();
 	}
-	
+
 	public void init(FMLInitializationEvent event)
 	{
 		Recipes.register();
 	}
-	
+
 	public void postInit(FMLPostInitializationEvent event)
 	{
 	}

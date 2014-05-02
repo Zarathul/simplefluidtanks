@@ -11,13 +11,13 @@ public class ServerProxy extends CommonProxy
 	{
 		super.preInit(event);
 	}
-	
+
 	@Override
 	public void init(FMLInitializationEvent event)
 	{
 		super.init(event);
 	}
-	
+
 	@Override
 	public void postInit(FMLPostInitializationEvent event)
 	{

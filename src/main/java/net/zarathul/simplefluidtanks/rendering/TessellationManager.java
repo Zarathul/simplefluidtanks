@@ -12,40 +12,41 @@ public final class TessellationManager
 	 * The max block width, height and depth is 1f, so we divide it by 16f to get 16 "subblocks" in every dimension
 	 */
 	public static final double pixel = 1d / 16d;
-	
+
 	/**
 	 * Reference to the {@link Tessellator} instance.
 	 */
 	private static final Tessellator tr = Tessellator.instance;
-	
+
 	/**
 	 * The base x-coordinate all methods are working on.
 	 */
 	private static double xBaseCoord = 0.0;
-	
+
 	/**
 	 * The base y-coordinate all methods are working on.
 	 */
 	private static double yBaseCoord = 0.0;
-	
+
 	/**
 	 * The base z-coordinate all methods are working on.
 	 */
 	private static double zBaseCoord = 0.0;
-	
+
 	/**
 	 * Default constructor.
 	 */
 	private TessellationManager()
 	{
 	}
-	
+
 	/**
 	 * Set the base coordinates.
+	 * 
 	 * @param coords
-	 * The new base coordinates. 
+	 * The new base coordinates.
 	 */
-	public static void setBaseCoords(double ... coords)
+	public static void setBaseCoords(double... coords)
 	{
 		if (coords != null && coords.length >= 3)
 		{
@@ -54,9 +55,10 @@ public final class TessellationManager
 			zBaseCoord = coords[2];
 		}
 	}
-	
+
 	/**
 	 * Renders a cube without the inside and the offsets scaled by <code>TessellationManager.pixel</code>.
+	 * 
 	 * @param xOffset
 	 * The offset on the x-axis.
 	 * @param yOffset
@@ -76,9 +78,10 @@ public final class TessellationManager
 	{
 		renderCube(xOffset, yOffset, zOffset, width, height, depth, icon, false, pixel);
 	}
-	
+
 	/**
 	 * Renders a cube.
+	 * 
 	 * @param xOffset
 	 * The offset on the x-axis.
 	 * @param yOffset
@@ -106,7 +109,7 @@ public final class TessellationManager
 		renderNegativeYFace(xOffset, yOffset, zOffset, width, depth, icon, scale);
 		renderPositiveZFace(xOffset, yOffset, zOffset + depth, width, height, icon, scale);
 		renderNegativeZFace(xOffset, yOffset, zOffset, width, height, icon, scale);
-		
+
 		if (renderInside)
 		{
 			// positive x back side
@@ -123,9 +126,10 @@ public final class TessellationManager
 			renderPositiveZFace(xOffset, yOffset, zOffset, width, height, icon, scale);
 		}
 	}
-	
+
 	/**
 	 * Renders the face on the positive x side with offsets scaled by <code>TessellationManager.pixel</code>
+	 * 
 	 * @param xOffset
 	 * The offset on the x-axis.
 	 * @param yOffset
@@ -143,9 +147,10 @@ public final class TessellationManager
 	{
 		renderPositiveXFace(xOffset, yOffset, zOffset, height, depth, 0, 0, 0, 0, icon, pixel);
 	}
-	
+
 	/**
 	 * Renders the face on the positive x side.
+	 * 
 	 * @param xOffset
 	 * The offset on the x-axis.
 	 * @param yOffset
@@ -165,9 +170,10 @@ public final class TessellationManager
 	{
 		renderPositiveXFace(xOffset, yOffset, zOffset, height, depth, 0, 0, 0, 0, icon, scale);
 	}
-	
+
 	/**
 	 * Renders the face on the positive x side with optional texture offsets.
+	 * 
 	 * @param xOffset
 	 * The offset on the x-axis.
 	 * @param yOffset
@@ -194,7 +200,7 @@ public final class TessellationManager
 	public static void renderPositiveXFace(double xOffset, double yOffset, double zOffset, double height, double depth, double uOffset, double vOffset, double uMaxOffset, double vMaxOffset, IIcon icon, double scale)
 	{
 		tr.setNormal(1f, 0f, 0f);
-		
+
 		double x = xBaseCoord + xOffset * scale;
 
 		// bottom right
@@ -208,16 +214,16 @@ public final class TessellationManager
 		// top left
 		double zTl = zBaseCoord + (zOffset + depth) * scale;
 		double yTl = yBaseCoord + (yOffset + height) * scale;
-		
+
 		// bottom left
 		double zBl = zBaseCoord + (zOffset + depth) * scale;
 		double yBl = yBaseCoord + yOffset * scale;
-		
+
 		double minU = (uOffset > 0 && uOffset < 16) ? icon.getMinU() + (icon.getInterpolatedU(uOffset) - icon.getMinU()) : icon.getMinU();
 		double maxU = (uMaxOffset > 0 && uMaxOffset < 16) ? icon.getMaxU() - (icon.getMaxU() - icon.getInterpolatedU(uMaxOffset)) : icon.getMaxU();
 		double minV = (vOffset > 0 && vOffset < 16) ? icon.getMinV() + (icon.getInterpolatedV(vOffset) - icon.getMinV()) : icon.getMinV();
 		double maxV = (vMaxOffset > 0 && vMaxOffset < 16) ? icon.getMaxV() - (icon.getMaxV() - icon.getInterpolatedV(vMaxOffset)) : icon.getMaxV();
-		
+
 		// bottom right
 		tr.addVertexWithUV(x, yBr, zBr, maxU, maxV);
 		// top right
@@ -227,9 +233,10 @@ public final class TessellationManager
 		// bottom left
 		tr.addVertexWithUV(x, yBl, zBl, minU, maxV);
 	}
-	
+
 	/**
 	 * Renders the face on the negative x side with offsets scaled by <code>TessellationManager.pixel</code>
+	 * 
 	 * @param xOffset
 	 * The offset on the x-axis.
 	 * @param yOffset
@@ -247,9 +254,10 @@ public final class TessellationManager
 	{
 		renderNegativeXFace(xOffset, yOffset, zOffset, height, depth, 0, 0, 0, 0, icon, pixel);
 	}
-	
+
 	/**
 	 * Renders the face on the negative x side.
+	 * 
 	 * @param xOffset
 	 * The offset on the x-axis.
 	 * @param yOffset
@@ -269,9 +277,10 @@ public final class TessellationManager
 	{
 		renderNegativeXFace(xOffset, yOffset, zOffset, height, depth, 0, 0, 0, 0, icon, scale);
 	}
-	
+
 	/**
 	 * Renders the face on the negative x side with optional texture offsets.
+	 * 
 	 * @param xOffset
 	 * The offset on the x-axis.
 	 * @param yOffset
@@ -300,7 +309,7 @@ public final class TessellationManager
 		tr.setNormal(-1f, 0f, 0f);
 
 		double x = xBaseCoord + xOffset * scale;
-		
+
 		// bottom left
 		double zBl = zBaseCoord + zOffset * scale;
 		double yBl = yBaseCoord + yOffset * scale;
@@ -316,12 +325,12 @@ public final class TessellationManager
 		// top left
 		double zTl = zBaseCoord + zOffset * scale;
 		double yTl = yBaseCoord + (yOffset + height) * scale;
-		
+
 		double minU = (uOffset > 0 && uOffset < 16) ? icon.getMinU() + (icon.getInterpolatedU(uOffset) - icon.getMinU()) : icon.getMinU();
 		double maxU = (uMaxOffset > 0 && uMaxOffset < 16) ? icon.getMaxU() - (icon.getMaxU() - icon.getInterpolatedU(uMaxOffset)) : icon.getMaxU();
 		double minV = (vOffset > 0 && vOffset < 16) ? icon.getMinV() + (icon.getInterpolatedV(vOffset) - icon.getMinV()) : icon.getMinV();
 		double maxV = (vMaxOffset > 0 && vMaxOffset < 16) ? icon.getMaxV() - (icon.getMaxV() - icon.getInterpolatedV(vMaxOffset)) : icon.getMaxV();
-		
+
 		// bottom left
 		tr.addVertexWithUV(x, yBl, zBl, minU, maxV);
 		// bottom right
@@ -331,9 +340,10 @@ public final class TessellationManager
 		// top left
 		tr.addVertexWithUV(x, yTl, zTl, minU, minV);
 	}
-	
+
 	/**
 	 * Renders the face on the positive y side with offsets scaled by <code>TessellationManager.pixel</code>
+	 * 
 	 * @param xOffset
 	 * The offset on the x-axis.
 	 * @param yOffset
@@ -351,9 +361,10 @@ public final class TessellationManager
 	{
 		renderPositiveYFace(xOffset, yOffset, zOffset, width, depth, 0, 0, 0, 0, icon, pixel);
 	}
-	
+
 	/**
 	 * Renders the face on the positive y side.
+	 * 
 	 * @param xOffset
 	 * The offset on the x-axis.
 	 * @param yOffset
@@ -373,9 +384,10 @@ public final class TessellationManager
 	{
 		renderPositiveYFace(xOffset, yOffset, zOffset, width, depth, 0, 0, 0, 0, icon, scale);
 	}
-	
+
 	/**
 	 * Renders the face on the positive y side with optional texture offsets.
+	 * 
 	 * @param xOffset
 	 * The offset on the x-axis.
 	 * @param yOffset
@@ -402,7 +414,7 @@ public final class TessellationManager
 	public static void renderPositiveYFace(double xOffset, double yOffset, double zOffset, double width, double depth, double uOffset, double vOffset, double uMaxOffset, double vMaxOffset, IIcon icon, double scale)
 	{
 		tr.setNormal(0f, 1f, 0f);
-		
+
 		double y = yBaseCoord + yOffset * scale;
 
 		// bottom right
@@ -412,20 +424,20 @@ public final class TessellationManager
 		// top right
 		double xTr = xBaseCoord + xOffset * scale;
 		double zTr = zBaseCoord + (zOffset + depth) * scale;
-		
+
 		// top left
 		double xTl = xBaseCoord + (xOffset + width) * scale;
 		double zTl = zBaseCoord + (zOffset + depth) * scale;
-		
+
 		// bottom left
 		double xBl = xBaseCoord + (xOffset + width) * scale;
 		double zBl = zBaseCoord + zOffset * scale;
-		
+
 		double minU = (uOffset > 0 && uOffset < 16) ? icon.getMinU() + (icon.getInterpolatedU(uOffset) - icon.getMinU()) : icon.getMinU();
 		double maxU = (uMaxOffset > 0 && uMaxOffset < 16) ? icon.getMaxU() - (icon.getMaxU() - icon.getInterpolatedU(uMaxOffset)) : icon.getMaxU();
 		double minV = (vOffset > 0 && vOffset < 16) ? icon.getMinV() + (icon.getInterpolatedV(vOffset) - icon.getMinV()) : icon.getMinV();
 		double maxV = (vMaxOffset > 0 && vMaxOffset < 16) ? icon.getMaxV() - (icon.getMaxV() - icon.getInterpolatedV(vMaxOffset)) : icon.getMaxV();
-		
+
 		// bottom right
 		tr.addVertexWithUV(xBr, y, zBr, maxU, maxV);
 		// top right
@@ -435,9 +447,10 @@ public final class TessellationManager
 		// bottom left
 		tr.addVertexWithUV(xBl, y, zBl, minU, maxV);
 	}
-	
+
 	/**
 	 * Renders the face on the negative y side with offsets scaled by <code>TessellationManager.pixel</code>
+	 * 
 	 * @param xOffset
 	 * The offset on the x-axis.
 	 * @param yOffset
@@ -455,9 +468,10 @@ public final class TessellationManager
 	{
 		renderNegativeYFace(xOffset, yOffset, zOffset, width, depth, 0, 0, 0, 0, icon, pixel);
 	}
-	
+
 	/**
 	 * Renders the face on the negative y side.
+	 * 
 	 * @param xOffset
 	 * The offset on the x-axis.
 	 * @param yOffset
@@ -477,9 +491,10 @@ public final class TessellationManager
 	{
 		renderNegativeYFace(xOffset, yOffset, zOffset, width, depth, 0, 0, 0, 0, icon, scale);
 	}
-	
+
 	/**
 	 * Renders the face on the negative y side with optional texture offsets.
+	 * 
 	 * @param xOffset
 	 * The offset on the x-axis.
 	 * @param yOffset
@@ -506,9 +521,9 @@ public final class TessellationManager
 	public static void renderNegativeYFace(double xOffset, double yOffset, double zOffset, double width, double depth, double uOffset, double vOffset, double uMaxOffset, double vMaxOffset, IIcon icon, double scale)
 	{
 		tr.setNormal(0f, -1f, 0f);
-		
+
 		double y = yBaseCoord + yOffset * scale;
-		
+
 		// top right
 		double xTr = xBaseCoord + xOffset * scale;
 		double zTr = zBaseCoord + zOffset * scale;
@@ -516,7 +531,7 @@ public final class TessellationManager
 		// top left
 		double xTl = xBaseCoord + (xOffset + width) * scale;
 		double zTl = zBaseCoord + zOffset * scale;
-		
+
 		// bottom left
 		double xBl = xBaseCoord + (xOffset + width) * scale;
 		double zBl = zBaseCoord + (zOffset + depth) * scale;
@@ -524,12 +539,12 @@ public final class TessellationManager
 		// bottom right
 		double xBr = xBaseCoord + xOffset * scale;
 		double zBr = zBaseCoord + (zOffset + depth) * scale;
-		
+
 		double minU = (uOffset > 0 && uOffset < 16) ? icon.getMinU() + (icon.getInterpolatedU(uOffset) - icon.getMinU()) : icon.getMinU();
 		double maxU = (uMaxOffset > 0 && uMaxOffset < 16) ? icon.getMaxU() - (icon.getMaxU() - icon.getInterpolatedU(uMaxOffset)) : icon.getMaxU();
 		double minV = (vOffset > 0 && vOffset < 16) ? icon.getMinV() + (icon.getInterpolatedV(vOffset) - icon.getMinV()) : icon.getMinV();
 		double maxV = (vMaxOffset > 0 && vMaxOffset < 16) ? icon.getMaxV() - (icon.getMaxV() - icon.getInterpolatedV(vMaxOffset)) : icon.getMaxV();
-		
+
 		// top right
 		tr.addVertexWithUV(xTr, y, zTr, maxU, minV);
 		// top left
@@ -539,9 +554,10 @@ public final class TessellationManager
 		// bottom right
 		tr.addVertexWithUV(xBr, y, zBr, maxU, maxV);
 	}
-	
+
 	/**
 	 * Renders the face on the positive z side with offsets scaled by <code>TessellationManager.pixel</code>
+	 * 
 	 * @param xOffset
 	 * The offset on the x-axis.
 	 * @param yOffset
@@ -559,9 +575,10 @@ public final class TessellationManager
 	{
 		renderPositiveZFace(xOffset, yOffset, zOffset, width, height, 0, 0, 0, 0, icon, pixel);
 	}
-	
+
 	/**
 	 * Renders the face on the positive z side.
+	 * 
 	 * @param xOffset
 	 * The offset on the x-axis.
 	 * @param yOffset
@@ -581,9 +598,10 @@ public final class TessellationManager
 	{
 		renderPositiveZFace(xOffset, yOffset, zOffset, width, height, 0, 0, 0, 0, icon, scale);
 	}
-	
+
 	/**
 	 * Renders the face on the positive z side with optional texture offsets.
+	 * 
 	 * @param xOffset
 	 * The offset on the x-axis.
 	 * @param yOffset
@@ -610,9 +628,9 @@ public final class TessellationManager
 	public static void renderPositiveZFace(double xOffset, double yOffset, double zOffset, double width, double height, double uOffset, double vOffset, double uMaxOffset, double vMaxOffset, IIcon icon, double scale)
 	{
 		tr.setNormal(0f, 0f, 1f);
-		
+
 		double z = zBaseCoord + zOffset * scale;
-		
+
 		// bottom left
 		double xBl = xBaseCoord + xOffset * scale;
 		double yBl = yBaseCoord + yOffset * scale;
@@ -628,12 +646,12 @@ public final class TessellationManager
 		// top left
 		double xTl = xBaseCoord + xOffset * scale;
 		double yTl = yBaseCoord + (yOffset + height) * scale;
-		
+
 		double minU = (uOffset > 0 && uOffset < 16) ? icon.getMinU() + (icon.getInterpolatedU(uOffset) - icon.getMinU()) : icon.getMinU();
 		double maxU = (uMaxOffset > 0 && uMaxOffset < 16) ? icon.getMaxU() - (icon.getMaxU() - icon.getInterpolatedU(uMaxOffset)) : icon.getMaxU();
 		double minV = (vOffset > 0 && vOffset < 16) ? icon.getMinV() + (icon.getInterpolatedV(vOffset) - icon.getMinV()) : icon.getMinV();
 		double maxV = (vMaxOffset > 0 && vMaxOffset < 16) ? icon.getMaxV() - (icon.getMaxV() - icon.getInterpolatedV(vMaxOffset)) : icon.getMaxV();
-		
+
 		// bottom left
 		tr.addVertexWithUV(xBl, yBl, z, minU, maxV);
 		// bottom right
@@ -643,9 +661,10 @@ public final class TessellationManager
 		// top left
 		tr.addVertexWithUV(xTl, yTl, z, minU, minV);
 	}
-	
+
 	/**
 	 * Renders the face on the negative z side with offsets scaled by <code>TessellationManager.pixel</code>
+	 * 
 	 * @param xOffset
 	 * The offset on the x-axis.
 	 * @param yOffset
@@ -663,9 +682,10 @@ public final class TessellationManager
 	{
 		renderNegativeZFace(xOffset, yOffset, zOffset, width, height, 0, 0, 0, 0, icon, pixel);
 	}
-	
+
 	/**
 	 * Renders the face on the negative z side.
+	 * 
 	 * @param xOffset
 	 * The offset on the x-axis.
 	 * @param yOffset
@@ -685,9 +705,10 @@ public final class TessellationManager
 	{
 		renderNegativeZFace(xOffset, yOffset, zOffset, width, height, 0, 0, 0, 0, icon, scale);
 	}
-	
+
 	/**
 	 * Renders the face on the negative z side with optional texture offsets.
+	 * 
 	 * @param xOffset
 	 * The offset on the x-axis.
 	 * @param yOffset
@@ -714,7 +735,7 @@ public final class TessellationManager
 	public static void renderNegativeZFace(double xOffset, double yOffset, double zOffset, double width, double height, double uOffset, double vOffset, double uMaxOffset, double vMaxOffset, IIcon icon, double scale)
 	{
 		tr.setNormal(0f, 0f, -1f);
-		
+
 		double z = zBaseCoord + zOffset * scale;
 
 		// bottom right
@@ -728,16 +749,16 @@ public final class TessellationManager
 		// top left
 		double xTl = xBaseCoord + (xOffset + width) * scale;
 		double yTl = yBaseCoord + (yOffset + height) * scale;
-		
+
 		// bottom left
 		double xBl = xBaseCoord + (xOffset + width) * scale;
 		double yBl = yBaseCoord + yOffset * scale;
-		
+
 		double minU = (uOffset > 0 && uOffset < 16) ? icon.getMinU() + (icon.getInterpolatedU(uOffset) - icon.getMinU()) : icon.getMinU();
 		double maxU = (uMaxOffset > 0 && uMaxOffset < 16) ? icon.getMaxU() - (icon.getMaxU() - icon.getInterpolatedU(uMaxOffset)) : icon.getMaxU();
 		double minV = (vOffset > 0 && vOffset < 16) ? icon.getMinV() + (icon.getInterpolatedV(vOffset) - icon.getMinV()) : icon.getMinV();
 		double maxV = (vMaxOffset > 0 && vMaxOffset < 16) ? icon.getMaxV() - (icon.getMaxV() - icon.getInterpolatedV(vMaxOffset)) : icon.getMaxV();
-		
+
 		// bottom right
 		tr.addVertexWithUV(xBr, yBr, z, maxU, maxV);
 		// top right
@@ -766,6 +787,7 @@ public final class TessellationManager
 
 	/**
 	 * Sets the brightness.
+	 * 
 	 * @param brightness
 	 * The brightness.
 	 */
@@ -773,9 +795,10 @@ public final class TessellationManager
 	{
 		tr.setBrightness(brightness);
 	}
-	
+
 	/**
 	 * Sets the lights color.
+	 * 
 	 * @param r
 	 * The red channel.
 	 * @param g

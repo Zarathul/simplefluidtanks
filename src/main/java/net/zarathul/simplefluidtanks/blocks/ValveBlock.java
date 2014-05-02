@@ -32,7 +32,7 @@ public class ValveBlock extends WrenchableBlock
 	public ValveBlock()
 	{
 		super(TankMaterial.tankMaterial);
-		
+
 		setBlockName(Registry.VALVEBLOCK_NAME);
 		setCreativeTab(SimpleFluidTanks.creativeTab);
 		setHardness(2.5f);
@@ -54,23 +54,23 @@ public class ValveBlock extends WrenchableBlock
 	{
 		return (side == meta) ? iconIo : (side == Direction.YPOS) ? iconTank : icon;
 	}
-	
+
 	@Override
 	@SideOnly(Side.CLIENT)
 	public IIcon getIcon(IBlockAccess blockAccess, int x, int y, int z, int side)
 	{
 		ValveBlockEntity valveEntity = Utils.getTileEntityAt(blockAccess, ValveBlockEntity.class, x, y, z);
-		
+
 		if (valveEntity != null && valveEntity.hasTanks())
 		{
 			if (valveEntity.isFacingTank(side))
 			{
 				return iconTank;
 			}
-			
+
 			return iconIo;
 		}
-		
+
 		return getIcon(side, blockAccess.getBlockMetadata(x, y, z));
 	}
 
@@ -88,37 +88,37 @@ public class ValveBlock extends WrenchableBlock
 	{
 		return new ValveBlockEntity();
 	}
-	
+
 	@Override
 	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack items)
 	{
 		super.onBlockPlacedBy(world, x, y, z, player, items);
-		
+
 		if (!world.isRemote)
 		{
 			int l = MathHelper.floor_double(player.rotationYaw * 4.0F / 360.0F + 0.5D) & 3;
-	        int direction;
-	        
-	        switch (l)
-	        {
-	        	case 1:
-	        		direction = Direction.XPOS;
-	        		break;
-	        	
-	        	case 2:
-	        		direction = Direction.ZPOS;
-	        		break;
-	        	
-	        	case 3:
-	        		direction = Direction.XNEG;
-	        		break;
-	        		
-	        	default:
-	        		direction = Direction.ZNEG;
-	        		break;
-	        }
-	        
-	        world.setBlockMetadataWithNotify(x, y, z, direction, 2);
+			int direction;
+
+			switch (l)
+			{
+				case 1:
+					direction = Direction.XPOS;
+					break;
+
+				case 2:
+					direction = Direction.ZPOS;
+					break;
+
+				case 3:
+					direction = Direction.XNEG;
+					break;
+
+				default:
+					direction = Direction.ZNEG;
+					break;
+			}
+
+			world.setBlockMetadataWithNotify(x, y, z, direction, 2);
 		}
 	}
 
@@ -126,11 +126,11 @@ public class ValveBlock extends WrenchableBlock
 	public void onBlockAdded(World world, int x, int y, int z)
 	{
 		super.onBlockAdded(world, x, y, z);
-		
+
 		if (!world.isRemote)
 		{
 			ValveBlockEntity valveEntity = Utils.getTileEntityAt(world, ValveBlockEntity.class, x, y, z);
-			
+
 			if (valveEntity != null)
 			{
 				valveEntity.formMultiblock();
@@ -144,7 +144,7 @@ public class ValveBlock extends WrenchableBlock
 		if (!world.isRemote)
 		{
 			ValveBlockEntity valveEntity = Utils.getTileEntityAt(world, ValveBlockEntity.class, x, y, z);
-			
+
 			if (valveEntity != null)
 			{
 				valveEntity.disbandMultiblock();
@@ -158,18 +158,18 @@ public class ValveBlock extends WrenchableBlock
 		if (!world.isRemote)
 		{
 			ItemStack equippedItemStack = player.getCurrentEquippedItem();
-			
+
 			if (equippedItemStack != null)
 			{
 				if (FluidContainerRegistry.isContainer(equippedItemStack))	// react to fluid containers
 				{
 					handleContainerClick(world, x, y, z, player, equippedItemStack);
-					
+
 					return true;
 				}
 			}
 		}
-		
+
 		return super.onBlockActivated(world, x, y, z, player, par6, par7, par8, par9);
 	}
 
@@ -178,7 +178,7 @@ public class ValveBlock extends WrenchableBlock
 	{
 		return 1;
 	}
-	
+
 	@Override
 	public boolean hasComparatorInputOverride()
 	{
@@ -189,33 +189,33 @@ public class ValveBlock extends WrenchableBlock
 	public int getComparatorInputOverride(World world, int x, int y, int z, int side)
 	{
 		ValveBlockEntity valveEntity = Utils.getTileEntityAt(world, ValveBlockEntity.class, x, y, z);
-		
+
 		if (valveEntity != null)
 		{
 			float capacity = valveEntity.getCapacity();
 			float fluidAmount = valveEntity.getFluidAmount();
-			int signalStrength = ((int)Math.floor((fluidAmount / capacity)  * 14.0f)) + ((fluidAmount > 0) ? 1 : 0);
-			
+			int signalStrength = ((int) Math.floor((fluidAmount / capacity) * 14.0f)) + ((fluidAmount > 0) ? 1 : 0);
+
 			return signalStrength;
 		}
-		
+
 		return 0;
 	}
-	
+
 	@Override
 	protected void handleToolWrenchClick(World world, int x, int y, int z, EntityPlayer player, ItemStack equippedItemStack)
 	{
 		// on sneak use: disband the multiblock | on use: rebuild the multiblock
-		
+
 		ValveBlockEntity valveEntity = Utils.getTileEntityAt(world, ValveBlockEntity.class, x, y, z);
-		
+
 		if (player.isSneaking())
 		{
 			if (valveEntity != null)
 			{
 				valveEntity.disbandMultiblock();
 			}
-			
+
 			world.setBlockToAir(x, y, z);
 			// last two parameters are metadata and fortune
 			dropBlockAsItem(world, x, y, z, 0, 0);
@@ -229,6 +229,7 @@ public class ValveBlock extends WrenchableBlock
 
 	/**
 	 * Handles fluid containers used on the {@link ValveBlock}. Currently only buckets (empty and filled) are supported,
+	 * 
 	 * @param world
 	 * The world.
 	 * @param x
@@ -265,6 +266,7 @@ public class ValveBlock extends WrenchableBlock
 
 	/**
 	 * Fills an empty bucket with the liquid contained in the multiblock tank.
+	 * 
 	 * @param world
 	 * The world.
 	 * @param x
@@ -287,29 +289,30 @@ public class ValveBlock extends WrenchableBlock
 		{
 			FluidStack oneBucketOfFluid = new FluidStack(valveEntity.getFluid(), FluidContainerRegistry.BUCKET_VOLUME);
 			ItemStack filledBucket = FluidContainerRegistry.fillFluidContainer(oneBucketOfFluid, FluidContainerRegistry.EMPTY_BUCKET);
-			
+
 			if (filledBucket != null && valveEntity.drain(null, oneBucketOfFluid, true).amount == FluidContainerRegistry.BUCKET_VOLUME)
 			{
 				// add filled bucket to player inventory or drop it to the ground if the inventory is full
-	            if (!player.inventory.addItemStackToInventory(filledBucket))
-	            {
-	                world.spawnEntityInWorld(new EntityItem(world, x + 0.5D, y + 1.5D, z + 0.5D, filledBucket));
-	            }
-	            else if (player instanceof EntityPlayerMP)
-	            {
-	                ((EntityPlayerMP)player).sendContainerToPlayer(player.inventoryContainer);
-	            }
+				if (!player.inventory.addItemStackToInventory(filledBucket))
+				{
+					world.spawnEntityInWorld(new EntityItem(world, x + 0.5D, y + 1.5D, z + 0.5D, filledBucket));
+				}
+				else if (player instanceof EntityPlayerMP)
+				{
+					((EntityPlayerMP) player).sendContainerToPlayer(player.inventoryContainer);
+				}
 			}
 
-            if (--equippedItemStack.stackSize <= 0)
-            {
-                player.inventory.setInventorySlotContents(player.inventory.currentItem, (ItemStack)null);
-            }
+			if (--equippedItemStack.stackSize <= 0)
+			{
+				player.inventory.setInventorySlotContents(player.inventory.currentItem, (ItemStack) null);
+			}
 		}
 	}
-	
+
 	/**
 	 * Drains the contents of a bucket into the multiblock tank.
+	 * 
 	 * @param valveEntity
 	 * The affected {@link ValveBlock}s {@link TileEntity} ({@link ValveBlockEntity}).
 	 * @param player
@@ -323,14 +326,14 @@ public class ValveBlock extends WrenchableBlock
 		if ((valveEntity.getFluidAmount() == 0 || valveEntity.getFluid().isFluidEqual(equippedItemStack)) && valveEntity.getCapacity() - valveEntity.getFluidAmount() >= FluidContainerRegistry.BUCKET_VOLUME)
 		{
 			FluidStack fluidFromBucket = FluidContainerRegistry.getFluidForFilledItem(equippedItemStack);
-			
+
 			if (valveEntity.fill(null, fluidFromBucket, true) == FluidContainerRegistry.BUCKET_VOLUME)
 			{
-				// don't consume the filled bucket in creative mode 
-                if (!player.capabilities.isCreativeMode)
-                {
-                    player.inventory.setInventorySlotContents(player.inventory.currentItem, new ItemStack(Items.bucket));
-                }
+				// don't consume the filled bucket in creative mode
+				if (!player.capabilities.isCreativeMode)
+				{
+					player.inventory.setInventorySlotContents(player.inventory.currentItem, new ItemStack(Items.bucket));
+				}
 			}
 		}
 	}

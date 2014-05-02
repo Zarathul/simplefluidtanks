@@ -25,7 +25,7 @@ public class TankItem extends ItemBlock
 {
 	private static final String toolTipKey = "item." + Registry.TANKITEM_NAME + ".toolTip";
 	private static final String toolTipDetailsKey = "item." + Registry.TANKITEM_NAME + ".toolTipDetails";
-	
+
 	public TankItem(Block block)
 	{
 		super(block);
@@ -40,7 +40,7 @@ public class TankItem extends ItemBlock
 	{
 		return 0;
 	}
-	
+
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack items, EntityPlayer player, List list, boolean advancedItemTooltipsEnabled)

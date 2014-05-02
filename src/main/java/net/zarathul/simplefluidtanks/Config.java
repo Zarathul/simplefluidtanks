@@ -14,7 +14,7 @@ public final class Config
 	public static String thermalExpansionModId = "ThermalExpansion";
 	public static String thermalExpansionHardenedGlass = "glassHardened";
 	public static String thermalExpansionBronzeIngot = "ingotBronze";
-	
+
 	// config file comments etc.
 	private static final String CATEGORY_MAIN = "simple fluid tanks";
 	private static final String BUCKETS_PER_TANK_KEY = "BucketsPerTank";
@@ -26,9 +26,10 @@ public final class Config
 	private static final String TE_MOD_HARDENED_GLASS_COMMENT = "The game registry key of Thermal Expansions hardened glass item.";
 	private static final String TE_MOD_BRONZE_INGOT_KEY = "TE_BronzeIngots";
 	private static final String TE_MOD_BRONZE_INGOT_COMMENT = "The game registry key of Thermal Expansions bronze(tinkers alloy) ingot .";
-	
+
 	/**
 	 * Loads the mods settings from the specified file.
+	 * 
 	 * @param configFile
 	 * The file to load the settings from.
 	 */
@@ -36,35 +37,31 @@ public final class Config
 	{
 		Configuration config = new Configuration(configFile);
 		config.load();
-		
+
 		bucketsPerTank = config.get(
-			CATEGORY_MAIN,
-			BUCKETS_PER_TANK_KEY,
-			bucketsPerTank,
-			BUCKETS_PER_TANK_COMMENT
-			).getInt();
-		
+				CATEGORY_MAIN,
+				BUCKETS_PER_TANK_KEY,
+				bucketsPerTank,
+				BUCKETS_PER_TANK_COMMENT).getInt();
+
 		thermalExpansionModId = config.get(
-			CATEGORY_MOD_INTEROP,
-			TE_MOD_ID_KEY,
-			thermalExpansionModId,
-			TE_MOD_ID_COMMENT
-			).getString();
-		
+				CATEGORY_MOD_INTEROP,
+				TE_MOD_ID_KEY,
+				thermalExpansionModId,
+				TE_MOD_ID_COMMENT).getString();
+
 		thermalExpansionHardenedGlass = config.get(
-			CATEGORY_MOD_INTEROP,
-			TE_MOD_HARDENED_GLASS_KEY,
-			thermalExpansionHardenedGlass,
-			TE_MOD_HARDENED_GLASS_COMMENT
-			).getString();
-		
+				CATEGORY_MOD_INTEROP,
+				TE_MOD_HARDENED_GLASS_KEY,
+				thermalExpansionHardenedGlass,
+				TE_MOD_HARDENED_GLASS_COMMENT).getString();
+
 		thermalExpansionBronzeIngot = config.get(
-			CATEGORY_MOD_INTEROP,
-			TE_MOD_BRONZE_INGOT_KEY,
-			thermalExpansionBronzeIngot,
-			TE_MOD_BRONZE_INGOT_COMMENT
-			).getString();
-		
+				CATEGORY_MOD_INTEROP,
+				TE_MOD_BRONZE_INGOT_KEY,
+				thermalExpansionBronzeIngot,
+				TE_MOD_BRONZE_INGOT_COMMENT).getString();
+
 		config.save();
 	}
 }

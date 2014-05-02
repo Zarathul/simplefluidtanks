@@ -24,7 +24,7 @@ public class ValveItem extends ItemBlock
 {
 	private static final String toolTipKey = "item." + Registry.VALVEITEM_NAME + ".toolTip";
 	private static final String toolTipDetailsKey = "item." + Registry.VALVEITEM_NAME + ".toolTipDetails";
-	
+
 	public ValveItem(Block block)
 	{
 		super(block);
@@ -39,7 +39,7 @@ public class ValveItem extends ItemBlock
 	{
 		return 0;
 	}
-	
+
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack items, EntityPlayer player, List list, boolean advancedItemTooltipsEnabled)

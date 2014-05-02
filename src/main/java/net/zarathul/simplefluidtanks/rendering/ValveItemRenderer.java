@@ -18,11 +18,11 @@ public class ValveItemRenderer extends BaseItemRenderer
 	public void renderItem(ItemRenderType type, ItemStack item, Object... data)
 	{
 		super.renderItem(type, item, data);
-		
+
 		IIcon icon = SimpleFluidTanks.valveBlock.getIcon(Direction.XPOS, 0);
 		IIcon iconIo = SimpleFluidTanks.valveBlock.getIcon(0, 0);
 		IIcon iconTank = SimpleFluidTanks.valveBlock.getIcon(Direction.YPOS, 0);
-		
+
 		TessellationManager.startDrawingQuads();
 		TessellationManager.renderPositiveXFace(0 + 1, 0, 0, 1, 1, icon, 1);
 		TessellationManager.renderNegativeXFace(0, 0, 0, 1, 1, (type == ItemRenderType.EQUIPPED_FIRST_PERSON) ? iconIo : icon, 1);

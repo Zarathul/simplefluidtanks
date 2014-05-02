@@ -10,20 +10,20 @@ public class ClientProxy extends CommonProxy
 	public void preInit(FMLPreInitializationEvent event)
 	{
 		Registry.addCreativeTab();
-		
+
 		super.preInit(event);
-		
+
 		Registry.registerCustomRenderers();
 	}
-	
+
 	@Override
 	public void init(FMLInitializationEvent event)
 	{
 		super.init(event);
-		
+
 		Registry.registerWithWaila();
 	}
-	
+
 	@Override
 	public void postInit(FMLPostInitializationEvent event)
 	{

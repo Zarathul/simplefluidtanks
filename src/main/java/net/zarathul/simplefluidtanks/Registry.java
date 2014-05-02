@@ -26,20 +26,20 @@ public final class Registry
 {
 	public static final String TANKBLOCK_NAME = "tankBlock";
 	public static final String TANKITEM_NAME = "tankItem";
-	
+
 	public static final String VALVEBLOCK_NAME = "valveBlock";
 	public static final String VALVEITEM_NAME = "valveItem";
-	
+
 	private static final String TANKBLOCK_KEY = SimpleFluidTanks.MOD_ID + TANKBLOCK_NAME;
-	
+
 	private static final String TANKBLOCK_ENTITY_NAME = "tankBlockEntity";
 	private static final String TANKBLOCK_ENTITY_KEY = SimpleFluidTanks.MOD_ID + TANKBLOCK_ENTITY_NAME;
-	
+
 	private static final String VALVEBLOCK_KEY = SimpleFluidTanks.MOD_ID + VALVEBLOCK_NAME;
-	
+
 	private static final String VALVEBLOCK_ENTITY_NAME = "valveBlockEntity";
 	private static final String VALVEBLOCK_ENTITY_KEY = SimpleFluidTanks.MOD_ID + VALVEBLOCK_ENTITY_NAME;
-	
+
 	/**
 	 * Creates and registers all blocks added by the mod.
 	 */
@@ -49,16 +49,16 @@ public final class Registry
 		SimpleFluidTanks.tankBlock = new TankBlock();
 		GameRegistry.registerBlock(SimpleFluidTanks.tankBlock, TankItem.class, TANKBLOCK_KEY);
 		SimpleFluidTanks.fakeFluidBlock = new FakeFluidBlock();
-		
+
 		// ValveBlock
 		SimpleFluidTanks.valveBlock = new ValveBlock();
 		GameRegistry.registerBlock(SimpleFluidTanks.valveBlock, ValveItem.class, VALVEBLOCK_KEY);
-		
+
 		// TileEntities
 		GameRegistry.registerTileEntity(ValveBlockEntity.class, VALVEBLOCK_ENTITY_KEY);
 		GameRegistry.registerTileEntity(TankBlockEntity.class, TANKBLOCK_ENTITY_KEY);
 	}
-	
+
 	/**
 	 * Creates and registers the mods custom renderers.
 	 */
@@ -69,7 +69,7 @@ public final class Registry
 		MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(SimpleFluidTanks.tankBlock), new TankItemRenderer());
 		MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(SimpleFluidTanks.valveBlock), new ValveItemRenderer());
 	}
-	
+
 	/**
 	 * Registers with Waila, if installed.
 	 */
@@ -77,7 +77,7 @@ public final class Registry
 	{
 		FMLInterModComms.sendMessage("Waila", "register", "net.zarathul.simplefluidtanks.waila.Registry.register");
 	}
-	
+
 	/**
 	 * Adds a tab in creative mode for the mod.
 	 */

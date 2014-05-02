@@ -19,35 +19,35 @@ public class FakeFluidBlock extends Block
 	{
 		super(Blocks.water.getMaterial());
 	}
-	
+
 	@Override
 	@SideOnly(Side.CLIENT)
 	public boolean shouldSideBeRendered(IBlockAccess blockAccess, int x, int y, int z, int side)
 	{
 		int shiftDir = Direction.vanillaSideOpposites.get(side);
 		BlockCoords tankCoords = BlockCoords.offsetBy(shiftDir, 1, x, y, z);
-		
+
 		TankBlockEntity tankEntity = Utils.getTileEntityAt(blockAccess, TankBlockEntity.class, tankCoords);
-		
+
 		if (tankEntity == null)
 		{
 			return true;
 		}
-		
+
 		boolean[] connections = tankEntity.getConnections();
-		
+
 		if (side == Direction.YPOS)
 		{
 			if (!connections[Direction.YPOS])
 			{
 				return true;
 			}
-			
+
 			TankBlockEntity tankAbove = Utils.getTileEntityAt(blockAccess, TankBlockEntity.class, x, y, z);
-			
+
 			return (tankAbove == null || tankAbove.isEmpty());
 		}
-		
+
 		return !connections[side];
 	}
 }
