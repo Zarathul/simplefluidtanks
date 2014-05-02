@@ -42,7 +42,8 @@ public final class TankBlockDataProvider implements IWailaDataProvider
 			
 			if (config.getConfig(WailaRegistrar.WAILA_TANK_LINKED_KEY))
 			{
-				currenttip.add(StatCollector.translateToLocalFormatted(WailaRegistrar.WAILA_TOOLTIP_ISLINKED, tankEntity.isPartOfTank()));
+				String readableFlag = StatCollector.translateToLocal((tankEntity.isPartOfTank()) ? WailaRegistrar.WAILA_TOOLTIP_YES : WailaRegistrar.WAILA_TOOLTIP_NO);
+				currenttip.add(StatCollector.translateToLocalFormatted(WailaRegistrar.WAILA_TOOLTIP_ISLINKED, readableFlag));
 			}
 			
 			if (config.getConfig(WailaRegistrar.WAILA_TANK_CAPACITY_KEY))

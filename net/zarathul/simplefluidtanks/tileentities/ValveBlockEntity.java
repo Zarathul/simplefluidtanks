@@ -650,7 +650,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		ArrayList<BlockCoords> adjacentTanks;
 		HashSet<BlockCoords> visitedTanks = new HashSet<BlockCoords>();
 		ArrayList<BlockCoords> foundTanks = new ArrayList<BlockCoords>();
-		ArrayList<BlockCoords> newTanks = new ArrayList<BlockCoords>();
+		HashSet<BlockCoords> newTanks = new HashSet<BlockCoords>();
 		ArrayList<BlockCoords> lastFoundTanks = new ArrayList<BlockCoords>();
 		lastFoundTanks.add(startTank);
 		
