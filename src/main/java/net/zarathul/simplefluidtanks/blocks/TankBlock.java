@@ -61,26 +61,28 @@ public class TankBlock extends WrenchableBlock
 	@SideOnly(Side.CLIENT)
 	public void registerBlockIcons(IIconRegister iconRegister)
 	{
-		icons = new IIcon[] { iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_closed"),				// 0
-		iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_open"),					// 1
+		icons = new IIcon[]
+		{
+			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_closed"),				// 0
+			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_open"),					// 1
 
-		iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_top_bottom"),			// 2
-		iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_left_right"),			// 3
+			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_top_bottom"),			// 2
+			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_left_right"),			// 3
 
-		iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_top_right"),				// 4
-		iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_bottom_right"),			// 5
-		iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_bottom_left"),			// 6
-		iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_top_left"),				// 7
+			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_top_right"),				// 4
+			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_bottom_right"),			// 5
+			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_bottom_left"),			// 6
+			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_top_left"),				// 7
 
-		iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_left_right_top"),		// 8
-		iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_top_bottom_right"),		// 9
-		iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_left_right_bottom"),		// 10
-		iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_top_bottom_left"),		// 11
+			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_left_right_top"),		// 8
+			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_top_bottom_right"),		// 9
+			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_left_right_bottom"),		// 10
+			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_top_bottom_left"),		// 11
 
-		iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_top"),					// 12
-		iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_bottom"),				// 13
-		iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_left"),					// 14
-		iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_right")					// 15
+			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_top"),					// 12
+			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_bottom"),				// 13
+			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_left"),					// 14
+			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_right")					// 15
 		};
 	}
 

@@ -9,14 +9,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map.Entry;
-import java.util.Set;
 
-import net.minecraft.launchwrapper.LogWrapper;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.MathHelper;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -507,7 +506,8 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 				tanksToFill = tankPriorities.get(priorities[i]);
 
 				int capacity = tanksToFill.size() * Config.bucketsPerTank * FluidContainerRegistry.BUCKET_VOLUME;
-				int fillPercentage = Math.max(Math.min((int) Math.ceil((double) amountToDistribute / (double) capacity * 100d), 100), 0);
+				int fillPercentage = MathHelper.clamp_int((int) Math.ceil((double) amountToDistribute / (double) capacity * 100d), 0, 100);
+				
 
 				for (BlockCoords tank : tanksToFill)
 				{
@@ -578,7 +578,8 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		ArrayList<BlockCoords> lowerTanks;
 		HashMap<BlockCoords, Integer> tanksToPrioritize = new HashMap<BlockCoords, Integer>();
 		HashSet<BlockCoords> newTanks = new HashSet<BlockCoords>();
-		HashSet<BlockCoords> handledTanks = new HashSet<BlockCoords>();
+		HashSet<BlockCoords> handledSourceTanks = new HashSet<BlockCoords>();
+		HashSet<BlockCoords> handledSegmentTanks = new HashSet<BlockCoords>();
 
 		currentTanks.add(startTank);
 
@@ -601,16 +602,19 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		{
 			for (BlockCoords currentTank : currentTanks)
 			{
+				if (handledSegmentTanks.contains(currentTank)) continue;
+
 				lowerTanks = getClosestLowestTanks(currentTank);
 
 				// handle tanks with lower tanks first, store the rest for later processing
 				if (lowerTanks.get(0) == currentTank)
 				{
 					tanksWithoutLowerTanks.add(currentTank);
+					handledSegmentTanks.addAll(lowerTanks);
 				}
 				else
 				{
-					handledTanks.add(currentTank);
+					handledSourceTanks.add(currentTank);
 
 					for (BlockCoords lowerTank : lowerTanks)
 					{
@@ -627,7 +631,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 				{
 					tanksOnSameHeight = getTanksOnSameHeight(tankWithoutLowerTanks);
 
-					if (Collections.disjoint(tanksOnSameHeight, handledTanks))
+					if (Collections.disjoint(tanksOnSameHeight, handledSourceTanks))
 					{
 						for (BlockCoords tankOnSameHeight : tanksOnSameHeight)
 						{
@@ -648,7 +652,8 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 			priority++;
 
 			tanksWithoutLowerTanks.clear();
-			handledTanks.clear();
+			handledSourceTanks.clear();
+			handledSegmentTanks.clear();
 			tanksToPrioritize.clear();
 			currentTanks.clear();
 

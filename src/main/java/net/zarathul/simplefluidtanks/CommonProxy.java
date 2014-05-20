@@ -10,6 +10,7 @@ public class CommonProxy
 	{
 		Config.load(event.getSuggestedConfigurationFile());
 		Registry.registerBlocks();
+		Registry.registerItems();
 	}
 
 	public void init(FMLInitializationEvent event)

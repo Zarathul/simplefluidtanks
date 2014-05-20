@@ -7,6 +7,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.MathHelper;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.zarathul.simplefluidtanks.blocks.TankBlock;
@@ -218,7 +219,7 @@ public class TankBlockEntity extends TileEntity
 	 */
 	public boolean setFillPercentage(int percentage, boolean forceBlockUpdate)
 	{
-		percentage = Utils.limit(percentage, 0, 100);
+		percentage = MathHelper.clamp_int(percentage, 0, 100);
 
 		boolean percentageChanged = (percentage != fillPercentage);
 
@@ -335,14 +336,11 @@ public class TankBlockEntity extends TileEntity
 			return false;
 		}
 
-		if (worldObj.getBlock(x, y, z) instanceof TankBlock)
-		{
-			TankBlockEntity connectionCandidate = Utils.getTileEntityAt(worldObj, TankBlockEntity.class, x, y, z);
+		TankBlockEntity connectionCandidate = Utils.getTileEntityAt(worldObj, TankBlockEntity.class, x, y, z);
 
-			if (connectionCandidate != null)
-			{
-				return (connectionCandidate.hasValveAt(valveCoords));
-			}
+		if (connectionCandidate != null)
+		{
+			return (connectionCandidate.hasValveAt(valveCoords));
 		}
 
 		return false;

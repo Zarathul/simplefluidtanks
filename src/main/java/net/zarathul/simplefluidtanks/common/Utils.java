@@ -1,5 +1,6 @@
 package net.zarathul.simplefluidtanks.common;
 
+import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 
@@ -12,7 +13,7 @@ public final class Utils
 	 * Gets the {@link TileEntity} at the specified coordinates, casted to the specified type.
 	 * 
 	 * @param access
-	 * A {@link IBlockAccess} implementation. Usually the world.
+	 * An {@link IBlockAccess} implementation. Usually the world.
 	 * @param entityType
 	 * The type the {@link TileEntity} should be casted to.
 	 * @param coords
@@ -28,7 +29,7 @@ public final class Utils
 	 * Gets the {@link TileEntity} at the specified coordinates, casted to the specified type.
 	 * 
 	 * @param access
-	 * A {@link IBlockAccess} implementation. Usually the world.
+	 * An {@link IBlockAccess} implementation. Usually the world.
 	 * @param entityType
 	 * The type the {@link TileEntity} should be casted to.
 	 * @param coords
@@ -51,20 +52,40 @@ public final class Utils
 	}
 
 	/**
-	 * Limits the specified value to the specified bounds.
+	 * Check if the block at the specified location is of the specified type.
 	 * 
-	 * @param x
-	 * The value to limit.
-	 * @param min
-	 * The lower bound.
-	 * @param max
-	 * The upper bound.
-	 * @return <code>min</code> if <code>x</code> is smaller than <code>min</code>,<br>
-	 * <code>max</code> if <code>x</code> is greater than <code>max</code>,<br>
-	 * otherwise <code>x</code>
+	 * @param access
+	 * An {@link IBlockAccess} implementation. Usually the world.
+	 * @param type
+	 * The type the block should be checked against.
+	 * @param coords
+	 * The blocks coordinates.
+	 * @return <code>true</code> if the block at the specified coordinates is of the specified type, otherwise <code>false</code>.
 	 */
-	public static int limit(int x, int min, int max)
+	public static final <T extends Block> boolean isBlockType(IBlockAccess access, Class<T> type, BlockCoords coords)
 	{
-		return (x < min) ? min : (x > max) ? max : x;
+		return isBlockType(access, type, coords.x, coords.y, coords.z);
+	}
+
+	/**
+	 * Check if the block at the specified location is of the specified type.
+	 * 
+	 * @param access
+	 * An {@link IBlockAccess} implementation. Usually the world.
+	 * @param type
+	 * The type the block should be checked against.
+	 * @param x
+	 * The blocks x-coordinate.
+	 * @param y
+	 * The blocks y-coordinate.
+	 * @param z
+	 * The blocks z-coordinate.
+	 * @return <code>true</code> if the block at the specified coordinates is of the specified type, otherwise <code>false</code>.
+	 */
+	public static final <T extends Block> boolean isBlockType(IBlockAccess access, Class<T> type, int x, int y, int z)
+	{
+		Block blockToCheck = access.getBlock(x, y, z);
+
+		return ((blockToCheck != null) && (type.isInstance(blockToCheck)));
 	}
 }

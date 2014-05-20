@@ -8,6 +8,7 @@ import net.zarathul.simplefluidtanks.blocks.TankBlock;
 import net.zarathul.simplefluidtanks.blocks.ValveBlock;
 import net.zarathul.simplefluidtanks.items.TankItem;
 import net.zarathul.simplefluidtanks.items.ValveItem;
+import net.zarathul.simplefluidtanks.items.WrenchItem;
 import net.zarathul.simplefluidtanks.rendering.TankBlockRenderer;
 import net.zarathul.simplefluidtanks.rendering.TankItemRenderer;
 import net.zarathul.simplefluidtanks.rendering.ValveItemRenderer;
@@ -29,6 +30,9 @@ public final class Registry
 
 	public static final String VALVEBLOCK_NAME = "valveBlock";
 	public static final String VALVEITEM_NAME = "valveItem";
+
+	public static final String WRENCH_ITEM_NAME = "wrench";
+	public static final String WRENCH_ITEM_KEY = SimpleFluidTanks.MOD_ID + ":" + WRENCH_ITEM_NAME;
 
 	private static final String TANKBLOCK_KEY = SimpleFluidTanks.MOD_ID + TANKBLOCK_NAME;
 
@@ -57,6 +61,15 @@ public final class Registry
 		// TileEntities
 		GameRegistry.registerTileEntity(ValveBlockEntity.class, VALVEBLOCK_ENTITY_KEY);
 		GameRegistry.registerTileEntity(TankBlockEntity.class, TANKBLOCK_ENTITY_KEY);
+	}
+
+	/**
+	 * Creates and registers all items added by the mod.
+	 */
+	public static void registerItems()
+	{
+		SimpleFluidTanks.wrenchItem = new WrenchItem();
+		GameRegistry.registerItem(SimpleFluidTanks.wrenchItem, WRENCH_ITEM_KEY);
 	}
 
 	/**

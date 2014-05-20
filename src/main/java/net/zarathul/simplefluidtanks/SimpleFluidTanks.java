@@ -4,6 +4,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.zarathul.simplefluidtanks.blocks.FakeFluidBlock;
 import net.zarathul.simplefluidtanks.blocks.TankBlock;
 import net.zarathul.simplefluidtanks.blocks.ValveBlock;
+import net.zarathul.simplefluidtanks.items.WrenchItem;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -25,6 +26,9 @@ public class SimpleFluidTanks
 	public static TankBlock tankBlock;
 	public static ValveBlock valveBlock;
 	public static FakeFluidBlock fakeFluidBlock;
+
+	// items
+	public static WrenchItem wrenchItem;
 
 	public static CreativeTabs creativeTab;
 
