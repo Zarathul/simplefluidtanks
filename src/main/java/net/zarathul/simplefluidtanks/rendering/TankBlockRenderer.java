@@ -88,7 +88,7 @@ public class TankBlockRenderer implements ISimpleBlockRenderingHandler
 	}
 
 	/**
-	 * Renders a slightly shrinked {@link TankBlock} without connected textures.
+	 * Renders a {@link TankBlock} without connected textures.
 	 * 
 	 * @param icon
 	 * The texture to use.
