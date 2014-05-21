@@ -6,6 +6,7 @@ import net.zarathul.simplefluidtanks.blocks.TankBlock;
 import net.zarathul.simplefluidtanks.blocks.ValveBlock;
 import net.zarathul.simplefluidtanks.items.TankItem;
 import net.zarathul.simplefluidtanks.items.ValveItem;
+import net.zarathul.simplefluidtanks.items.WrenchItem;
 import net.zarathul.simplefluidtanks.tileentities.TankBlockEntity;
 import net.zarathul.simplefluidtanks.tileentities.ValveBlockEntity;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -55,6 +56,10 @@ public class CommonProxy
 		// set harvest levels for blocks
 		MinecraftForge.setBlockHarvestLevel(SimpleFluidTanks.tankBlock, "pickaxe", 2);
 		MinecraftForge.setBlockHarvestLevel(SimpleFluidTanks.valveBlock, "pickaxe", 2);
+		
+		// create and register Wrench
+		SimpleFluidTanks.wrenchItem = new WrenchItem(SimpleFluidTanks.wrenchItemId);
+		GameRegistry.registerItem(SimpleFluidTanks.wrenchItem, SimpleFluidTanks.REGISTRY_WRENCHITEM_KEY);
 	}
 	
 	public void init(FMLInitializationEvent event)

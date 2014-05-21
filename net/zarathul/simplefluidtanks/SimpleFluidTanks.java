@@ -3,6 +3,7 @@ package net.zarathul.simplefluidtanks;
 import net.minecraft.creativetab.CreativeTabs;
 import net.zarathul.simplefluidtanks.blocks.TankBlock;
 import net.zarathul.simplefluidtanks.blocks.ValveBlock;
+import net.zarathul.simplefluidtanks.items.WrenchItem;
 import net.zarathul.simplefluidtanks.rendering.TankBlockRenderer;
 import net.zarathul.simplefluidtanks.rendering.TankItemRenderer;
 import net.zarathul.simplefluidtanks.rendering.ValveItemRenderer;
@@ -31,6 +32,9 @@ public class SimpleFluidTanks
 	public static TankBlock tankBlock;
 	public static ValveBlock valveBlock;
 	
+	// items
+	public static WrenchItem wrenchItem;
+	
 	// custom renderers
 	@SideOnly(Side.CLIENT)
 	public static TankBlockRenderer tankBlockRenderer;
@@ -41,6 +45,7 @@ public class SimpleFluidTanks
 	
 	public static int tankBlockId;
 	public static int valveBlockId;
+	public static int wrenchItemId;
 	
 	public static int bucketsPerTank;
 	
@@ -48,7 +53,7 @@ public class SimpleFluidTanks
 	
 	// constants
 	public static final String MOD_ID = "simplefluidtanks";
-	public static final String VERSION = "1.0.0.7";
+	public static final String VERSION = "1.0.0.8";
 	
 	// - registry
 	public static final String REGISTRY_TANKBLOCK_NAME = "tankBlock";
@@ -67,6 +72,9 @@ public class SimpleFluidTanks
 	public static final String REGISTRY_VALVEBLOCK_ENTITY_NAME = "valveBlockEntity";
 	public static final String REGISTRY_VALVEBLOCK_ENTITY_KEY = MOD_ID + REGISTRY_VALVEBLOCK_ENTITY_NAME;
 	
+	public static final String REGISTRY_WRENCHITEM_NAME = "wrench";
+	public static final String REGISTRY_WRENCHITEM_KEY = SimpleFluidTanks.MOD_ID + ":" + REGISTRY_WRENCHITEM_NAME;
+	
 	public static String REGISTRY_THERMAL_EXPANSION_MOD_ID = "ThermalExpansion";
 	public static String REGISTRY_THERMAL_EXPANSION_HARDENED_GLASS = "glassHardened";
 	public static String REGISTRY_THERMAL_EXPANSION_BRONZE_INGOT = "ingotBronze";
@@ -74,12 +82,15 @@ public class SimpleFluidTanks
 	// - config settings
 	public static final int CONFIG_DEFAULT_TANKBLOCK_ID = 2529;
 	public static final int CONFIG_DEFAULT_VALVEBLOCK_ID = 2530;
+	public static final int CONFIG_DEFAULT_WRENCHITEM_ID = 26000;
 	public static final int CONFIG_DEFAULT_BUCKETS_PER_TANK = 16;
 	public static final String CONFIG_CATEGORY_MAIN = "simple fluid tanks";
 	public static final String CONFIG_TANKBLOCK_ID_KEY = "TankblockId";
 	public static final String CONFIG_TANKBLOCK_ID_COMMENT = "The tanks block id.";
 	public static final String CONFIG_VALVEBLOCK_ID_KEY = "ValveblockId";
 	public static final String CONFIG_VALVEBLOCK_ID_COMMENT = "The valves block id.";
+	public static final String CONFIG_WRENCHITEM_ID_KEY = "WrenchItemId";
+	public static final String CONFIG_WRENCHITEM_ID_COMMENT = "The wrench item id.";
 	public static final String CONFIG_BUCKETS_PER_TANK_KEY = "BucketsPerTank";
 	public static final String CONFIG_BUCKETS_PER_TANK_COMMENT = "The amount of fluid that can be stored per tank (measured in buckets).";
 	public static final String CONFIG_CATEGORY_MOD_INTEROP = "mod interop";

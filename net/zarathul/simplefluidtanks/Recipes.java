@@ -43,5 +43,13 @@ public final class Recipes
 			'T', SimpleFluidTanks.tankBlock,
 			'S', Item.slimeBall
 		);
+		
+		// wrench recipe
+		GameRegistry.addShapedRecipe(new ItemStack(SimpleFluidTanks.wrenchItem, 1),
+				" I ",
+				" II",
+				"I  ",
+				'I',
+				Item.ingotIron);
 	}
 }

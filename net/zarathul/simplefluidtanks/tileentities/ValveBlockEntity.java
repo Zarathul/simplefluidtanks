@@ -545,7 +545,8 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		BlockCoords sourceTank;
 		
 		HashSet<BlockCoords> newTanks =  new HashSet<BlockCoords>();
-		HashSet<BlockCoords> handledTanks =  new HashSet<BlockCoords>();
+		HashSet<BlockCoords> handledSourceTanks =  new HashSet<BlockCoords>();
+		HashSet<BlockCoords> handledSegmentTanks = new HashSet<BlockCoords>();
 		HashMap<BlockCoords, Integer> tanksToPrioritize = new HashMap<BlockCoords, Integer>();
 		ArrayList<BlockCoords> tanksWithoutLowerTanks = new ArrayList<BlockCoords>();
 		ArrayList<BlockCoords> currentTanks =  new ArrayList<BlockCoords>();
@@ -571,16 +572,19 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		{
 			for (BlockCoords currentTank : currentTanks)
 			{
+				if (handledSegmentTanks.contains(currentTank)) continue;
+				
 				lowerTanks = getClosestLowestTanks(currentTank);
 				
 				// handle tanks with lower tanks first, store the rest for later processing
 				if (lowerTanks.get(0) == currentTank)	
 				{
 					tanksWithoutLowerTanks.add(currentTank);
+					handledSegmentTanks.addAll(lowerTanks);
 				}
 				else
 				{
-					handledTanks.add(currentTank);
+					handledSourceTanks.add(currentTank);
 					
 					for (BlockCoords lowerTank : lowerTanks)
 					{
@@ -597,7 +601,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 				{
 					tanksOnSameHeight = getTanksOnSameHeight(tank);
 					
-					if (Collections.disjoint(tanksOnSameHeight, handledTanks))
+					if (Collections.disjoint(tanksOnSameHeight, handledSourceTanks))
 					{
 						for (BlockCoords sameHeightTank : tanksOnSameHeight)
 						{
@@ -618,7 +622,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 			priority++;
 			
 			tanksWithoutLowerTanks.clear();
-			handledTanks.clear();
+			handledSourceTanks.clear();
 			tanksToPrioritize.clear();
 			currentTanks.clear();
 			

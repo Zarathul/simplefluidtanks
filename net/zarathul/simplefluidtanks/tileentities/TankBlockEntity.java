@@ -8,6 +8,7 @@ import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.MathHelper;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.zarathul.simplefluidtanks.SimpleFluidTanks;
@@ -225,7 +226,7 @@ public class TankBlockEntity extends TileEntity
 	 */
 	public boolean setFillPercentage(int percentage)
 	{
-		percentage = Utils.limit(percentage, 0, 100);
+		percentage = MathHelper.clamp_int(percentage, 0, 100);
 		
 		if (percentage == fillPercentage)
 		{

@@ -27,6 +27,13 @@ public final class Config
 				SimpleFluidTanks.CONFIG_VALVEBLOCK_ID_COMMENT
 				).getInt();
 		
+		SimpleFluidTanks.wrenchItemId = config.getItem(
+				SimpleFluidTanks.CONFIG_CATEGORY_MAIN,
+				SimpleFluidTanks.CONFIG_WRENCHITEM_ID_KEY,
+				SimpleFluidTanks.CONFIG_DEFAULT_WRENCHITEM_ID,
+				SimpleFluidTanks.CONFIG_WRENCHITEM_ID_COMMENT
+				).getInt();
+		
 		SimpleFluidTanks.bucketsPerTank = config.get(
 				SimpleFluidTanks.CONFIG_CATEGORY_MAIN,
 				SimpleFluidTanks.CONFIG_BUCKETS_PER_TANK_KEY,

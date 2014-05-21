@@ -50,11 +50,11 @@ public final class TankBlockDataProvider implements IWailaDataProvider
 			{
 				if (config.getConfig(WailaRegistrar.WAILA_CAPACITY_IN_MILLIBUCKETS_KEY))
 				{
-					currenttip.add(StatCollector.translateToLocalFormatted(WailaRegistrar.WAILA_TOOLTIP_CAPACITY, SimpleFluidTanks.bucketsPerTank * 1000, "", "", " mB") );
+					currenttip.add(StatCollector.translateToLocalFormatted(WailaRegistrar.WAILA_TOOLTIP_CAPACITY, SimpleFluidTanks.bucketsPerTank * 1000, "", "", "mB", tankEntity.getFillPercentage()) );
 				}
 				else
 				{
-					currenttip.add(StatCollector.translateToLocalFormatted(WailaRegistrar.WAILA_TOOLTIP_CAPACITY, SimpleFluidTanks.bucketsPerTank, "", "", " B"));
+					currenttip.add(StatCollector.translateToLocalFormatted(WailaRegistrar.WAILA_TOOLTIP_CAPACITY, SimpleFluidTanks.bucketsPerTank, "", "", "B", tankEntity.getFillPercentage()));
 				}
 			}
 		}

@@ -4,18 +4,19 @@ tile.valveBlock.name=Valve
 # Items
 item.tankItem.name=Fluid Tank
 item.tankItem.toolTip=Hold §e§oshift§r§7 for details.
-item.tankItem.toolTipDetails0=Use a buildcraft compatible wrench
+item.tankItem.toolTipDetails0=Use a BuildCraft compatible wrench
 item.tankItem.toolTipDetails1=while sneaking to remove a tank from
 item.tankItem.toolTipDetails2=the multiblock structure.
 item.tankItem.toolTipDetails3=§9Holds up to §b%d §9buckets of fluid.
 item.valveItem.name=Valve
 item.valveItem.toolTip=Hold §e§oshift§r§7 for details.
-item.valveItem.toolTipDetails0=Use a buildcraft compatible wrench to
-item.valveItem.toolTipDetails1=add new tanks to the multiblock structure
-item.valveItem.toolTipDetails2=without loosing any fluid. Note that the
-item.valveItem.toolTipDetails3=Valve counts as a tank towards the total
-item.valveItem.toolTipDetails4=capacity and emits a redstone signal in
-item.valveItem.toolTipDetails5=conjunction with a comparator.
+item.valveItem.toolTipDetails0=Use a BuildCraft compatible wrench on the
+item.valveItem.toolTipDetails1=valve to add new tanks to the multiblock
+item.valveItem.toolTipDetails2=structure without loosing any fluid. Note
+item.valveItem.toolTipDetails3=that the Valve counts as a tank towards
+item.valveItem.toolTipDetails4=the total capacity and emits a redstone
+item.valveItem.toolTipDetails5=signal in conjunction with a comparator.
+item.wrench.name=Wrench
 # Waila option labels
 waila.tankCount=Tank count
 waila.totalCapacity=Total capacity
@@ -25,7 +26,7 @@ waila.capacityInMb=Capacities in mB
 waila.fluidName=Fluid name
 # Waila tooltip texts
 waila.toolTip.isLinked=Linked: §c%s
-waila.toolTip.capacity=Capacity: §b%d%s%d§r%s
+waila.toolTip.capacity=Capacity: §b%d%s%d§r %s (%d%%)
 waila.toolTip.tanks=Tanks: §b%d
 waila.toolTip.fluid=Fluid: §b%s
 waila.toolTip.fluidEmpty=Empty
