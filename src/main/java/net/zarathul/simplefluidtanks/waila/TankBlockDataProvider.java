@@ -7,6 +7,7 @@ import mcp.mobius.waila.api.IWailaDataAccessor;
 import mcp.mobius.waila.api.IWailaDataProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.StatCollector;
 import net.zarathul.simplefluidtanks.Config;
 import net.zarathul.simplefluidtanks.blocks.TankBlock;
@@ -54,11 +55,11 @@ public final class TankBlockDataProvider implements IWailaDataProvider
 			{
 				if (config.getConfig(Registry.WAILA_CAPACITY_IN_MILLIBUCKETS_KEY))
 				{
-					currenttip.add(StatCollector.translateToLocalFormatted(Registry.WAILA_TOOLTIP_CAPACITY, Config.bucketsPerTank * 1000, "", "", " mB"));
+					currenttip.add(StatCollector.translateToLocalFormatted(Registry.WAILA_TOOLTIP_CAPACITY, Config.bucketsPerTank * 1000, "", "", "mB", tankEntity.getFillPercentage()));
 				}
 				else
 				{
-					currenttip.add(StatCollector.translateToLocalFormatted(Registry.WAILA_TOOLTIP_CAPACITY, Config.bucketsPerTank, "", "", " B"));
+					currenttip.add(StatCollector.translateToLocalFormatted(Registry.WAILA_TOOLTIP_CAPACITY, Config.bucketsPerTank, "", "", "B", tankEntity.getFillPercentage()));
 				}
 			}
 		}

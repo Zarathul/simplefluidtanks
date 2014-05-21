@@ -7,6 +7,7 @@ import mcp.mobius.waila.api.IWailaDataAccessor;
 import mcp.mobius.waila.api.IWailaDataProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.StatCollector;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -52,13 +53,15 @@ public final class ValveBlockDataProvider implements IWailaDataProvider
 
 			if (config.getConfig(Registry.WAILA_TOTAL_CAPACITY_KEY))
 			{
+				int totalFillPercentage = MathHelper.clamp_int((valveEntity.getFluidAmount() * 100) / valveEntity.getCapacity(), 0, 100);
+				
 				if (config.getConfig(Registry.WAILA_CAPACITY_IN_MILLIBUCKETS_KEY))
 				{
-					currenttip.add(StatCollector.translateToLocalFormatted(Registry.WAILA_TOOLTIP_CAPACITY, valveEntity.getFluidAmount(), "/", valveEntity.getCapacity(), " mB"));
+					currenttip.add(StatCollector.translateToLocalFormatted(Registry.WAILA_TOOLTIP_CAPACITY, valveEntity.getFluidAmount(), "/", valveEntity.getCapacity(), "mB", totalFillPercentage));
 				}
 				else
 				{
-					currenttip.add(StatCollector.translateToLocalFormatted(Registry.WAILA_TOOLTIP_CAPACITY, valveEntity.getFluidAmount() / 1000, "/", valveEntity.getCapacity() / 1000, " B"));
+					currenttip.add(StatCollector.translateToLocalFormatted(Registry.WAILA_TOOLTIP_CAPACITY, valveEntity.getFluidAmount() / 1000, "/", valveEntity.getCapacity() / 1000, "B", totalFillPercentage));
 				}
 			}
 
