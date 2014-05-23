@@ -1,8 +1,9 @@
 package net.zarathul.simplefluidtanks;
 
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
+import java.util.ArrayList;
+
 import net.minecraft.item.ItemStack;
+import net.minecraft.launchwrapper.LogWrapper;
 import cpw.mods.fml.common.registry.GameRegistry;
 
 /**
@@ -10,56 +11,141 @@ import cpw.mods.fml.common.registry.GameRegistry;
  */
 public final class Recipes
 {
+	// Default TankBlock recipe
+	public static final Recipe defaultTankBlockRecipe = new Recipe
+	(
+		2,
+		new RecipePattern(
+			"IGI",
+			String.format("G%sG", RecipePattern.EMPTY_SLOT),
+			"IGI"
+		),
+		new RecipeComponent[]
+		{
+			new RecipeComponent("I", "minecraft", "iron_ingot"),
+			new RecipeComponent("G", "minecraft", "glass")
+		}
+	);
+
+	// Default ValveBlock recipe
+	public static final Recipe defaultValveBlockRecipe = new Recipe
+	(
+		1,
+		new RecipePattern(
+			"ISI",
+			"STS",
+			"ISI"
+		),
+		new RecipeComponent[]
+		{
+			new RecipeComponent("I", "minecraft", "iron_ingot"),
+			new RecipeComponent("S", "minecraft", "slime_ball"),
+			new RecipeComponent("T", SimpleFluidTanks.MOD_ID, Registry.TANKBLOCK_NAME)
+		}
+	);
+
+	// Default Wrench recipe
+	public static final Recipe defaultWrenchRecipe = new Recipe
+	(
+		1,
+		new RecipePattern(
+			String.format("%sI%s", RecipePattern.EMPTY_SLOT, RecipePattern.EMPTY_SLOT),
+			String.format("%sII", RecipePattern.EMPTY_SLOT),
+			String.format("I%s%s", RecipePattern.EMPTY_SLOT, RecipePattern.EMPTY_SLOT)
+		),
+		new RecipeComponent[]
+		{
+			new RecipeComponent("I", "minecraft", "iron_ingot")
+		}
+	);
+
 	/**
 	 * Registers the mods recipes.
 	 */
 	public static final void register()
 	{
-		// use thermal expansions hardened glass and bronze(tinkers alloy) ingots for the recipes if TE is installed, otherwise use normal glass and iron
-		ItemStack teHardenedGlass = GameRegistry.findItemStack(Config.thermalExpansionModId, Config.thermalExpansionHardenedGlass, 1);
-		ItemStack teBronzeIngots = GameRegistry.findItemStack(Config.thermalExpansionModId, Config.thermalExpansionBronzeIngot, 1);
-		ItemStack glassRecipeComponent = new ItemStack(Blocks.glass);
-		ItemStack ingotRecipeComponent = (teBronzeIngots != null) ? teBronzeIngots : new ItemStack(Items.iron_ingot);
-		int tankRecipeOutputAmount = 2;
+		ItemStack tankBlockRecipeResult = new ItemStack(SimpleFluidTanks.tankBlock);
+		ItemStack valveBlockRecipeResult = new ItemStack(SimpleFluidTanks.valveBlock);
 
-		// the thermal expansion recipe for tanks yields 4 instead of 2 tanks
-		if (teHardenedGlass != null)
+		register(tankBlockRecipeResult, Config.tankBlockRecipe, defaultTankBlockRecipe);
+		register(valveBlockRecipeResult, Config.valveBlockRecipe, defaultValveBlockRecipe);
+
+		if (Config.wrenchEnabled)
 		{
-			glassRecipeComponent = teHardenedGlass;
-			tankRecipeOutputAmount = 4;
+			ItemStack wrenchRecipeResult = new ItemStack(SimpleFluidTanks.wrenchItem);
+			register(wrenchRecipeResult, Config.wrenchRecipe, defaultWrenchRecipe);
+		}
+	}
+
+	/**
+	 * Tries to register the recipe for the specified ItemStack. If registration fails
+	 * the default recipe is used instead.
+	 * 
+	 * @param result
+	 * The ItemStack crafted using the specified recipe.
+	 * @param recipe
+	 * The recipe.
+	 * @param defaultRecipe
+	 * The fallback recipe.
+	 */
+	private static final void register(ItemStack result, Recipe recipe, Recipe defaultRecipe)
+	{
+		Object[] registrationArgs;
+		Recipe[] recipes = new Recipe[] { recipe, defaultRecipe };
+
+		for (Recipe currentRecipe : recipes)
+		{
+			try
+			{
+				registrationArgs = getRegistrationArgs(currentRecipe);
+
+				if (registrationArgs != null)
+				{
+					result.stackSize = currentRecipe.yield;
+
+					GameRegistry.addShapedRecipe(result, registrationArgs);
+
+					return;
+				}
+			}
+			catch (Exception e)
+			{
+			}
+
+			LogWrapper.severe("[%s] Failed to register recipe for: %s. Check your config file.", SimpleFluidTanks.MOD_ID, result.getUnlocalizedName());
+		}
+	}
+
+	/**
+	 * Generates the arguments for the Forge recipe registration API call
+	 * from the specified recipe.
+	 * 
+	 * @param recipe
+	 * The recipe to get the arguments for.
+	 * @return
+	 * The generated arguments or <code>null</code> if a component of the recipe
+	 * could't be found or if an component identifier is missing.
+	 */
+	private static Object[] getRegistrationArgs(Recipe recipe)
+	{
+		ArrayList<Object> args = new ArrayList<Object>();
+
+		for (String patternRow : recipe.pattern.rows)
+		{
+			args.add(patternRow);
 		}
 
-		// tank recipe
-		GameRegistry.addShapedRecipe(
-				new ItemStack(SimpleFluidTanks.tankBlock, tankRecipeOutputAmount),
-				"IGI",
-				"G G",
-				"IGI",
-				'I',
-				ingotRecipeComponent,
-				'G',
-				glassRecipeComponent);
+		for (RecipeComponent component : recipe.components)
+		{
+			ItemStack componentItem = GameRegistry.findItemStack(component.modId, component.itemId, 1);
 
-		// valve recipe
-		GameRegistry.addShapedRecipe(
-				new ItemStack(SimpleFluidTanks.valveBlock, 1),
-				"ISI",
-				"STS",
-				"ISI",
-				'I',
-				ingotRecipeComponent,
-				'T',
-				SimpleFluidTanks.tankBlock,
-				'S',
-				Items.slime_ball);
+			if (componentItem == null || component.identifier == null || component.identifier.length() == 0) return null;
 
-		// wrench recipe
-		GameRegistry.addShapedRecipe(
-				new ItemStack(SimpleFluidTanks.wrenchItem, 1),
-				" I ",
-				" II",
-				"I  ",
-				'I',
-				Items.iron_ingot);
+			char id = component.identifier.charAt(0);
+			args.add((id == RecipePattern.EMPTY_SLOT) ? ' ' : id);
+			args.add(componentItem);
+		}
+
+		return args.toArray();
 	}
 }

@@ -32,17 +32,12 @@ public final class Registry
 	public static final String VALVEITEM_NAME = "valveItem";
 
 	public static final String WRENCH_ITEM_NAME = "wrench";
-	public static final String WRENCH_ITEM_KEY = SimpleFluidTanks.MOD_ID + ":" + WRENCH_ITEM_NAME;
-
-	private static final String TANKBLOCK_KEY = SimpleFluidTanks.MOD_ID + TANKBLOCK_NAME;
 
 	private static final String TANKBLOCK_ENTITY_NAME = "tankBlockEntity";
-	private static final String TANKBLOCK_ENTITY_KEY = SimpleFluidTanks.MOD_ID + TANKBLOCK_ENTITY_NAME;
-
-	private static final String VALVEBLOCK_KEY = SimpleFluidTanks.MOD_ID + VALVEBLOCK_NAME;
+	private static final String TANKBLOCK_ENTITY_KEY = SimpleFluidTanks.MOD_ID + ":" + TANKBLOCK_ENTITY_NAME;
 
 	private static final String VALVEBLOCK_ENTITY_NAME = "valveBlockEntity";
-	private static final String VALVEBLOCK_ENTITY_KEY = SimpleFluidTanks.MOD_ID + VALVEBLOCK_ENTITY_NAME;
+	private static final String VALVEBLOCK_ENTITY_KEY = SimpleFluidTanks.MOD_ID + ":" + VALVEBLOCK_ENTITY_NAME;
 
 	/**
 	 * Creates and registers all blocks added by the mod.
@@ -51,16 +46,16 @@ public final class Registry
 	{
 		// TankBlock
 		SimpleFluidTanks.tankBlock = new TankBlock();
-		GameRegistry.registerBlock(SimpleFluidTanks.tankBlock, TankItem.class, TANKBLOCK_KEY);
+		GameRegistry.registerBlock(SimpleFluidTanks.tankBlock, TankItem.class, TANKBLOCK_NAME, SimpleFluidTanks.MOD_ID);
 		SimpleFluidTanks.fakeFluidBlock = new FakeFluidBlock();
 
 		// ValveBlock
 		SimpleFluidTanks.valveBlock = new ValveBlock();
-		GameRegistry.registerBlock(SimpleFluidTanks.valveBlock, ValveItem.class, VALVEBLOCK_KEY);
+		GameRegistry.registerBlock(SimpleFluidTanks.valveBlock, ValveItem.class, VALVEBLOCK_NAME, SimpleFluidTanks.MOD_ID);
 
 		// TileEntities
-		GameRegistry.registerTileEntity(ValveBlockEntity.class, VALVEBLOCK_ENTITY_KEY);
 		GameRegistry.registerTileEntity(TankBlockEntity.class, TANKBLOCK_ENTITY_KEY);
+		GameRegistry.registerTileEntity(ValveBlockEntity.class, VALVEBLOCK_ENTITY_KEY);
 	}
 
 	/**
@@ -69,7 +64,7 @@ public final class Registry
 	public static void registerItems()
 	{
 		SimpleFluidTanks.wrenchItem = new WrenchItem();
-		GameRegistry.registerItem(SimpleFluidTanks.wrenchItem, WRENCH_ITEM_KEY);
+		GameRegistry.registerItem(SimpleFluidTanks.wrenchItem, WRENCH_ITEM_NAME, SimpleFluidTanks.MOD_ID);
 	}
 
 	/**

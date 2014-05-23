@@ -30,7 +30,7 @@ public class WrenchItem extends Item implements IToolWrench
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IIconRegister iconRegister)
 	{
-		itemIcon = iconRegister.registerIcon(Registry.WRENCH_ITEM_KEY);
+		itemIcon = iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":" + Registry.WRENCH_ITEM_NAME);
 	}
 
 	@Override

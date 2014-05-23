@@ -11,21 +11,20 @@ public final class Config
 {
 	// settings
 	public static int bucketsPerTank = 16;
-	public static String thermalExpansionModId = "ThermalExpansion";
-	public static String thermalExpansionHardenedGlass = "glassHardened";
-	public static String thermalExpansionBronzeIngot = "ingotBronze";
-
+	public static boolean wrenchEnabled = true;
+	public static Recipe tankBlockRecipe;
+	public static Recipe valveBlockRecipe;
+	public static Recipe wrenchRecipe;
 	// config file comments etc.
 	private static final String CATEGORY_MAIN = "simple fluid tanks";
 	private static final String BUCKETS_PER_TANK_KEY = "BucketsPerTank";
 	private static final String BUCKETS_PER_TANK_COMMENT = "The amount of fluid that can be stored per tank (measured in buckets).";
-	private static final String CATEGORY_MOD_INTEROP = "mod interop";
-	private static final String TE_MOD_ID_KEY = "ThermalExpansionModId";
-	private static final String TE_MOD_ID_COMMENT = "The mod id for Thermal Expansion. This is used to include TE items in the recipes.";
-	private static final String TE_MOD_HARDENED_GLASS_KEY = "TE_HardenedGlass";
-	private static final String TE_MOD_HARDENED_GLASS_COMMENT = "The game registry key of Thermal Expansions hardened glass item.";
-	private static final String TE_MOD_BRONZE_INGOT_KEY = "TE_BronzeIngots";
-	private static final String TE_MOD_BRONZE_INGOT_COMMENT = "The game registry key of Thermal Expansions bronze(tinkers alloy) ingot .";
+	private static final String WRENCH_ENABLED_KEY = "WrenchEnabled";
+	private static final String WRENCH_ENABLED_COMMENT = "Set to false to disable the recipe for the wrench.";
+	private static final String CATEGORY_RECIPES = "recipes";
+	private static final String CATEGORY_RECIPES_TANKBLOCK = CATEGORY_RECIPES + Configuration.CATEGORY_SPLITTER + "tankBlockRecipe";
+	private static final String CATEGORY_RECIPES_VALVEBLOCK = CATEGORY_RECIPES + Configuration.CATEGORY_SPLITTER + "valveBlockRecipe";
+	private static final String CATEGORY_RECIPES_WRENCH = CATEGORY_RECIPES + Configuration.CATEGORY_SPLITTER + "wrenchRecipe";
 
 	/**
 	 * Loads the mods settings from the specified file.
@@ -38,30 +37,37 @@ public final class Config
 		Configuration config = new Configuration(configFile);
 		config.load();
 
-		bucketsPerTank = config.get(
-				CATEGORY_MAIN,
-				BUCKETS_PER_TANK_KEY,
-				bucketsPerTank,
-				BUCKETS_PER_TANK_COMMENT).getInt();
+		bucketsPerTank = config.get(CATEGORY_MAIN, BUCKETS_PER_TANK_KEY, bucketsPerTank, BUCKETS_PER_TANK_COMMENT).getInt();
+		wrenchEnabled = config.get(CATEGORY_MAIN, WRENCH_ENABLED_KEY, wrenchEnabled, WRENCH_ENABLED_COMMENT).getBoolean(wrenchEnabled);
 
-		thermalExpansionModId = config.get(
-				CATEGORY_MOD_INTEROP,
-				TE_MOD_ID_KEY,
-				thermalExpansionModId,
-				TE_MOD_ID_COMMENT).getString();
-
-		thermalExpansionHardenedGlass = config.get(
-				CATEGORY_MOD_INTEROP,
-				TE_MOD_HARDENED_GLASS_KEY,
-				thermalExpansionHardenedGlass,
-				TE_MOD_HARDENED_GLASS_COMMENT).getString();
-
-		thermalExpansionBronzeIngot = config.get(
-				CATEGORY_MOD_INTEROP,
-				TE_MOD_BRONZE_INGOT_KEY,
-				thermalExpansionBronzeIngot,
-				TE_MOD_BRONZE_INGOT_COMMENT).getString();
+		// Recipes
+		tankBlockRecipe = loadRecipe(config, CATEGORY_RECIPES_TANKBLOCK, Recipes.defaultTankBlockRecipe);
+		valveBlockRecipe = loadRecipe(config, CATEGORY_RECIPES_VALVEBLOCK, Recipes.defaultValveBlockRecipe);
+		wrenchRecipe = loadRecipe(config, CATEGORY_RECIPES_WRENCH, Recipes.defaultWrenchRecipe);
 
 		config.save();
+	}
+
+	/**
+	 * Loads a recipe from the config file.
+	 * 
+	 * @param config
+	 * The configuration interface.
+	 * @param category
+	 * The category containing the recipe.
+	 * @param defaultRecipe
+	 * The default values for the recipe.
+	 * @return
+	 * The recipe loaded from the config.
+	 */
+	private static Recipe loadRecipe(Configuration config, String category, Recipe defaultRecipe)
+	{
+		String[] pattern = config.get(category, "pattern", defaultRecipe.pattern.rows).getStringList();
+
+		String[] components = config.get(category, "components", defaultRecipe.getComponentList()).getStringList();
+
+		int yield = config.get(category, "yield", defaultRecipe.yield).getInt();
+
+		return new Recipe(yield, new RecipePattern(pattern), Recipe.toComponents(components));
 	}
 }

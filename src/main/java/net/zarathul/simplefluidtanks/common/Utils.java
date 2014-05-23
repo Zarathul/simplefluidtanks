@@ -4,6 +4,10 @@ import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Strings;
+import com.google.common.collect.Iterables;
+
 /**
  * General utility class.
  */
@@ -87,5 +91,30 @@ public final class Utils
 		Block blockToCheck = access.getBlock(x, y, z);
 
 		return ((blockToCheck != null) && (type.isInstance(blockToCheck)));
+	}
+
+	/**
+	 * A predicate that returns <code>true</code> if passed string is neither <code>null</code> nor empty.
+	 */
+	private static final Predicate<String> stringNotNullOrEmpty = new Predicate<String>()
+	{
+		@Override
+		public boolean apply(String item)
+		{
+			return !Strings.isNullOrEmpty(item);
+		}
+	};
+
+	/**
+	 * Checks a list of strings for <code>null</code> and empty elements.
+	 * 
+	 * @param items
+	 * The list of strings to check.
+	 * @return
+	 * <code>true</code> if the list neither contains <code>null</code> elements nor empty strings, otherwise <code>false</code>.
+	 */
+	public static final boolean notNullorEmpty(Iterable<String> items)
+	{
+		return Iterables.all(items, stringNotNullOrEmpty);
 	}
 }
