@@ -22,9 +22,11 @@ public final class Config
 	private static final String WRENCH_ENABLED_KEY = "WrenchEnabled";
 	private static final String WRENCH_ENABLED_COMMENT = "Set to false to disable the recipe for the wrench.";
 	private static final String CATEGORY_RECIPES = "recipes";
-	private static final String CATEGORY_RECIPES_TANKBLOCK = CATEGORY_RECIPES + Configuration.CATEGORY_SPLITTER + "tankBlockRecipe";
-	private static final String CATEGORY_RECIPES_VALVEBLOCK = CATEGORY_RECIPES + Configuration.CATEGORY_SPLITTER + "valveBlockRecipe";
-	private static final String CATEGORY_RECIPES_WRENCH = CATEGORY_RECIPES + Configuration.CATEGORY_SPLITTER + "wrenchRecipe";
+	private static final String CATEGORY_RECIPES_COMMENT = "Here you can customize the recipes crafting patterns, components and the amount of resulting items. " +
+			"If a modified recipe can't be registered with Forge, the default recipe will be used instead. Note: \"" + RecipePattern.EMPTY_SLOT + "\" signifies an empty slot in the recipe pattern.";
+	private static final String CATEGORY_RECIPES_TANKBLOCK = CATEGORY_RECIPES + Configuration.CATEGORY_SPLITTER + "tankBlock";
+	private static final String CATEGORY_RECIPES_VALVEBLOCK = CATEGORY_RECIPES + Configuration.CATEGORY_SPLITTER + "valveBlock";
+	private static final String CATEGORY_RECIPES_WRENCH = CATEGORY_RECIPES + Configuration.CATEGORY_SPLITTER + "wrench";
 
 	/**
 	 * Loads the mods settings from the specified file.
@@ -44,6 +46,8 @@ public final class Config
 		tankBlockRecipe = loadRecipe(config, CATEGORY_RECIPES_TANKBLOCK, Recipes.defaultTankBlockRecipe);
 		valveBlockRecipe = loadRecipe(config, CATEGORY_RECIPES_VALVEBLOCK, Recipes.defaultValveBlockRecipe);
 		wrenchRecipe = loadRecipe(config, CATEGORY_RECIPES_WRENCH, Recipes.defaultWrenchRecipe);
+		
+		config.getCategory(CATEGORY_RECIPES).setComment(CATEGORY_RECIPES_COMMENT);
 
 		config.save();
 	}

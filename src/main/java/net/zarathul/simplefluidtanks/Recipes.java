@@ -99,7 +99,7 @@ public final class Recipes
 			{
 				registrationArgs = getRegistrationArgs(currentRecipe);
 
-				if (registrationArgs != null)
+				if (registrationArgs != null && currentRecipe.yield > 0)
 				{
 					result.stackSize = currentRecipe.yield;
 
