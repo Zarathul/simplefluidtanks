@@ -2,6 +2,8 @@ package net.zarathul.simplefluidtanks;
 
 import net.minecraft.creativetab.CreativeTabs;
 import net.zarathul.simplefluidtanks.blocks.FakeFluidBlock;
+import net.zarathul.simplefluidtanks.blocks.LegacyTankBlock;
+import net.zarathul.simplefluidtanks.blocks.LegacyValveBlock;
 import net.zarathul.simplefluidtanks.blocks.TankBlock;
 import net.zarathul.simplefluidtanks.blocks.ValveBlock;
 import net.zarathul.simplefluidtanks.items.WrenchItem;
@@ -26,6 +28,9 @@ public class SimpleFluidTanks
 	public static TankBlock tankBlock;
 	public static ValveBlock valveBlock;
 	public static FakeFluidBlock fakeFluidBlock;
+	// legacy blocks TODO:remove in next version
+	public static LegacyTankBlock legacyTankBlock;
+	public static LegacyValveBlock legacyValveBlock;
 
 	// items
 	public static WrenchItem wrenchItem;
