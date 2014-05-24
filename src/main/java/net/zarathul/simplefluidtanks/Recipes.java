@@ -49,9 +49,9 @@ public final class Recipes
 	(
 		1,
 		new RecipePattern(
-			String.format("%sI%s", RecipePattern.EMPTY_SLOT, RecipePattern.EMPTY_SLOT),
+			String.format("%1$sI%1$s", RecipePattern.EMPTY_SLOT),
 			String.format("%sII", RecipePattern.EMPTY_SLOT),
-			String.format("I%s%s", RecipePattern.EMPTY_SLOT, RecipePattern.EMPTY_SLOT)
+			String.format("I%1$s%1$s", RecipePattern.EMPTY_SLOT)
 		),
 		new RecipeComponent[]
 		{
