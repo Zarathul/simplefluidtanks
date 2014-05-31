@@ -75,10 +75,6 @@ public final class Recipes
 			ItemStack wrenchRecipeResult = new ItemStack(SimpleFluidTanks.wrenchItem);
 			register(wrenchRecipeResult, Config.wrenchRecipe, defaultWrenchRecipe);
 		}
-		
-		// legacy item exchange recipes TODO:remove in next version
-		GameRegistry.addShapelessRecipe(new ItemStack(SimpleFluidTanks.tankBlock), SimpleFluidTanks.legacyTankBlock);
-		GameRegistry.addShapelessRecipe(new ItemStack(SimpleFluidTanks.valveBlock), SimpleFluidTanks.legacyValveBlock);
 	}
 
 	/**

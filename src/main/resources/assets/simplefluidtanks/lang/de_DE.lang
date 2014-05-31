@@ -1,8 +1,6 @@
 # Blocks
 tile.tankBlock.name=Flüssigkeitstank
 tile.valveBlock.name=Ventil
-tile.legacy_tankBlock.name=Flüssigkeitstank (alt)
-tile.legacy_valveBlock.name=Ventil (alt)
 # Items
 item.tankItem.name=Flüssigkeitstank
 item.tankItem.toolTip=§e§oUmschalten§r§7 gedrückt halten für Details.
@@ -22,10 +20,6 @@ item.valveItem.toolTipDetails5=was die Gesamtkapazität angeht als
 item.valveItem.toolTipDetails6=Tank zählt und zusammen mit einem 
 item.valveItem.toolTipDetails7=Komparator ein Redstone Signal abgibt.
 item.wrench.name=Schraubenschlüssel
-item.legacy_tankItem.name=Flüssigkeitstank (alt)
-item.legacy_tankItem.toolTip=§4Kann in der Werkbank in neuen Block umgewandelt werden.
-item.legacy_valveBlock.name=Ventil (alt)
-item.legacy_valveItem.toolTip=§4Kann in der Werkbank in neuen Block umgewandelt werden.
 # Waila option labels
 waila.tankCount=Tank Anzahl
 waila.totalCapacity=Gesamtkapazität

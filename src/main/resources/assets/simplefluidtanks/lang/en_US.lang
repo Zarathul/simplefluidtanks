@@ -1,8 +1,6 @@
 # Blocks
 tile.tankBlock.name=Fluid Tank
 tile.valveBlock.name=Valve
-tile.legacy_tankBlock.name=Fluid Tank (legacy)
-tile.legacy_valveBlock.name=Valve (legacy)
 # Items
 item.tankItem.name=Fluid Tank
 item.tankItem.toolTip=Hold §e§oshift§r§7 for details.
@@ -19,10 +17,6 @@ item.valveItem.toolTipDetails3=that the Valve counts as a tank towards
 item.valveItem.toolTipDetails4=the total capacity and emits a redstone
 item.valveItem.toolTipDetails5=signal in conjunction with a comparator.
 item.wrench.name=Wrench
-item.legacy_tankItem.name=Fluid Tank (legacy)
-item.legacy_tankItem.toolTip=§4Use any crafting grid to get the new block.
-item.legacy_valveBlock.name=Valve (legacy)
-item.legacy_valveItem.toolTip=§4Use any crafting grid to get the new block.
 # Waila option labels
 waila.tankCount=Tank count
 waila.totalCapacity=Total capacity
