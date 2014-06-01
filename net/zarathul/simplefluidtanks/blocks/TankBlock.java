@@ -34,8 +34,8 @@ public class TankBlock extends WrenchableBlock
 		
 		setUnlocalizedName(SimpleFluidTanks.REGISTRY_TANKBLOCK_NAME);
 		setCreativeTab(SimpleFluidTanks.creativeTab);
-		setHardness(2.5f);
-		setResistance(1000f);
+		setHardness(SimpleFluidTanks.tankBlockHardness);
+		setResistance(SimpleFluidTanks.tankBlockResistance);
 		setStepSound(soundGlassFootstep);
 		
 		ignorePreDestroyEvent = new HashSet<BlockCoords>();

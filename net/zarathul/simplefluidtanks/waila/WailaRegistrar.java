@@ -36,7 +36,8 @@ public final class WailaRegistrar
 	private static final String WAILA_FLUID_NAME_LOCA = WAILA + WAILA_FLUID_NAME;
 	
 	public static final String WAILA_TOOLTIP = WAILA + "toolTip.";
-	public static final String WAILA_TOOLTIP_CAPACITY = WAILA_TOOLTIP + "capacity";
+	public static final String WAILA_TOOLTIP_TANK_CAPACITY = WAILA_TOOLTIP + "tankCapacity";
+	public static final String WAILA_TOOLTIP_VALVE_CAPACITY = WAILA_TOOLTIP + "valveCapacity";
 	public static final String WAILA_TOOLTIP_ISLINKED = WAILA_TOOLTIP + "isLinked";
 	public static final String WAILA_TOOLTIP_TANKS = WAILA_TOOLTIP + "tanks";
 	public static final String WAILA_TOOLTIP_FLUID = WAILA_TOOLTIP + "fluid";

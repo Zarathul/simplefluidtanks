@@ -34,8 +34,8 @@ public class ValveBlock extends WrenchableBlock
 		
 		setUnlocalizedName(SimpleFluidTanks.REGISTRY_VALVEBLOCK_NAME);
 		setCreativeTab(SimpleFluidTanks.creativeTab);
-		setHardness(2.5f);
-		setResistance(1000f);
+		setHardness(SimpleFluidTanks.valveBlockHardness);
+		setResistance(SimpleFluidTanks.valveBlockResistance);
 		setStepSound(soundMetalFootstep);
 	}
 

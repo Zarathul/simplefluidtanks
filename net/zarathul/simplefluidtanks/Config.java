@@ -41,6 +41,34 @@ public final class Config
 				SimpleFluidTanks.CONFIG_BUCKETS_PER_TANK_COMMENT
 				).getInt();
 		
+		SimpleFluidTanks.tankBlockHardness = (float)config.get(
+				SimpleFluidTanks.CATEGORY_BLOCKS_TANKBLOCK,
+				SimpleFluidTanks.BLOCK_HARDNESS_KEY,
+				SimpleFluidTanks.CONFIG_DEFAULT_BLOCK_HARDNESS,
+				SimpleFluidTanks.BLOCK_HARDNESS_COMMENT
+				).getDouble(SimpleFluidTanks.CONFIG_DEFAULT_BLOCK_HARDNESS);
+		
+		SimpleFluidTanks.tankBlockResistance = (float)config.get(
+				SimpleFluidTanks.CATEGORY_BLOCKS_TANKBLOCK,
+				SimpleFluidTanks.BLOCK_RESISTANCE_KEY,
+				SimpleFluidTanks.CONFIG_DEFAULT_BLOCK_RESISTANCE,
+				SimpleFluidTanks.BLOCK_RESISTANCE_COMMENT
+				).getDouble(SimpleFluidTanks.CONFIG_DEFAULT_BLOCK_RESISTANCE);
+		
+		SimpleFluidTanks.valveBlockHardness = (float)config.get(
+				SimpleFluidTanks.CATEGORY_BLOCKS_VALVEBLOCK,
+				SimpleFluidTanks.BLOCK_HARDNESS_KEY,
+				SimpleFluidTanks.CONFIG_DEFAULT_BLOCK_HARDNESS,
+				SimpleFluidTanks.BLOCK_HARDNESS_COMMENT
+				).getDouble(SimpleFluidTanks.CONFIG_DEFAULT_BLOCK_HARDNESS);
+		
+		SimpleFluidTanks.valveBlockResistance = (float)config.get(
+				SimpleFluidTanks.CATEGORY_BLOCKS_VALVEBLOCK,
+				SimpleFluidTanks.BLOCK_RESISTANCE_KEY,
+				SimpleFluidTanks.CONFIG_DEFAULT_BLOCK_RESISTANCE,
+				SimpleFluidTanks.BLOCK_RESISTANCE_COMMENT
+				).getDouble(SimpleFluidTanks.CONFIG_DEFAULT_BLOCK_RESISTANCE);
+		
 		SimpleFluidTanks.REGISTRY_THERMAL_EXPANSION_MOD_ID = config.get(
 				SimpleFluidTanks.CONFIG_CATEGORY_MOD_INTEROP,
 				SimpleFluidTanks.CONFIG_TE_MOD_ID_KEY,
@@ -61,6 +89,8 @@ public final class Config
 				SimpleFluidTanks.REGISTRY_THERMAL_EXPANSION_BRONZE_INGOT,
 				SimpleFluidTanks.CONFIG_TE_MOD_BRONZE_INGOT_COMMENT
 				).getString();
+		
+		config.getCategory(SimpleFluidTanks.CATEGORY_BLOCKS).setComment(SimpleFluidTanks.CATEGORY_BLOCKS_COMMENT);
 		
 		config.save();
 	}
