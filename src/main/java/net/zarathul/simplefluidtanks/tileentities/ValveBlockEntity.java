@@ -33,7 +33,9 @@ import net.zarathul.simplefluidtanks.common.BlockSearchMode;
 import net.zarathul.simplefluidtanks.common.Direction;
 import net.zarathul.simplefluidtanks.common.Utils;
 
+import com.google.common.base.Predicates;
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Multimap;
 import com.google.common.primitives.Ints;
 
@@ -76,6 +78,12 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	 * <b>Caution:</b> This will be empty after reloading the {@link ValveBlock} from nbt data.
 	 */
 	private HashSet<BlockCoords> tanks;
+	
+	/**
+	 * A temporary set of all connected {@link TankBlock}s before disbanding the multiblock structure.<br>
+	 * <b>Caution:</b> This will be empty after reloading the {@link ValveBlock} from nbt data.
+	 */
+	private HashSet<BlockCoords> tanksBeforeDisband;
 
 	/**
 	 * Holds a {@link BasicAStar} instance while the tank finding algorithms are running.
@@ -387,6 +395,13 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 			}
 		}
 
+		if (suppressBlockUpdates)
+		{
+			// This Set is used later to update TankBlocks that are no longer part of the multiblock structure.
+			tanksBeforeDisband = new HashSet<BlockCoords>();
+			tanksBeforeDisband.addAll(tankPriorities.values());
+		}
+
 		tankPriorities.clear();
 		linkedTankCount = 0;
 		tankFacingSides = 0;
@@ -411,8 +426,12 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		FluidStack fluid = internalTank.getFluid();
 
 		// find new tanks and update the valves textures
+		
+		// block updates are suppressed here because tanks are updated anyway when the fluid is distributed
 		disbandMultiblock(true);
 		findAndPrioritizeTanks();
+		// tanks that are no longer part of the multiblock structure need to be updated to render correctly
+		updateOrphanedTanks();
 		updateTankFacingSides();
 
 		// redistribute the fluid
@@ -457,6 +476,27 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 
 		// calculate and set the internal tanks capacity, note the " + 1" is needed because the ValveBlock itself is considered a tank with storage capacity
 		internalTank.setCapacity((tankEntities.size() + 1) * Config.bucketsPerTank * FluidContainerRegistry.BUCKET_VOLUME);
+	}
+
+	/**
+	 * Marks TankBlocks that are no longer part of the multiblock structure for an update.
+	 */
+	private void updateOrphanedTanks()
+	{
+		Collection<BlockCoords> tanksToUpdate = Collections2.filter(tanksBeforeDisband, Predicates.not(Predicates.in(tanks)));
+
+		for (BlockCoords tank : tanksToUpdate)
+		{
+			TankBlockEntity tankEntity = Utils.getTileEntityAt(worldObj, TankBlockEntity.class, tank);
+
+			if (tankEntity != null)
+			{
+				worldObj.markTileEntityChunkModified(tank.x, tank.y, tank.z, tankEntity);
+				worldObj.markBlockForUpdate(tank.x, tank.y, tank.z);
+			}
+		}
+
+		tanksBeforeDisband.clear();
 	}
 
 	/**

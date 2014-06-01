@@ -11,6 +11,7 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.zarathul.simplefluidtanks.Config;
 import net.zarathul.simplefluidtanks.Registry;
 import net.zarathul.simplefluidtanks.SimpleFluidTanks;
 import net.zarathul.simplefluidtanks.common.BlockCoords;
@@ -34,8 +35,8 @@ public class TankBlock extends WrenchableBlock
 
 		setBlockName(Registry.TANKBLOCK_NAME);
 		setCreativeTab(SimpleFluidTanks.creativeTab);
-		setHardness(2.5f);
-		setResistance(1000f);
+		setHardness(Config.tankBlockHardness);
+		setResistance(Config.tankBlockResistance);
 		setStepSound(soundTypeGlass);
 		setHarvestLevel("pickaxe", 2);
 		ignorePreDestroyEvent = new HashSet<BlockCoords>();

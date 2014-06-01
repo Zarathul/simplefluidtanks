@@ -16,6 +16,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.zarathul.simplefluidtanks.Config;
 import net.zarathul.simplefluidtanks.Registry;
 import net.zarathul.simplefluidtanks.SimpleFluidTanks;
 import net.zarathul.simplefluidtanks.common.Direction;
@@ -35,8 +36,8 @@ public class ValveBlock extends WrenchableBlock
 
 		setBlockName(Registry.VALVEBLOCK_NAME);
 		setCreativeTab(SimpleFluidTanks.creativeTab);
-		setHardness(2.5f);
-		setResistance(1000f);
+		setHardness(Config.valveBlockHardness);
+		setResistance(Config.valveBlockResistance);
 		setStepSound(soundTypeMetal);
 		setHarvestLevel("pickaxe", 2);
 	}

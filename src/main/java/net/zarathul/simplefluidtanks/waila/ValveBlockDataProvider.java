@@ -53,15 +53,15 @@ public final class ValveBlockDataProvider implements IWailaDataProvider
 
 			if (config.getConfig(Registry.WAILA_TOTAL_CAPACITY_KEY))
 			{
-				int totalFillPercentage = MathHelper.clamp_int((valveEntity.getFluidAmount() * 100) / valveEntity.getCapacity(), 0, 100);
+				int totalFillPercentage = MathHelper.clamp_int(valveEntity.getFluidAmount() * (100 / valveEntity.getCapacity()), 0, 100);
 				
 				if (config.getConfig(Registry.WAILA_CAPACITY_IN_MILLIBUCKETS_KEY))
 				{
-					currenttip.add(StatCollector.translateToLocalFormatted(Registry.WAILA_TOOLTIP_CAPACITY, valveEntity.getFluidAmount(), "/", valveEntity.getCapacity(), "mB", totalFillPercentage));
+					currenttip.add(StatCollector.translateToLocalFormatted(Registry.WAILA_TOOLTIP_VALVE_CAPACITY, valveEntity.getFluidAmount(), valveEntity.getCapacity(), "mB", totalFillPercentage));
 				}
 				else
 				{
-					currenttip.add(StatCollector.translateToLocalFormatted(Registry.WAILA_TOOLTIP_CAPACITY, valveEntity.getFluidAmount() / 1000, "/", valveEntity.getCapacity() / 1000, "B", totalFillPercentage));
+					currenttip.add(StatCollector.translateToLocalFormatted(Registry.WAILA_TOOLTIP_VALVE_CAPACITY, valveEntity.getFluidAmount() / 1000, valveEntity.getCapacity() / 1000, "B", totalFillPercentage));
 				}
 			}
 
