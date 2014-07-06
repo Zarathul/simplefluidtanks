@@ -1,7 +1,10 @@
 package net.zarathul.simplefluidtanks.common;
 
+import java.util.ArrayList;
+
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.IBlockAccess;
 
 import com.google.common.base.Predicate;
@@ -116,5 +119,33 @@ public final class Utils
 	public static final boolean notNullorEmpty(Iterable<String> items)
 	{
 		return Iterables.all(items, stringNotNullOrEmpty);
+	}
+
+	/**
+	 * Gets the localized formatted strings for the specified key and formatting arguments.
+	 * 
+	 * @param key
+	 * The base key without an index (e.g. "myKey" gets "myKey0", "myKey1" ... etc.).
+	 * @param args
+	 * Formatting arguments.
+	 * @return
+	 */
+	public static ArrayList<String> multiLineTranslateToLocal(String key, Object... args)
+	{
+		ArrayList<String> lines = new ArrayList<String>();
+
+		if (key != null)
+		{
+			int x = 0;
+			String currentKey = key + x;
+
+			while (StatCollector.canTranslate(currentKey))
+			{
+				lines.add(StatCollector.translateToLocalFormatted(currentKey, args));
+				currentKey = key + ++x;
+			}
+		}
+
+		return lines;
 	}
 }

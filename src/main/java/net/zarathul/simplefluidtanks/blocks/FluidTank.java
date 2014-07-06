@@ -99,9 +99,9 @@ public class FluidTank implements IFluidTank
 	 */
 	public void setFluid(FluidStack fluid)
 	{
-		// limit the stored fluid to the specified capacity
 		if (fluid != null)
 		{
+			// limit the stored fluid to the tanks capacity
 			fluid.amount = Math.min(fluid.amount, capacity);
 		}
 
@@ -130,7 +130,7 @@ public class FluidTank implements IFluidTank
 	/**
 	 * Gets the remaining capacity of the tank.
 	 * 
-	 * @return The remaining amount of fluid the tank can taken in until it is full.
+	 * @return The remaining amount of fluid the tank can take in until it is full.
 	 */
 	public int getRemainingCapacity()
 	{

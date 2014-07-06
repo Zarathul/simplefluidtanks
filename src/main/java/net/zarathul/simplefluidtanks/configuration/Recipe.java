@@ -1,9 +1,11 @@
-package net.zarathul.simplefluidtanks;
+package net.zarathul.simplefluidtanks.configuration;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import net.minecraft.item.ItemStack;
 import net.zarathul.simplefluidtanks.common.Utils;
+import cpw.mods.fml.common.registry.GameRegistry;
 
 /**
  * Represents recipe data from the config file. Does not contain any information
@@ -11,15 +13,27 @@ import net.zarathul.simplefluidtanks.common.Utils;
  */
 public class Recipe
 {
+	public boolean isShapeless;
 	public int yield;
 	public RecipePattern pattern;
 	public RecipeComponent[] components;
 
+	public Recipe(int yield, RecipeComponent[] components)
+	{
+		this(yield, null, components, true);
+	}
+
 	public Recipe(int yield, RecipePattern pattern, RecipeComponent[] components)
 	{
+		this(yield, pattern, components, (pattern == null));
+	}
+
+	private Recipe(int yield, RecipePattern pattern, RecipeComponent[] components, boolean isShapeless)
+	{
 		this.yield = yield;
-		this.pattern = pattern;
+		this.pattern = (isShapeless) ? null : pattern;
 		this.components = components;
+		this.isShapeless = isShapeless;
 	}
 
 	/**
@@ -43,6 +57,48 @@ public class Recipe
 		}
 
 		return componentList.toArray(new String[componentList.size()]);
+	}
+
+	/**
+	 * Generates the arguments for the Forge recipe registration API call
+	 * from the specified recipe.
+	 * 
+	 * @param recipe
+	 * The recipe to get the arguments for.
+	 * @return
+	 * The generated arguments or <code>null</code> if a component of the recipe
+	 * could't be found or if an component identifier is missing.
+	 */
+	public Object[] getRecipeRegistrationArgs()
+	{
+		ArrayList<Object> args = new ArrayList<Object>();
+
+		if (!isShapeless)
+		{
+			for (String patternRow : pattern.rows)
+			{
+				args.add((patternRow.length() > 3) ? patternRow.substring(0, 3) : patternRow);
+			}
+		}
+
+		for (RecipeComponent component : components)
+		{
+			ItemStack componentItem = GameRegistry.findItemStack(component.modId, component.itemId, 1);
+
+			if (componentItem == null) return null;
+
+			if (!isShapeless)
+			{
+				if (component.identifier == null || component.identifier.length() == 0) return null;
+
+				char id = component.identifier.charAt(0);
+				args.add((id == RecipePattern.EMPTY_SLOT) ? ' ' : id);
+			}
+
+			args.add(componentItem);
+		}
+
+		return args.toArray();
 	}
 
 	/**

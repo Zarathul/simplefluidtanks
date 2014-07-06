@@ -19,10 +19,10 @@ import net.minecraft.util.MathHelper;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
-import net.zarathul.simplefluidtanks.Config;
 import net.zarathul.simplefluidtanks.SimpleFluidTanks;
 import net.zarathul.simplefluidtanks.blocks.FluidTank;
 import net.zarathul.simplefluidtanks.blocks.TankBlock;
@@ -32,6 +32,7 @@ import net.zarathul.simplefluidtanks.common.BlockCoords;
 import net.zarathul.simplefluidtanks.common.BlockSearchMode;
 import net.zarathul.simplefluidtanks.common.Direction;
 import net.zarathul.simplefluidtanks.common.Utils;
+import net.zarathul.simplefluidtanks.configuration.Config;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.ArrayListMultimap;
@@ -78,7 +79,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	 * <b>Caution:</b> This will be empty after reloading the {@link ValveBlock} from nbt data.
 	 */
 	private HashSet<BlockCoords> tanks;
-	
+
 	/**
 	 * A temporary set of all connected {@link TankBlock}s before disbanding the multiblock structure.<br>
 	 * <b>Caution:</b> This will be empty after reloading the {@link ValveBlock} from nbt data.
@@ -145,11 +146,11 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	}
 
 	@Override
-	public int fill(ForgeDirection from, FluidStack drainFluid, boolean doFill)
+	public int fill(ForgeDirection from, FluidStack fillFluid, boolean doFill)
 	{
 		if (!worldObj.isRemote && hasTanks())
 		{
-			int fillAmount = internalTank.fill(drainFluid, doFill);
+			int fillAmount = internalTank.fill(fillFluid, doFill);
 
 			if (doFill && fillAmount > 0)
 			{
@@ -158,6 +159,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 				worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 				// triggers onNeighborTileChange on neighboring blocks, this is needed for comparators to work
 				worldObj.notifyBlockChange(xCoord, yCoord, zCoord, SimpleFluidTanks.valveBlock);
+				FluidEvent.fireEvent(new FluidEvent.FluidFillingEvent(fillFluid, this.worldObj, this.xCoord, this.yCoord, this.zCoord, this.internalTank, fillFluid.amount));
 			}
 
 			return fillAmount;
@@ -196,8 +198,8 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		if (!worldObj.isRemote && hasTanks())
 		{
 			FluidStack drainedFluid = (drainFluid != null && drainFluid.isFluidEqual(internalTank.getFluid())) ?
-					internalTank.drain(drainFluid.amount, doDrain) :
-					(drainAmount >= 0) ? internalTank.drain(drainAmount, doDrain) : null;
+				internalTank.drain(drainFluid.amount, doDrain) :
+				(drainAmount >= 0) ? internalTank.drain(drainAmount, doDrain) : null;
 
 			if (doDrain && drainedFluid != null && drainedFluid.amount > 0)
 			{
@@ -206,6 +208,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 				worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 				// triggers onNeighborTileChange on neighboring blocks, this is needed for comparators to work
 				worldObj.notifyBlockChange(xCoord, yCoord, zCoord, SimpleFluidTanks.valveBlock);
+				FluidEvent.fireEvent(new FluidEvent.FluidDrainingEvent(drainFluid, this.worldObj, this.xCoord, this.yCoord, this.zCoord, this.internalTank, drainFluid.amount));
 			}
 
 			return drainedFluid;
@@ -424,9 +427,10 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	{
 		// store the current fluid for reinsertion
 		FluidStack fluid = internalTank.getFluid();
+		int oldFluidAmount = (fluid != null) ? fluid.amount : 0;
 
 		// find new tanks and update the valves textures
-		
+
 		// block updates are suppressed here because tanks are updated anyway when the fluid is distributed
 		disbandMultiblock(true);
 		findAndPrioritizeTanks();
@@ -444,6 +448,13 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 		// triggers onNeighborTileChange on neighboring blocks, this is needed for comparators to work
 		worldObj.notifyBlockChange(xCoord, yCoord, zCoord, SimpleFluidTanks.valveBlock);
+
+		if (oldFluidAmount > this.internalTank.getCapacity())
+		{
+			FluidStack spilledFluid = fluid.copy();
+			spilledFluid.amount = oldFluidAmount - this.internalTank.getCapacity();
+			FluidEvent.fireEvent(new FluidEvent.FluidSpilledEvent(spilledFluid, this.worldObj, this.xCoord, this.yCoord, this.zCoord));
+		}
 	}
 
 	/**
@@ -547,7 +558,6 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 
 				int capacity = tanksToFill.size() * Config.bucketsPerTank * FluidContainerRegistry.BUCKET_VOLUME;
 				int fillPercentage = MathHelper.clamp_int((int) Math.ceil((double) amountToDistribute / (double) capacity * 100d), 0, 100);
-				
 
 				for (BlockCoords tank : tanksToFill)
 				{

@@ -7,11 +7,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.StatCollector;
-import net.zarathul.simplefluidtanks.Config;
-import net.zarathul.simplefluidtanks.Registry;
 import net.zarathul.simplefluidtanks.SimpleFluidTanks;
 import net.zarathul.simplefluidtanks.blocks.TankBlock;
-import net.zarathul.simplefluidtanks.common.LocalizationHelper;
+import net.zarathul.simplefluidtanks.common.Utils;
+import net.zarathul.simplefluidtanks.configuration.Config;
+import net.zarathul.simplefluidtanks.registration.Registry;
 
 import org.lwjgl.input.Keyboard;
 
@@ -47,7 +47,7 @@ public class TankItem extends ItemBlock
 	{
 		if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
 		{
-			list.addAll(LocalizationHelper.multiLineTranslateToLocal(toolTipDetailsKey, Config.bucketsPerTank));
+			list.addAll(Utils.multiLineTranslateToLocal(toolTipDetailsKey, Config.bucketsPerTank));
 		}
 		else
 		{

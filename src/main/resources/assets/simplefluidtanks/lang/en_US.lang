@@ -1,6 +1,7 @@
 # Blocks
 tile.tankBlock.name=Fluid Tank
 tile.valveBlock.name=Valve
+
 # Items
 item.tankItem.name=Fluid Tank
 item.tankItem.toolTip=Hold §e§oshift§r§7 for details.
@@ -17,14 +18,49 @@ item.valveItem.toolTipDetails3=that the Valve counts as a tank towards
 item.valveItem.toolTipDetails4=the total capacity and emits a redstone
 item.valveItem.toolTipDetails5=signal in conjunction with a comparator.
 item.wrench.name=Wrench
-# Waila option labels
+
+# ConfigUI Category Labels
+configui.category.misc=Misc
+configui.category.blocks=Blocks
+configui.category.recipes=Recipes
+configui.category.tank=Tank
+configui.category.valve=Valve
+configui.category.wrench=Wrench
+
+# ConfigUI Element Labels
+configui.bucketsPerTank=Buckets Per Tank
+configui.wrenchEnabled=Enable Wrench Recipe
+configui.blockHardness=Block Hardness
+configui.blockResistance=Block Blast Resistance
+configui.shapeless=Shapeless
+configui.yield=Yield
+configui.components=Components
+configui.pattern=Pattern
+
+# ConfigUI Element ToolTips
+configui.category.misc.tooltip=Basic settings.
+configui.bucketsPerTank.tooltip=The amount of fluid a tank can hold measured in buckets.
+configui.wrenchEnabled.tooltip=Set to false to disable the wrench recipe.
+
+configui.category.blocks.tooltip=Block properties.
+configui.blockHardness.tooltip=The amount of hits the block can take before it breaks (-1 = indestructible).
+configui.blockResistance.tooltip=The blocks resistance to explosions.
+
+configui.category.recipes.tooltip=Crafting recipes.
+configui.shapeless.tooltip=If this is set to true, the pattern is ignored.
+configui.yield.tooltip=The amount of blocks/items the recipe yields.
+configui.components.tooltip=The blocks/items needed to complete the recipe (Format: [patternId, modId, itemId]).
+configui.pattern.tooltip=The crafting table pattern for the recipe ("-" = empty slot).
+
+# Waila Option Labels
 waila.tankCount=Tank count
 waila.totalCapacity=Total capacity
 waila.linkStatus=Link status
 waila.tankCapacity=Tank capacity
 waila.capacityInMb=Capacities in mB
 waila.fluidName=Fluid name
-# Waila tooltip texts
+
+# Waila Tooltip Texts
 waila.toolTip.isLinked=Linked: §c%s
 waila.toolTip.tankCapacity=Capacity: §b%,d§r %s (%d%%)
 waila.toolTip.valveCapacity=Capacity: §b%,d/%,d§r %s (%d%%)

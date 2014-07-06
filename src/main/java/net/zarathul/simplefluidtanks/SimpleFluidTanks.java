@@ -13,7 +13,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
-@Mod(modid = SimpleFluidTanks.MOD_ID, name = "SimpleFluidTanks", version = SimpleFluidTanks.VERSION)
+@Mod(modid = SimpleFluidTanks.MOD_ID, name = "SimpleFluidTanks", version = SimpleFluidTanks.VERSION, guiFactory = "net.zarathul.simplefluidtanks.configuration.ConfigGuiFactory")
 public class SimpleFluidTanks
 {
 	@Instance(value = SimpleFluidTanks.MOD_ID)
@@ -34,6 +34,7 @@ public class SimpleFluidTanks
 
 	// constants
 	public static final String MOD_ID = "simplefluidtanks";
+	public static final String MOD_READABLE_NAME = "Simple Fluid Tanks";
 	public static final String VERSION = "@VERSION@";
 
 	@EventHandler

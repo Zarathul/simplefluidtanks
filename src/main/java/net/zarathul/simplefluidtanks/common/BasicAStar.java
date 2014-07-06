@@ -7,7 +7,8 @@ import java.util.PriorityQueue;
 import java.util.Set;
 
 /**
- * Very basic unoptimized implementation of the A-Star algorithm, that only works on a plane (meaning it does not search down- or upwards). It is currently used to find the closest {@link BlockCoords} in a {@link Collection} to given {@link BlockCoords}.<br>
+ * Very basic unoptimized implementation of the A-Star algorithm, that only works on a plane (meaning it does not search down- or upwards). It is currently used to find the closest {@link BlockCoords}
+ * in a {@link Collection} to given {@link BlockCoords}.<br>
  * (References used http://theory.stanford.edu/~amitp/GameProgramming/)
  */
 public class BasicAStar

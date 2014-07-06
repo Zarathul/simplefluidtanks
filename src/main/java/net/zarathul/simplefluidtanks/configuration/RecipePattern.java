@@ -1,13 +1,13 @@
-package net.zarathul.simplefluidtanks;
+package net.zarathul.simplefluidtanks.configuration;
 
 /**
  * Represents the pattern for a {@link Recipe}.
  */
 public class RecipePattern
 {
-	public static final char EMPTY_SLOT = '_';
+	public static final char EMPTY_SLOT = '-';
 
-	public String[] rows;
+	public final String[] rows;
 
 	public RecipePattern(String... rows)
 	{
