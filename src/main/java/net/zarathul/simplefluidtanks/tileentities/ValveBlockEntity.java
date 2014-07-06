@@ -208,7 +208,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 				worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 				// triggers onNeighborTileChange on neighboring blocks, this is needed for comparators to work
 				worldObj.notifyBlockChange(xCoord, yCoord, zCoord, SimpleFluidTanks.valveBlock);
-				FluidEvent.fireEvent(new FluidEvent.FluidDrainingEvent(drainFluid, this.worldObj, this.xCoord, this.yCoord, this.zCoord, this.internalTank, drainFluid.amount));
+				FluidEvent.fireEvent(new FluidEvent.FluidDrainingEvent(drainedFluid, this.worldObj, this.xCoord, this.yCoord, this.zCoord, this.internalTank, drainedFluid.amount));
 			}
 
 			return drainedFluid;
@@ -449,7 +449,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		// triggers onNeighborTileChange on neighboring blocks, this is needed for comparators to work
 		worldObj.notifyBlockChange(xCoord, yCoord, zCoord, SimpleFluidTanks.valveBlock);
 
-		if (oldFluidAmount > this.internalTank.getCapacity())
+		if (oldFluidAmount > this.internalTank.getCapacity() && fluid != null)
 		{
 			FluidStack spilledFluid = fluid.copy();
 			spilledFluid.amount = oldFluidAmount - this.internalTank.getCapacity();
