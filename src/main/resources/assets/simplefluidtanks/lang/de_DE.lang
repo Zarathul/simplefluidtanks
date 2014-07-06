@@ -1,6 +1,7 @@
 # Blocks
 tile.tankBlock.name=Flüssigkeitstank
 tile.valveBlock.name=Ventil
+
 # Items
 item.tankItem.name=Flüssigkeitstank
 item.tankItem.toolTip=§e§oUmschalten§r§7 gedrückt halten für Details.
@@ -20,6 +21,40 @@ item.valveItem.toolTipDetails5=was die Gesamtkapazität angeht als
 item.valveItem.toolTipDetails6=Tank zählt und zusammen mit einem 
 item.valveItem.toolTipDetails7=Komparator ein Redstone Signal abgibt.
 item.wrench.name=Schraubenschlüssel
+
+# ConfigUI Category Labels
+configui.category.misc=Verschiedenes
+configui.category.blocks=Blöcke
+configui.category.recipes=Rezepte
+configui.category.tank=Flüssigkeitstank
+configui.category.valve=Ventil
+configui.category.wrench=Schraubenschlüssel
+
+# ConfigUI Element Labels
+configui.bucketsPerTank=Eimer pro Tank
+configui.wrenchEnabled=Schraubenschlüsselrezept aktiv
+configui.blockHardness=Härte des Blocks
+configui.blockResistance=Explosionswiderstand des Blocks
+configui.shapeless=Formlos
+configui.yield=Ertrag
+configui.components=Komponenten
+configui.pattern=Muster
+
+# ConfigUI Element ToolTips
+configui.category.misc.tooltip=Grundlegende Einstellungen.
+configui.bucketsPerTank.tooltip=Die Menge an Flüssigkeit die ein Tank aufnehmen kann, gemessen in Eimern.
+configui.wrenchEnabled.tooltip=Auf "false" setzen um das Rezept für den Schraubenschlüssel zu deaktivieren.
+
+configui.category.blocks.tooltip=Blockeigenschaften.
+configui.blockHardness.tooltip=Die Menge an Treffern die ein Block aushält, bis er zerstört wird (-1 = unzerstörbar).
+configui.blockResistance.tooltip=Der Widerstand des Blocks gegen Explosionen.
+
+configui.category.recipes.tooltip=Handwerksrezepte.
+configui.shapeless.tooltip=Ist dieser Wert auf "true" gesetzt, wird das Muster ignoriert.
+configui.yield.tooltip=Die Menge an Blöcken/Gegenständen die das Rezept ergiebt.
+configui.components.tooltip=Die Blöcke/Gegenstände die für das Rezept benötigt werden (Format: [MusterId], [ModId], [GegenstandsId]).
+configui.pattern.tooltip=Das Muster des Rezepts für die Werkbank ("-" = leere Position).
+
 # Waila option labels
 waila.tankCount=Tank Anzahl
 waila.totalCapacity=Gesamtkapazität
@@ -27,6 +62,7 @@ waila.linkStatus=Verbindungsstatus
 waila.tankCapacity=Tankkapazität
 waila.capacityInMb=Kapazitäten in mB
 waila.fluidName=Flüssigkeitsname
+
 # Waila tooltip texts
 waila.toolTip.isLinked=Verbunden: §c%s
 waila.toolTip.tankCapacity=Kapazität: §b%,d§r %s (%d%%)

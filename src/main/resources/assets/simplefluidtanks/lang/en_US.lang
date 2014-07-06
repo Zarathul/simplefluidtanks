@@ -49,7 +49,7 @@ configui.blockResistance.tooltip=The blocks resistance to explosions.
 configui.category.recipes.tooltip=Crafting recipes.
 configui.shapeless.tooltip=If this is set to true, the pattern is ignored.
 configui.yield.tooltip=The amount of blocks/items the recipe yields.
-configui.components.tooltip=The blocks/items needed to complete the recipe (Format: [patternId, modId, itemId]).
+configui.components.tooltip=The blocks/items needed to complete the recipe (Format: [patternId], [modId], [itemId]).
 configui.pattern.tooltip=The crafting table pattern for the recipe ("-" = empty slot).
 
 # Waila Option Labels
