@@ -15,9 +15,8 @@ public final class Config
 {
 	private static Configuration config = null;
 
-	// recipes
+	// default values
 
-	// Default TankBlock recipe
 	public static final Recipe defaultTankBlockRecipe = new Recipe
 	(
 		2,
@@ -33,7 +32,6 @@ public final class Config
 		}
 	);
 
-	// Default ValveBlock recipe
 	public static final Recipe defaultValveBlockRecipe = new Recipe
 	(
 		1,
@@ -50,7 +48,6 @@ public final class Config
 		}
 	);
 
-	// Default Wrench recipe
 	public static final Recipe defaultWrenchRecipe = new Recipe
 	(
 		1,
@@ -65,14 +62,21 @@ public final class Config
 		}
 	);
 
+	private static final int defaultBucketsPerTank = 16;
+	private static final boolean defaultWrenchEnabled = true;
+	private static final float defaultTankBlockHardness = 50;
+	private static final float defaultTankBlockResistance = 1000;
+	private static final float defaultValveBlockHardness = 50;
+	private static final float defaultValveBlockResistance = 1000;
+
 	// settings
 
-	public static int bucketsPerTank = 16;
-	public static boolean wrenchEnabled = true;
-	public static float tankBlockHardness = 50;
-	public static float tankBlockResistance = 1000;
-	public static float valveBlockHardness = 50;
-	public static float valveBlockResistance = 1000;
+	public static int bucketsPerTank;
+	public static boolean wrenchEnabled;
+	public static float tankBlockHardness;
+	public static float tankBlockResistance;
+	public static float valveBlockHardness;
+	public static float valveBlockResistance;
 	public static Recipe tankBlockRecipe;
 	public static Recipe valveBlockRecipe;
 	public static Recipe wrenchRecipe;
@@ -125,12 +129,12 @@ public final class Config
 
 		config.getCategory(CATEGORY_MISC).setLanguageKey("configui.category.misc").setComment(StatCollector.translateToLocal("configui.category.misc.tooltip"));
 
-		prop = config.get(CATEGORY_MISC, "bucketsPerTank", bucketsPerTank);
+		prop = config.get(CATEGORY_MISC, "bucketsPerTank", defaultBucketsPerTank);
 		prop.comment = StatCollector.translateToLocal("configui.bucketsPerTank.tooltip");
 		prop.setLanguageKey("configui.bucketsPerTank").setRequiresWorldRestart(true).setMinValue(1);
 		bucketsPerTank = prop.getInt();
 
-		prop = config.get(CATEGORY_MISC, "wrenchEnabled", wrenchEnabled);
+		prop = config.get(CATEGORY_MISC, "wrenchEnabled", defaultWrenchEnabled);
 		prop.comment = StatCollector.translateToLocal("configui.wrenchEnabled.tooltip");
 		prop.setLanguageKey("configui.wrenchEnabled").setRequiresMcRestart(true);
 		wrenchEnabled = prop.getBoolean();
@@ -147,19 +151,19 @@ public final class Config
 		String blockHardnessComment = StatCollector.translateToLocal("configui.blockHardness.tooltip");
 		String blockResistanceComment = StatCollector.translateToLocal("configui.blockResistance.tooltip");
 
-		prop = config.get(CATEGORY_BLOCKS_TANKBLOCK, blockHardnessKey, tankBlockHardness, blockHardnessComment);
+		prop = config.get(CATEGORY_BLOCKS_TANKBLOCK, blockHardnessKey, defaultTankBlockHardness, blockHardnessComment);
 		prop.setLanguageKey("configui.blockHardness").setRequiresMcRestart(true).setMinValue(-1.0).setMaxValue(1000000.0);
 		tankBlockHardness = (float) prop.getDouble();
 
-		prop = config.get(CATEGORY_BLOCKS_TANKBLOCK, blockResistanceKey, tankBlockResistance, blockResistanceComment);
+		prop = config.get(CATEGORY_BLOCKS_TANKBLOCK, blockResistanceKey, defaultTankBlockResistance, blockResistanceComment);
 		prop.setLanguageKey("configui.blockResistance").setRequiresMcRestart(true).setMinValue(1.0).setMaxValue(1000000.0);
 		tankBlockResistance = (float) prop.getDouble();
 
-		prop = config.get(CATEGORY_BLOCKS_VALVEBLOCK, blockHardnessKey, valveBlockHardness, blockHardnessComment);
+		prop = config.get(CATEGORY_BLOCKS_VALVEBLOCK, blockHardnessKey, defaultValveBlockHardness, blockHardnessComment);
 		prop.setLanguageKey("configui.blockHardness").setRequiresMcRestart(true).setMinValue(-1.0).setMaxValue(1000000.0);
 		valveBlockHardness = (float) prop.getDouble();
 
-		prop = config.get(CATEGORY_BLOCKS_VALVEBLOCK, blockResistanceKey, valveBlockResistance, blockResistanceComment);
+		prop = config.get(CATEGORY_BLOCKS_VALVEBLOCK, blockResistanceKey, defaultValveBlockResistance, blockResistanceComment);
 		prop.setLanguageKey("configui.blockResistance").setRequiresMcRestart(true).setMinValue(1.0).setMaxValue(1000000.0);
 		valveBlockResistance = (float) prop.getDouble();
 
@@ -209,7 +213,7 @@ public final class Config
 		prop.setLanguageKey("configui.components").setRequiresMcRestart(true).setMaxListLength(27);
 		String[] components = prop.getStringList();
 
-		prop = config.get(category, "pattern", defaultRecipe.pattern.rows).setIsListLengthFixed(true).setMaxListLength(3);
+		prop = config.get(category, "pattern", defaultRecipe.pattern.rows.toArray(new String[0])).setIsListLengthFixed(true).setMaxListLength(3);
 		prop.comment = StatCollector.translateToLocal("configui.pattern.tooltip");
 		prop.setLanguageKey("configui.pattern").setRequiresMcRestart(true);
 		String[] pattern = prop.getStringList();

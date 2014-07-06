@@ -13,10 +13,10 @@ import cpw.mods.fml.common.registry.GameRegistry;
  */
 public class Recipe
 {
-	public boolean isShapeless;
-	public int yield;
-	public RecipePattern pattern;
-	public RecipeComponent[] components;
+	public final boolean isShapeless;
+	public final int yield;
+	public final RecipePattern pattern;
+	public final RecipeComponent[] components;
 
 	public Recipe(int yield, RecipeComponent[] components)
 	{
