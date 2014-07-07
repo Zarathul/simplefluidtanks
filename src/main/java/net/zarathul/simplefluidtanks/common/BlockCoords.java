@@ -13,27 +13,20 @@ public class BlockCoords
 	/**
 	 * The x-coordinate.
 	 */
-	public int x;
+	public final int x;
 
 	/**
 	 * The y-coordinate.
 	 */
-	public int y;
+	public final int y;
 
 	/**
 	 * The z-coordinate.
 	 */
-	public int z;
+	public final int z;
 
 	/**
-	 * Default constructor
-	 */
-	public BlockCoords()
-	{
-	}
-
-	/**
-	 * Creates a new instance with the supplied coordinates.
+	 * Creates a new instance with the specified coordinates.
 	 * 
 	 * @param x
 	 * The x-coordinate.
@@ -50,49 +43,30 @@ public class BlockCoords
 	}
 
 	/**
-	 * Creates a copy of the given {@link BlockCoords}.
-	 * 
-	 * @param coords
-	 * The {@link BlockCoords} to copy.
-	 */
-	public BlockCoords(BlockCoords coords)
-	{
-		if (coords != null)
-		{
-			x = coords.x;
-			y = coords.y;
-			z = coords.z;
-		}
-	}
-
-	/**
-	 * Copies and offsets each supplied {@link BlockCoords} instance by the supplied offsets.
+	 * Copies and offsets all {@link BlockCoords} instances in the specified collection by the specified offsets.
 	 * 
 	 * @param blocks
 	 * The coordinates to offset.
 	 * @param offsets
 	 * The values by which the coordinates should be offset.
-	 * @return An {@link ArrayList} containing the offset copies of the supplied {@link BlockCoords}.
+	 * @return An {@link ArrayList} containing the offset copies of the {@link BlockCoords}.
 	 */
-	public static ArrayList<BlockCoords> cloneWithOffset(Collection<BlockCoords> blocks, int... offsets)
+	public static ArrayList<BlockCoords> offsetBy(Collection<BlockCoords> blocks, int... offsets)
 	{
-		if (blocks == null)
-		{
-			return null;
-		}
+		if (blocks == null || offsets == null || offsets.length < 3) throw new IllegalArgumentException();
 
 		ArrayList<BlockCoords> offsetBlocks = new ArrayList<BlockCoords>(blocks.size());
 
 		for (BlockCoords block : blocks)
 		{
-			offsetBlocks.add(block.cloneWithOffset(offsets));
+			offsetBlocks.add(new BlockCoords(block.x + offsets[0], block.y + offsets[1], block.z + offsets[2]));
 		}
 
 		return offsetBlocks;
 	}
 
 	/**
-	 * Creates a {@link BlockCoords} instance from the supplied coordinates, offset in the specified direction by the specified amount.
+	 * Creates a {@link BlockCoords} instance from the specified coordinates, offset in the specified direction by the specified amount.
 	 * 
 	 * @param direction
 	 * The direction the offset is relative to.
@@ -100,78 +74,59 @@ public class BlockCoords
 	 * The amount by which the coordinates should be offset.
 	 * @param coords
 	 * The coordinates.
-	 * @return The offset {@link BlockCoords} instance or <code>null</code> if no coordinates were specified.
+	 * @return The offset {@link BlockCoords} instance.
 	 */
-	public static BlockCoords offsetBy(int direction, int amount, int... coords)
+	public static BlockCoords offset(int direction, int amount, int... coords)
 	{
-		if (coords == null || coords.length != 3)
-		{
-			return null;
-		}
+		if (coords == null || coords.length < 3 || !Direction.vanillaSideOffsets.containsKey(direction)) throw new IllegalArgumentException();
 
-		return new BlockCoords(coords[0], coords[1], coords[2]).offsetBy(direction, amount);
+		DirectionalOffset offset = Direction.vanillaSideOffsets.get(direction);
+
+		return new BlockCoords(coords[0] + offset.x * amount, coords[1] + offset.y * amount, coords[2] + offset.z * amount);
 	}
 
 	/**
-	 * Offsets the coordinates of the current instance by the supplied values.
+	 * Creates a copy of the current instance offset by 1, in the specified direction.
 	 * 
-	 * @param offsets
-	 * The values by which the coordinates should be offset.
-	 * @return The current instance after the changes.
+	 * @param direction
+	 * The direction the offset is relative to.
+	 * @return The offset copy of the current instance.
 	 */
-	public BlockCoords offset(int... offsets)
+	public BlockCoords offset(int direction)
 	{
-		if (offsets == null || offsets.length < 1 || offsets.length > 3)
-		{
-			return this;
-		}
-
-		x += offsets[0];
-		y += (offsets.length > 1) ? offsets[1] : 0;
-		z += (offsets.length > 2) ? offsets[2] : 0;
-
-		return this;
+		return offset(direction, 1);
 	}
 
 	/**
-	 * Offsets the coordinates of the current instance by the supplied amount, in the specified direction.
+	 * Creates a copy of the current instance offset by the specified amount, in the specified direction.
 	 * 
 	 * @param direction
 	 * The direction the offset is relative to.
 	 * @param amount
 	 * The amount by which the coordinates should be offset.
-	 * @return The current instance after the changes.
+	 * @return The offset copy of the current instance.
 	 */
-	public BlockCoords offsetBy(int direction, int amount)
+	public BlockCoords offset(int direction, int amount)
 	{
-		DirectionalOffset offset = Direction.vanillaSideOffsets.get(direction);
-
-		if (offset != null)
-		{
-			x += offset.x * amount;
-			y += offset.y * amount;
-			z += offset.z * amount;
-		}
-
-		return this;
+		return offset(direction, amount, x, y, z);
 	}
 
 	/**
-	 * Creates a copy of the current instance offset by the supplied values.
+	 * Creates a copy of the current instance offset by the specified values.
 	 * 
 	 * @param offsets
 	 * The values by which the coordinates should be offset.
 	 * @return The offset copy of the current instance.
 	 */
-	public BlockCoords cloneWithOffset(int... offsets)
+	public BlockCoords offsetBy(int... offsets)
 	{
-		BlockCoords newCoords = new BlockCoords(this);
+		if (offsets == null || offsets.length < 3) throw new IllegalArgumentException();
 
-		return newCoords.offset(offsets);
+		return new BlockCoords(x + offsets[0], y + offsets[1], z + offsets[2]);
 	}
 
 	/**
-	 * Gets the distance from the current instance to the supplied coordinates.
+	 * Gets the distance from the current instance to the specified coordinates.
 	 * 
 	 * @param block
 	 * The coordinates to get the distance to.

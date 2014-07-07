@@ -285,10 +285,10 @@ public class BasicAStar
 	{
 		BlockCoords[] neighborBlocks = new BlockCoords[]
 		{
-			node.block.cloneWithOffset(1),			// X+
-			node.block.cloneWithOffset(-1),			// X-
-			node.block.cloneWithOffset(0, 0, 1),	// Z+
-			node.block.cloneWithOffset(0, 0, -1),	// Z-
+			node.block.offset(Direction.XPOS),
+			node.block.offset(Direction.XNEG),
+			node.block.offset(Direction.ZPOS),
+			node.block.offset(Direction.ZNEG)
 		};
 
 		for (BlockCoords neighborBlock : neighborBlocks)

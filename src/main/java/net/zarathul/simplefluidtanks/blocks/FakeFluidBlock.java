@@ -25,7 +25,7 @@ public class FakeFluidBlock extends Block
 	public boolean shouldSideBeRendered(IBlockAccess blockAccess, int x, int y, int z, int side)
 	{
 		int offsetDirection = Direction.vanillaSideOpposites.get(side);
-		BlockCoords tankCoords = BlockCoords.offsetBy(offsetDirection, 1, x, y, z);
+		BlockCoords tankCoords = BlockCoords.offset(offsetDirection, 1, x, y, z);
 
 		TankBlockEntity tankEntity = Utils.getTileEntityAt(blockAccess, TankBlockEntity.class, tankCoords);
 

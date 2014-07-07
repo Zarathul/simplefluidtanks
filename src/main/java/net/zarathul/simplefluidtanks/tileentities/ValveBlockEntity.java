@@ -299,32 +299,32 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 
 		BlockCoords coords = new BlockCoords(xCoord, yCoord, zCoord);
 
-		if (isInTankList(coords.cloneWithOffset(0, 0, 1)))
+		if (isInTankList(coords.offset(Direction.ZPOS)))
 		{
 			sides = sides | Direction.sidesToBitFlagsMappings.get(Direction.ZPOS);
 		}
 
-		if (isInTankList(coords.cloneWithOffset(0, 0, -1)))
+		if (isInTankList(coords.offset(Direction.ZNEG)))
 		{
 			sides = sides | Direction.sidesToBitFlagsMappings.get(Direction.ZNEG);
 		}
 
-		if (isInTankList(coords.cloneWithOffset(1, 0, 0)))
+		if (isInTankList(coords.offset(Direction.XPOS)))
 		{
 			sides = sides | Direction.sidesToBitFlagsMappings.get(Direction.XPOS);
 		}
 
-		if (isInTankList(coords.cloneWithOffset(-1, 0, 0)))
+		if (isInTankList(coords.offset(Direction.XNEG)))
 		{
 			sides = sides | Direction.sidesToBitFlagsMappings.get(Direction.XNEG);
 		}
 
-		if (isInTankList(coords.cloneWithOffset(0, 1, 0)))
+		if (isInTankList(coords.offset(Direction.YPOS)))
 		{
 			sides = sides | Direction.sidesToBitFlagsMappings.get(Direction.YPOS);
 		}
 
-		if (isInTankList(coords.cloneWithOffset(0, -1, 0)))
+		if (isInTankList(coords.offset(Direction.YNEG)))
 		{
 			sides = sides | Direction.sidesToBitFlagsMappings.get(Direction.YNEG);
 		}
@@ -859,7 +859,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 
 					for (BlockCoords closestTank : closestTanksWithTanksBelow)
 					{
-						newTanks.add(closestTank.cloneWithOffset(0, -1));
+						newTanks.add(closestTank.offset(Direction.YNEG));
 					}
 				}
 				else
