@@ -124,17 +124,17 @@ public class BasicAStar
 	/**
 	 * Holds the {@link Node}s that have not been visited by the algorithm yet.
 	 */
-	private PriorityQueue<Node> unvisitedNodes;
+	private final PriorityQueue<Node> unvisitedNodes;
 
 	/**
 	 * Holds the coordinates the algorithm has already visited.
 	 */
-	private HashSet<BlockCoords> visitedBlocks;
+	private final HashSet<BlockCoords> visitedBlocks;
 
 	/**
 	 * Holds the current smallest known cost to get to a {@link Node}, for every visited {@link Node}.
 	 */
-	private HashMap<BlockCoords, Integer> minCosts;
+	private final HashMap<BlockCoords, Integer> minCosts;
 
 	/**
 	 * A {@link Set} of {@link BlockCoords} the algorithm can move through.

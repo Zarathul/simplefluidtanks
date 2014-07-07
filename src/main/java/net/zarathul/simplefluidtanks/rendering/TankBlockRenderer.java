@@ -44,11 +44,7 @@ public class TankBlockRenderer implements ISimpleBlockRenderingHandler
 
 		TessellationManager.setBaseCoords(x, y, z);
 
-		if (!tankEntity.isPartOfTank())
-		{
-			renderUnlinkedTank(tankEntity, icons[0]);
-		}
-		else
+		if (tankEntity.isPartOfTank())
 		{
 			int fillPercentage = tankEntity.getFillPercentage();
 			boolean[] connections = tankEntity.getConnections();
@@ -66,6 +62,10 @@ public class TankBlockRenderer implements ISimpleBlockRenderingHandler
 
 			renderFrame(tankEntity, connections, icons);
 		}
+		else
+		{
+			renderUnlinkedTank(tankEntity, icons[0]);
+		}
 
 		return true;
 	}
@@ -79,12 +79,17 @@ public class TankBlockRenderer implements ISimpleBlockRenderingHandler
 	@Override
 	public void renderInventoryBlock(Block block, int metadata, int modelId, RenderBlocks renderer)
 	{
+		TessellationManager.setBaseCoords(-0.5f, -0.5f, -0.5f);
+		TessellationManager.startDrawingQuads();
+		TessellationManager.renderCube(0, 0, 0, 16, 16, 16, block.getIcon(0, 0));
+		TessellationManager.draw();
+		TessellationManager.resetBaseCoords();
 	}
 
 	@Override
 	public boolean shouldRender3DInInventory(int modelId)
 	{
-		return false;
+		return true;
 	}
 
 	/**
@@ -97,9 +102,9 @@ public class TankBlockRenderer implements ISimpleBlockRenderingHandler
 	{
 		IBlockAccess world = entity.getWorldObj();
 		int colorMultiplier = SimpleFluidTanks.tankBlock.colorMultiplier(world, entity.xCoord, entity.yCoord, entity.zCoord);
-		float red = (float) (colorMultiplier >> 16 & 255) / 255.0F;
-		float green = (float) (colorMultiplier >> 8 & 255) / 255.0F;
-		float blue = (float) (colorMultiplier & 255) / 255.0F;
+		float red = (colorMultiplier >> 16 & 255) / 255.0F;
+		float green = (colorMultiplier >> 8 & 255) / 255.0F;
+		float blue = (colorMultiplier & 255) / 255.0F;
 
 		TankBlockEntity BlockYNEG = Utils.getTileEntityAt(world, TankBlockEntity.class, entity.xCoord, entity.yCoord - 1, entity.zCoord);
 		TankBlockEntity BlockYPOS = Utils.getTileEntityAt(world, TankBlockEntity.class, entity.xCoord, entity.yCoord + 1, entity.zCoord);
@@ -171,9 +176,9 @@ public class TankBlockRenderer implements ISimpleBlockRenderingHandler
 	{
 		IBlockAccess world = entity.getWorldObj();
 		int colorMultiplier = SimpleFluidTanks.tankBlock.colorMultiplier(world, entity.xCoord, entity.yCoord, entity.zCoord);
-		float red = (float) (colorMultiplier >> 16 & 255) / 255.0F;
-		float green = (float) (colorMultiplier >> 8 & 255) / 255.0F;
-		float blue = (float) (colorMultiplier & 255) / 255.0F;
+		float red = (colorMultiplier >> 16 & 255) / 255.0F;
+		float green = (colorMultiplier >> 8 & 255) / 255.0F;
+		float blue = (colorMultiplier & 255) / 255.0F;
 
 		if (!connections[Direction.YNEG])
 		{

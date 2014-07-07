@@ -31,5 +31,7 @@ public class ValveItemRenderer extends BaseItemRenderer
 		TessellationManager.renderPositiveZFace(0, 0, 0 + 1, 1, 1, (type != ItemRenderType.EQUIPPED_FIRST_PERSON) ? iconIo : icon, 1);
 		TessellationManager.renderNegativeZFace(0, 0, 0, 1, 1, icon, 1);
 		TessellationManager.draw();
+
+		TessellationManager.resetBaseCoords();
 	}
 }

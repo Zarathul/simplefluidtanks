@@ -34,7 +34,7 @@ jar
 
 minecraft
 {
-    version = "1.7.10-10.13.0.1160"
+    version = "1.7.10-10.13.0.1170"
     assetDir = "eclipse/assets"
     
     replaceIn "SimpleFluidTanks.java"

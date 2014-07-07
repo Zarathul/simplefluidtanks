@@ -27,7 +27,7 @@ import cpw.mods.fml.relauncher.SideOnly;
  */
 public class TankBlock extends WrenchableBlock
 {
-	private HashSet<BlockCoords> ignorePreDestroyEvent;
+	private final HashSet<BlockCoords> ignorePreDestroyEvent;
 
 	public TankBlock()
 	{

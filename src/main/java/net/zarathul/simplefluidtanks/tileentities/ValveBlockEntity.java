@@ -48,7 +48,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	/**
 	 * The {@link FluidTank} that actually holds all the fluid in the multiblock tank.
 	 */
-	private FluidTank internalTank;
+	private final FluidTank internalTank;
 
 	/**
 	 * Holds the number of {@link TankBlock}s that are linked to this {@link ValveBlock}. (This is primarily used on the client side. This way the multimap containing the tank information does not
