@@ -24,7 +24,7 @@ public class TankBlockRenderer implements ISimpleBlockRenderingHandler
 {
 	public static final int id = RenderingRegistry.getNextAvailableRenderId();
 
-	private static final double flickerOffset = 0.001d;
+	private static final double flickerOffset = 0.0009765625d;
 	private static final float yPosLightFactor = 1.0f;
 	private static final float yNegLightFactor = 0.5f;
 	private static final float zLightFactor = 0.8f;
@@ -40,7 +40,7 @@ public class TankBlockRenderer implements ISimpleBlockRenderingHandler
 			return false;
 		}
 
-		IIcon[] icons = SimpleFluidTanks.tankBlock.getIcons();
+		IIcon[] frameIcons = SimpleFluidTanks.tankBlock.getIcons();
 
 		TessellationManager.setBaseCoords(x, y, z);
 
@@ -60,11 +60,11 @@ public class TankBlockRenderer implements ISimpleBlockRenderingHandler
 				}
 			}
 
-			renderFrame(tankEntity, connections, icons);
+			renderFrame(block, renderer, tankEntity, connections, frameIcons);
 		}
 		else
 		{
-			renderUnlinkedTank(tankEntity, icons[0]);
+			renderUnlinkedTank(block, renderer, tankEntity, frameIcons[0]);
 		}
 
 		return true;
@@ -98,7 +98,7 @@ public class TankBlockRenderer implements ISimpleBlockRenderingHandler
 	 * @param icon
 	 * The texture to use.
 	 */
-	private void renderUnlinkedTank(TankBlockEntity entity, IIcon icon)
+	private void renderUnlinkedTank(Block block, RenderBlocks renderer, TankBlockEntity entity, IIcon icon)
 	{
 		IBlockAccess world = entity.getWorldObj();
 		int colorMultiplier = SimpleFluidTanks.tankBlock.colorMultiplier(world, entity.xCoord, entity.yCoord, entity.zCoord);
@@ -117,50 +117,50 @@ public class TankBlockRenderer implements ISimpleBlockRenderingHandler
 		{
 			TessellationManager.setBrightness(SimpleFluidTanks.tankBlock.getMixedBrightnessForBlock(world, entity.xCoord, entity.yCoord, entity.zCoord));
 			TessellationManager.setColorOpaque(yNegLightFactor * red, yNegLightFactor * green, yNegLightFactor * blue);
-			TessellationManager.renderNegativeYFace(0, 0, 0, 16, 16, icon);
+			renderer.renderFaceYNeg(block, entity.xCoord, entity.yCoord, entity.zCoord, icon);
 			TessellationManager.setColorOpaque(yPosLightFactor * red, yPosLightFactor * green, yPosLightFactor * blue);
-			TessellationManager.renderPositiveYFace(0, 0 + flickerOffset, 0, 16, 16, icon);
+			renderer.renderFaceYPos(block, entity.xCoord, entity.yCoord - 1, entity.zCoord, icon);
 		}
 
 		if (BlockYPOS == null || BlockYPOS.isPartOfTank())
 		{
 			TessellationManager.setBrightness(SimpleFluidTanks.tankBlock.getMixedBrightnessForBlock(world, entity.xCoord, entity.yCoord, entity.zCoord));
 			TessellationManager.setColorOpaque(yPosLightFactor * red, yPosLightFactor * green, yPosLightFactor * blue);
-			TessellationManager.renderPositiveYFace(0, 16, 0, 16, 16, icon);
+			renderer.renderFaceYPos(block, entity.xCoord, entity.yCoord, entity.zCoord, icon);
 			TessellationManager.setColorOpaque(yNegLightFactor * red, yNegLightFactor * green, yNegLightFactor * blue);
-			TessellationManager.renderNegativeYFace(0, 16 - flickerOffset, 0, 16, 16, icon);
+			renderer.renderFaceYNeg(block, entity.xCoord, entity.yCoord + 1, entity.zCoord, icon);
 		}
 
 		if (BlockZNEG == null || BlockZNEG.isPartOfTank())
 		{
 			TessellationManager.setBrightness(SimpleFluidTanks.tankBlock.getMixedBrightnessForBlock(world, entity.xCoord, entity.yCoord, entity.zCoord));
 			TessellationManager.setColorOpaque(zLightFactor * red, zLightFactor * green, zLightFactor * blue);
-			TessellationManager.renderNegativeZFace(0, 0, 0, 16, 16, icon);
-			TessellationManager.renderPositiveZFace(0, 0, 0 + flickerOffset, 16, 16, icon);
+			renderer.renderFaceZNeg(block, entity.xCoord, entity.yCoord, entity.zCoord, icon);
+			renderer.renderFaceZPos(block, entity.xCoord, entity.yCoord, entity.zCoord - 1, icon);
 		}
 
 		if (BlockZPOS == null || BlockZPOS.isPartOfTank())
 		{
 			TessellationManager.setBrightness(SimpleFluidTanks.tankBlock.getMixedBrightnessForBlock(world, entity.xCoord, entity.yCoord, entity.zCoord));
 			TessellationManager.setColorOpaque(zLightFactor * red, zLightFactor * green, zLightFactor * blue);
-			TessellationManager.renderPositiveZFace(0, 0, 16, 16, 16, icon);
-			TessellationManager.renderNegativeZFace(0, 0, 16 - flickerOffset, 16, 16, icon);
+			renderer.renderFaceZPos(block, entity.xCoord, entity.yCoord, entity.zCoord, icon);
+			renderer.renderFaceZNeg(block, entity.xCoord, entity.yCoord, entity.zCoord + 1, icon);
 		}
 
 		if (BlockXNEG == null || BlockXNEG.isPartOfTank())
 		{
 			TessellationManager.setBrightness(SimpleFluidTanks.tankBlock.getMixedBrightnessForBlock(world, entity.xCoord, entity.yCoord, entity.zCoord));
 			TessellationManager.setColorOpaque(xLightFactor * red, xLightFactor * green, xLightFactor * blue);
-			TessellationManager.renderNegativeXFace(0, 0, 0, 16, 16, icon);
-			TessellationManager.renderPositiveXFace(0 + flickerOffset, 0, 0, 16, 16, icon);
+			renderer.renderFaceXNeg(block, entity.xCoord, entity.yCoord, entity.zCoord, icon);
+			renderer.renderFaceXPos(block, entity.xCoord - 1, entity.yCoord, entity.zCoord, icon);
 		}
 
 		if (BlockXPOS == null || BlockXPOS.isPartOfTank())
 		{
 			TessellationManager.setBrightness(SimpleFluidTanks.tankBlock.getMixedBrightnessForBlock(world, entity.xCoord, entity.yCoord, entity.zCoord));
 			TessellationManager.setColorOpaque(xLightFactor * red, xLightFactor * green, xLightFactor * blue);
-			TessellationManager.renderPositiveXFace(16, 0, 0, 16, 16, icon);
-			TessellationManager.renderNegativeXFace(16 - flickerOffset, 0, 0, 16, 16, icon);
+			renderer.renderFaceXPos(block, entity.xCoord, entity.yCoord, entity.zCoord, icon);
+			renderer.renderFaceXNeg(block, entity.xCoord + 1, entity.yCoord, entity.zCoord, icon);
 		}
 	}
 
@@ -174,7 +174,7 @@ public class TankBlockRenderer implements ISimpleBlockRenderingHandler
 	 * @param icons
 	 * The {@link TankBlock}s textures.
 	 */
-	private void renderFrame(TankBlockEntity entity, boolean[] connections, IIcon[] icons)
+	private void renderFrame(Block block, RenderBlocks renderer, TankBlockEntity entity, boolean[] connections, IIcon[] icons)
 	{
 		IBlockAccess world = entity.getWorldObj();
 		int colorMultiplier = SimpleFluidTanks.tankBlock.colorMultiplier(world, entity.xCoord, entity.yCoord, entity.zCoord);
@@ -186,50 +186,58 @@ public class TankBlockRenderer implements ISimpleBlockRenderingHandler
 		{
 			TessellationManager.setBrightness(SimpleFluidTanks.tankBlock.getMixedBrightnessForBlock(world, entity.xCoord, entity.yCoord, entity.zCoord));
 			TessellationManager.setColorOpaque(yNegLightFactor * red, yNegLightFactor * green, yNegLightFactor * blue);
-			TessellationManager.renderNegativeYFace(0, 0, 0, 16, 16, icons[entity.getTextureIndex(Direction.YNEG)]);
+			renderer.uvRotateBottom = 3;
+			renderer.renderFaceYNeg(block, entity.xCoord, entity.yCoord, entity.zCoord, icons[entity.getTextureIndex(Direction.YPOS)]);
+			renderer.uvRotateBottom = 0;
 			TessellationManager.setColorOpaque(yPosLightFactor * red, yPosLightFactor * green, yPosLightFactor * blue);
-			TessellationManager.renderPositiveYFace(0, 0 + flickerOffset, 0, 16, 16, icons[entity.getTextureIndex(Direction.YPOS)]);
+			renderer.uvRotateTop = 3;
+			renderer.renderFaceYPos(block, entity.xCoord, entity.yCoord - 1, entity.zCoord, icons[entity.getTextureIndex(Direction.YPOS)]);
+			renderer.uvRotateTop = 0;
 		}
 
 		if (!connections[Direction.YPOS])
 		{
 			TessellationManager.setBrightness(SimpleFluidTanks.tankBlock.getMixedBrightnessForBlock(world, entity.xCoord, entity.yCoord, entity.zCoord));
 			TessellationManager.setColorOpaque(yPosLightFactor * red, yPosLightFactor * green, yPosLightFactor * blue);
-			TessellationManager.renderPositiveYFace(0, 16, 0, 16, 16, icons[entity.getTextureIndex(Direction.YPOS)]);
+			renderer.uvRotateTop = 3;
+			renderer.renderFaceYPos(block, entity.xCoord, entity.yCoord, entity.zCoord, icons[entity.getTextureIndex(Direction.YPOS)]);
+			renderer.uvRotateTop = 0;
 			TessellationManager.setColorOpaque(yNegLightFactor * red, yNegLightFactor * green, yNegLightFactor * blue);
-			TessellationManager.renderNegativeYFace(0, 16 - flickerOffset, 0, 16, 16, icons[entity.getTextureIndex(Direction.YNEG)]);
+			renderer.uvRotateBottom = 3;
+			renderer.renderFaceYNeg(block, entity.xCoord, entity.yCoord + 1, entity.zCoord, icons[entity.getTextureIndex(Direction.YPOS)]);
+			renderer.uvRotateBottom = 0;
 		}
 
 		if (!connections[Direction.ZNEG])
 		{
 			TessellationManager.setBrightness(SimpleFluidTanks.tankBlock.getMixedBrightnessForBlock(world, entity.xCoord, entity.yCoord, entity.zCoord));
 			TessellationManager.setColorOpaque(zLightFactor * red, zLightFactor * green, zLightFactor * blue);
-			TessellationManager.renderNegativeZFace(0, 0, 0, 16, 16, icons[entity.getTextureIndex(Direction.ZNEG)]);
-			TessellationManager.renderPositiveZFace(0, 0, 0 + flickerOffset, 16, 16, icons[entity.getTextureIndex(Direction.ZPOS)]);
+			renderer.renderFaceZNeg(block, entity.xCoord, entity.yCoord, entity.zCoord, icons[entity.getTextureIndex(Direction.ZNEG)]);
+			renderer.renderFaceZPos(block, entity.xCoord, entity.yCoord, entity.zCoord - 1, icons[entity.getTextureIndex(Direction.ZPOS)]);
 		}
 
 		if (!connections[Direction.ZPOS])
 		{
 			TessellationManager.setBrightness(SimpleFluidTanks.tankBlock.getMixedBrightnessForBlock(world, entity.xCoord, entity.yCoord, entity.zCoord));
 			TessellationManager.setColorOpaque(zLightFactor * red, zLightFactor * green, zLightFactor * blue);
-			TessellationManager.renderPositiveZFace(0, 0, 16, 16, 16, icons[entity.getTextureIndex(Direction.ZPOS)]);
-			TessellationManager.renderNegativeZFace(0, 0, 16 - flickerOffset, 16, 16, icons[entity.getTextureIndex(Direction.ZNEG)]);
+			renderer.renderFaceZPos(block, entity.xCoord, entity.yCoord, entity.zCoord, icons[entity.getTextureIndex(Direction.ZPOS)]);
+			renderer.renderFaceZNeg(block, entity.xCoord, entity.yCoord, entity.zCoord + 1, icons[entity.getTextureIndex(Direction.ZNEG)]);
 		}
 
 		if (!connections[Direction.XNEG])
 		{
 			TessellationManager.setBrightness(SimpleFluidTanks.tankBlock.getMixedBrightnessForBlock(world, entity.xCoord, entity.yCoord, entity.zCoord));
 			TessellationManager.setColorOpaque(xLightFactor * red, xLightFactor * green, xLightFactor * blue);
-			TessellationManager.renderNegativeXFace(0, 0, 0, 16, 16, icons[entity.getTextureIndex(Direction.XNEG)]);
-			TessellationManager.renderPositiveXFace(0 + flickerOffset, 0, 0, 16, 16, icons[entity.getTextureIndex(Direction.XPOS)]);
+			renderer.renderFaceXNeg(block, entity.xCoord, entity.yCoord, entity.zCoord, icons[entity.getTextureIndex(Direction.XNEG)]);
+			renderer.renderFaceXPos(block, entity.xCoord - 1, entity.yCoord, entity.zCoord, icons[entity.getTextureIndex(Direction.XPOS)]);
 		}
 
 		if (!connections[Direction.XPOS])
 		{
 			TessellationManager.setBrightness(SimpleFluidTanks.tankBlock.getMixedBrightnessForBlock(world, entity.xCoord, entity.yCoord, entity.zCoord));
 			TessellationManager.setColorOpaque(xLightFactor * red, xLightFactor * green, xLightFactor * blue);
-			TessellationManager.renderPositiveXFace(16, 0, 0, 16, 16, icons[entity.getTextureIndex(Direction.XPOS)]);
-			TessellationManager.renderNegativeXFace(16 - flickerOffset, 0, 0, 16, 16, icons[entity.getTextureIndex(Direction.XNEG)]);
+			renderer.renderFaceXPos(block, entity.xCoord, entity.yCoord, entity.zCoord, icons[entity.getTextureIndex(Direction.XPOS)]);
+			renderer.renderFaceXNeg(block, entity.xCoord + 1, entity.yCoord, entity.zCoord, icons[entity.getTextureIndex(Direction.XNEG)]);
 		}
 	}
 
