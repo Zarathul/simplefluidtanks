@@ -15,7 +15,6 @@ import net.zarathul.simplefluidtanks.items.TankItem;
 import net.zarathul.simplefluidtanks.items.ValveItem;
 import net.zarathul.simplefluidtanks.items.WrenchItem;
 import net.zarathul.simplefluidtanks.rendering.TankBlockRenderer;
-import net.zarathul.simplefluidtanks.rendering.TankItemRenderer;
 import net.zarathul.simplefluidtanks.rendering.ValveItemRenderer;
 import net.zarathul.simplefluidtanks.tileentities.TankBlockEntity;
 import net.zarathul.simplefluidtanks.tileentities.ValveBlockEntity;
@@ -79,7 +78,6 @@ public final class Registry
 	public static void registerCustomRenderers()
 	{
 		RenderingRegistry.registerBlockHandler(new TankBlockRenderer());
-		MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(SimpleFluidTanks.tankBlock), new TankItemRenderer());
 		MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(SimpleFluidTanks.valveBlock), new ValveItemRenderer());
 	}
 

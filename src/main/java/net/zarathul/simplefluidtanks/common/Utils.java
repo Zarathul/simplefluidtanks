@@ -3,9 +3,15 @@ package net.zarathul.simplefluidtanks.common;
 import java.util.ArrayList;
 
 import net.minecraft.block.Block;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidContainerRegistry.FluidContainerData;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.IFluidContainerItem;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
@@ -130,7 +136,7 @@ public final class Utils
 	 * Formatting arguments.
 	 * @return
 	 */
-	public static ArrayList<String> multiLineTranslateToLocal(String key, Object... args)
+	public static final ArrayList<String> multiLineTranslateToLocal(String key, Object... args)
 	{
 		ArrayList<String> lines = new ArrayList<String>();
 
@@ -147,5 +153,92 @@ public final class Utils
 		}
 
 		return lines;
+	}
+
+	/**
+	 * Gets the capacity for a registered fluid container.
+	 * 
+	 * @param fluid
+	 * The fluid the container can hold.
+	 * @param container
+	 * The container.
+	 * @return
+	 * The containers capacity or 0 if the container could not be found.
+	 */
+	public static final int getFluidContainerCapacity(FluidStack fluid, ItemStack container)
+	{
+		if (fluid == null || container == null) return 0;
+
+		Item containerItem = container.getItem();
+
+		FluidContainerData[] containerData = FluidContainerRegistry.getRegisteredFluidContainerData();
+
+		if (containerData != null)
+		{
+			for (FluidContainerData data : containerData)
+			{
+				if (((data.emptyContainer != null && data.emptyContainer.getItem() == containerItem) || (data.filledContainer != null && data.filledContainer.getItem() == containerItem)) && fluid.isFluidEqual(data.fluid))
+				{
+					return data.fluid.amount;
+				}
+			}
+		}
+
+		return 0;
+	}
+
+	/**
+	 * Gets the empty container for a filled one.
+	 * 
+	 * @param filledContainer
+	 * The filled container.
+	 * @return
+	 * The empty container or null if no empty container could be found.
+	 */
+	public static final ItemStack getEmptyFluidContainer(ItemStack filledContainer)
+	{
+		if (filledContainer == null) return null;
+
+		FluidStack containerFluid = FluidContainerRegistry.getFluidForFilledItem(filledContainer);
+
+		Item containerItem = filledContainer.getItem();
+
+		FluidContainerData[] containerData = FluidContainerRegistry.getRegisteredFluidContainerData();
+
+		if (containerData != null)
+		{
+			for (FluidContainerData data : containerData)
+			{
+				if ((data.filledContainer != null && data.filledContainer.getItem() == containerItem) && containerFluid.isFluidEqual(data.fluid))
+				{
+					return data.emptyContainer.copy();
+				}
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Checks if an item is a container that implements {@code IFluidContainerItem} and is empty.
+	 * 
+	 * @param item
+	 * The container to check.
+	 * @return
+	 * {@code true} if the container is empty and implements {@code IFluidContainerItem}, otherwise {@code false}.
+	 */
+	public static final boolean isEmptyComplexContainer(ItemStack item)
+	{
+		if (item == null) return false;
+
+		if (item.getItem() instanceof IFluidContainerItem)
+		{
+			IFluidContainerItem container = (IFluidContainerItem) item.getItem();
+			FluidStack containerFluid = container.getFluid(item);
+
+			return (containerFluid == null || (containerFluid != null && containerFluid.amount == 0));
+		}
+
+		return false;
 	}
 }

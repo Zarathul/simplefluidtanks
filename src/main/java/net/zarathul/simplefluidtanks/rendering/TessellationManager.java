@@ -46,7 +46,7 @@ public final class TessellationManager
 	 * @param coords
 	 * The new base coordinates.
 	 */
-	public static void setBaseCoords(double... coords)
+	public static final void setBaseCoords(double... coords)
 	{
 		if (coords != null && coords.length >= 3)
 		{
@@ -54,6 +54,16 @@ public final class TessellationManager
 			yBaseCoord = coords[1];
 			zBaseCoord = coords[2];
 		}
+	}
+
+	/**
+	 * Resets the base coordinates to [0, 0, 0].
+	 */
+	public static final void resetBaseCoords()
+	{
+		xBaseCoord = 0;
+		yBaseCoord = 0;
+		zBaseCoord = 0;
 	}
 
 	/**
@@ -74,7 +84,7 @@ public final class TessellationManager
 	 * @param icon
 	 * The cubes texture.
 	 */
-	public static void renderCube(double xOffset, double yOffset, double zOffset, double width, double height, double depth, IIcon icon)
+	public static final void renderCube(double xOffset, double yOffset, double zOffset, double width, double height, double depth, IIcon icon)
 	{
 		renderCube(xOffset, yOffset, zOffset, width, height, depth, icon, false, pixel);
 	}
@@ -101,7 +111,7 @@ public final class TessellationManager
 	 * @param scale
 	 * The factor that is used to scale the offsets.
 	 */
-	public static void renderCube(double xOffset, double yOffset, double zOffset, double width, double height, double depth, IIcon icon, boolean renderInside, double scale)
+	public static final void renderCube(double xOffset, double yOffset, double zOffset, double width, double height, double depth, IIcon icon, boolean renderInside, double scale)
 	{
 		renderPositiveXFace(xOffset + width, yOffset, zOffset, height, depth, icon, scale);
 		renderNegativeXFace(xOffset, yOffset, zOffset, height, depth, icon, scale);
@@ -143,7 +153,7 @@ public final class TessellationManager
 	 * @param icon
 	 * The faces texture.
 	 */
-	public static void renderPositiveXFace(double xOffset, double yOffset, double zOffset, double height, double depth, IIcon icon)
+	public static final void renderPositiveXFace(double xOffset, double yOffset, double zOffset, double height, double depth, IIcon icon)
 	{
 		renderPositiveXFace(xOffset, yOffset, zOffset, height, depth, 0, 0, 0, 0, icon, pixel);
 	}
@@ -166,7 +176,7 @@ public final class TessellationManager
 	 * @param scale
 	 * The value to scale the offsets with.
 	 */
-	public static void renderPositiveXFace(double xOffset, double yOffset, double zOffset, double height, double depth, IIcon icon, double scale)
+	public static final void renderPositiveXFace(double xOffset, double yOffset, double zOffset, double height, double depth, IIcon icon, double scale)
 	{
 		renderPositiveXFace(xOffset, yOffset, zOffset, height, depth, 0, 0, 0, 0, icon, scale);
 	}
@@ -197,7 +207,7 @@ public final class TessellationManager
 	 * @param scale
 	 * The value to scale the offsets with.
 	 */
-	public static void renderPositiveXFace(double xOffset, double yOffset, double zOffset, double height, double depth, double uOffset, double vOffset, double uMaxOffset, double vMaxOffset, IIcon icon, double scale)
+	public static final void renderPositiveXFace(double xOffset, double yOffset, double zOffset, double height, double depth, double uOffset, double vOffset, double uMaxOffset, double vMaxOffset, IIcon icon, double scale)
 	{
 		tr.setNormal(1f, 0f, 0f);
 
@@ -250,7 +260,7 @@ public final class TessellationManager
 	 * @param icon
 	 * The faces texture.
 	 */
-	public static void renderNegativeXFace(double xOffset, double yOffset, double zOffset, double height, double depth, IIcon icon)
+	public static final void renderNegativeXFace(double xOffset, double yOffset, double zOffset, double height, double depth, IIcon icon)
 	{
 		renderNegativeXFace(xOffset, yOffset, zOffset, height, depth, 0, 0, 0, 0, icon, pixel);
 	}
@@ -273,7 +283,7 @@ public final class TessellationManager
 	 * @param scale
 	 * The value to scale the offsets with.
 	 */
-	public static void renderNegativeXFace(double xOffset, double yOffset, double zOffset, double height, double depth, IIcon icon, double scale)
+	public static final void renderNegativeXFace(double xOffset, double yOffset, double zOffset, double height, double depth, IIcon icon, double scale)
 	{
 		renderNegativeXFace(xOffset, yOffset, zOffset, height, depth, 0, 0, 0, 0, icon, scale);
 	}
@@ -304,7 +314,7 @@ public final class TessellationManager
 	 * @param scale
 	 * The value to scale the offsets with.
 	 */
-	public static void renderNegativeXFace(double xOffset, double yOffset, double zOffset, double height, double depth, double uOffset, double vOffset, double uMaxOffset, double vMaxOffset, IIcon icon, double scale)
+	public static final void renderNegativeXFace(double xOffset, double yOffset, double zOffset, double height, double depth, double uOffset, double vOffset, double uMaxOffset, double vMaxOffset, IIcon icon, double scale)
 	{
 		tr.setNormal(-1f, 0f, 0f);
 
@@ -357,7 +367,7 @@ public final class TessellationManager
 	 * @param icon
 	 * The faces texture.
 	 */
-	public static void renderPositiveYFace(double xOffset, double yOffset, double zOffset, double width, double depth, IIcon icon)
+	public static final void renderPositiveYFace(double xOffset, double yOffset, double zOffset, double width, double depth, IIcon icon)
 	{
 		renderPositiveYFace(xOffset, yOffset, zOffset, width, depth, 0, 0, 0, 0, icon, pixel);
 	}
@@ -380,7 +390,7 @@ public final class TessellationManager
 	 * @param scale
 	 * The value to scale the offsets with.
 	 */
-	public static void renderPositiveYFace(double xOffset, double yOffset, double zOffset, double width, double depth, IIcon icon, double scale)
+	public static final void renderPositiveYFace(double xOffset, double yOffset, double zOffset, double width, double depth, IIcon icon, double scale)
 	{
 		renderPositiveYFace(xOffset, yOffset, zOffset, width, depth, 0, 0, 0, 0, icon, scale);
 	}
@@ -411,7 +421,7 @@ public final class TessellationManager
 	 * @param scale
 	 * The value to scale the offsets with.
 	 */
-	public static void renderPositiveYFace(double xOffset, double yOffset, double zOffset, double width, double depth, double uOffset, double vOffset, double uMaxOffset, double vMaxOffset, IIcon icon, double scale)
+	public static final void renderPositiveYFace(double xOffset, double yOffset, double zOffset, double width, double depth, double uOffset, double vOffset, double uMaxOffset, double vMaxOffset, IIcon icon, double scale)
 	{
 		tr.setNormal(0f, 1f, 0f);
 
@@ -464,7 +474,7 @@ public final class TessellationManager
 	 * @param icon
 	 * The faces texture.
 	 */
-	public static void renderNegativeYFace(double xOffset, double yOffset, double zOffset, double width, double depth, IIcon icon)
+	public static final void renderNegativeYFace(double xOffset, double yOffset, double zOffset, double width, double depth, IIcon icon)
 	{
 		renderNegativeYFace(xOffset, yOffset, zOffset, width, depth, 0, 0, 0, 0, icon, pixel);
 	}
@@ -487,7 +497,7 @@ public final class TessellationManager
 	 * @param scale
 	 * The value to scale the offsets with.
 	 */
-	public static void renderNegativeYFace(double xOffset, double yOffset, double zOffset, double width, double depth, IIcon icon, double scale)
+	public static final void renderNegativeYFace(double xOffset, double yOffset, double zOffset, double width, double depth, IIcon icon, double scale)
 	{
 		renderNegativeYFace(xOffset, yOffset, zOffset, width, depth, 0, 0, 0, 0, icon, scale);
 	}
@@ -518,7 +528,7 @@ public final class TessellationManager
 	 * @param scale
 	 * The value to scale the offsets with.
 	 */
-	public static void renderNegativeYFace(double xOffset, double yOffset, double zOffset, double width, double depth, double uOffset, double vOffset, double uMaxOffset, double vMaxOffset, IIcon icon, double scale)
+	public static final void renderNegativeYFace(double xOffset, double yOffset, double zOffset, double width, double depth, double uOffset, double vOffset, double uMaxOffset, double vMaxOffset, IIcon icon, double scale)
 	{
 		tr.setNormal(0f, -1f, 0f);
 
@@ -571,7 +581,7 @@ public final class TessellationManager
 	 * @param icon
 	 * The faces texture.
 	 */
-	public static void renderPositiveZFace(double xOffset, double yOffset, double zOffset, double width, double height, IIcon icon)
+	public static final void renderPositiveZFace(double xOffset, double yOffset, double zOffset, double width, double height, IIcon icon)
 	{
 		renderPositiveZFace(xOffset, yOffset, zOffset, width, height, 0, 0, 0, 0, icon, pixel);
 	}
@@ -594,7 +604,7 @@ public final class TessellationManager
 	 * @param scale
 	 * The value to scale the offsets with.
 	 */
-	public static void renderPositiveZFace(double xOffset, double yOffset, double zOffset, double width, double height, IIcon icon, double scale)
+	public static final void renderPositiveZFace(double xOffset, double yOffset, double zOffset, double width, double height, IIcon icon, double scale)
 	{
 		renderPositiveZFace(xOffset, yOffset, zOffset, width, height, 0, 0, 0, 0, icon, scale);
 	}
@@ -625,7 +635,7 @@ public final class TessellationManager
 	 * @param scale
 	 * The value to scale the offsets with.
 	 */
-	public static void renderPositiveZFace(double xOffset, double yOffset, double zOffset, double width, double height, double uOffset, double vOffset, double uMaxOffset, double vMaxOffset, IIcon icon, double scale)
+	public static final void renderPositiveZFace(double xOffset, double yOffset, double zOffset, double width, double height, double uOffset, double vOffset, double uMaxOffset, double vMaxOffset, IIcon icon, double scale)
 	{
 		tr.setNormal(0f, 0f, 1f);
 
@@ -678,7 +688,7 @@ public final class TessellationManager
 	 * @param icon
 	 * The faces texture.
 	 */
-	public static void renderNegativeZFace(double xOffset, double yOffset, double zOffset, double width, double height, IIcon icon)
+	public static final void renderNegativeZFace(double xOffset, double yOffset, double zOffset, double width, double height, IIcon icon)
 	{
 		renderNegativeZFace(xOffset, yOffset, zOffset, width, height, 0, 0, 0, 0, icon, pixel);
 	}
@@ -701,7 +711,7 @@ public final class TessellationManager
 	 * @param scale
 	 * The value to scale the offsets with.
 	 */
-	public static void renderNegativeZFace(double xOffset, double yOffset, double zOffset, double width, double height, IIcon icon, double scale)
+	public static final void renderNegativeZFace(double xOffset, double yOffset, double zOffset, double width, double height, IIcon icon, double scale)
 	{
 		renderNegativeZFace(xOffset, yOffset, zOffset, width, height, 0, 0, 0, 0, icon, scale);
 	}
@@ -732,7 +742,7 @@ public final class TessellationManager
 	 * @param scale
 	 * The value to scale the offsets with.
 	 */
-	public static void renderNegativeZFace(double xOffset, double yOffset, double zOffset, double width, double height, double uOffset, double vOffset, double uMaxOffset, double vMaxOffset, IIcon icon, double scale)
+	public static final void renderNegativeZFace(double xOffset, double yOffset, double zOffset, double width, double height, double uOffset, double vOffset, double uMaxOffset, double vMaxOffset, IIcon icon, double scale)
 	{
 		tr.setNormal(0f, 0f, -1f);
 
@@ -772,7 +782,7 @@ public final class TessellationManager
 	/**
 	 * Sets up the tessellator for drawing quads.
 	 */
-	public static void startDrawingQuads()
+	public static final void startDrawingQuads()
 	{
 		tr.startDrawingQuads();
 	}
@@ -780,7 +790,7 @@ public final class TessellationManager
 	/**
 	 * Draws the data in the tessellator and resets.
 	 */
-	public static void draw()
+	public static final void draw()
 	{
 		tr.draw();
 	}
@@ -791,7 +801,7 @@ public final class TessellationManager
 	 * @param brightness
 	 * The brightness.
 	 */
-	public static void setBrightness(int brightness)
+	public static final void setBrightness(int brightness)
 	{
 		tr.setBrightness(brightness);
 	}
@@ -806,7 +816,7 @@ public final class TessellationManager
 	 * @param b
 	 * The blue channel.
 	 */
-	public static void setColorOpaque(float r, float g, float b)
+	public static final void setColorOpaque(float r, float g, float b)
 	{
 		tr.setColorOpaque_F(r, g, b);
 	}
