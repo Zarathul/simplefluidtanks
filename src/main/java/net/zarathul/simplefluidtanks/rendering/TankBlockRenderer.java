@@ -24,7 +24,7 @@ public class TankBlockRenderer implements ISimpleBlockRenderingHandler
 {
 	public static final int id = RenderingRegistry.getNextAvailableRenderId();
 
-	private static final double flickerOffset = 0.0001d;
+	private static final double flickerOffset = 0.0005d;
 	private static final float yPosLightFactor = 1.0f;
 	private static final float yNegLightFactor = 0.5f;
 	private static final float zLightFactor = 0.8f;
@@ -130,7 +130,7 @@ public class TankBlockRenderer implements ISimpleBlockRenderingHandler
 			TessellationManager.setColorOpaque(yNegLightFactor * red, yNegLightFactor * green, yNegLightFactor * blue);
 			renderer.renderFaceYNeg(block, entity.xCoord, entity.yCoord, entity.zCoord, icon);
 			TessellationManager.setColorOpaque(yPosLightFactor * red, yPosLightFactor * green, yPosLightFactor * blue);
-			renderer.renderFaceYPos(block, entity.xCoord, entity.yCoord - 1, entity.zCoord, icon);
+			renderer.renderFaceYPos(block, entity.xCoord, entity.yCoord - 1 + flickerOffset, entity.zCoord, icon);
 		}
 
 		if (BlockYPOS == null || BlockYPOS.isPartOfTank())
@@ -139,7 +139,7 @@ public class TankBlockRenderer implements ISimpleBlockRenderingHandler
 			TessellationManager.setColorOpaque(yPosLightFactor * red, yPosLightFactor * green, yPosLightFactor * blue);
 			renderer.renderFaceYPos(block, entity.xCoord, entity.yCoord, entity.zCoord, icon);
 			TessellationManager.setColorOpaque(yNegLightFactor * red, yNegLightFactor * green, yNegLightFactor * blue);
-			renderer.renderFaceYNeg(block, entity.xCoord, entity.yCoord + 1, entity.zCoord, icon);
+			renderer.renderFaceYNeg(block, entity.xCoord, entity.yCoord + 1 - flickerOffset, entity.zCoord, icon);
 		}
 
 		if (BlockZNEG == null || BlockZNEG.isPartOfTank())
@@ -147,7 +147,7 @@ public class TankBlockRenderer implements ISimpleBlockRenderingHandler
 			TessellationManager.setBrightness(block.getMixedBrightnessForBlock(world, entity.xCoord, entity.yCoord, entity.zCoord));
 			TessellationManager.setColorOpaque(zLightFactor * red, zLightFactor * green, zLightFactor * blue);
 			renderer.renderFaceZNeg(block, entity.xCoord, entity.yCoord, entity.zCoord, icon);
-			renderer.renderFaceZPos(block, entity.xCoord, entity.yCoord, entity.zCoord - 1, icon);
+			renderer.renderFaceZPos(block, entity.xCoord, entity.yCoord, entity.zCoord - 1 + flickerOffset, icon);
 		}
 
 		if (BlockZPOS == null || BlockZPOS.isPartOfTank())
@@ -155,7 +155,7 @@ public class TankBlockRenderer implements ISimpleBlockRenderingHandler
 			TessellationManager.setBrightness(block.getMixedBrightnessForBlock(world, entity.xCoord, entity.yCoord, entity.zCoord));
 			TessellationManager.setColorOpaque(zLightFactor * red, zLightFactor * green, zLightFactor * blue);
 			renderer.renderFaceZPos(block, entity.xCoord, entity.yCoord, entity.zCoord, icon);
-			renderer.renderFaceZNeg(block, entity.xCoord, entity.yCoord, entity.zCoord + 1, icon);
+			renderer.renderFaceZNeg(block, entity.xCoord, entity.yCoord, entity.zCoord + 1 - flickerOffset, icon);
 		}
 
 		if (BlockXNEG == null || BlockXNEG.isPartOfTank())
@@ -163,7 +163,7 @@ public class TankBlockRenderer implements ISimpleBlockRenderingHandler
 			TessellationManager.setBrightness(block.getMixedBrightnessForBlock(world, entity.xCoord, entity.yCoord, entity.zCoord));
 			TessellationManager.setColorOpaque(xLightFactor * red, xLightFactor * green, xLightFactor * blue);
 			renderer.renderFaceXNeg(block, entity.xCoord, entity.yCoord, entity.zCoord, icon);
-			renderer.renderFaceXPos(block, entity.xCoord - 1, entity.yCoord, entity.zCoord, icon);
+			renderer.renderFaceXPos(block, entity.xCoord - 1 + flickerOffset, entity.yCoord, entity.zCoord, icon);
 		}
 
 		if (BlockXPOS == null || BlockXPOS.isPartOfTank())
@@ -171,7 +171,7 @@ public class TankBlockRenderer implements ISimpleBlockRenderingHandler
 			TessellationManager.setBrightness(block.getMixedBrightnessForBlock(world, entity.xCoord, entity.yCoord, entity.zCoord));
 			TessellationManager.setColorOpaque(xLightFactor * red, xLightFactor * green, xLightFactor * blue);
 			renderer.renderFaceXPos(block, entity.xCoord, entity.yCoord, entity.zCoord, icon);
-			renderer.renderFaceXNeg(block, entity.xCoord + 1, entity.yCoord, entity.zCoord, icon);
+			renderer.renderFaceXNeg(block, entity.xCoord + 1 - flickerOffset, entity.yCoord, entity.zCoord, icon);
 		}
 	}
 
@@ -208,7 +208,7 @@ public class TankBlockRenderer implements ISimpleBlockRenderingHandler
 			renderer.uvRotateBottom = 0;
 			TessellationManager.setColorOpaque(yPosLightFactor * red, yPosLightFactor * green, yPosLightFactor * blue);
 			renderer.uvRotateTop = 3;
-			renderer.renderFaceYPos(block, entity.xCoord, entity.yCoord - 1, entity.zCoord, icons[entity.getTextureIndex(Direction.YPOS)]);
+			renderer.renderFaceYPos(block, entity.xCoord, entity.yCoord - 1 + flickerOffset, entity.zCoord, icons[entity.getTextureIndex(Direction.YPOS)]);
 			renderer.uvRotateTop = 0;
 		}
 
@@ -221,7 +221,7 @@ public class TankBlockRenderer implements ISimpleBlockRenderingHandler
 			renderer.uvRotateTop = 0;
 			TessellationManager.setColorOpaque(yNegLightFactor * red, yNegLightFactor * green, yNegLightFactor * blue);
 			renderer.uvRotateBottom = 3;
-			renderer.renderFaceYNeg(block, entity.xCoord, entity.yCoord + 1, entity.zCoord, icons[entity.getTextureIndex(Direction.YPOS)]);
+			renderer.renderFaceYNeg(block, entity.xCoord, entity.yCoord + 1 - flickerOffset, entity.zCoord, icons[entity.getTextureIndex(Direction.YPOS)]);
 			renderer.uvRotateBottom = 0;
 		}
 
@@ -230,7 +230,7 @@ public class TankBlockRenderer implements ISimpleBlockRenderingHandler
 			TessellationManager.setBrightness(block.getMixedBrightnessForBlock(world, entity.xCoord, entity.yCoord, entity.zCoord));
 			TessellationManager.setColorOpaque(zLightFactor * red, zLightFactor * green, zLightFactor * blue);
 			renderer.renderFaceZNeg(block, entity.xCoord, entity.yCoord, entity.zCoord, icons[entity.getTextureIndex(Direction.ZNEG)]);
-			renderer.renderFaceZPos(block, entity.xCoord, entity.yCoord, entity.zCoord - 1, icons[entity.getTextureIndex(Direction.ZPOS)]);
+			renderer.renderFaceZPos(block, entity.xCoord, entity.yCoord, entity.zCoord - 1 + flickerOffset, icons[entity.getTextureIndex(Direction.ZPOS)]);
 		}
 
 		if (!connections[Direction.ZPOS])
@@ -238,7 +238,7 @@ public class TankBlockRenderer implements ISimpleBlockRenderingHandler
 			TessellationManager.setBrightness(block.getMixedBrightnessForBlock(world, entity.xCoord, entity.yCoord, entity.zCoord));
 			TessellationManager.setColorOpaque(zLightFactor * red, zLightFactor * green, zLightFactor * blue);
 			renderer.renderFaceZPos(block, entity.xCoord, entity.yCoord, entity.zCoord, icons[entity.getTextureIndex(Direction.ZPOS)]);
-			renderer.renderFaceZNeg(block, entity.xCoord, entity.yCoord, entity.zCoord + 1, icons[entity.getTextureIndex(Direction.ZNEG)]);
+			renderer.renderFaceZNeg(block, entity.xCoord, entity.yCoord, entity.zCoord + 1 - flickerOffset, icons[entity.getTextureIndex(Direction.ZNEG)]);
 		}
 
 		if (!connections[Direction.XNEG])
@@ -246,7 +246,7 @@ public class TankBlockRenderer implements ISimpleBlockRenderingHandler
 			TessellationManager.setBrightness(block.getMixedBrightnessForBlock(world, entity.xCoord, entity.yCoord, entity.zCoord));
 			TessellationManager.setColorOpaque(xLightFactor * red, xLightFactor * green, xLightFactor * blue);
 			renderer.renderFaceXNeg(block, entity.xCoord, entity.yCoord, entity.zCoord, icons[entity.getTextureIndex(Direction.XNEG)]);
-			renderer.renderFaceXPos(block, entity.xCoord - 1, entity.yCoord, entity.zCoord, icons[entity.getTextureIndex(Direction.XPOS)]);
+			renderer.renderFaceXPos(block, entity.xCoord - 1 + flickerOffset, entity.yCoord, entity.zCoord, icons[entity.getTextureIndex(Direction.XPOS)]);
 		}
 
 		if (!connections[Direction.XPOS])
@@ -254,7 +254,7 @@ public class TankBlockRenderer implements ISimpleBlockRenderingHandler
 			TessellationManager.setBrightness(block.getMixedBrightnessForBlock(world, entity.xCoord, entity.yCoord, entity.zCoord));
 			TessellationManager.setColorOpaque(xLightFactor * red, xLightFactor * green, xLightFactor * blue);
 			renderer.renderFaceXPos(block, entity.xCoord, entity.yCoord, entity.zCoord, icons[entity.getTextureIndex(Direction.XPOS)]);
-			renderer.renderFaceXNeg(block, entity.xCoord + 1, entity.yCoord, entity.zCoord, icons[entity.getTextureIndex(Direction.XNEG)]);
+			renderer.renderFaceXNeg(block, entity.xCoord + 1 - flickerOffset, entity.yCoord, entity.zCoord, icons[entity.getTextureIndex(Direction.XNEG)]);
 		}
 	}
 
