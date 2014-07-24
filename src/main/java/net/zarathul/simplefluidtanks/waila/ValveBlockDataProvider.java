@@ -76,7 +76,7 @@ public final class ValveBlockDataProvider implements IWailaDataProvider
 
 					if (fluid != null)
 					{
-						fluidName = fluid.getLocalizedName();
+						fluidName = fluid.getLocalizedName(fluidStack);
 					}
 				}
 
