@@ -51,12 +51,12 @@ public final class Registry
 	 */
 	public static final void register(IWailaRegistrar registrar)
 	{
-		registrar.addConfig("Simple Fluid Tanks", WAILA_TANK_COUNT_KEY, StatCollector.translateToLocal(WAILA_TANK_COUNT_LOCA));
-		registrar.addConfig("Simple Fluid Tanks", WAILA_TOTAL_CAPACITY_KEY, StatCollector.translateToLocal(WAILA_TOTAL_CAPACITY_LOCA));
-		registrar.addConfig("Simple Fluid Tanks", WAILA_TANK_CAPACITY_KEY, StatCollector.translateToLocal(WAILA_TANK_CAPACITY_LOCA));
-		registrar.addConfig("Simple Fluid Tanks", WAILA_TANK_LINKED_KEY, StatCollector.translateToLocal(WAILA_TANK_LINKED_LOCA));
-		registrar.addConfig("Simple Fluid Tanks", WAILA_CAPACITY_IN_MILLIBUCKETS_KEY, StatCollector.translateToLocal(WAILA_CAPACITY_IN_MILLIBUCKETS_LOCA));
-		registrar.addConfig("Simple Fluid Tanks", WAILA_FLUID_NAME_KEY, StatCollector.translateToLocal(WAILA_FLUID_NAME_LOCA));
+		registrar.addConfig(SimpleFluidTanks.MOD_READABLE_NAME, WAILA_TANK_COUNT_KEY, StatCollector.translateToLocal(WAILA_TANK_COUNT_LOCA));
+		registrar.addConfig(SimpleFluidTanks.MOD_READABLE_NAME, WAILA_TOTAL_CAPACITY_KEY, StatCollector.translateToLocal(WAILA_TOTAL_CAPACITY_LOCA));
+		registrar.addConfig(SimpleFluidTanks.MOD_READABLE_NAME, WAILA_TANK_CAPACITY_KEY, StatCollector.translateToLocal(WAILA_TANK_CAPACITY_LOCA));
+		registrar.addConfig(SimpleFluidTanks.MOD_READABLE_NAME, WAILA_TANK_LINKED_KEY, StatCollector.translateToLocal(WAILA_TANK_LINKED_LOCA));
+		registrar.addConfig(SimpleFluidTanks.MOD_READABLE_NAME, WAILA_CAPACITY_IN_MILLIBUCKETS_KEY, StatCollector.translateToLocal(WAILA_CAPACITY_IN_MILLIBUCKETS_LOCA));
+		registrar.addConfig(SimpleFluidTanks.MOD_READABLE_NAME, WAILA_FLUID_NAME_KEY, StatCollector.translateToLocal(WAILA_FLUID_NAME_LOCA));
 
 		registrar.registerBodyProvider(ValveBlockDataProvider.instance, ValveBlockEntity.class);
 		registrar.registerBodyProvider(TankBlockDataProvider.instance, TankBlockEntity.class);

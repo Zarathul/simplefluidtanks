@@ -7,7 +7,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
@@ -16,6 +15,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.IFluidContainerItem;
 import net.zarathul.simplefluidtanks.SimpleFluidTanks;
 import net.zarathul.simplefluidtanks.common.Direction;
 import net.zarathul.simplefluidtanks.common.Utils;
@@ -229,7 +229,7 @@ public class ValveBlock extends WrenchableBlock
 	}
 
 	/**
-	 * Handles fluid containers used on the {@link ValveBlock}. Currently only buckets (empty and filled) are supported,
+	 * Handles fluid containers used on the {@link ValveBlock}.
 	 * 
 	 * @param world
 	 * The world.
@@ -250,23 +250,21 @@ public class ValveBlock extends WrenchableBlock
 
 		if (valveEntity != null)
 		{
-			// only deal with buckets, all other fluid containers need to use pipes
-			if (FluidContainerRegistry.isBucket(equippedItemStack))
+			if (FluidContainerRegistry.isEmptyContainer(equippedItemStack) ||
+				Utils.isEmptyComplexContainer(equippedItemStack) ||
+				(equippedItemStack.getItem() instanceof IFluidContainerItem && player.isSneaking()))
 			{
-				if (FluidContainerRegistry.isEmptyContainer(equippedItemStack))
-				{
-					fillBucketFromTank(world, x, y, z, player, equippedItemStack, valveEntity);
-				}
-				else
-				{
-					drainBucketIntoTank(valveEntity, player, equippedItemStack);
-				}
+				fillContainerFromTank(world, x, y, z, player, equippedItemStack, valveEntity);
+			}
+			else
+			{
+				drainContainerIntoTank(world, x, y, z, player, equippedItemStack, valveEntity);
 			}
 		}
 	}
 
 	/**
-	 * Fills an empty bucket with the liquid contained in the multiblock tank.
+	 * Fills an empty container with the liquid contained in the multiblock tank.
 	 * 
 	 * @param world
 	 * The world.
@@ -277,64 +275,137 @@ public class ValveBlock extends WrenchableBlock
 	 * @param z
 	 * The {@link ValveBlock}s z-coordinate.
 	 * @param player
-	 * The player using the bucket.
+	 * The player holding the container.
 	 * @param equippedItemStack
-	 * The {@link ItemStack} that contains the bucket.
+	 * The container {@link ItemStack}.
 	 * @param valveEntity
 	 * The affected {@link ValveBlock}s {@link TileEntity} ({@link ValveBlockEntity}).
 	 */
-	private void fillBucketFromTank(World world, int x, int y, int z, EntityPlayer player, ItemStack equippedItemStack, ValveBlockEntity valveEntity)
+	private void fillContainerFromTank(World world, int x, int y, int z, EntityPlayer player, ItemStack equippedItemStack, ValveBlockEntity valveEntity)
 	{
-		// fill empty bucket with liquid from the tank if it has stored enough
-		if (valveEntity.getFluidAmount() >= FluidContainerRegistry.BUCKET_VOLUME)
+		if (valveEntity.getFluid() == null) return;
+
+		int containerCapacity = 0;
+		IFluidContainerItem containerItem = null;
+
+		// determine the containers capacity
+		if (equippedItemStack.getItem() instanceof IFluidContainerItem)
 		{
-			FluidStack oneBucketOfFluid = new FluidStack(valveEntity.getFluid(), FluidContainerRegistry.BUCKET_VOLUME);
-			ItemStack filledBucket = FluidContainerRegistry.fillFluidContainer(oneBucketOfFluid, FluidContainerRegistry.EMPTY_BUCKET);
+			containerItem = (IFluidContainerItem) equippedItemStack.getItem();
+		}
+		else
+		{
+			containerCapacity = Utils.getFluidContainerCapacity(valveEntity.getFluid(), equippedItemStack);
+		}
 
-			if (filledBucket != null && valveEntity.drain(null, oneBucketOfFluid, true).amount == FluidContainerRegistry.BUCKET_VOLUME)
-			{
-				// add filled bucket to player inventory or drop it to the ground if the inventory is full
-				if (!player.inventory.addItemStackToInventory(filledBucket))
-				{
-					world.spawnEntityInWorld(new EntityItem(world, x + 0.5D, y + 1.5D, z + 0.5D, filledBucket));
-				}
-				else if (player instanceof EntityPlayerMP)
-				{
-					((EntityPlayerMP) player).sendContainerToPlayer(player.inventoryContainer);
-				}
-			}
+		if (containerItem != null)
+		{
+			// handle IFluidContainerItem items
 
-			if (--equippedItemStack.stackSize <= 0)
+			int fillFluidAmount = containerItem.fill(equippedItemStack, valveEntity.getFluid(), true);
+			valveEntity.drain(null, fillFluidAmount, true);
+		}
+		else if (containerCapacity > 0)
+		{
+			// handle drain/fill by exchange items
+
+			ItemStack filledContainer = FluidContainerRegistry.fillFluidContainer(valveEntity.getFluid(), equippedItemStack);
+
+			if (filledContainer != null)
 			{
-				player.inventory.setInventorySlotContents(player.inventory.currentItem, (ItemStack) null);
+				FluidStack drainedFluid = valveEntity.drain(null, containerCapacity, true);
+
+				if (drainedFluid != null && drainedFluid.amount == containerCapacity)
+				{
+					if (--equippedItemStack.stackSize <= 0)
+					{
+						player.inventory.setInventorySlotContents(player.inventory.currentItem, null);
+					}
+
+					// add filled container to player inventory or drop it to the ground if the inventory is full
+
+					if (!player.inventory.addItemStackToInventory(filledContainer))
+					{
+						world.spawnEntityInWorld(new EntityItem(world, x + 0.5D, y + 1.5D, z + 0.5D, filledContainer));
+					}
+					else if (player instanceof EntityPlayerMP)
+					{
+						((EntityPlayerMP) player).sendContainerToPlayer(player.inventoryContainer);
+					}
+				}
 			}
 		}
 	}
 
 	/**
-	 * Drains the contents of a bucket into the multiblock tank.
+	 * Drains the contents of a container into the multiblock tank.
 	 * 
+	 * @param world
+	 * The world.
+	 * @param x
+	 * The {@link ValveBlock}s x-coordinate.
+	 * @param y
+	 * The {@link ValveBlock}s y-coordinate.
+	 * @param z
+	 * The {@link ValveBlock}s z-coordinate.
+	 * @param player
+	 * The player holding the container.
+	 * @param equippedItemStack
+	 * The container {@link ItemStack}.
 	 * @param valveEntity
 	 * The affected {@link ValveBlock}s {@link TileEntity} ({@link ValveBlockEntity}).
-	 * @param player
-	 * The player using the bucket.
-	 * @param equippedItemStack
-	 * The {@link ItemStack} that contains the bucket.
 	 */
-	private void drainBucketIntoTank(ValveBlockEntity valveEntity, EntityPlayer player, ItemStack equippedItemStack)
+	private void drainContainerIntoTank(World world, int x, int y, int z, EntityPlayer player, ItemStack equippedItemStack, ValveBlockEntity valveEntity)
 	{
-		// fill the liquid from the bucket into the tank
-		if ((valveEntity.getFluidAmount() == 0 || valveEntity.getFluid().isFluidEqual(equippedItemStack)) && valveEntity.getCapacity() - valveEntity.getFluidAmount() >= FluidContainerRegistry.BUCKET_VOLUME)
-		{
-			FluidStack fluidFromBucket = FluidContainerRegistry.getFluidForFilledItem(equippedItemStack);
+		IFluidContainerItem containerItem = null;
+		FluidStack containerFluid = null;
 
-			if (valveEntity.fill(null, fluidFromBucket, true) == FluidContainerRegistry.BUCKET_VOLUME)
+		// determine the amount of fluid in the container
+		if (equippedItemStack.getItem() instanceof IFluidContainerItem)
+		{
+			containerItem = (IFluidContainerItem) equippedItemStack.getItem();
+			containerFluid = containerItem.getFluid(equippedItemStack);
+		}
+		else
+		{
+			containerFluid = FluidContainerRegistry.getFluidForFilledItem(equippedItemStack);
+		}
+
+		// fill the liquid from the container into the tank
+		if (containerItem != null)
+		{
+			// handle IFluidContainerItem items
+
+			FluidStack tankFluid = valveEntity.getFluid();
+
+			if (tankFluid == null || tankFluid.isFluidEqual(containerFluid))
 			{
-				// don't consume the filled bucket in creative mode
-				if (!player.capabilities.isCreativeMode)
-				{
-					player.inventory.setInventorySlotContents(player.inventory.currentItem, new ItemStack(Items.bucket));
-				}
+				int drainAmount = Math.min(valveEntity.getCapacity() - valveEntity.getFluidAmount(), containerFluid.amount);
+				// drain the fluid from the container first because the amount per drain could be limited
+				FluidStack drainFluid = containerItem.drain(equippedItemStack, drainAmount, true);
+				valveEntity.fill(null, drainFluid, true);
+			}
+		}
+		else if (valveEntity.fill(null, containerFluid, true) > 0 && !player.capabilities.isCreativeMode) // don't consume the container contents in creative mode 
+		{
+			// handle drain/fill by exchange items
+
+			ItemStack emptyContainer = Utils.getEmptyFluidContainer(equippedItemStack);
+
+			if (--equippedItemStack.stackSize <= 0)
+			{
+				player.inventory.setInventorySlotContents(player.inventory.currentItem, null);
+			}
+
+			// add emptied container to player inventory or drop it to the ground if the inventory is full
+
+			if (!player.inventory.addItemStackToInventory(emptyContainer))
+			{
+				world.spawnEntityInWorld(new EntityItem(world, x + 0.5D, y + 1.5D, z + 0.5D, emptyContainer));
+			}
+			else if (player instanceof EntityPlayerMP)
+			{
+				((EntityPlayerMP) player).sendContainerToPlayer(player.inventoryContainer);
 			}
 		}
 	}
