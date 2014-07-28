@@ -8,6 +8,7 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
+import net.minecraft.world.EnumSkyBlock;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.zarathul.simplefluidtanks.blocks.TankBlock;
@@ -15,6 +16,7 @@ import net.zarathul.simplefluidtanks.blocks.ValveBlock;
 import net.zarathul.simplefluidtanks.common.BlockCoords;
 import net.zarathul.simplefluidtanks.common.Direction;
 import net.zarathul.simplefluidtanks.common.Utils;
+import net.zarathul.simplefluidtanks.configuration.Config;
 import net.zarathul.simplefluidtanks.rendering.ConnectedTexturesHelper;
 
 /**
@@ -26,6 +28,11 @@ public class TankBlockEntity extends TileEntity
 	 * The filling level of the tank in percent.
 	 */
 	private int fillPercentage;
+
+	/**
+	 * The maximum light level the {@link TankBlock} will emit. This is set based on contained fluids luminosity.
+	 */
+	private int maxLightLevel;
 
 	/**
 	 * Indicates if the {@link TankBlock} is part of a multiblock tank aka. connected to a {@link ValveBlock}.
@@ -41,6 +48,10 @@ public class TankBlockEntity extends TileEntity
 	 * The ids of the textures to use when rendering.
 	 */
 	private int[] textureIds;
+
+	/**
+	 * Contains information on which side there are other {@link TankBlock}s that belong to the same multiblock structure.
+	 */
 	private boolean[] connections;
 
 	/**
@@ -49,6 +60,7 @@ public class TankBlockEntity extends TileEntity
 	public TankBlockEntity()
 	{
 		fillPercentage = 0;
+		maxLightLevel = 0;
 		isPartOfTank = false;
 		valveCoords = null;
 		textureIds = new int[] { 0, 0, 0, 0, 0, 0 };
@@ -61,6 +73,7 @@ public class TankBlockEntity extends TileEntity
 		super.readFromNBT(tag);
 
 		fillPercentage = tag.getByte("FillPercentage");
+		maxLightLevel = tag.getByte("MaxLightLevel");
 		isPartOfTank = tag.getBoolean("isPartOfTank");
 
 		if (isPartOfTank)
@@ -85,6 +98,7 @@ public class TankBlockEntity extends TileEntity
 		super.writeToNBT(tag);
 
 		tag.setByte("FillPercentage", (byte) fillPercentage);
+		tag.setByte("MaxLightLevel", (byte) maxLightLevel);
 		tag.setBoolean("isPartOfTank", isPartOfTank);
 
 		if (valveCoords != null)
@@ -117,6 +131,33 @@ public class TankBlockEntity extends TileEntity
 		readFromNBT(packet.func_148857_g());
 
 		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+		worldObj.updateLightByType(EnumSkyBlock.Block, xCoord, yCoord, zCoord);
+	}
+
+	/**
+	 * Gets the light level the {@link TankBlock} should emit (maximum light level scaled by the fill percentage).
+	 * 
+	 * @return
+	 * The light level.
+	 */
+	public int getLightLevel()
+	{
+		if (!Config.tanksEmitLightEnabled) return 0;
+
+		int lightLevel = (Config.scaleEmittedLightEnabled) ? (int) ((maxLightLevel / 100.0d) * fillPercentage) : maxLightLevel;
+
+		return lightLevel;
+	}
+
+	/**
+	 * Sets the maximum light level the block can emit.
+	 * 
+	 * @param level
+	 * The maximum light level.
+	 */
+	public void setMaxLightLevel(int level)
+	{
+		maxLightLevel = level;
 	}
 
 	/**
@@ -227,8 +268,9 @@ public class TankBlockEntity extends TileEntity
 
 		if (percentageChanged || forceBlockUpdate)
 		{
-			worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);
 			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+			worldObj.updateLightByType(EnumSkyBlock.Block, xCoord, yCoord, zCoord);
+			worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);
 		}
 
 		return percentageChanged;
@@ -355,6 +397,7 @@ public class TankBlockEntity extends TileEntity
 	public void disconnect(boolean suppressBlockUpdates)
 	{
 		isPartOfTank = false;
+		maxLightLevel = 0;
 		fillPercentage = 0;
 		valveCoords = null;
 		Arrays.fill(textureIds, 0);
@@ -362,8 +405,9 @@ public class TankBlockEntity extends TileEntity
 
 		if (!suppressBlockUpdates)
 		{
-			worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);
 			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+			worldObj.updateLightByType(EnumSkyBlock.Block, xCoord, yCoord, zCoord);
+			worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);
 		}
 	}
 }

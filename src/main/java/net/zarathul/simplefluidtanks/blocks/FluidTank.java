@@ -65,11 +65,8 @@ public class FluidTank implements IFluidTank
 	{
 		setCapacity(nbt.getInteger("Capacity"));
 
-		if (!nbt.hasKey("Empty"))
-		{
-			FluidStack loadedFluid = FluidStack.loadFluidStackFromNBT(nbt);
-			setFluid(loadedFluid);
-		}
+		FluidStack loadedFluid = (nbt.hasKey("Empty")) ? null : FluidStack.loadFluidStackFromNBT(nbt);
+		setFluid(loadedFluid);
 
 		return this;
 	}

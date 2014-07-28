@@ -64,6 +64,8 @@ public final class Config
 
 	private static final int defaultBucketsPerTank = 16;
 	private static final boolean defaultWrenchEnabled = true;
+	private static final boolean defaultTanksEmitLightEnabled = false;
+	private static final boolean defaultScaleEmittedLightEnabled = false;
 	private static final float defaultTankBlockHardness = 50;
 	private static final float defaultTankBlockResistance = 1000;
 	private static final float defaultValveBlockHardness = 50;
@@ -73,6 +75,8 @@ public final class Config
 
 	public static int bucketsPerTank;
 	public static boolean wrenchEnabled;
+	public static boolean tanksEmitLightEnabled;
+	public static boolean scaleEmittedLightEnabled;
 	public static float tankBlockHardness;
 	public static float tankBlockResistance;
 	public static float valveBlockHardness;
@@ -158,6 +162,16 @@ public final class Config
 		prop = config.get(CATEGORY_BLOCKS_TANKBLOCK, blockResistanceKey, defaultTankBlockResistance, blockResistanceComment);
 		prop.setLanguageKey("configui.blockResistance").setRequiresMcRestart(true).setMinValue(1.0).setMaxValue(1000000.0);
 		tankBlockResistance = (float) prop.getDouble();
+
+		prop = config.get(CATEGORY_BLOCKS_TANKBLOCK, "tanksEmitLight", defaultTanksEmitLightEnabled);
+		prop.comment = StatCollector.translateToLocal("configui.tanksEmitLight.tooltip");
+		prop.setLanguageKey("configui.tanksEmitLight").setRequiresWorldRestart(true);
+		tanksEmitLightEnabled = prop.getBoolean();
+
+		prop = config.get(CATEGORY_BLOCKS_TANKBLOCK, "scaleEmittedLight", defaultScaleEmittedLightEnabled);
+		prop.comment = StatCollector.translateToLocal("configui.scaleEmittedLight.tooltip");
+		prop.setLanguageKey("configui.scaleEmittedLight").setRequiresWorldRestart(true);
+		scaleEmittedLightEnabled = prop.getBoolean();
 
 		prop = config.get(CATEGORY_BLOCKS_VALVEBLOCK, blockHardnessKey, defaultValveBlockHardness, blockHardnessComment);
 		prop.setLanguageKey("configui.blockHardness").setRequiresMcRestart(true).setMinValue(-1.0).setMaxValue(1000000.0);

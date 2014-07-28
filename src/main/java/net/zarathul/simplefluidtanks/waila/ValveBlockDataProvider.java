@@ -9,8 +9,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.StatCollector;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidStack;
 import net.zarathul.simplefluidtanks.blocks.ValveBlock;
 import net.zarathul.simplefluidtanks.tileentities.ValveBlockEntity;
 
@@ -53,31 +51,27 @@ public final class ValveBlockDataProvider implements IWailaDataProvider
 
 			if (config.getConfig(Registry.WAILA_TOTAL_CAPACITY_KEY))
 			{
-				int totalFillPercentage = MathHelper.clamp_int((int) ((long) valveEntity.getFluidAmount() * 100 / valveEntity.getCapacity()), 0, 100);
+				int amount = valveEntity.getFluidAmount();
+				int capacity = valveEntity.getCapacity();
+				int totalFillPercentage = (capacity > 0) ? MathHelper.clamp_int((int) ((long) amount * 100 / capacity), 0, 100) : 0;
 
 				if (config.getConfig(Registry.WAILA_CAPACITY_IN_MILLIBUCKETS_KEY))
 				{
-					currenttip.add(StatCollector.translateToLocalFormatted(Registry.WAILA_TOOLTIP_VALVE_CAPACITY, valveEntity.getFluidAmount(), valveEntity.getCapacity(), "mB", totalFillPercentage));
+					currenttip.add(StatCollector.translateToLocalFormatted(Registry.WAILA_TOOLTIP_VALVE_CAPACITY, amount, capacity, "mB", totalFillPercentage));
 				}
 				else
 				{
-					currenttip.add(StatCollector.translateToLocalFormatted(Registry.WAILA_TOOLTIP_VALVE_CAPACITY, valveEntity.getFluidAmount() / 1000, valveEntity.getCapacity() / 1000, "B", totalFillPercentage));
+					currenttip.add(StatCollector.translateToLocalFormatted(Registry.WAILA_TOOLTIP_VALVE_CAPACITY, amount / 1000, capacity / 1000, "B", totalFillPercentage));
 				}
 			}
 
 			if (config.getConfig(Registry.WAILA_FLUID_NAME_KEY))
 			{
-				String fluidName = StatCollector.translateToLocal(Registry.WAILA_TOOLTIP_FLUID_EMPTY);
-				FluidStack fluidStack = valveEntity.getFluid();
+				String fluidName = valveEntity.getLocalizedFluidName();
 
-				if (fluidStack != null)
+				if (fluidName == null)
 				{
-					Fluid fluid = fluidStack.getFluid();
-
-					if (fluid != null)
-					{
-						fluidName = fluid.getLocalizedName(fluidStack);
-					}
+					fluidName = StatCollector.translateToLocal(Registry.WAILA_TOOLTIP_FLUID_EMPTY);
 				}
 
 				currenttip.add(StatCollector.translateToLocalFormatted(Registry.WAILA_TOOLTIP_FLUID, fluidName));

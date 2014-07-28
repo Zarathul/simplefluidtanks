@@ -270,6 +270,50 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	}
 
 	/**
+	 * Gets the luminosity of the fluid in the multiblock tank.
+	 * 
+	 * @return The luminosity of the fluid.
+	 */
+	public int getFluidLuminosity()
+	{
+		FluidStack storedFluid = this.internalTank.getFluid();
+
+		if (storedFluid != null)
+		{
+			Fluid fluid = storedFluid.getFluid();
+
+			if (fluid != null)
+			{
+				return fluid.getLuminosity();
+			}
+		}
+
+		return 0;
+	}
+
+	/**
+	 * Gets the localized name of the fluid in the multiblock tank.
+	 * 
+	 * @return The localized name of the fluid.
+	 */
+	public String getLocalizedFluidName()
+	{
+		FluidStack storedFluid = this.internalTank.getFluid();
+
+		if (storedFluid != null)
+		{
+			Fluid fluid = storedFluid.getFluid();
+
+			if (fluid != null)
+			{
+				return fluid.getLocalizedName(storedFluid);
+			}
+		}
+
+		return null;
+	}
+
+	/**
 	 * Gets the fluid in the multiblock tank.
 	 * 
 	 * @return A {@link FluidStack} representing the fluid in the multiblock tank.
@@ -405,6 +449,8 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 			tanksBeforeDisband.addAll(tankPriorities.values());
 		}
 
+		FluidStack fluidInTank = internalTank.getFluid();
+		FluidStack spilledFluid = (fluidInTank != null) ? fluidInTank.copy() : null;
 		tankPriorities.clear();
 		linkedTankCount = 0;
 		tankFacingSides = 0;
@@ -417,6 +463,11 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 			// triggers onNeighborTileChange on neighboring blocks, this is needed for comparators to work
 			worldObj.notifyBlockChange(xCoord, yCoord, zCoord, SimpleFluidTanks.valveBlock);
+
+			if (spilledFluid != null)
+			{
+				FluidEvent.fireEvent(new FluidEvent.FluidSpilledEvent(spilledFluid, this.worldObj, this.xCoord, this.yCoord, this.zCoord));
+			}
 		}
 	}
 
@@ -540,6 +591,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 				if (tankEntity != null)
 				{
 					tankEntity.setFillPercentage(percentage, forceBlockUpdates);
+					tankEntity.setMaxLightLevel(getFluidLuminosity());
 				}
 			}
 		}
@@ -566,6 +618,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 					if (tankEntity != null)
 					{
 						tankEntity.setFillPercentage(fillPercentage, forceBlockUpdates);
+						tankEntity.setMaxLightLevel(getFluidLuminosity());
 					}
 				}
 
