@@ -3,7 +3,6 @@ package net.zarathul.simplefluidtanks.common;
 import java.util.ArrayList;
 
 import net.minecraft.block.Block;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.StatCollector;

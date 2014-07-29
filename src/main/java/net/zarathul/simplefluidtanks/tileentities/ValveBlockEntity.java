@@ -599,6 +599,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	{
 		// returned amount is mb(milli buckets)
 		int amountToDistribute = internalTank.getFluidAmount();
+		int lightLevel = getFluidLuminosity();
 
 		if (amountToDistribute == 0 || amountToDistribute == internalTank.getCapacity()) // there is nothing to distribute or the internal tank is full (no fill percentage calculations needed)
 		{
@@ -611,7 +612,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 				if (tankEntity != null)
 				{
 					tankEntity.setFillPercentage(percentage, forceBlockUpdates);
-					tankEntity.setMaxLightLevel(getFluidLuminosity());
+					tankEntity.setMaxLightLevel(lightLevel);
 				}
 			}
 		}
@@ -638,7 +639,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 					if (tankEntity != null)
 					{
 						tankEntity.setFillPercentage(fillPercentage, forceBlockUpdates);
-						tankEntity.setMaxLightLevel(getFluidLuminosity());
+						tankEntity.setMaxLightLevel(lightLevel);
 					}
 				}
 
