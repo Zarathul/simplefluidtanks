@@ -269,7 +269,6 @@ public class TankBlockEntity extends TileEntity
 		if (percentageChanged || forceBlockUpdate)
 		{
 			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-			worldObj.updateLightByType(EnumSkyBlock.Block, xCoord, yCoord, zCoord);
 			worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);
 		}
 
@@ -406,7 +405,6 @@ public class TankBlockEntity extends TileEntity
 		if (!suppressBlockUpdates)
 		{
 			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-			worldObj.updateLightByType(EnumSkyBlock.Block, xCoord, yCoord, zCoord);
 			worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);
 		}
 	}

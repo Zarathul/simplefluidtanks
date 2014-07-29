@@ -169,15 +169,13 @@ public final class Utils
 	{
 		if (fluid == null || container == null) return 0;
 
-		Item containerItem = container.getItem();
-
 		FluidContainerData[] containerData = FluidContainerRegistry.getRegisteredFluidContainerData();
 
 		if (containerData != null)
 		{
 			for (FluidContainerData data : containerData)
 			{
-				if (((data.emptyContainer != null && data.emptyContainer.getItem() == containerItem) || (data.filledContainer != null && data.filledContainer.getItem() == containerItem)) && fluid.isFluidEqual(data.fluid))
+				if ((container.isItemEqual(data.emptyContainer) || container.isItemEqual(data.filledContainer)) && fluid.isFluidEqual(data.fluid))
 				{
 					return data.fluid.amount;
 				}
@@ -201,15 +199,13 @@ public final class Utils
 
 		FluidStack containerFluid = FluidContainerRegistry.getFluidForFilledItem(filledContainer);
 
-		Item containerItem = filledContainer.getItem();
-
 		FluidContainerData[] containerData = FluidContainerRegistry.getRegisteredFluidContainerData();
 
 		if (containerData != null)
 		{
 			for (FluidContainerData data : containerData)
 			{
-				if ((data.filledContainer != null && data.filledContainer.getItem() == containerItem) && containerFluid.isFluidEqual(data.fluid))
+				if (filledContainer.isItemEqual(data.filledContainer) && containerFluid.isFluidEqual(data.fluid))
 				{
 					return data.emptyContainer.copy();
 				}

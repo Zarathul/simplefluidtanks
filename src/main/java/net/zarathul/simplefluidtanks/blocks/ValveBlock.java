@@ -162,7 +162,8 @@ public class ValveBlock extends WrenchableBlock
 
 			if (equippedItemStack != null)
 			{
-				if (FluidContainerRegistry.isContainer(equippedItemStack))	// react to fluid containers
+				// react to fluid containers
+				if (equippedItemStack.getItem() instanceof IFluidContainerItem || FluidContainerRegistry.isContainer(equippedItemStack))
 				{
 					handleContainerClick(world, x, y, z, player, equippedItemStack);
 
@@ -285,27 +286,15 @@ public class ValveBlock extends WrenchableBlock
 	{
 		if (valveEntity.getFluid() == null) return;
 
-		int containerCapacity = 0;
-		IFluidContainerItem containerItem = null;
-
-		// determine the containers capacity
 		if (equippedItemStack.getItem() instanceof IFluidContainerItem)
-		{
-			containerItem = (IFluidContainerItem) equippedItemStack.getItem();
-		}
-		else
-		{
-			containerCapacity = Utils.getFluidContainerCapacity(valveEntity.getFluid(), equippedItemStack);
-		}
-
-		if (containerItem != null)
 		{
 			// handle IFluidContainerItem items
 
+			IFluidContainerItem containerItem = (IFluidContainerItem) equippedItemStack.getItem();
 			int fillFluidAmount = containerItem.fill(equippedItemStack, valveEntity.getFluid(), true);
 			valveEntity.drain(null, fillFluidAmount, true);
 		}
-		else if (containerCapacity > 0)
+		else
 		{
 			// handle drain/fill by exchange items
 
@@ -313,24 +302,28 @@ public class ValveBlock extends WrenchableBlock
 
 			if (filledContainer != null)
 			{
-				FluidStack drainedFluid = valveEntity.drain(null, containerCapacity, true);
+				int containerCapacity = Utils.getFluidContainerCapacity(valveEntity.getFluid(), equippedItemStack);
 
-				if (drainedFluid != null && drainedFluid.amount == containerCapacity)
+				if (containerCapacity > 0)
 				{
-					if (--equippedItemStack.stackSize <= 0)
+					FluidStack drainedFluid = valveEntity.drain(null, containerCapacity, true);
+					if (drainedFluid != null && drainedFluid.amount == containerCapacity)
 					{
-						player.inventory.setInventorySlotContents(player.inventory.currentItem, null);
-					}
+						if (--equippedItemStack.stackSize <= 0)
+						{
+							player.inventory.setInventorySlotContents(player.inventory.currentItem, null);
+						}
 
-					// add filled container to player inventory or drop it to the ground if the inventory is full
+						// add filled container to player inventory or drop it to the ground if the inventory is full
 
-					if (!player.inventory.addItemStackToInventory(filledContainer))
-					{
-						world.spawnEntityInWorld(new EntityItem(world, x + 0.5D, y + 1.5D, z + 0.5D, filledContainer));
-					}
-					else if (player instanceof EntityPlayerMP)
-					{
-						((EntityPlayerMP) player).sendContainerToPlayer(player.inventoryContainer);
+						if (!player.inventory.addItemStackToInventory(filledContainer))
+						{
+							world.spawnEntityInWorld(new EntityItem(world, x + 0.5D, y + 1.5D, z + 0.5D, filledContainer));
+						}
+						else if (player instanceof EntityPlayerMP)
+						{
+							((EntityPlayerMP) player).sendContainerToPlayer(player.inventoryContainer);
+						}
 					}
 				}
 			}
@@ -357,55 +350,49 @@ public class ValveBlock extends WrenchableBlock
 	 */
 	private void drainContainerIntoTank(World world, int x, int y, int z, EntityPlayer player, ItemStack equippedItemStack, ValveBlockEntity valveEntity)
 	{
-		IFluidContainerItem containerItem = null;
-		FluidStack containerFluid = null;
+		if (valveEntity.isFull()) return;
 
-		// determine the amount of fluid in the container
 		if (equippedItemStack.getItem() instanceof IFluidContainerItem)
-		{
-			containerItem = (IFluidContainerItem) equippedItemStack.getItem();
-			containerFluid = containerItem.getFluid(equippedItemStack);
-		}
-		else
-		{
-			containerFluid = FluidContainerRegistry.getFluidForFilledItem(equippedItemStack);
-		}
-
-		// fill the liquid from the container into the tank
-		if (containerItem != null)
 		{
 			// handle IFluidContainerItem items
 
+			IFluidContainerItem containerItem = (IFluidContainerItem) equippedItemStack.getItem();
+			FluidStack containerFluid = containerItem.getFluid(equippedItemStack);
 			FluidStack tankFluid = valveEntity.getFluid();
 
 			if (tankFluid == null || tankFluid.isFluidEqual(containerFluid))
 			{
-				int drainAmount = Math.min(valveEntity.getCapacity() - valveEntity.getFluidAmount(), containerFluid.amount);
+				int drainAmount = Math.min(valveEntity.getRemainingCapacity(), containerFluid.amount);
 				// drain the fluid from the container first because the amount per drain could be limited
 				FluidStack drainFluid = containerItem.drain(equippedItemStack, drainAmount, true);
 				valveEntity.fill(null, drainFluid, true);
 			}
 		}
-		else if (valveEntity.fill(null, containerFluid, true) > 0 && !player.capabilities.isCreativeMode) // don't consume the container contents in creative mode 
+		else
 		{
 			// handle drain/fill by exchange items
 
-			ItemStack emptyContainer = Utils.getEmptyFluidContainer(equippedItemStack);
+			FluidStack containerFluid = FluidContainerRegistry.getFluidForFilledItem(equippedItemStack);
 
-			if (--equippedItemStack.stackSize <= 0)
+			if (valveEntity.fill(null, containerFluid, true) > 0 && !player.capabilities.isCreativeMode) // don't consume the container contents in creative mode
 			{
-				player.inventory.setInventorySlotContents(player.inventory.currentItem, null);
-			}
+				ItemStack emptyContainer = Utils.getEmptyFluidContainer(equippedItemStack);
 
-			// add emptied container to player inventory or drop it to the ground if the inventory is full
+				if (--equippedItemStack.stackSize <= 0)
+				{
+					player.inventory.setInventorySlotContents(player.inventory.currentItem, null);
+				}
 
-			if (!player.inventory.addItemStackToInventory(emptyContainer))
-			{
-				world.spawnEntityInWorld(new EntityItem(world, x + 0.5D, y + 1.5D, z + 0.5D, emptyContainer));
-			}
-			else if (player instanceof EntityPlayerMP)
-			{
-				((EntityPlayerMP) player).sendContainerToPlayer(player.inventoryContainer);
+				// add emptied container to player inventory or drop it to the ground if the inventory is full
+
+				if (!player.inventory.addItemStackToInventory(emptyContainer))
+				{
+					world.spawnEntityInWorld(new EntityItem(world, x + 0.5D, y + 1.5D, z + 0.5D, emptyContainer));
+				}
+				else if (player instanceof EntityPlayerMP)
+				{
+					((EntityPlayerMP) player).sendContainerToPlayer(player.inventoryContainer);
+				}
 			}
 		}
 	}

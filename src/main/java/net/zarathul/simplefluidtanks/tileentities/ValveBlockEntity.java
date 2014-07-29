@@ -270,6 +270,16 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	}
 
 	/**
+	 * Gets the remaining capacity of the tank.
+	 * 
+	 * @return The remaining amount of fluid the tank can take in until it is full.
+	 */
+	public int getRemainingCapacity()
+	{
+		return internalTank.getRemainingCapacity();
+	}
+
+	/**
 	 * Gets the luminosity of the fluid in the multiblock tank.
 	 * 
 	 * @return The luminosity of the fluid.
@@ -321,6 +331,16 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	public FluidStack getFluid()
 	{
 		return internalTank.getFluid();
+	}
+
+	/**
+	 * Checks if the tank is full.
+	 * 
+	 * @return <code>true</code> if the tank is full, otherwise <code>false</code>.
+	 */
+	public boolean isFull()
+	{
+		return internalTank.isFull();
 	}
 
 	/**
