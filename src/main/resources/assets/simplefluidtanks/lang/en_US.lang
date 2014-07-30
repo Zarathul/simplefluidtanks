@@ -30,8 +30,6 @@ configui.category.wrench=Wrench
 # ConfigUI Element Labels
 configui.bucketsPerTank=Buckets Per Tank
 configui.wrenchEnabled=Enable Wrench Recipe
-configui.tanksEmitLight=Tanks Can Emit Light
-configui.scaleEmittedLight=Scale The Emitted Light
 configui.blockHardness=Block Hardness
 configui.blockResistance=Block Blast Resistance
 configui.shapeless=Shapeless
@@ -45,8 +43,6 @@ configui.bucketsPerTank.tooltip=The amount of fluid a tank can hold measured in 
 configui.wrenchEnabled.tooltip=Set to false to disable the wrench recipe.
 
 configui.category.blocks.tooltip=Block properties.
-configui.tanksEmitLight.tooltip=Controls whether tank blocks should emit light if the contained fluid normally does.
-configui.scaleEmittedLight.tooltip=Controls whether the light emitted by tank blocks should be dependent on the amount of contained fluid.
 configui.blockHardness.tooltip=The amount of hits the block can take before it breaks (-1 = indestructible).
 configui.blockResistance.tooltip=The blocks resistance to explosions.
 

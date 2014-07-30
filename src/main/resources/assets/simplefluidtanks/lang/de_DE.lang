@@ -33,8 +33,6 @@ configui.category.wrench=Schraubenschlüssel
 # ConfigUI Element Labels
 configui.bucketsPerTank=Eimer pro Tank
 configui.wrenchEnabled=Schraubenschlüsselrezept aktiv
-configui.tanksEmitLight=Tanks können Licht abstrahlen
-configui.scaleEmittedLight=Skaliere das abgestrahlte Licht
 configui.blockHardness=Härte des Blocks
 configui.blockResistance=Explosionswiderstand des Blocks
 configui.shapeless=Formlos
@@ -44,8 +42,6 @@ configui.pattern=Muster
 
 # ConfigUI Element ToolTips
 configui.category.misc.tooltip=Grundlegende Einstellungen.
-configui.tanksEmitLight.tooltip=Legt fest, ob Tankblöcke Licht abstrahlen sollen wenn die enthaltene Flüssigkeit dies normalerweise tut.
-configui.scaleEmittedLight.tooltip=Legt fest, ob das abgestrahlte Licht von der Menge der enthaltenen Flüssigkeit abhängig sein soll.
 configui.bucketsPerTank.tooltip=Die Menge an Flüssigkeit die ein Tank aufnehmen kann, gemessen in Eimern.
 configui.wrenchEnabled.tooltip=Auf "false" setzen um das Rezept für den Schraubenschlüssel zu deaktivieren.
 

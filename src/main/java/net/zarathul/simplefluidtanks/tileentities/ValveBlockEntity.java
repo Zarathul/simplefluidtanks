@@ -612,7 +612,6 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 				if (tankEntity != null)
 				{
 					tankEntity.setFillPercentage(percentage, forceBlockUpdates);
-					tankEntity.setMaxLightLevel(lightLevel);
 				}
 			}
 		}
@@ -639,7 +638,6 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 					if (tankEntity != null)
 					{
 						tankEntity.setFillPercentage(fillPercentage, forceBlockUpdates);
-						tankEntity.setMaxLightLevel(lightLevel);
 					}
 				}
 

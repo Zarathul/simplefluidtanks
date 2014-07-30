@@ -163,19 +163,6 @@ public class TankBlock extends WrenchableBlock
 	}
 
 	@Override
-	public int getLightValue(IBlockAccess world, int x, int y, int z)
-	{
-		TankBlockEntity tankEntity = Utils.getTileEntityAt(world, TankBlockEntity.class, x, y, z);
-
-		if (tankEntity != null)
-		{
-			return tankEntity.getLightLevel();
-		}
-
-		return super.getLightValue(world, x, y, z);
-	}
-
-	@Override
 	protected void handleToolWrenchClick(World world, int x, int y, int z, EntityPlayer player, ItemStack equippedItemStack)
 	{
 		// dismantle aka. instantly destroy the tank and drop the

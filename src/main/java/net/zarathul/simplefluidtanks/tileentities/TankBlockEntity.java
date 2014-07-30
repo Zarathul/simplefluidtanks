@@ -30,11 +30,6 @@ public class TankBlockEntity extends TileEntity
 	private int fillPercentage;
 
 	/**
-	 * The maximum light level the {@link TankBlock} will emit. This is set based on contained fluids luminosity.
-	 */
-	private int maxLightLevel;
-
-	/**
 	 * Indicates if the {@link TankBlock} is part of a multiblock tank aka. connected to a {@link ValveBlock}.
 	 */
 	private boolean isPartOfTank;
@@ -60,7 +55,6 @@ public class TankBlockEntity extends TileEntity
 	public TankBlockEntity()
 	{
 		fillPercentage = 0;
-		maxLightLevel = 0;
 		isPartOfTank = false;
 		valveCoords = null;
 		textureIds = new int[] { 0, 0, 0, 0, 0, 0 };
@@ -73,7 +67,6 @@ public class TankBlockEntity extends TileEntity
 		super.readFromNBT(tag);
 
 		fillPercentage = tag.getByte("FillPercentage");
-		maxLightLevel = tag.getByte("MaxLightLevel");
 		isPartOfTank = tag.getBoolean("isPartOfTank");
 
 		if (isPartOfTank)
@@ -98,7 +91,6 @@ public class TankBlockEntity extends TileEntity
 		super.writeToNBT(tag);
 
 		tag.setByte("FillPercentage", (byte) fillPercentage);
-		tag.setByte("MaxLightLevel", (byte) maxLightLevel);
 		tag.setBoolean("isPartOfTank", isPartOfTank);
 
 		if (valveCoords != null)
@@ -129,35 +121,7 @@ public class TankBlockEntity extends TileEntity
 	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet)
 	{
 		readFromNBT(packet.func_148857_g());
-
 		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-		worldObj.updateLightByType(EnumSkyBlock.Block, xCoord, yCoord, zCoord);
-	}
-
-	/**
-	 * Gets the light level the {@link TankBlock} should emit (maximum light level scaled by the fill percentage).
-	 * 
-	 * @return
-	 * The light level.
-	 */
-	public int getLightLevel()
-	{
-		if (!Config.tanksEmitLightEnabled) return 0;
-
-		int lightLevel = (Config.scaleEmittedLightEnabled) ? (int) ((maxLightLevel / 100.0d) * fillPercentage) : maxLightLevel;
-
-		return lightLevel;
-	}
-
-	/**
-	 * Sets the maximum light level the block can emit.
-	 * 
-	 * @param level
-	 * The maximum light level.
-	 */
-	public void setMaxLightLevel(int level)
-	{
-		maxLightLevel = level;
 	}
 
 	/**
@@ -396,7 +360,6 @@ public class TankBlockEntity extends TileEntity
 	public void disconnect(boolean suppressBlockUpdates)
 	{
 		isPartOfTank = false;
-		maxLightLevel = 0;
 		fillPercentage = 0;
 		valveCoords = null;
 		Arrays.fill(textureIds, 0);
