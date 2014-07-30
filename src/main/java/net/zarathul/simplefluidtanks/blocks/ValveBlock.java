@@ -298,7 +298,7 @@ public class ValveBlock extends WrenchableBlock
 		{
 			// handle drain/fill by exchange items
 
-			ItemStack filledContainer = FluidContainerRegistry.fillFluidContainer(valveEntity.getFluid(), equippedItemStack);
+			ItemStack filledContainer = Utils.fillFluidContainer(valveEntity.getFluid(), equippedItemStack);
 
 			if (filledContainer != null)
 			{
@@ -372,7 +372,7 @@ public class ValveBlock extends WrenchableBlock
 		{
 			// handle drain/fill by exchange items
 
-			FluidStack containerFluid = FluidContainerRegistry.getFluidForFilledItem(equippedItemStack);
+			FluidStack containerFluid = Utils.getFluidForFilledItem(equippedItemStack);
 
 			if (valveEntity.fill(null, containerFluid, true) > 0 && !player.capabilities.isCreativeMode) // don't consume the container contents in creative mode
 			{

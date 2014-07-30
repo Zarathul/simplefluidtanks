@@ -3,6 +3,7 @@ package net.zarathul.simplefluidtanks.common;
 import java.util.ArrayList;
 
 import net.minecraft.block.Block;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.StatCollector;
@@ -21,6 +22,19 @@ import com.google.common.collect.Iterables;
  */
 public final class Utils
 {
+	/* 
+	 * Forge registers bottles with a capacity of 1000mb which makes no sense to me. In Vanilla a cauldron that can hold 1 bucket 
+	 * of water fills 3 bottles. But because 333mb would result in tiny amounts of fluid left behind in the tank, I chose 250mb. 
+	*/
+	public static final int BOTTLE_VOLUME = 250;
+
+	public static final ItemStack FILLED_BOTTLE = new ItemStack(Items.potionitem);
+
+	/**
+	 * Chances that other mods register fluid containers while the game is already running are low. So we cache the container data.
+	 */
+	private static FluidContainerData[] cachedFluidContainerData = null;
+
 	/**
 	 * Gets the {@link TileEntity} at the specified coordinates, casted to the specified type.
 	 * 
@@ -168,16 +182,20 @@ public final class Utils
 	{
 		if (fluid == null || container == null) return 0;
 
-		FluidContainerData[] containerData = FluidContainerRegistry.getRegisteredFluidContainerData();
+		// override default bottle volume
+		if (container.isItemEqual(FluidContainerRegistry.EMPTY_BOTTLE) || container.isItemEqual(FILLED_BOTTLE)) return BOTTLE_VOLUME;
 
-		if (containerData != null)
+		if (cachedFluidContainerData == null)
 		{
-			for (FluidContainerData data : containerData)
+			// cache container data if we haven't done it already
+			cachedFluidContainerData = FluidContainerRegistry.getRegisteredFluidContainerData();
+		}
+
+		for (FluidContainerData data : cachedFluidContainerData)
+		{
+			if ((container.isItemEqual(data.emptyContainer) || container.isItemEqual(data.filledContainer)) && fluid.isFluidEqual(data.fluid))
 			{
-				if ((container.isItemEqual(data.emptyContainer) || container.isItemEqual(data.filledContainer)) && fluid.isFluidEqual(data.fluid))
-				{
-					return data.fluid.amount;
-				}
+				return data.fluid.amount;
 			}
 		}
 
@@ -198,16 +216,17 @@ public final class Utils
 
 		FluidStack containerFluid = FluidContainerRegistry.getFluidForFilledItem(filledContainer);
 
-		FluidContainerData[] containerData = FluidContainerRegistry.getRegisteredFluidContainerData();
-
-		if (containerData != null)
+		if (cachedFluidContainerData == null)
 		{
-			for (FluidContainerData data : containerData)
+			// cache container data if we haven't done it already
+			cachedFluidContainerData = FluidContainerRegistry.getRegisteredFluidContainerData();
+		}
+
+		for (FluidContainerData data : cachedFluidContainerData)
+		{
+			if (filledContainer.isItemEqual(data.filledContainer) && containerFluid.isFluidEqual(data.fluid))
 			{
-				if (filledContainer.isItemEqual(data.filledContainer) && containerFluid.isFluidEqual(data.fluid))
-				{
-					return data.emptyContainer.copy();
-				}
+				return data.emptyContainer.copy();
 			}
 		}
 
@@ -231,9 +250,67 @@ public final class Utils
 			IFluidContainerItem container = (IFluidContainerItem) item.getItem();
 			FluidStack containerFluid = container.getFluid(item);
 
-			return (containerFluid == null || (containerFluid != null && containerFluid.amount == 0));
+			return (containerFluid == null || containerFluid.amount == 0);
 		}
 
 		return false;
+	}
+
+	/**
+	 * Wrapper method for FluidContainerRegistry.fillFluidContainer that overrides the default bottle volume.
+	 * 
+	 * @param fluid
+	 * FluidStack containing the type and amount of fluid to fill.
+	 * @param container
+	 * ItemStack representing the empty container.
+	 * @return
+	 * Filled container if successful, otherwise null.
+	 */
+	public static ItemStack fillFluidContainer(FluidStack fluid, ItemStack container)
+	{
+		if (container == null || fluid == null) return null;
+
+		// override default bottle volume
+		if (container.isItemEqual(FluidContainerRegistry.EMPTY_BOTTLE))
+		{
+			if (cachedFluidContainerData == null)
+			{
+				// cache container data if we haven't done it already
+				cachedFluidContainerData = FluidContainerRegistry.getRegisteredFluidContainerData();
+			}
+
+			for (FluidContainerData data : cachedFluidContainerData)
+			{
+				if (container.isItemEqual(data.emptyContainer) && fluid.isFluidEqual(data.fluid) && fluid.amount >= BOTTLE_VOLUME)
+				{
+					return data.filledContainer.copy();
+				}
+			}
+		}
+
+		return FluidContainerRegistry.fillFluidContainer(fluid, container);
+	}
+
+	/**
+	 * Wrapper method for FluidContainerRegistry.getFluidForFilledItem that overrides the default bottle volume.
+	 * 
+	 * @param filledContainer
+	 * The fluid container.
+	 * @return
+	 * FluidStack representing stored fluid.
+	 */
+	public static FluidStack getFluidForFilledItem(ItemStack filledContainer)
+	{
+		if (filledContainer == null) return null;
+
+		FluidStack fluid = FluidContainerRegistry.getFluidForFilledItem(filledContainer);
+
+		// override default bottle volume
+		if (fluid != null && filledContainer.isItemEqual(FILLED_BOTTLE))
+		{
+			fluid.amount = BOTTLE_VOLUME;
+		}
+
+		return fluid;
 	}
 }

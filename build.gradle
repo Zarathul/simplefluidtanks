@@ -23,7 +23,7 @@ buildscript
 
 apply plugin: 'forge'
 
-version = "1.7.10-1.2.0.2"
+version = "1.7.10-1.2.0.3"
 group= "net.zarathul.simplefluidtanks" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "simplefluidtanks"
 
