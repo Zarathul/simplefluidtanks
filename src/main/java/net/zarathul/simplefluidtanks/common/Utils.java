@@ -164,71 +164,6 @@ public final class Utils
 	}
 
 	/**
-	 * Gets the capacity for a registered fluid container.
-	 * 
-	 * @param fluid
-	 * The fluid the container can hold.
-	 * @param container
-	 * The container.
-	 * @return
-	 * The containers capacity or 0 if the container could not be found.
-	 */
-	public static final int getFluidContainerCapacity(FluidStack fluid, ItemStack container)
-	{
-		if (fluid == null || container == null) return 0;
-
-		// override default bottle volume
-		if (Config.overrideBottleVolume > 0 && (container.isItemEqual(FluidContainerRegistry.EMPTY_BOTTLE) || container.isItemEqual(FILLED_BOTTLE))) return Config.overrideBottleVolume;
-
-		if (cachedFluidContainerData == null)
-		{
-			// cache container data if we haven't done it already
-			cachedFluidContainerData = FluidContainerRegistry.getRegisteredFluidContainerData();
-		}
-
-		for (FluidContainerData data : cachedFluidContainerData)
-		{
-			if ((container.isItemEqual(data.emptyContainer) || container.isItemEqual(data.filledContainer)) && fluid.isFluidEqual(data.fluid))
-			{
-				return data.fluid.amount;
-			}
-		}
-
-		return 0;
-	}
-
-	/**
-	 * Gets the empty container for a filled one.
-	 * 
-	 * @param filledContainer
-	 * The filled container.
-	 * @return
-	 * The empty container or null if no empty container could be found.
-	 */
-	public static final ItemStack getEmptyFluidContainer(ItemStack filledContainer)
-	{
-		if (filledContainer == null) return null;
-
-		FluidStack containerFluid = FluidContainerRegistry.getFluidForFilledItem(filledContainer);
-
-		if (cachedFluidContainerData == null)
-		{
-			// cache container data if we haven't done it already
-			cachedFluidContainerData = FluidContainerRegistry.getRegisteredFluidContainerData();
-		}
-
-		for (FluidContainerData data : cachedFluidContainerData)
-		{
-			if (filledContainer.isItemEqual(data.filledContainer) && containerFluid.isFluidEqual(data.fluid))
-			{
-				return data.emptyContainer.copy();
-			}
-		}
-
-		return null;
-	}
-
-	/**
 	 * Checks if an item is a container that implements {@code IFluidContainerItem} and is empty.
 	 * 
 	 * @param item
@@ -252,7 +187,27 @@ public final class Utils
 	}
 
 	/**
-	 * Wrapper method for FluidContainerRegistry.fillFluidContainer that overrides the default bottle volume.
+	 * Wrapper method for FluidContainerRegistry.getContainerCapacity that overrides the default bottle volume if configured.
+	 * 
+	 * @param fluid
+	 * The fluid the container can hold.
+	 * @param container
+	 * The container.
+	 * @return
+	 * The containers capacity or 0 if the container could not be found.
+	 */
+	public static final int getFluidContainerCapacity(FluidStack fluid, ItemStack container)
+	{
+		if (fluid == null || container == null) return 0;
+
+		// override default bottle volume
+		if (Config.overrideBottleVolume > 0 && (container.isItemEqual(FluidContainerRegistry.EMPTY_BOTTLE) || container.isItemEqual(FILLED_BOTTLE))) return Config.overrideBottleVolume;
+
+		return FluidContainerRegistry.getContainerCapacity(fluid, container);
+	}
+
+	/**
+	 * Wrapper method for FluidContainerRegistry.fillFluidContainer that overrides the default bottle volume if configured.
 	 * 
 	 * @param fluid
 	 * FluidStack containing the type and amount of fluid to fill.

@@ -54,8 +54,8 @@ configui.blockResistance.tooltip=Der Widerstand des Blocks gegen Explosionen.
 configui.category.recipes.tooltip=Handwerksrezepte.
 configui.shapeless.tooltip=Ist dieser Wert auf "true" gesetzt, wird das Muster ignoriert.
 configui.yield.tooltip=Die Menge an Blöcken/Gegenständen die das Rezept ergiebt.
-configui.components.tooltip=Die Blöcke/Gegenstände die für das Rezept benötigt werden (Format: [MusterId], [ModId], [GegenstandsId]).
-configui.pattern.tooltip=Das Muster des Rezepts für die Werkbank ("-" = leere Position).
+configui.components.tooltip=Die Blöcke/Gegenstände die für das Rezept benötigt werden. Format: [MusterId], [ModId], [GegenstandsId]. Benutze "-" als MusterId für formlose Rezepte. Benutze "oreDict" als ModId für Ore Dictionary Gegenstände.
+configui.pattern.tooltip=Das Muster des Rezepts für die Werkbank. Benutze "-" für leere Positionen.
 
 # Waila option labels
 waila.tankCount=Tank Anzahl

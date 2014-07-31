@@ -3,7 +3,6 @@ package net.zarathul.simplefluidtanks.configuration;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import net.minecraft.item.ItemStack;
 import net.zarathul.simplefluidtanks.common.Utils;
 import cpw.mods.fml.common.registry.GameRegistry;
 
@@ -81,21 +80,27 @@ public class Recipe
 			}
 		}
 
+		Object componentArg = null;
+		char id = 0;
+
 		for (RecipeComponent component : components)
 		{
-			ItemStack componentItem = GameRegistry.findItemStack(component.modId, component.itemId, 1);
+			componentArg = (!component.modId.equals(RecipeComponent.OREDICT_IDENTIFIER)) ? GameRegistry.findItemStack(component.modId, component.itemId, 1) : component.itemId;
 
-			if (componentItem == null) return null;
+			if (componentArg == null) return null;
 
 			if (!isShapeless)
 			{
 				if (component.identifier == null || component.identifier.length() == 0) return null;
 
-				char id = component.identifier.charAt(0);
-				args.add((id == RecipePattern.EMPTY_SLOT) ? ' ' : id);
+				id = component.identifier.charAt(0);
+
+				if (id == RecipeComponent.EMPTY_IDENTIFIER.charAt(0)) return null;
+
+				args.add(id);
 			}
 
-			args.add(componentItem);
+			args.add(componentArg);
 		}
 
 		return args.toArray();

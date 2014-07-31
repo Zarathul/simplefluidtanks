@@ -376,7 +376,7 @@ public class ValveBlock extends WrenchableBlock
 
 			if (valveEntity.fill(null, containerFluid, true) > 0 && !player.capabilities.isCreativeMode) // don't consume the container contents in creative mode
 			{
-				ItemStack emptyContainer = Utils.getEmptyFluidContainer(equippedItemStack);
+				ItemStack emptyContainer = FluidContainerRegistry.drainFluidContainer(equippedItemStack);
 
 				if (--equippedItemStack.stackSize <= 0)
 				{

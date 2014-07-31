@@ -5,6 +5,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.launchwrapper.LogWrapper;
 import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraftforge.oredict.ShapedOreRecipe;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
 import net.zarathul.simplefluidtanks.SimpleFluidTanks;
 import net.zarathul.simplefluidtanks.blocks.FakeFluidBlock;
 import net.zarathul.simplefluidtanks.blocks.TankBlock;
@@ -155,11 +157,11 @@ public final class Registry
 
 				if (recipe.isShapeless)
 				{
-					GameRegistry.addShapelessRecipe(result, registrationArgs);
+					GameRegistry.addRecipe(new ShapelessOreRecipe(result, registrationArgs));
 				}
 				else
 				{
-					GameRegistry.addShapedRecipe(result, registrationArgs);
+					GameRegistry.addRecipe(new ShapedOreRecipe(result, false, registrationArgs));
 				}
 
 				return true;

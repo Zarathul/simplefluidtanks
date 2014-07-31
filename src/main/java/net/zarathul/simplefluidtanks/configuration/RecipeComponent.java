@@ -6,6 +6,7 @@ package net.zarathul.simplefluidtanks.configuration;
 public class RecipeComponent
 {
 	public static final String EMPTY_IDENTIFIER = "-";
+	public static final String OREDICT_IDENTIFIER = "oreDict";
 
 	public final String identifier;
 	public final String modId;
