@@ -12,6 +12,7 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidContainerRegistry.FluidContainerData;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidContainerItem;
+import net.zarathul.simplefluidtanks.configuration.Config;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
@@ -22,12 +23,6 @@ import com.google.common.collect.Iterables;
  */
 public final class Utils
 {
-	/* 
-	 * Forge registers bottles with a capacity of 1000mb which makes no sense to me. In Vanilla a cauldron that can hold 1 bucket 
-	 * of water fills 3 bottles. But because 333mb would result in tiny amounts of fluid left behind in the tank, I chose 250mb. 
-	*/
-	public static final int BOTTLE_VOLUME = 250;
-
 	public static final ItemStack FILLED_BOTTLE = new ItemStack(Items.potionitem);
 
 	/**
@@ -183,7 +178,7 @@ public final class Utils
 		if (fluid == null || container == null) return 0;
 
 		// override default bottle volume
-		if (container.isItemEqual(FluidContainerRegistry.EMPTY_BOTTLE) || container.isItemEqual(FILLED_BOTTLE)) return BOTTLE_VOLUME;
+		if (Config.overrideBottleVolume > 0 && (container.isItemEqual(FluidContainerRegistry.EMPTY_BOTTLE) || container.isItemEqual(FILLED_BOTTLE))) return Config.overrideBottleVolume;
 
 		if (cachedFluidContainerData == null)
 		{
@@ -271,7 +266,7 @@ public final class Utils
 		if (container == null || fluid == null) return null;
 
 		// override default bottle volume
-		if (container.isItemEqual(FluidContainerRegistry.EMPTY_BOTTLE))
+		if (Config.overrideBottleVolume > 0 && container.isItemEqual(FluidContainerRegistry.EMPTY_BOTTLE))
 		{
 			if (cachedFluidContainerData == null)
 			{
@@ -281,7 +276,7 @@ public final class Utils
 
 			for (FluidContainerData data : cachedFluidContainerData)
 			{
-				if (container.isItemEqual(data.emptyContainer) && fluid.isFluidEqual(data.fluid) && fluid.amount >= BOTTLE_VOLUME)
+				if (container.isItemEqual(data.emptyContainer) && fluid.isFluidEqual(data.fluid) && fluid.amount >= Config.overrideBottleVolume)
 				{
 					return data.filledContainer.copy();
 				}
@@ -306,9 +301,9 @@ public final class Utils
 		FluidStack fluid = FluidContainerRegistry.getFluidForFilledItem(filledContainer);
 
 		// override default bottle volume
-		if (fluid != null && filledContainer.isItemEqual(FILLED_BOTTLE))
+		if (fluid != null && Config.overrideBottleVolume > 0 && filledContainer.isItemEqual(FILLED_BOTTLE))
 		{
-			fluid.amount = BOTTLE_VOLUME;
+			fluid.amount = Config.overrideBottleVolume;
 		}
 
 		return fluid;

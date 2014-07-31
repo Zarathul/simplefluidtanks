@@ -5,6 +5,7 @@ import java.io.File;
 import net.minecraft.util.StatCollector;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.zarathul.simplefluidtanks.SimpleFluidTanks;
 import net.zarathul.simplefluidtanks.registration.Registry;
 
@@ -63,6 +64,7 @@ public final class Config
 	);
 
 	private static final int defaultBucketsPerTank = 16;
+	private static final int defaultOverrideBottleVolume = 250;
 	private static final boolean defaultWrenchEnabled = true;
 	private static final float defaultTankBlockHardness = 50;
 	private static final float defaultTankBlockResistance = 1000;
@@ -72,6 +74,7 @@ public final class Config
 	// settings
 
 	public static int bucketsPerTank;
+	public static int overrideBottleVolume;
 	public static boolean wrenchEnabled;
 	public static float tankBlockHardness;
 	public static float tankBlockResistance;
@@ -138,6 +141,11 @@ public final class Config
 		prop.comment = StatCollector.translateToLocal("configui.wrenchEnabled.tooltip");
 		prop.setLanguageKey("configui.wrenchEnabled").setRequiresMcRestart(true);
 		wrenchEnabled = prop.getBoolean();
+
+		prop = config.get(CATEGORY_MISC, "overrideBottleVolume", defaultOverrideBottleVolume);
+		prop.comment = StatCollector.translateToLocal("configui.overrideBottleVolume.tooltip");
+		prop.setLanguageKey("configui.overrideBottleVolume").setMinValue(0).setMaxValue(FluidContainerRegistry.BUCKET_VOLUME);
+		overrideBottleVolume = prop.getInt();
 
 		// blocks
 
