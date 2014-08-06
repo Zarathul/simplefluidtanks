@@ -84,7 +84,7 @@ public final class Config
 	public static Recipe valveBlockRecipe;
 	public static Recipe wrenchRecipe;
 
-	// config file categories, comments etc.
+	// config file categories
 
 	public static final String CATEGORY_MISC = Configuration.CATEGORY_GENERAL + Configuration.CATEGORY_SPLITTER + "misc";
 	public static final String CATEGORY_BLOCKS = Configuration.CATEGORY_GENERAL + Configuration.CATEGORY_SPLITTER + "blocks";

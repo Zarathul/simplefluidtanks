@@ -3,6 +3,7 @@ package net.zarathul.simplefluidtanks.blocks;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.fluids.Fluid;
 import net.zarathul.simplefluidtanks.common.BlockCoords;
 import net.zarathul.simplefluidtanks.common.Direction;
 import net.zarathul.simplefluidtanks.common.Utils;
@@ -49,5 +50,34 @@ public class FakeFluidBlock extends Block
 		}
 
 		return !connections[side];
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public int getMixedBrightnessForBlock(IBlockAccess blockAccess, int x, int y, int z)
+	{
+		int mixedBrightness = super.getMixedBrightnessForBlock(blockAccess, x, y, z);
+		int blockLight = (mixedBrightness >> 4) & 15;
+		int skyLight = (mixedBrightness >> 20);
+
+		TankBlockEntity tankEntity = Utils.getTileEntityAt(blockAccess, TankBlockEntity.class, x, y, z);
+
+		if (tankEntity != null)
+		{
+			Fluid fluid = tankEntity.getFluid();
+
+			if (fluid != null)
+			{
+				int luminostiy = fluid.getLuminosity();
+
+				if (luminostiy > blockLight)
+				{
+					// replace the block light with the fluids luminosity
+					return skyLight << 20 | luminostiy << 4;
+				}
+			}
+		}
+
+		return mixedBrightness;
 	}
 }
