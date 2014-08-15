@@ -68,7 +68,7 @@ public class Recipe
 	 * The generated arguments or <code>null</code> if a component of the recipe
 	 * could't be found or if an component identifier is missing.
 	 */
-	public Object[] getRecipeRegistrationArgs()
+	public Object[] getRegistrationArgs()
 	{
 		ArrayList<Object> args = new ArrayList<Object>();
 

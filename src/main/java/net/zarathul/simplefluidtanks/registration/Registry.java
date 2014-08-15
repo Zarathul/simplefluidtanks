@@ -149,7 +149,7 @@ public final class Registry
 
 		try
 		{
-			registrationArgs = recipe.getRecipeRegistrationArgs();
+			registrationArgs = recipe.getRegistrationArgs();
 
 			if (registrationArgs != null && recipe.yield > 0)
 			{
