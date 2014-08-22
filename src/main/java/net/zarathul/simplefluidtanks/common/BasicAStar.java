@@ -249,7 +249,7 @@ public class BasicAStar
 	}
 
 	/**
-	 * The algorithm uses to get the cost to move from a {@link Node} to one of its adjacent {@link Node}s.
+	 * The algorithm used to determine the cost to move from a {@link Node} to one of its adjacent {@link Node}s.
 	 * 
 	 * @param from
 	 * The coordinates of the {@link Node} to move from.
