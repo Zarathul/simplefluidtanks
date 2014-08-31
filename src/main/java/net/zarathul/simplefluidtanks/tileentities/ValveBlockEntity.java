@@ -146,6 +146,12 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	}
 
 	@Override
+	public boolean canUpdate()
+	{
+		return false;
+	}
+
+	@Override
 	public int fill(ForgeDirection from, FluidStack fillFluid, boolean doFill)
 	{
 		if (!worldObj.isRemote && hasTanks())

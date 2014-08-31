@@ -122,6 +122,12 @@ public class TankBlockEntity extends TileEntity
 		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 	}
 
+	@Override
+	public boolean canUpdate()
+	{
+		return false;
+	}
+
 	/**
 	 * Checks if the {@link TankBlock} is part of a multiblock tank.
 	 * 
