@@ -13,6 +13,7 @@ import net.minecraft.util.IIcon;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidContainerItem;
@@ -314,11 +315,11 @@ public class ValveBlock extends WrenchableBlock
 							player.inventory.setInventorySlotContents(player.inventory.currentItem, null);
 						}
 
-						// add filled container to player inventory or drop it to the ground if the inventory is full
+						// add filled container to player inventory or drop it to the ground if the inventory is full or we're dealing with a fake player
 
-						if (!player.inventory.addItemStackToInventory(filledContainer))
+						if (player instanceof FakePlayer || !player.inventory.addItemStackToInventory(filledContainer))
 						{
-							world.spawnEntityInWorld(new EntityItem(world, x + 0.5D, y + 1.5D, z + 0.5D, filledContainer));
+							world.spawnEntityInWorld(new EntityItem(world, player.posX + 0.5D, player.posY + 1.5D, player.posZ + 0.5D, filledContainer));
 						}
 						else if (player instanceof EntityPlayerMP)
 						{
@@ -383,11 +384,11 @@ public class ValveBlock extends WrenchableBlock
 					player.inventory.setInventorySlotContents(player.inventory.currentItem, null);
 				}
 
-				// add emptied container to player inventory or drop it to the ground if the inventory is full
+				// add emptied container to player inventory or drop it to the ground if the inventory is full or we're dealing with a fake player
 
-				if (!player.inventory.addItemStackToInventory(emptyContainer))
+				if (player instanceof FakePlayer || !player.inventory.addItemStackToInventory(emptyContainer))
 				{
-					world.spawnEntityInWorld(new EntityItem(world, x + 0.5D, y + 1.5D, z + 0.5D, emptyContainer));
+					world.spawnEntityInWorld(new EntityItem(world, player.posX + 0.5D, player.posY + 1.5D, player.posZ + 0.5D, emptyContainer));
 				}
 				else if (player instanceof EntityPlayerMP)
 				{

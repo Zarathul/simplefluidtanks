@@ -28,8 +28,8 @@ public final class Config
 		),
 		new RecipeComponent[]
 		{
-			new RecipeComponent("I", "minecraft", "iron_ingot"),
-			new RecipeComponent("G", "minecraft", "glass")
+			new RecipeComponent("I", "oreDict", "ingotIron"),
+			new RecipeComponent("G", "oreDict", "blockGlass")
 		}
 	);
 
@@ -43,8 +43,8 @@ public final class Config
 		),
 		new RecipeComponent[]
 		{
-			new RecipeComponent("I", "minecraft", "iron_ingot"),
-			new RecipeComponent("S", "minecraft", "slime_ball"),
+			new RecipeComponent("I", "oreDict", "ingotIron"),
+			new RecipeComponent("S", "oreDict", "slimeball"),
 			new RecipeComponent("T", SimpleFluidTanks.MOD_ID, Registry.TANKBLOCK_NAME)
 		}
 	);
@@ -59,7 +59,7 @@ public final class Config
 		),
 		new RecipeComponent[]
 		{
-			new RecipeComponent("I", "minecraft", "iron_ingot")
+			new RecipeComponent("I", "oreDict", "ingotIron")
 		}
 	);
 
