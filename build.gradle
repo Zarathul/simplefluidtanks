@@ -23,18 +23,24 @@ buildscript
 
 apply plugin: 'forge'
 
-version = "1.7.10-1.2.0.5"
-group= "net.zarathul.simplefluidtanks" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "simplefluidtanks"
-
-jar
-{
-    exclude 'mcp/**'
+ext {
+	ext.configFile = file "buildconfig.properties"
 }
+
+configFile.withReader {
+    // read config. it shall from now on be referenced as simply config or as project.config
+    def prop = new Properties()
+    prop.load(it)
+    ext.config = new ConfigSlurper().parse prop
+}
+
+version = config.minecraft_version + "-" + config.mod_version
+group= "net.zarathul.simplefluidtanks" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = "SimpleFluidTanks"
 
 minecraft
 {
-    version = "1.7.10-10.13.0.1208"
+    version = config.minecraft_version + "-" + config.forge_version
     runDir = "eclipse/assets"
     
     replaceIn "SimpleFluidTanks.java"
@@ -55,4 +61,25 @@ processResources
         // replace version and mcversion
         expand 'version':project.version, 'mcversion':project.minecraft.version
     }
+}
+
+jar
+{
+    exclude 'mcp/**'
+}
+
+task devJar(type: Jar) {
+	from(sourceSets.main.output) {
+		include '**'
+	    exclude 'mcp/**'
+		exclude '**/*.bak'
+	}
+
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+	classifier = 'dev'
+}
+
+artifacts {
+    archives devJar
 }
