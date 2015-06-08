@@ -83,8 +83,11 @@ public final class Registry
 	 */
 	public static void registerItems()
 	{
-		SimpleFluidTanks.wrenchItem = new WrenchItem();
-		GameRegistry.registerItem(SimpleFluidTanks.wrenchItem, WRENCH_ITEM_NAME, SimpleFluidTanks.MOD_ID);
+		if (Config.wrenchEnabled)
+		{
+			SimpleFluidTanks.wrenchItem = new WrenchItem();
+			GameRegistry.registerItem(SimpleFluidTanks.wrenchItem, WRENCH_ITEM_NAME, SimpleFluidTanks.MOD_ID);
+		}
 	}
 
 	/**
