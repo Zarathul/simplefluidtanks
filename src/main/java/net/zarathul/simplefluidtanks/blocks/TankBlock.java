@@ -43,7 +43,7 @@ public class TankBlock extends WrenchableBlock
 	}
 
 	@SideOnly(Side.CLIENT)
-	private IIcon[] icons;
+	protected IIcon[] icons;
 
 	@SideOnly(Side.CLIENT)
 	public IIcon[] getIcons()

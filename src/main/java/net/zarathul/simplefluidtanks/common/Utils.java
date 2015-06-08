@@ -63,7 +63,7 @@ public final class Utils
 		{
 			TileEntity entity = access.getTileEntity(coords[0], coords[1], coords[2]);
 
-			if (entity != null && entity.getClass() == entityType)
+			if (entity != null && entityType.isInstance(entity))  // Changed from "entity.getClass() == entityType" to support ConnectorBlockEntity that extends TankBlockEntity
 			{
 				return (T) entity;
 			}

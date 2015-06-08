@@ -33,6 +33,21 @@ public final class Config
 		}
 	);
 
+	public static final Recipe defaultConnectorBlockRecipe = new Recipe
+	(
+		1,
+		new RecipePattern(
+			String.format("%sI%s", RecipePattern.EMPTY_SLOT, RecipePattern.EMPTY_SLOT),
+			"ITI",
+			String.format("%sI%s", RecipePattern.EMPTY_SLOT, RecipePattern.EMPTY_SLOT)
+		),
+		new RecipeComponent[]
+		{
+			new RecipeComponent("T", SimpleFluidTanks.MOD_ID, Registry.TANKBLOCK_NAME),
+			new RecipeComponent("I", "oreDict", "ingotIron")
+		}
+	);
+
 	public static final Recipe defaultValveBlockRecipe = new Recipe
 	(
 		1,
@@ -68,6 +83,8 @@ public final class Config
 	private static final boolean defaultWrenchEnabled = true;
 	private static final float defaultTankBlockHardness = 50;
 	private static final float defaultTankBlockResistance = 1000;
+	private static final float defaultConnectorBlockHardness = 50;
+	private static final float defaultConnectorBlockResistance = 1000;
 	private static final float defaultValveBlockHardness = 50;
 	private static final float defaultValveBlockResistance = 1000;
 
@@ -78,9 +95,12 @@ public final class Config
 	public static boolean wrenchEnabled;
 	public static float tankBlockHardness;
 	public static float tankBlockResistance;
+	public static float connectorBlockHardness;
+	public static float connectorBlockResistance;
 	public static float valveBlockHardness;
 	public static float valveBlockResistance;
 	public static Recipe tankBlockRecipe;
+	public static Recipe connectorBlockRecipe;
 	public static Recipe valveBlockRecipe;
 	public static Recipe wrenchRecipe;
 
@@ -91,9 +111,11 @@ public final class Config
 	public static final String CATEGORY_RECIPES = Configuration.CATEGORY_GENERAL + Configuration.CATEGORY_SPLITTER + "recipes";
 
 	private static final String CATEGORY_BLOCKS_TANKBLOCK = CATEGORY_BLOCKS + Configuration.CATEGORY_SPLITTER + "tank";
+	private static final String CATEGORY_BLOCKS_CONNECTORBLOCK = CATEGORY_BLOCKS + Configuration.CATEGORY_SPLITTER + "connector";
 	private static final String CATEGORY_BLOCKS_VALVEBLOCK = CATEGORY_BLOCKS + Configuration.CATEGORY_SPLITTER + "valve";
 
 	private static final String CATEGORY_RECIPES_TANKBLOCK = CATEGORY_RECIPES + Configuration.CATEGORY_SPLITTER + "tank";
+	private static final String CATEGORY_RECIPES_CONNECTORBLOCK = CATEGORY_RECIPES + Configuration.CATEGORY_SPLITTER + "connector";
 	private static final String CATEGORY_RECIPES_VALVEBLOCK = CATEGORY_RECIPES + Configuration.CATEGORY_SPLITTER + "valve";
 	private static final String CATEGORY_RECIPES_WRENCH = CATEGORY_RECIPES + Configuration.CATEGORY_SPLITTER + "wrench";
 
@@ -151,6 +173,7 @@ public final class Config
 
 		config.getCategory(CATEGORY_BLOCKS).setLanguageKey("configui.category.blocks").setComment(StatCollector.translateToLocal("configui.category.blocks.tooltip"));
 		config.getCategory(CATEGORY_BLOCKS_TANKBLOCK).setLanguageKey("configui.category.tank");
+		config.getCategory(CATEGORY_BLOCKS_CONNECTORBLOCK).setLanguageKey("configui.category.connector");
 		config.getCategory(CATEGORY_BLOCKS_VALVEBLOCK).setLanguageKey("configui.category.valve");
 
 		String blockHardnessKey = "hardness";
@@ -167,6 +190,14 @@ public final class Config
 		prop.setLanguageKey("configui.blockResistance").setRequiresMcRestart(true).setMinValue(1.0).setMaxValue(1000000.0);
 		tankBlockResistance = (float) prop.getDouble();
 
+		prop = config.get(CATEGORY_BLOCKS_CONNECTORBLOCK, blockHardnessKey, defaultConnectorBlockHardness, blockHardnessComment);
+		prop.setLanguageKey("configui.blockHardness").setRequiresMcRestart(true).setMinValue(-1.0).setMaxValue(1000000.0);
+		connectorBlockHardness = (float) prop.getDouble();
+
+		prop = config.get(CATEGORY_BLOCKS_CONNECTORBLOCK, blockResistanceKey, defaultConnectorBlockResistance, blockResistanceComment);
+		prop.setLanguageKey("configui.blockResistance").setRequiresMcRestart(true).setMinValue(1.0).setMaxValue(1000000.0);
+		connectorBlockResistance = (float) prop.getDouble();
+
 		prop = config.get(CATEGORY_BLOCKS_VALVEBLOCK, blockHardnessKey, defaultValveBlockHardness, blockHardnessComment);
 		prop.setLanguageKey("configui.blockHardness").setRequiresMcRestart(true).setMinValue(-1.0).setMaxValue(1000000.0);
 		valveBlockHardness = (float) prop.getDouble();
@@ -179,10 +210,12 @@ public final class Config
 
 		config.getCategory(CATEGORY_RECIPES).setLanguageKey("configui.category.recipes").setComment(StatCollector.translateToLocal("configui.category.recipes.tooltip"));
 		config.getCategory(CATEGORY_RECIPES_TANKBLOCK).setLanguageKey("configui.category.tank");
+		config.getCategory(CATEGORY_RECIPES_CONNECTORBLOCK).setLanguageKey("configui.category.connector");
 		config.getCategory(CATEGORY_RECIPES_VALVEBLOCK).setLanguageKey("configui.category.valve");
 		config.getCategory(CATEGORY_RECIPES_WRENCH).setLanguageKey("configui.category.wrench");
 
 		tankBlockRecipe = loadRecipe(config, CATEGORY_RECIPES_TANKBLOCK, Config.defaultTankBlockRecipe);
+		connectorBlockRecipe = loadRecipe(config, CATEGORY_RECIPES_CONNECTORBLOCK, Config.defaultConnectorBlockRecipe);
 		valveBlockRecipe = loadRecipe(config, CATEGORY_RECIPES_VALVEBLOCK, Config.defaultValveBlockRecipe);
 		wrenchRecipe = loadRecipe(config, CATEGORY_RECIPES_WRENCH, Config.defaultWrenchRecipe);
 

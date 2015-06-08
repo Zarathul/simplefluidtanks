@@ -8,16 +8,19 @@ import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 import net.zarathul.simplefluidtanks.SimpleFluidTanks;
+import net.zarathul.simplefluidtanks.blocks.ConnectorBlock;
 import net.zarathul.simplefluidtanks.blocks.FakeFluidBlock;
 import net.zarathul.simplefluidtanks.blocks.TankBlock;
 import net.zarathul.simplefluidtanks.blocks.ValveBlock;
 import net.zarathul.simplefluidtanks.configuration.Config;
 import net.zarathul.simplefluidtanks.configuration.Recipe;
+import net.zarathul.simplefluidtanks.items.ConnectorItem;
 import net.zarathul.simplefluidtanks.items.TankItem;
 import net.zarathul.simplefluidtanks.items.ValveItem;
 import net.zarathul.simplefluidtanks.items.WrenchItem;
 import net.zarathul.simplefluidtanks.rendering.TankBlockRenderer;
 import net.zarathul.simplefluidtanks.rendering.ValveItemRenderer;
+import net.zarathul.simplefluidtanks.tileentities.ConnectorBlockEntity;
 import net.zarathul.simplefluidtanks.tileentities.TankBlockEntity;
 import net.zarathul.simplefluidtanks.tileentities.ValveBlockEntity;
 import cpw.mods.fml.client.registry.RenderingRegistry;
@@ -34,6 +37,9 @@ public final class Registry
 	public static final String TANKBLOCK_NAME = "tankBlock";
 	public static final String TANKITEM_NAME = "tankItem";
 
+	public static final String CONNECTORBLOCK_NAME = "connectorBlock";
+	public static final String CONNECTORITEM_NAME = "connectorItem";
+
 	public static final String VALVEBLOCK_NAME = "valveBlock";
 	public static final String VALVEITEM_NAME = "valveItem";
 
@@ -41,6 +47,9 @@ public final class Registry
 
 	private static final String TANKBLOCK_ENTITY_NAME = "tankBlockEntity";
 	private static final String TANKBLOCK_ENTITY_KEY = SimpleFluidTanks.MOD_ID + ":" + TANKBLOCK_ENTITY_NAME;
+
+	private static final String CONNECTORBLOCK_ENTITY_NAME = "connectorBlockEntity";
+	private static final String CONNECTORBLOCK_ENTITY_KEY = SimpleFluidTanks.MOD_ID + ":" + CONNECTORBLOCK_ENTITY_NAME;
 
 	private static final String VALVEBLOCK_ENTITY_NAME = "valveBlockEntity";
 	private static final String VALVEBLOCK_ENTITY_KEY = SimpleFluidTanks.MOD_ID + ":" + VALVEBLOCK_ENTITY_NAME;
@@ -55,12 +64,17 @@ public final class Registry
 		GameRegistry.registerBlock(SimpleFluidTanks.tankBlock, TankItem.class, TANKBLOCK_NAME);
 		SimpleFluidTanks.fakeFluidBlock = new FakeFluidBlock();
 
+		// ConnectorBlock
+		SimpleFluidTanks.connectorBlock = new ConnectorBlock();
+		GameRegistry.registerBlock(SimpleFluidTanks.connectorBlock, ConnectorItem.class, CONNECTORBLOCK_NAME);
+
 		// ValveBlock
 		SimpleFluidTanks.valveBlock = new ValveBlock();
 		GameRegistry.registerBlock(SimpleFluidTanks.valveBlock, ValveItem.class, VALVEBLOCK_NAME);
 
 		// TileEntities
 		GameRegistry.registerTileEntity(TankBlockEntity.class, TANKBLOCK_ENTITY_KEY);
+		GameRegistry.registerTileEntity(ConnectorBlockEntity.class, CONNECTORBLOCK_ENTITY_KEY);
 		GameRegistry.registerTileEntity(ValveBlockEntity.class, VALVEBLOCK_ENTITY_KEY);
 	}
 
@@ -97,9 +111,11 @@ public final class Registry
 	public static final void registerRecipes()
 	{
 		ItemStack tankBlockRecipeResult = new ItemStack(SimpleFluidTanks.tankBlock);
+		ItemStack connectorBlockRecipeResult = new ItemStack(SimpleFluidTanks.connectorBlock);
 		ItemStack valveBlockRecipeResult = new ItemStack(SimpleFluidTanks.valveBlock);
 
 		registerRecipeWithAlternative(tankBlockRecipeResult, Config.tankBlockRecipe, Config.defaultTankBlockRecipe);
+		registerRecipeWithAlternative(connectorBlockRecipeResult, Config.connectorBlockRecipe, Config.defaultConnectorBlockRecipe);
 		registerRecipeWithAlternative(valveBlockRecipeResult, Config.valveBlockRecipe, Config.defaultValveBlockRecipe);
 
 		if (Config.wrenchEnabled)
