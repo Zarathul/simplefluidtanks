@@ -388,12 +388,18 @@ public class TankBlockEntity extends TileEntity
 			return false;
 		}
 
-		TankBlockEntity connectionCandidate = Utils.getTileEntityAt(worldObj, TankBlockEntity.class, x, y, z);
+		// Connect to our valve
+		if (valveCoords != null && valveCoords.equals(x, y, z))
+		{
+			return true;
+		}
 
+		// Connect to any tank that have the same valve as us.
+		TankBlockEntity connectionCandidate = Utils.getTileEntityAt(worldObj, TankBlockEntity.class, x, y, z);
 		if (connectionCandidate != null)
 		{
 			return (connectionCandidate.hasValveAt(valveCoords));
-		}
+		} 
 
 		return false;
 	}
