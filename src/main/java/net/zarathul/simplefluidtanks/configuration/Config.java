@@ -81,6 +81,7 @@ public final class Config
 	private static final int defaultBucketsPerTank = 16;
 	private static final int defaultOverrideBottleVolume = 250;
 	private static final boolean defaultWrenchEnabled = true;
+	private static final boolean defaultTankFluidLightEnabled = true;
 	private static final float defaultTankBlockHardness = 50;
 	private static final float defaultTankBlockResistance = 1000;
 	private static final float defaultConnectorBlockHardness = 50;
@@ -93,6 +94,7 @@ public final class Config
 	public static int bucketsPerTank;
 	public static int overrideBottleVolume;
 	public static boolean wrenchEnabled;
+	public static boolean tankFluidLightEnabled;
 	public static float tankBlockHardness;
 	public static float tankBlockResistance;
 	public static float connectorBlockHardness;
@@ -168,6 +170,11 @@ public final class Config
 		prop.comment = StatCollector.translateToLocal("configui.overrideBottleVolume.tooltip");
 		prop.setLanguageKey("configui.overrideBottleVolume").setMinValue(0).setMaxValue(FluidContainerRegistry.BUCKET_VOLUME);
 		overrideBottleVolume = prop.getInt();
+
+		prop = config.get(CATEGORY_MISC, "tankFluidLightEnabled", defaultTankFluidLightEnabled);
+		prop.comment = StatCollector.translateToLocal("configui.tankFluidLightEnabled.tooltip");
+		prop.setLanguageKey("configui.tankFluidLightEnabled").setRequiresMcRestart(false);
+		tankFluidLightEnabled = prop.getBoolean();
 
 		// blocks
 

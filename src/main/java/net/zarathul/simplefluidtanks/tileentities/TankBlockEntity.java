@@ -28,6 +28,11 @@ public class TankBlockEntity extends TileEntity
 	private int fillPercentage;
 
 	/**
+	 * The filling level of the tank in percent.
+	 */
+	private int fluidLightLevel;
+
+	/**
 	 * Indicates if the {@link TankBlock} is part of a multiblock tank aka. connected to a {@link ValveBlock}.
 	 */
 	private boolean isPartOfTank;
@@ -65,6 +70,7 @@ public class TankBlockEntity extends TileEntity
 		super.readFromNBT(tag);
 
 		fillPercentage = tag.getByte("FillPercentage");
+		fluidLightLevel = tag.getByte("FluidLightLevel");
 		isPartOfTank = tag.getBoolean("isPartOfTank");
 
 		if (isPartOfTank)
@@ -89,6 +95,7 @@ public class TankBlockEntity extends TileEntity
 		super.writeToNBT(tag);
 
 		tag.setByte("FillPercentage", (byte) fillPercentage);
+		tag.setByte("FluidLightLevel", (byte) fluidLightLevel);
 		tag.setBoolean("isPartOfTank", isPartOfTank);
 
 		if (valveCoords != null)
@@ -241,6 +248,42 @@ public class TankBlockEntity extends TileEntity
 		}
 
 		return percentageChanged;
+	}
+
+	/**
+	 * Gets the {@link TankBlock}s current fluid light level.
+	 * 
+	 * @return The {@link TankBlock}s fluid light level.
+	 */
+	public int getFluidLightLevel()
+	{
+		return fluidLightLevel;
+	}
+
+	/**
+	 * Sets the {@link TankBlock}s current fluid light level.
+	 * 
+	 * @param fluidLight
+	 * The amount of light the fluid in the {@link TankBlock}s emits.
+	 * @param forceBlockUpdate
+	 * Specifies if a block update should be forced.
+	 * @return <code>true</code> if the fluid light level was changed, otherwise <code>false</code>.
+	 */
+	public boolean setFluidLightLevel(int fluidLight, boolean forceBlockUpdate)
+	{
+		fluidLight = MathHelper.clamp_int(fluidLight, 0, 15);
+
+		boolean fluidLightChanged = (fluidLight != fluidLightLevel);
+
+		fluidLightLevel = fluidLight;
+
+		if (fluidLightChanged || forceBlockUpdate)
+		{
+			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+			worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);
+		}
+
+		return fluidLightChanged;
 	}
 
 	/**
