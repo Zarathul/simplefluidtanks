@@ -15,30 +15,24 @@ import net.zarathul.simplefluidtanks.registration.Registry;
 
 import org.lwjgl.input.Keyboard;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * {@link TankBlock} in item form.
  */
 public class TankItem extends ItemBlock
 {
-	private static final String toolTipKey = "item." + Registry.TANKITEM_NAME + ".toolTip";
-	private static final String toolTipDetailsKey = "item." + Registry.TANKITEM_NAME + ".toolTipDetails";
+	private static final String toolTipKey = "item." + Registry.TANK_ITEM_NAME + ".toolTip";
+	private static final String toolTipDetailsKey = "item." + Registry.TANK_ITEM_NAME + ".toolTipDetails";
 
 	public TankItem(Block block)
 	{
 		super(block);
-		this.setMaxStackSize(64);
-		this.setCreativeTab(SimpleFluidTanks.creativeTab);
-		this.setUnlocalizedName(Registry.TANKITEM_NAME);
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public int getSpriteNumber()
-	{
-		return 0;
+		
+		setMaxStackSize(64);
+		setCreativeTab(SimpleFluidTanks.creativeTab);
+		setUnlocalizedName(Registry.TANK_ITEM_NAME);
 	}
 
 	@Override

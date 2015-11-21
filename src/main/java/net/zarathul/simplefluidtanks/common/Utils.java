@@ -6,13 +6,18 @@ import net.minecraft.block.Block;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidContainerRegistry.FluidContainerData;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidContainerItem;
+import net.zarathul.simplefluidtanks.blocks.TankBlock;
+import net.zarathul.simplefluidtanks.blocks.ValveBlock;
 import net.zarathul.simplefluidtanks.configuration.Config;
+import net.zarathul.simplefluidtanks.tileentities.TankBlockEntity;
+import net.zarathul.simplefluidtanks.tileentities.ValveBlockEntity;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
@@ -41,27 +46,11 @@ public final class Utils
 	 * The coordinates of the {@link TileEntity}.
 	 * @return The casted {@link TileEntity} or <code>null</code> if no {@link TileEntity} was found or the casting failed.
 	 */
-	public static final <T extends TileEntity> T getTileEntityAt(IBlockAccess access, Class<T> entityType, BlockCoords coords)
+	public static final <T extends TileEntity> T getTileEntityAt(IBlockAccess access, Class<T> entityType, BlockPos coords)
 	{
-		return getTileEntityAt(access, entityType, coords.x, coords.y, coords.z);
-	}
-
-	/**
-	 * Gets the {@link TileEntity} at the specified coordinates, casted to the specified type.
-	 * 
-	 * @param access
-	 * An {@link IBlockAccess} implementation. Usually the world.
-	 * @param entityType
-	 * The type the {@link TileEntity} should be casted to.
-	 * @param coords
-	 * The coordinates of the {@link TileEntity}.
-	 * @return The casted {@link TileEntity} or <code>null</code> if no {@link TileEntity} was found or the casting failed.
-	 */
-	public static final <T extends TileEntity> T getTileEntityAt(IBlockAccess access, Class<T> entityType, int... coords)
-	{
-		if (access != null && entityType != null && coords != null && coords.length == 3)
+		if (access != null && entityType != null && coords != null)
 		{
-			TileEntity entity = access.getTileEntity(coords[0], coords[1], coords[2]);
+			TileEntity entity = access.getTileEntity(coords);
 
 			if (entity != null && entity.getClass() == entityType)
 			{
@@ -73,41 +62,31 @@ public final class Utils
 	}
 
 	/**
-	 * Check if the block at the specified location is of the specified type.
+	 * Gets the {@link ValveBlock}s {@link TileEntity} for a linked {@link TankBlock}.
 	 * 
-	 * @param access
-	 * An {@link IBlockAccess} implementation. Usually the world.
-	 * @param type
-	 * The type the block should be checked against.
-	 * @param coords
-	 * The blocks coordinates.
-	 * @return <code>true</code> if the block at the specified coordinates is of the specified type, otherwise <code>false</code>.
+	 * @return The valves {@link ValveBlockEntity}<br>
+	 * or<br>
+	 * <code>null</code> if no linked {@link ValveBlock} was found.
+	 * @param world
+	 * The world.
+	 * @param pos
+	 * The {@link TankBlock}s coordinates.
 	 */
-	public static final <T extends Block> boolean isBlockType(IBlockAccess access, Class<T> type, BlockCoords coords)
+	public static ValveBlockEntity getValve(IBlockAccess world, BlockPos pos)
 	{
-		return isBlockType(access, type, coords.x, coords.y, coords.z);
-	}
+		if (world != null && pos != null)
+		{
+			TankBlockEntity tankEntity = Utils.getTileEntityAt(world, TankBlockEntity.class, pos);
 
-	/**
-	 * Check if the block at the specified location is of the specified type.
-	 * 
-	 * @param access
-	 * An {@link IBlockAccess} implementation. Usually the world.
-	 * @param type
-	 * The type the block should be checked against.
-	 * @param x
-	 * The blocks x-coordinate.
-	 * @param y
-	 * The blocks y-coordinate.
-	 * @param z
-	 * The blocks z-coordinate.
-	 * @return <code>true</code> if the block at the specified coordinates is of the specified type, otherwise <code>false</code>.
-	 */
-	public static final <T extends Block> boolean isBlockType(IBlockAccess access, Class<T> type, int x, int y, int z)
-	{
-		Block blockToCheck = access.getBlock(x, y, z);
+			if (tankEntity != null)
+			{
+				ValveBlockEntity valveEntity = tankEntity.getValve();
 
-		return ((blockToCheck != null) && (type.isInstance(blockToCheck)));
+				return valveEntity;
+			}
+		}
+
+		return null;
 	}
 
 	/**

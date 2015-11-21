@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import net.zarathul.simplefluidtanks.common.Utils;
-import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 /**
  * Represents recipe data from the config file. Does not contain any information
@@ -85,7 +85,7 @@ public class Recipe
 
 		for (RecipeComponent component : components)
 		{
-			componentArg = (!component.modId.equals(RecipeComponent.OREDICT_IDENTIFIER)) ? GameRegistry.findItemStack(component.modId, component.itemId, 1) : component.itemId;
+			componentArg = (!component.modId.equals(RecipeComponent.OREDICT_IDENTIFIER)) ? GameRegistry.findItem(component.modId, component.itemId) : component.itemId;
 
 			if (componentArg == null) return null;
 

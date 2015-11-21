@@ -1,23 +1,24 @@
 package net.zarathul.simplefluidtanks;
 
 import net.zarathul.simplefluidtanks.registration.Registry;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 public class ClientProxy extends CommonProxy
 {
 	@Override
 	public void preInit(FMLPreInitializationEvent event)
 	{
-		FMLCommonHandler.instance().bus().register(new EventHub());
+		SimpleFluidTanks.clientEventHub = new ClientEventHub();
+		FMLCommonHandler.instance().bus().register(SimpleFluidTanks.clientEventHub);
 
 		Registry.addCreativeTab();
 
 		super.preInit(event);
-
-		Registry.registerCustomRenderers();
 	}
 
 	@Override
@@ -25,6 +26,7 @@ public class ClientProxy extends CommonProxy
 	{
 		super.init(event);
 
+		Registry.registerItemModels();
 		Registry.registerWithWaila();
 	}
 

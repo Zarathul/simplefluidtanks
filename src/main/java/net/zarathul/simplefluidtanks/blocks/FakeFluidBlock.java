@@ -2,14 +2,15 @@ package net.zarathul.simplefluidtanks.blocks;
 
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fluids.Fluid;
-import net.zarathul.simplefluidtanks.common.BlockCoords;
 import net.zarathul.simplefluidtanks.common.Direction;
 import net.zarathul.simplefluidtanks.common.Utils;
 import net.zarathul.simplefluidtanks.tileentities.TankBlockEntity;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * A fake block that can't be placed and is only used for rendering fluids in tanks.
@@ -23,10 +24,12 @@ public class FakeFluidBlock extends Block
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public boolean shouldSideBeRendered(IBlockAccess blockAccess, int x, int y, int z, int side)
+	public boolean shouldSideBeRendered(IBlockAccess blockAccess, BlockPos pos, EnumFacing side)
 	{
-		int offsetDirection = Direction.vanillaSideOpposites.get(side);
-		BlockCoords tankCoords = BlockCoords.offset(offsetDirection, 1, x, y, z);
+		// Note: "pos" represents the coordinates of the adjacent block, not the FakeFluidBlock 
+		// (e.g. side = EnumFacing.UP means "pos" contains the coordinates of the block above).
+		
+		BlockPos tankCoords = pos.offset(side.getOpposite());
 
 		TankBlockEntity tankEntity = Utils.getTileEntityAt(blockAccess, TankBlockEntity.class, tankCoords);
 
@@ -37,30 +40,30 @@ public class FakeFluidBlock extends Block
 
 		boolean[] connections = tankEntity.getConnections();
 
-		if (side == Direction.YPOS)
+		if (side == EnumFacing.UP)
 		{
-			if (!connections[Direction.YPOS])
+			if (!connections[EnumFacing.UP.getIndex()])
 			{
 				return true;
 			}
 
-			TankBlockEntity tankAbove = Utils.getTileEntityAt(blockAccess, TankBlockEntity.class, x, y, z);
+			TankBlockEntity tankAbove = Utils.getTileEntityAt(blockAccess, TankBlockEntity.class, pos);
 
 			return (tankAbove == null || tankAbove.isEmpty());
 		}
 
-		return !connections[side];
+		return !connections[side.getIndex()];
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public int getMixedBrightnessForBlock(IBlockAccess blockAccess, int x, int y, int z)
+	public int getMixedBrightnessForBlock(IBlockAccess blockAccess, BlockPos pos)
 	{
-		int mixedBrightness = super.getMixedBrightnessForBlock(blockAccess, x, y, z);
+		int mixedBrightness = super.getMixedBrightnessForBlock(blockAccess, pos);
 		int blockLight = (mixedBrightness >> 4) & 15;
 		int skyLight = (mixedBrightness >> 20);
 
-		TankBlockEntity tankEntity = Utils.getTileEntityAt(blockAccess, TankBlockEntity.class, x, y, z);
+		TankBlockEntity tankEntity = Utils.getTileEntityAt(blockAccess, TankBlockEntity.class, pos);
 
 		if (tankEntity != null)
 		{

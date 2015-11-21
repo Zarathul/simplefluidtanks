@@ -28,12 +28,6 @@ public class TankMaterial extends Material
 	}
 
 	@Override
-	public boolean getCanBlockGrass()
-	{
-		return true;
-	}
-
-	@Override
 	public boolean blocksMovement()
 	{
 		return true;

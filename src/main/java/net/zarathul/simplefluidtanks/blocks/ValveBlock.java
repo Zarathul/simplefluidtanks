@@ -2,17 +2,32 @@ package net.zarathul.simplefluidtanks.blocks;
 
 import java.util.Random;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
+import org.apache.logging.log4j.core.net.Facility;
+
+import com.google.common.collect.ImmutableMap;
+
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyDirection;
+import net.minecraft.block.properties.PropertyInteger;
+import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.property.ExtendedBlockState;
+import net.minecraftforge.common.property.IExtendedBlockState;
+import net.minecraftforge.common.property.IUnlistedProperty;
+import net.minecraftforge.common.property.Properties;
+import net.minecraftforge.common.property.Properties.PropertyAdapter;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -23,40 +38,38 @@ import net.zarathul.simplefluidtanks.common.Utils;
 import net.zarathul.simplefluidtanks.configuration.Config;
 import net.zarathul.simplefluidtanks.registration.Registry;
 import net.zarathul.simplefluidtanks.tileentities.ValveBlockEntity;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Represents a valve in the mods multiblock structure.
  */
 public class ValveBlock extends WrenchableBlock
 {
+	public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
+	
 	public ValveBlock()
 	{
 		super(TankMaterial.tankMaterial);
 
-		setBlockName(Registry.VALVEBLOCK_NAME);
+		setUnlocalizedName(Registry.VALVE_BLOCK_NAME);
 		setCreativeTab(SimpleFluidTanks.creativeTab);
 		setHardness(Config.valveBlockHardness);
 		setResistance(Config.valveBlockResistance);
 		setStepSound(soundTypeMetal);
 		setHarvestLevel("pickaxe", 2);
+		
+		this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
 	}
 
-	@SideOnly(Side.CLIENT)
-	private IIcon icon;
-	@SideOnly(Side.CLIENT)
-	private IIcon iconTank;
-	@SideOnly(Side.CLIENT)
-	private IIcon iconIo;
-
+/*
 	@Override
 	@SideOnly(Side.CLIENT)
 	public IIcon getIcon(int side, int meta)
 	{
 		return (side == meta) ? iconIo : (side == Direction.YPOS) ? iconTank : icon;
 	}
-
+	
 	@Override
 	@SideOnly(Side.CLIENT)
 	public IIcon getIcon(IBlockAccess blockAccess, int x, int y, int z, int side)
@@ -76,13 +89,12 @@ public class ValveBlock extends WrenchableBlock
 		return getIcon(side, blockAccess.getBlockMetadata(x, y, z));
 	}
 
+*/
+
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister iconRegister)
+	public int getRenderType()
 	{
-		icon = iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":valve");
-		iconTank = iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":valve_tank");
-		iconIo = iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":valve_io");
+		return 3;
 	}
 
 	@Override
@@ -92,46 +104,51 @@ public class ValveBlock extends WrenchableBlock
 	}
 
 	@Override
-	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack items)
+	protected BlockState createBlockState()
 	{
-		super.onBlockPlacedBy(world, x, y, z, player, items);
+		return new BlockState(this, FACING);
+	}
 
+	@Override
+	public IBlockState getStateFromMeta(int meta)
+	{
+        EnumFacing enumfacing = EnumFacing.getFront(meta);
+
+        if (enumfacing.getAxis() == EnumFacing.Axis.Y)
+        {
+            enumfacing = EnumFacing.NORTH;
+        }
+
+        return this.getDefaultState().withProperty(FACING, enumfacing);
+	}
+
+	@Override
+	public int getMetaFromState(IBlockState state)
+	{
+		return ((EnumFacing)state.getValue(FACING)).getIndex();
+	}
+
+	@Override
+	public boolean requiresUpdates()
+	{
+		return false;
+	}
+
+	@Override
+	public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack items)
+	{
 		if (!world.isRemote)
 		{
-			int l = MathHelper.floor_double(player.rotationYaw * 4.0F / 360.0F + 0.5D) & 3;
-			int direction;
-
-			switch (l)
-			{
-				case 1:
-					direction = Direction.XPOS;
-					break;
-
-				case 2:
-					direction = Direction.ZPOS;
-					break;
-
-				case 3:
-					direction = Direction.XNEG;
-					break;
-
-				default:
-					direction = Direction.ZNEG;
-					break;
-			}
-
-			world.setBlockMetadataWithNotify(x, y, z, direction, 2);
+			world.setBlockState(pos, state.withProperty(FACING, placer.getHorizontalFacing().getOpposite()), 2);
 		}
 	}
 
 	@Override
-	public void onBlockAdded(World world, int x, int y, int z)
+	public void onBlockAdded(World world, BlockPos pos, IBlockState state)
 	{
-		super.onBlockAdded(world, x, y, z);
-
 		if (!world.isRemote)
 		{
-			ValveBlockEntity valveEntity = Utils.getTileEntityAt(world, ValveBlockEntity.class, x, y, z);
+			ValveBlockEntity valveEntity = Utils.getTileEntityAt(world, ValveBlockEntity.class, pos);
 
 			if (valveEntity != null)
 			{
@@ -141,21 +158,7 @@ public class ValveBlock extends WrenchableBlock
 	}
 
 	@Override
-	public void onBlockPreDestroy(World world, int x, int y, int z, int par5)
-	{
-		if (!world.isRemote)
-		{
-			ValveBlockEntity valveEntity = Utils.getTileEntityAt(world, ValveBlockEntity.class, x, y, z);
-
-			if (valveEntity != null)
-			{
-				valveEntity.disbandMultiblock();
-			}
-		}
-	}
-
-	@Override
-	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int par6, float par7, float par8, float par9)
+	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float hitX, float hitY, float hitZ)
 	{
 		if (!world.isRemote)
 		{
@@ -166,18 +169,18 @@ public class ValveBlock extends WrenchableBlock
 				// react to fluid containers
 				if (equippedItemStack.getItem() instanceof IFluidContainerItem || FluidContainerRegistry.isContainer(equippedItemStack))
 				{
-					handleContainerClick(world, x, y, z, player, equippedItemStack);
-
+					handleContainerClick(world, pos, player, equippedItemStack);
+					
 					return true;
 				}
 			}
 		}
-
-		return super.onBlockActivated(world, x, y, z, player, par6, par7, par8, par9);
+		
+		return super.onBlockActivated(world, pos, state, player, side, hitX, hitY, hitZ);
 	}
 
 	@Override
-	public int quantityDropped(int meta, int fortune, Random random)
+	public int quantityDropped(IBlockState state, int fortune, Random random)
 	{
 		return 1;
 	}
@@ -189,9 +192,9 @@ public class ValveBlock extends WrenchableBlock
 	}
 
 	@Override
-	public int getComparatorInputOverride(World world, int x, int y, int z, int side)
+	public int getComparatorInputOverride(World world, BlockPos pos)
 	{
-		ValveBlockEntity valveEntity = Utils.getTileEntityAt(world, ValveBlockEntity.class, x, y, z);
+		ValveBlockEntity valveEntity = Utils.getTileEntityAt(world, ValveBlockEntity.class, pos);
 
 		if (valveEntity != null)
 		{
@@ -206,11 +209,11 @@ public class ValveBlock extends WrenchableBlock
 	}
 
 	@Override
-	protected void handleToolWrenchClick(World world, int x, int y, int z, EntityPlayer player, ItemStack equippedItemStack)
+	protected void handleToolWrenchClick(World world, BlockPos pos, EntityPlayer player, ItemStack equippedItemStack)
 	{
 		// on sneak use: disband the multiblock | on use: rebuild the multiblock
 
-		ValveBlockEntity valveEntity = Utils.getTileEntityAt(world, ValveBlockEntity.class, x, y, z);
+		ValveBlockEntity valveEntity = Utils.getTileEntityAt(world, ValveBlockEntity.class, pos);
 
 		if (player.isSneaking())
 		{
@@ -219,9 +222,9 @@ public class ValveBlock extends WrenchableBlock
 				valveEntity.disbandMultiblock();
 			}
 
-			world.setBlockToAir(x, y, z);
+			world.setBlockToAir(pos);
 			// last two parameters are metadata and fortune
-			dropBlockAsItem(world, x, y, z, 0, 0);
+			dropBlockAsItem(world, pos, this.getDefaultState(), 0);
 		}
 		else if (valveEntity != null)
 		{
@@ -235,20 +238,16 @@ public class ValveBlock extends WrenchableBlock
 	 * 
 	 * @param world
 	 * The world.
-	 * @param x
-	 * The {@link ValveBlock}s x-coordinate.
-	 * @param y
-	 * The {@link ValveBlock}s y-coordinate.
-	 * @param z
-	 * The {@link ValveBlock}s z-coordinate.
+	 * @param pos
+	 * The {@link ValveBlock}s coordinates.
 	 * @param player
 	 * The player using the item.
 	 * @param equippedItemStack
 	 * The item(stack) used on the {@link ValveBlock}.
 	 */
-	private void handleContainerClick(World world, int x, int y, int z, EntityPlayer player, ItemStack equippedItemStack)
+	private void handleContainerClick(World world, BlockPos pos, EntityPlayer player, ItemStack equippedItemStack)
 	{
-		ValveBlockEntity valveEntity = Utils.getTileEntityAt(world, ValveBlockEntity.class, x, y, z);
+		ValveBlockEntity valveEntity = Utils.getTileEntityAt(world, ValveBlockEntity.class, pos);
 
 		if (valveEntity != null)
 		{
@@ -256,11 +255,11 @@ public class ValveBlock extends WrenchableBlock
 				Utils.isEmptyComplexContainer(equippedItemStack) ||
 				(equippedItemStack.getItem() instanceof IFluidContainerItem && player.isSneaking()))
 			{
-				fillContainerFromTank(world, x, y, z, player, equippedItemStack, valveEntity);
+				fillContainerFromTank(world, pos, player, equippedItemStack, valveEntity);
 			}
 			else
 			{
-				drainContainerIntoTank(world, x, y, z, player, equippedItemStack, valveEntity);
+				drainContainerIntoTank(world, pos, player, equippedItemStack, valveEntity);
 			}
 		}
 	}
@@ -270,12 +269,8 @@ public class ValveBlock extends WrenchableBlock
 	 * 
 	 * @param world
 	 * The world.
-	 * @param x
-	 * The {@link ValveBlock}s x-coordinate.
-	 * @param y
-	 * The {@link ValveBlock}s y-coordinate.
-	 * @param z
-	 * The {@link ValveBlock}s z-coordinate.
+	 * @param pos
+	 * The {@link ValveBlock}s coordinates.
 	 * @param player
 	 * The player holding the container.
 	 * @param equippedItemStack
@@ -283,7 +278,7 @@ public class ValveBlock extends WrenchableBlock
 	 * @param valveEntity
 	 * The affected {@link ValveBlock}s {@link TileEntity} ({@link ValveBlockEntity}).
 	 */
-	private void fillContainerFromTank(World world, int x, int y, int z, EntityPlayer player, ItemStack equippedItemStack, ValveBlockEntity valveEntity)
+	private void fillContainerFromTank(World world, BlockPos pos, EntityPlayer player, ItemStack equippedItemStack, ValveBlockEntity valveEntity)
 	{
 		if (valveEntity.getFluid() == null) return;
 
@@ -336,12 +331,8 @@ public class ValveBlock extends WrenchableBlock
 	 * 
 	 * @param world
 	 * The world.
-	 * @param x
-	 * The {@link ValveBlock}s x-coordinate.
-	 * @param y
-	 * The {@link ValveBlock}s y-coordinate.
-	 * @param z
-	 * The {@link ValveBlock}s z-coordinate.
+	 * @param pos
+	 * The {@link ValveBlock}s coordinates.
 	 * @param player
 	 * The player holding the container.
 	 * @param equippedItemStack
@@ -349,7 +340,7 @@ public class ValveBlock extends WrenchableBlock
 	 * @param valveEntity
 	 * The affected {@link ValveBlock}s {@link TileEntity} ({@link ValveBlockEntity}).
 	 */
-	private void drainContainerIntoTank(World world, int x, int y, int z, EntityPlayer player, ItemStack equippedItemStack, ValveBlockEntity valveEntity)
+	private void drainContainerIntoTank(World world, BlockPos pos, EntityPlayer player, ItemStack equippedItemStack, ValveBlockEntity valveEntity)
 	{
 		if (valveEntity.isFull()) return;
 

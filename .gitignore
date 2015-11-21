@@ -5,5 +5,7 @@
 /.classpath
 /eclipse
 /build
+/run
 /gradle-app.setting
 /libs
+*.launch

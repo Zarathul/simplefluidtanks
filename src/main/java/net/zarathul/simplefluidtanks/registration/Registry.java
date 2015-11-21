@@ -1,5 +1,8 @@
 package net.zarathul.simplefluidtanks.registration;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ItemModelMesher;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -16,26 +19,24 @@ import net.zarathul.simplefluidtanks.configuration.Recipe;
 import net.zarathul.simplefluidtanks.items.TankItem;
 import net.zarathul.simplefluidtanks.items.ValveItem;
 import net.zarathul.simplefluidtanks.items.WrenchItem;
-import net.zarathul.simplefluidtanks.rendering.TankBlockRenderer;
-import net.zarathul.simplefluidtanks.rendering.ValveItemRenderer;
 import net.zarathul.simplefluidtanks.tileentities.TankBlockEntity;
 import net.zarathul.simplefluidtanks.tileentities.ValveBlockEntity;
-import cpw.mods.fml.client.registry.RenderingRegistry;
-import cpw.mods.fml.common.event.FMLInterModComms;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
+import net.minecraftforge.fml.common.event.FMLInterModComms;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Provides helper methods to register blocks, items, custom renderers etc.
  */
 public final class Registry
 {
-	public static final String TANKBLOCK_NAME = "tankBlock";
-	public static final String TANKITEM_NAME = "tankItem";
+	public static final String TANK_BLOCK_NAME = "tankBlock";
+	public static final String TANK_ITEM_NAME = "tankItem";
 
-	public static final String VALVEBLOCK_NAME = "valveBlock";
-	public static final String VALVEITEM_NAME = "valveItem";
+	public static final String VALVE_BLOCK_NAME = "valveBlock";
+	public static final String VALVE_ITEM_NAME = "valveItem";
 
 	public static final String WRENCH_ITEM_NAME = "wrench";
 
@@ -44,6 +45,10 @@ public final class Registry
 
 	private static final String VALVEBLOCK_ENTITY_NAME = "valveBlockEntity";
 	private static final String VALVEBLOCK_ENTITY_KEY = SimpleFluidTanks.MOD_ID + ":" + VALVEBLOCK_ENTITY_NAME;
+	
+	private static final String TANKITEM_MODEL_RESLOC = SimpleFluidTanks.MOD_ID + ":" + TANK_BLOCK_NAME;
+	private static final String VALVEITEM_MODEL_RESLOC = SimpleFluidTanks.MOD_ID + ":" + VALVE_BLOCK_NAME;
+	private static final String WRENCHITEM_MODEL_RESLOC = SimpleFluidTanks.MOD_ID + ":" + WRENCH_ITEM_NAME;
 
 	/**
 	 * Creates and registers all blocks added by the mod.
@@ -52,12 +57,12 @@ public final class Registry
 	{
 		// TankBlock
 		SimpleFluidTanks.tankBlock = new TankBlock();
-		GameRegistry.registerBlock(SimpleFluidTanks.tankBlock, TankItem.class, TANKBLOCK_NAME);
+		GameRegistry.registerBlock(SimpleFluidTanks.tankBlock, TankItem.class, TANK_BLOCK_NAME);
 		SimpleFluidTanks.fakeFluidBlock = new FakeFluidBlock();
 
 		// ValveBlock
 		SimpleFluidTanks.valveBlock = new ValveBlock();
-		GameRegistry.registerBlock(SimpleFluidTanks.valveBlock, ValveItem.class, VALVEBLOCK_NAME);
+		GameRegistry.registerBlock(SimpleFluidTanks.valveBlock, ValveItem.class, VALVE_BLOCK_NAME);
 
 		// TileEntities
 		GameRegistry.registerTileEntity(TankBlockEntity.class, TANKBLOCK_ENTITY_KEY);
@@ -72,15 +77,20 @@ public final class Registry
 		SimpleFluidTanks.wrenchItem = new WrenchItem();
 		GameRegistry.registerItem(SimpleFluidTanks.wrenchItem, WRENCH_ITEM_NAME, SimpleFluidTanks.MOD_ID);
 	}
-
+	
 	/**
-	 * Creates and registers the mods custom renderers.
+	 * Registers item models. Must be called after registerItems().
 	 */
-	@SideOnly(Side.CLIENT)
-	public static void registerCustomRenderers()
+	public static void registerItemModels()
 	{
-		RenderingRegistry.registerBlockHandler(new TankBlockRenderer());
-		MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(SimpleFluidTanks.valveBlock), new ValveItemRenderer());
+		Item tankItem = GameRegistry.findItem(SimpleFluidTanks.MOD_ID, TANK_BLOCK_NAME);
+		Item valveItem = GameRegistry.findItem(SimpleFluidTanks.MOD_ID, VALVE_BLOCK_NAME);
+		
+		ItemModelMesher modelMesher = Minecraft.getMinecraft().getRenderItem().getItemModelMesher();
+		
+		modelMesher.register(tankItem, 0, new ModelResourceLocation(TANKITEM_MODEL_RESLOC, "inventory"));
+		modelMesher.register(valveItem, 0, new ModelResourceLocation(VALVEITEM_MODEL_RESLOC, "inventory"));
+		modelMesher.register(SimpleFluidTanks.wrenchItem, 0, new ModelResourceLocation(WRENCHITEM_MODEL_RESLOC, "inventory"));
 	}
 
 	/**

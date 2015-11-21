@@ -1,25 +1,23 @@
 package net.zarathul.simplefluidtanks.items;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.zarathul.simplefluidtanks.SimpleFluidTanks;
 import net.zarathul.simplefluidtanks.registration.Registry;
-import buildcraft.api.tools.IToolWrench;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
- * A simple BuildCraft compatible wrench.
+ * A simple wrench.
  */
-public class WrenchItem extends Item implements IToolWrench
+public class WrenchItem extends Item
 {
 	public WrenchItem()
 	{
 		super();
 
-		setFull3D();
 		setMaxStackSize(1);
 
 		setCreativeTab(SimpleFluidTanks.creativeTab);
@@ -27,27 +25,8 @@ public class WrenchItem extends Item implements IToolWrench
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister iconRegister)
-	{
-		itemIcon = iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":" + Registry.WRENCH_ITEM_NAME);
-	}
-
-	@Override
-	public boolean doesSneakBypassUse(World world, int x, int y, int z, EntityPlayer player)
+	public boolean doesSneakBypassUse(World world, BlockPos pos, EntityPlayer player)
 	{
 		return true;
-	}
-
-	@Override
-	public boolean canWrench(EntityPlayer player, int x, int y, int z)
-	{
-		return true;
-	}
-
-	@Override
-	public void wrenchUsed(EntityPlayer player, int x, int y, int z)
-	{
-		player.swingItem();
 	}
 }

@@ -1,0 +1,8 @@
+{
+    "parent": "block/orientable",
+    "textures": {
+        "top": "simplefluidtanks:blocks/valveGrate",
+        "front": "simplefluidtanks:blocks/valveIo",
+        "side": "simplefluidtanks:blocks/valve"
+    }
+}

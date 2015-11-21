@@ -2,10 +2,14 @@ package net.zarathul.simplefluidtanks.blocks;
 
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import buildcraft.api.tools.IToolWrench;
+import net.zarathul.simplefluidtanks.items.WrenchItem;
 
 /**
  * A base class for blocks that have custom behavior when a buildcraft compatible wrenches is used on them.
@@ -19,7 +23,7 @@ public abstract class WrenchableBlock extends BlockContainer
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int par6, float par7, float par8, float par9)
+	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float hitX, float hitY, float hitZ)
 	{
 		if (!world.isRemote)
 		{
@@ -27,9 +31,9 @@ public abstract class WrenchableBlock extends BlockContainer
 
 			if (equippedItemStack != null)
 			{
-				if (equippedItemStack.getItem() instanceof IToolWrench)	// react to Buildcraft Api ToolWrench
+				if (equippedItemStack.getItem() instanceof WrenchItem)	// react to ToolWrench (TODO: Replace by an Wrench API interface (e.g.Thermal Expansion))
 				{
-					handleToolWrenchClick(world, x, y, z, player, equippedItemStack);
+					handleToolWrenchClick(world, pos, player, equippedItemStack);
 
 					return true;
 				}
@@ -46,16 +50,12 @@ public abstract class WrenchableBlock extends BlockContainer
 	 * 
 	 * @param world
 	 * The world.
-	 * @param x
-	 * The {@link ValveBlock}s x-coordinate.
-	 * @param y
-	 * The {@link ValveBlock}s y-coordinate.
-	 * @param z
-	 * The {@link ValveBlock}s z-coordinate.
+	 * @param pos
+	 * The {@link ValveBlock}s coordinates.
 	 * @param player
 	 * The player using the item.
 	 * @param equippedItemStack
 	 * The item(stack) used on the {@link ValveBlock}.
 	 */
-	protected abstract void handleToolWrenchClick(World world, int x, int y, int z, EntityPlayer player, ItemStack equippedItemStack);
+	protected abstract void handleToolWrenchClick(World world, BlockPos pos, EntityPlayer player, ItemStack equippedItemStack);
 }

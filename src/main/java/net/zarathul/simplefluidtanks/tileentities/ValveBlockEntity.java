@@ -10,13 +10,15 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map.Entry;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
-import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidEvent;
@@ -28,7 +30,6 @@ import net.zarathul.simplefluidtanks.blocks.FluidTank;
 import net.zarathul.simplefluidtanks.blocks.TankBlock;
 import net.zarathul.simplefluidtanks.blocks.ValveBlock;
 import net.zarathul.simplefluidtanks.common.BasicAStar;
-import net.zarathul.simplefluidtanks.common.BlockCoords;
 import net.zarathul.simplefluidtanks.common.BlockSearchMode;
 import net.zarathul.simplefluidtanks.common.Direction;
 import net.zarathul.simplefluidtanks.common.Utils;
@@ -59,7 +60,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	/**
 	 * The fill priorities of all connected {@link TankBlock}s.
 	 */
-	private Multimap<Integer, BlockCoords> tankPriorities;
+	private Multimap<Integer, BlockPos> tankPriorities;
 
 	/**
 	 * A bitmask storing which sides of the {@link ValveBlock} face connected {@link TankBlock}s.
@@ -72,19 +73,19 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	 * A temporary mapping of connected {@link TankBlock}s to their priorities.<br>
 	 * <b>Caution:</b> This will be empty after reloading the {@link ValveBlock} from nbt data.
 	 */
-	private HashMap<BlockCoords, Integer> tankToPriorityMappings;
+	private HashMap<BlockPos, Integer> tankToPriorityMappings;
 
 	/**
 	 * A temporary set of all connected {@link TankBlock}s.<br>
 	 * <b>Caution:</b> This will be empty after reloading the {@link ValveBlock} from nbt data.
 	 */
-	private HashSet<BlockCoords> tanks;
+	private HashSet<BlockPos> tanks;
 
 	/**
 	 * A temporary set of all connected {@link TankBlock}s before disbanding the multiblock structure.<br>
 	 * <b>Caution:</b> This will be empty after reloading the {@link ValveBlock} from nbt data.
 	 */
-	private HashSet<BlockCoords> tanksBeforeDisband;
+	private HashSet<BlockPos> tanksBeforeDisband;
 
 	/**
 	 * Holds a {@link BasicAStar} instance while the tank finding algorithms are running.
@@ -131,28 +132,22 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		tag.setInteger("LinkedTankCount", linkedTankCount);
 		internalTank.writeToNBT(tag);
 
-		return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, -1, tag);
+		return new S35PacketUpdateTileEntity(pos, -1, tag);
 	}
 
 	@Override
 	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet)
 	{
-		NBTTagCompound tag = packet.func_148857_g();
+		NBTTagCompound tag = packet.getNbtCompound();
 		tankFacingSides = tag.getByte("TankFacingSides");
 		linkedTankCount = tag.getInteger("LinkedTankCount");
 		internalTank.readFromNBT(tag);
 
-		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+		worldObj.markBlockForUpdate(pos);
 	}
 
 	@Override
-	public boolean canUpdate()
-	{
-		return false;
-	}
-
-	@Override
-	public int fill(ForgeDirection from, FluidStack fillFluid, boolean doFill)
+	public int fill(EnumFacing from, FluidStack fillFluid, boolean doFill)
 	{
 		if (!worldObj.isRemote && hasTanks())
 		{
@@ -161,11 +156,11 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 			if (doFill && fillAmount > 0)
 			{
 				distributeFluidToTanks();
-				worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);
-				worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+				worldObj.markChunkDirty(pos, this);
+				worldObj.markBlockForUpdate(pos);
 				// triggers onNeighborTileChange on neighboring blocks, this is needed for comparators to work
-				worldObj.notifyBlockChange(xCoord, yCoord, zCoord, SimpleFluidTanks.valveBlock);
-				FluidEvent.fireEvent(new FluidEvent.FluidFillingEvent(fillFluid, this.worldObj, this.xCoord, this.yCoord, this.zCoord, this.internalTank, fillFluid.amount));
+				worldObj.notifyBlockOfStateChange(pos, SimpleFluidTanks.valveBlock);
+				FluidEvent.fireEvent(new FluidEvent.FluidFillingEvent(fillFluid, worldObj, pos, internalTank, fillFluid.amount));
 			}
 
 			return fillAmount;
@@ -175,13 +170,13 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	}
 
 	@Override
-	public FluidStack drain(ForgeDirection from, FluidStack drainFluid, boolean doDrain)
+	public FluidStack drain(EnumFacing from, FluidStack drainFluid, boolean doDrain)
 	{
 		return drain(from, drainFluid, -1, doDrain);
 	}
 
 	@Override
-	public FluidStack drain(ForgeDirection from, int drainAmount, boolean doDrain)
+	public FluidStack drain(EnumFacing from, int drainAmount, boolean doDrain)
 	{
 		return drain(from, null, drainAmount, doDrain);
 	}
@@ -199,7 +194,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	 * Indicates whether the draining should be simulated or not.
 	 * @return The type and amount of fluid drained.
 	 */
-	private FluidStack drain(ForgeDirection from, FluidStack drainFluid, int drainAmount, boolean doDrain)
+	private FluidStack drain(EnumFacing from, FluidStack drainFluid, int drainAmount, boolean doDrain)
 	{
 		if (!worldObj.isRemote && hasTanks())
 		{
@@ -210,11 +205,11 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 			if (doDrain && drainedFluid != null && drainedFluid.amount > 0)
 			{
 				distributeFluidToTanks();
-				worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);
-				worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+				worldObj.markChunkDirty(pos, this);
+				worldObj.markBlockForUpdate(pos);
 				// triggers onNeighborTileChange on neighboring blocks, this is needed for comparators to work
-				worldObj.notifyBlockChange(xCoord, yCoord, zCoord, SimpleFluidTanks.valveBlock);
-				FluidEvent.fireEvent(new FluidEvent.FluidDrainingEvent(drainedFluid, this.worldObj, this.xCoord, this.yCoord, this.zCoord, this.internalTank, drainedFluid.amount));
+				worldObj.notifyBlockOfStateChange(pos, SimpleFluidTanks.valveBlock);
+				FluidEvent.fireEvent(new FluidEvent.FluidDrainingEvent(drainedFluid, worldObj, pos, internalTank, drainedFluid.amount));
 			}
 
 			return drainedFluid;
@@ -224,9 +219,9 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	}
 
 	@Override
-	public boolean canFill(ForgeDirection from, Fluid fluid)
+	public boolean canFill(EnumFacing from, Fluid fluid)
 	{
-		if (hasTanks() && !isFacingTank(Direction.fromForge(from)) && fluid != null && !internalTank.isFull())
+		if (hasTanks() && !isFacingTank(from) && fluid != null && !internalTank.isFull())
 		{
 			FluidStack tankFluid = internalTank.getFluid();
 
@@ -237,9 +232,9 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	}
 
 	@Override
-	public boolean canDrain(ForgeDirection from, Fluid fluid)
+	public boolean canDrain(EnumFacing from, Fluid fluid)
 	{
-		if (hasTanks() && !isFacingTank(Direction.fromForge(from)) && fluid != null && internalTank.getFluidAmount() > 0)
+		if (hasTanks() && !isFacingTank(from) && fluid != null && internalTank.getFluidAmount() > 0)
 		{
 			FluidStack tankFluid = internalTank.getFluid();
 
@@ -250,7 +245,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	}
 
 	@Override
-	public FluidTankInfo[] getTankInfo(ForgeDirection from)
+	public FluidTankInfo[] getTankInfo(EnumFacing from)
 	{
 		return new FluidTankInfo[] { internalTank.getInfo() };
 	}
@@ -367,36 +362,34 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	{
 		int sides = 0;
 
-		BlockCoords coords = new BlockCoords(xCoord, yCoord, zCoord);
-
-		if (isInTankList(coords.offset(Direction.ZPOS)))
+		if (isInTankList(pos.south()))
 		{
-			sides = sides | Direction.sidesToBitFlagsMappings.get(Direction.ZPOS);
+			sides = sides | Direction.sidesToBitFlagsMappings.get(EnumFacing.SOUTH.getIndex());
 		}
 
-		if (isInTankList(coords.offset(Direction.ZNEG)))
+		if (isInTankList(pos.north()))
 		{
-			sides = sides | Direction.sidesToBitFlagsMappings.get(Direction.ZNEG);
+			sides = sides | Direction.sidesToBitFlagsMappings.get(EnumFacing.NORTH.getIndex());
 		}
 
-		if (isInTankList(coords.offset(Direction.XPOS)))
+		if (isInTankList(pos.east()))
 		{
-			sides = sides | Direction.sidesToBitFlagsMappings.get(Direction.XPOS);
+			sides = sides | Direction.sidesToBitFlagsMappings.get(EnumFacing.EAST.getIndex());
 		}
 
-		if (isInTankList(coords.offset(Direction.XNEG)))
+		if (isInTankList(pos.west()))
 		{
-			sides = sides | Direction.sidesToBitFlagsMappings.get(Direction.XNEG);
+			sides = sides | Direction.sidesToBitFlagsMappings.get(EnumFacing.WEST.getIndex());
 		}
 
-		if (isInTankList(coords.offset(Direction.YPOS)))
+		if (isInTankList(pos.up()))
 		{
-			sides = sides | Direction.sidesToBitFlagsMappings.get(Direction.YPOS);
+			sides = sides | Direction.sidesToBitFlagsMappings.get(EnumFacing.UP.getIndex());
 		}
 
-		if (isInTankList(coords.offset(Direction.YNEG)))
+		if (isInTankList(pos.down()))
 		{
-			sides = sides | Direction.sidesToBitFlagsMappings.get(Direction.YNEG);
+			sides = sides | Direction.sidesToBitFlagsMappings.get(EnumFacing.DOWN.getIndex());
 		}
 
 		tankFacingSides = (byte) sides;
@@ -410,13 +403,18 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	 * @return <code>true</code> if the {@link ValveBlock} is facing a connected {@link TankBlock} on the specified side, otherwise <code>false</code>.
 	 * @see Direction
 	 */
-	public boolean isFacingTank(int side)
+	public boolean isFacingTank(EnumFacing side)
 	{
-		if (side >= Byte.MIN_VALUE && side <= Byte.MAX_VALUE)
+		if (side != null)
 		{
-			byte flags = (byte) (int) Direction.sidesToBitFlagsMappings.get(side);
+			int sideIndex = side.getIndex();
+			
+			if (sideIndex >= Byte.MIN_VALUE && sideIndex <= Byte.MAX_VALUE)
+			{
+				byte flags = (byte) (int) Direction.sidesToBitFlagsMappings.get(sideIndex);
 
-			return (tankFacingSides & flags) == flags;
+				return (tankFacingSides & flags) == flags;
+			}
 		}
 
 		return false;
@@ -458,7 +456,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	 */
 	public void disbandMultiblock(boolean suppressBlockUpdates)
 	{
-		for (BlockCoords tankCoords : tankPriorities.values())
+		for (BlockPos tankCoords : tankPriorities.values())
 		{
 			TankBlockEntity tankEntity = Utils.getTileEntityAt(worldObj, TankBlockEntity.class, tankCoords);
 
@@ -471,7 +469,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		if (suppressBlockUpdates)
 		{
 			// This Set is used later to update TankBlocks that are no longer part of the multiblock structure.
-			tanksBeforeDisband = new HashSet<BlockCoords>();
+			tanksBeforeDisband = new HashSet<BlockPos>();
 			tanksBeforeDisband.addAll(tankPriorities.values());
 		}
 
@@ -485,14 +483,14 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 
 		if (!suppressBlockUpdates)
 		{
-			worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);
-			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+			worldObj.markChunkDirty(pos, this);
+			worldObj.markBlockForUpdate(pos);
 			// triggers onNeighborTileChange on neighboring blocks, this is needed for comparators to work
-			worldObj.notifyBlockChange(xCoord, yCoord, zCoord, SimpleFluidTanks.valveBlock);
+			worldObj.notifyBlockOfStateChange(pos, SimpleFluidTanks.valveBlock);
 
 			if (spilledFluid != null)
 			{
-				FluidEvent.fireEvent(new FluidEvent.FluidSpilledEvent(spilledFluid, this.worldObj, this.xCoord, this.yCoord, this.zCoord));
+				FluidEvent.fireEvent(new FluidEvent.FluidSpilledEvent(spilledFluid, worldObj, pos));
 			}
 		}
 	}
@@ -521,16 +519,16 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		// the ValveBlock also counts as a tank in the multiblock structure
 		linkedTankCount = Math.max(tankPriorities.size() - 1, 0);
 
-		worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);
-		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+		worldObj.markChunkDirty(pos, this);
+		worldObj.markBlockForUpdate(pos);
 		// triggers onNeighborTileChange on neighboring blocks, this is needed for comparators to work
-		worldObj.notifyBlockChange(xCoord, yCoord, zCoord, SimpleFluidTanks.valveBlock);
+		worldObj.notifyBlockOfStateChange(pos, SimpleFluidTanks.valveBlock);
 
 		if (oldFluidAmount > this.internalTank.getCapacity() && fluid != null)
 		{
 			FluidStack spilledFluid = fluid.copy();
 			spilledFluid.amount = oldFluidAmount - this.internalTank.getCapacity();
-			FluidEvent.fireEvent(new FluidEvent.FluidSpilledEvent(spilledFluid, this.worldObj, this.xCoord, this.yCoord, this.zCoord));
+			FluidEvent.fireEvent(new FluidEvent.FluidSpilledEvent(spilledFluid, worldObj, pos));
 		}
 	}
 
@@ -545,13 +543,13 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		ArrayList<TankBlockEntity> tankEntities = new ArrayList<TankBlockEntity>(tankPriorities.size());
 
 		// set the valve for all connected tanks
-		for (BlockCoords tankCoords : tankPriorities.values())
+		for (BlockPos tankCoords : tankPriorities.values())
 		{
 			TankBlockEntity tankEntity = Utils.getTileEntityAt(worldObj, TankBlockEntity.class, tankCoords);
 
 			if (tankEntity != null)
 			{
-				tankEntity.setValve(new BlockCoords(xCoord, yCoord, zCoord));
+				tankEntity.setValve(pos);
 				tankEntities.add(tankEntity);
 			}
 		}
@@ -571,16 +569,16 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	 */
 	private void updateOrphanedTanks()
 	{
-		Collection<BlockCoords> tanksToUpdate = Collections2.filter(tanksBeforeDisband, Predicates.not(Predicates.in(tanks)));
+		Collection<BlockPos> tanksToUpdate = Collections2.filter(tanksBeforeDisband, Predicates.not(Predicates.in(tanks)));
 
-		for (BlockCoords tank : tanksToUpdate)
+		for (BlockPos tank : tanksToUpdate)
 		{
 			TankBlockEntity tankEntity = Utils.getTileEntityAt(worldObj, TankBlockEntity.class, tank);
 
 			if (tankEntity != null)
 			{
-				worldObj.markTileEntityChunkModified(tank.x, tank.y, tank.z, tankEntity);
-				worldObj.markBlockForUpdate(tank.x, tank.y, tank.z);
+				worldObj.markChunkDirty(tank, tankEntity);
+				worldObj.markBlockForUpdate(tank);
 			}
 		}
 
@@ -611,7 +609,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		{
 			int percentage = (amountToDistribute == 0) ? 0 : 100;
 
-			for (BlockCoords tankCoords : tankPriorities.values())
+			for (BlockPos tankCoords : tankPriorities.values())
 			{
 				TankBlockEntity tankEntity = Utils.getTileEntityAt(worldObj, TankBlockEntity.class, tankCoords);
 
@@ -627,7 +625,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 			int[] priorities = Ints.toArray(tankPriorities.keySet());
 			Arrays.sort(priorities);
 
-			Collection<BlockCoords> tanksToFill = null;
+			Collection<BlockPos> tanksToFill = null;
 
 			// for each priority get all the TankBlocks and fill them evenly
 			for (int i = 0; i < priorities.length; i++)
@@ -637,7 +635,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 				int capacity = tanksToFill.size() * Config.bucketsPerTank * FluidContainerRegistry.BUCKET_VOLUME;
 				int fillPercentage = MathHelper.clamp_int((int) Math.ceil((double) amountToDistribute / (double) capacity * 100d), 0, 100);
 
-				for (BlockCoords tank : tanksToFill)
+				for (BlockPos tank : tanksToFill)
 				{
 					TankBlockEntity tankEntity = Utils.getTileEntityAt(worldObj, TankBlockEntity.class, tank);
 
@@ -657,23 +655,22 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	 */
 	private void generateTankList()
 	{
-		tanks = new HashSet<BlockCoords>();
+		tanks = new HashSet<BlockPos>();
 
-		BlockCoords startCoords = new BlockCoords(xCoord, yCoord, zCoord);
-		ArrayList<BlockCoords> currentTanks = new ArrayList<BlockCoords>();
-		ArrayList<BlockCoords> newTanks = new ArrayList<BlockCoords>();
-		Collection<BlockCoords> adjacentTanks;
+		ArrayList<BlockPos> currentTanks = new ArrayList<BlockPos>();
+		ArrayList<BlockPos> newTanks = new ArrayList<BlockPos>();
+		Collection<BlockPos> adjacentTanks;
 
-		currentTanks.add(startCoords);
+		currentTanks.add(pos);
 
 		// simple flood find algorithm: get all adjacent TankBlocks to the current one -> repeat for all blocks found until there is nothing left to find
 		do
 		{
-			for (BlockCoords tank : currentTanks)
+			for (BlockPos tank : currentTanks)
 			{
 				adjacentTanks = findAdjacentTanks(tank);
 
-				for (BlockCoords adjacentTank : adjacentTanks)
+				for (BlockPos adjacentTank : adjacentTanks)
 				{
 					if (tanks.add(adjacentTank))
 					{
@@ -695,21 +692,18 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	private void computeFillPriorities()
 	{
 		aStar = new BasicAStar();
-		tankToPriorityMappings = new HashMap<BlockCoords, Integer>();
+		tankToPriorityMappings = new HashMap<BlockPos, Integer>();
 
-		BlockCoords startTank = new BlockCoords(xCoord, yCoord, zCoord);
-		BlockCoords sourceTank;
+		ArrayList<BlockPos> tanksWithoutLowerTanks = new ArrayList<BlockPos>();
+		ArrayList<BlockPos> currentTanks = new ArrayList<BlockPos>();
+		ArrayList<BlockPos> tanksOnSameHeight;
+		ArrayList<BlockPos> lowerTanks;
+		HashMap<BlockPos, Integer> tanksToPrioritize = new HashMap<BlockPos, Integer>();
+		HashSet<BlockPos> newTanks = new HashSet<BlockPos>();
+		HashSet<BlockPos> handledSourceTanks = new HashSet<BlockPos>();
+		HashSet<BlockPos> handledSegmentTanks = new HashSet<BlockPos>();
 
-		ArrayList<BlockCoords> tanksWithoutLowerTanks = new ArrayList<BlockCoords>();
-		ArrayList<BlockCoords> currentTanks = new ArrayList<BlockCoords>();
-		ArrayList<BlockCoords> tanksOnSameHeight;
-		ArrayList<BlockCoords> lowerTanks;
-		HashMap<BlockCoords, Integer> tanksToPrioritize = new HashMap<BlockCoords, Integer>();
-		HashSet<BlockCoords> newTanks = new HashSet<BlockCoords>();
-		HashSet<BlockCoords> handledSourceTanks = new HashSet<BlockCoords>();
-		HashSet<BlockCoords> handledSegmentTanks = new HashSet<BlockCoords>();
-
-		currentTanks.add(startTank);
+		currentTanks.add(pos);
 
 		int priority = 0;
 		int adjustedPriority;
@@ -728,7 +722,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 
 		do
 		{
-			for (BlockCoords currentTank : currentTanks)
+			for (BlockPos currentTank : currentTanks)
 			{
 				if (handledSegmentTanks.contains(currentTank)) continue;
 
@@ -744,7 +738,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 				{
 					handledSourceTanks.add(currentTank);
 
-					for (BlockCoords lowerTank : lowerTanks)
+					for (BlockPos lowerTank : lowerTanks)
 					{
 						tanksToPrioritize.put(lowerTank, priority);
 						newTanks.addAll(getAdjacentTanks(lowerTank, BlockSearchMode.Above));
@@ -753,7 +747,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 			}
 
 			// find connected tanks on the same height without stepping over the height level of the initial tank
-			for (BlockCoords tankWithoutLowerTanks : tanksWithoutLowerTanks)
+			for (BlockPos tankWithoutLowerTanks : tanksWithoutLowerTanks)
 			{
 				if (!tanksToPrioritize.containsKey(tankWithoutLowerTanks))
 				{
@@ -761,7 +755,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 
 					if (Collections.disjoint(tanksOnSameHeight, handledSourceTanks))
 					{
-						for (BlockCoords tankOnSameHeight : tanksOnSameHeight)
+						for (BlockPos tankOnSameHeight : tanksOnSameHeight)
 						{
 							adjustedPriority = (tankToPriorityMappings.containsKey(tankOnSameHeight)) ? Math.max(priority, tankToPriorityMappings.get(tankOnSameHeight)) : priority;
 
@@ -772,7 +766,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 				}
 			}
 
-			for (Entry<BlockCoords, Integer> entry : tanksToPrioritize.entrySet())
+			for (Entry<BlockPos, Integer> entry : tanksToPrioritize.entrySet())
 			{
 				setTankPriority(entry.getKey(), entry.getValue());
 			}
@@ -800,19 +794,19 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	 * The tanks to start from.
 	 * @return An {@link ArrayList} of found tanks.
 	 */
-	private ArrayList<BlockCoords> getTanksOnSameHeight(BlockCoords startTank)
+	private ArrayList<BlockPos> getTanksOnSameHeight(BlockPos startTank)
 	{
 		if (startTank == null)
 		{
 			return null;
 		}
 
-		ArrayList<BlockCoords> adjacentTanks;
-		ArrayList<BlockCoords> foundTanks = new ArrayList<BlockCoords>();
-		ArrayList<BlockCoords> currentTanks = new ArrayList<BlockCoords>();
+		ArrayList<BlockPos> adjacentTanks;
+		ArrayList<BlockPos> foundTanks = new ArrayList<BlockPos>();
+		ArrayList<BlockPos> currentTanks = new ArrayList<BlockPos>();
 		EnumSet<BlockSearchMode> searchFlags;
-		HashSet<BlockCoords> handledTanks = new HashSet<BlockCoords>();
-		HashSet<BlockCoords> newTanks = new HashSet<BlockCoords>();
+		HashSet<BlockPos> handledTanks = new HashSet<BlockPos>();
+		HashSet<BlockPos> newTanks = new HashSet<BlockPos>();
 
 		currentTanks.add(startTank);
 
@@ -823,17 +817,17 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 
 		do
 		{
-			for (BlockCoords currentTank : currentTanks)
+			for (BlockPos currentTank : currentTanks)
 			{
-				if (currentTank.y == startTank.y)
+				if (currentTank.getY() == startTank.getY())
 				{
 					foundTanks.add(currentTank);
 				}
 
-				searchFlags = (currentTank.y < startTank.y) ? BlockSearchMode.All : BlockSearchMode.SameLevelAndBelow;
+				searchFlags = (currentTank.getY() < startTank.getY()) ? BlockSearchMode.All : BlockSearchMode.SameLevelAndBelow;
 				adjacentTanks = getAdjacentTanks(currentTank, searchFlags);
 
-				for (BlockCoords adjacentTank : adjacentTanks)
+				for (BlockPos adjacentTank : adjacentTanks)
 				{
 					if (!handledTanks.contains(adjacentTank))
 					{
@@ -861,7 +855,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	 * @param priority
 	 * The {@link TankBlock}s priority.
 	 */
-	private void setTankPriority(BlockCoords tank, int priority)
+	private void setTankPriority(BlockPos tank, int priority)
 	{
 		if (tank == null || priority < 0)
 		{
@@ -888,20 +882,20 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	 * The {@link TankBlock}s coordinates to start from.
 	 * @return An {@link ArrayList} of found tanks.
 	 */
-	private ArrayList<BlockCoords> getClosestLowestTanks(BlockCoords startTank)
+	private ArrayList<BlockPos> getClosestLowestTanks(BlockPos startTank)
 	{
 		if (startTank == null)
 		{
 			return null;
 		}
 
-		ArrayList<BlockCoords> tanksInSegment;
-		ArrayList<BlockCoords> adjacentTanks;
-		ArrayList<BlockCoords> closestTanksWithTanksBelow;
-		ArrayList<BlockCoords> tanksWithTanksBelow = new ArrayList<BlockCoords>();
-		ArrayList<BlockCoords> newTanks = new ArrayList<BlockCoords>();
-		ArrayList<BlockCoords> foundTanks = new ArrayList<BlockCoords>();
-		ArrayList<BlockCoords> currentTanks = new ArrayList<BlockCoords>();
+		ArrayList<BlockPos> tanksInSegment;
+		ArrayList<BlockPos> adjacentTanks;
+		ArrayList<BlockPos> closestTanksWithTanksBelow;
+		ArrayList<BlockPos> tanksWithTanksBelow = new ArrayList<BlockPos>();
+		ArrayList<BlockPos> newTanks = new ArrayList<BlockPos>();
+		ArrayList<BlockPos> foundTanks = new ArrayList<BlockPos>();
+		ArrayList<BlockPos> currentTanks = new ArrayList<BlockPos>();
 
 		currentTanks.add(startTank);
 
@@ -916,11 +910,11 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 
 		do
 		{
-			for (BlockCoords currentTank : currentTanks)
+			for (BlockPos currentTank : currentTanks)
 			{
 				tanksInSegment = getTanksInSegment(currentTank);
 
-				for (BlockCoords segmentTank : tanksInSegment)
+				for (BlockPos segmentTank : tanksInSegment)
 				{
 					adjacentTanks = getAdjacentTanks(segmentTank, BlockSearchMode.Below);
 
@@ -935,9 +929,9 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 					// if there is more than one way down, only consider the closest ones
 					closestTanksWithTanksBelow = (tanksWithTanksBelow.size() > 1) ? getClosestTanks(tanksInSegment, tanksWithTanksBelow, currentTank) : tanksWithTanksBelow;
 
-					for (BlockCoords closestTank : closestTanksWithTanksBelow)
+					for (BlockPos closestTank : closestTanksWithTanksBelow)
 					{
-						newTanks.add(closestTank.offset(Direction.YNEG));
+						newTanks.add(closestTank.down());
 					}
 				}
 				else
@@ -958,17 +952,17 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	}
 
 	/**
-	 * Gets the {@link BlockCoords} from the specified {@link Collection} that are closest to the specified destination.
+	 * Gets the {@link BlockPos} from the specified {@link Collection} that are closest to the specified destination.
 	 * 
 	 * @param passableBlocks
-	 * The {@link BlockCoords} the search algorithm is allowed to move through.
+	 * The {@link BlockPos} the search algorithm is allowed to move through.
 	 * @param sources
 	 * The coordinates of the source blocks whose distances to the destination is measured.
 	 * @param destination
 	 * The coordinates of the destination block.
-	 * @return An {@link ArrayList} of the found {@link BlockCoords}.
+	 * @return An {@link ArrayList} of the found {@link BlockPos}.
 	 */
-	private ArrayList<BlockCoords> getClosestTanks(Collection<BlockCoords> passableBlocks, Collection<BlockCoords> sources, BlockCoords destination)
+	private ArrayList<BlockPos> getClosestTanks(Collection<BlockPos> passableBlocks, Collection<BlockPos> sources, BlockPos destination)
 	{
 		if (tanks == null || tanks.isEmpty() || sources == null || sources.isEmpty() || destination == null)
 		{
@@ -976,13 +970,13 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		}
 
 		ArrayList<Integer> distances = new ArrayList<Integer>();
-		Multimap<Integer, BlockCoords> distanceToTanksMappings = ArrayListMultimap.create();
+		Multimap<Integer, BlockPos> distanceToTanksMappings = ArrayListMultimap.create();
 		int distance;
 
 		// simply use my crappy A-Star implementation to measure the distances
 		aStar.setPassableBlocks(tanks);
 
-		for (BlockCoords source : sources)
+		for (BlockPos source : sources)
 		{
 			distance = (source.equals(destination)) ? 0 : aStar.getShortestPath(source, destination).currentCost;
 			distances.add(distance);
@@ -991,7 +985,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 
 		Collections.sort(distances);
 
-		return new ArrayList<BlockCoords>(distanceToTanksMappings.get(distances.get(0)));
+		return new ArrayList<BlockPos>(distanceToTanksMappings.get(distances.get(0)));
 	}
 
 	/**
@@ -999,31 +993,31 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	 * 
 	 * @param firstTank
 	 * The coordinates of the tank to start from.
-	 * @return An {@link ArrayList} of the found {@link BlockCoords}.
+	 * @return An {@link ArrayList} of the found {@link BlockPos}.
 	 */
-	private ArrayList<BlockCoords> getTanksInSegment(BlockCoords firstTank)
+	private ArrayList<BlockPos> getTanksInSegment(BlockPos firstTank)
 	{
 		if (firstTank == null)
 		{
 			return null;
 		}
 
-		LinkedHashSet<BlockCoords> foundTanks = new LinkedHashSet<BlockCoords>();
+		LinkedHashSet<BlockPos> foundTanks = new LinkedHashSet<BlockPos>();
 		foundTanks.add(firstTank);
 
-		ArrayList<BlockCoords> currentTanks = new ArrayList<BlockCoords>();
-		ArrayList<BlockCoords> newTanks = new ArrayList<BlockCoords>();
-		Collection<BlockCoords> adjacentTanks;
+		ArrayList<BlockPos> currentTanks = new ArrayList<BlockPos>();
+		ArrayList<BlockPos> newTanks = new ArrayList<BlockPos>();
+		Collection<BlockPos> adjacentTanks;
 
 		currentTanks.add(firstTank);
 
 		do
 		{
-			for (BlockCoords currentTank : currentTanks)
+			for (BlockPos currentTank : currentTanks)
 			{
 				adjacentTanks = getAdjacentTanks(currentTank, BlockSearchMode.SameLevel);
 
-				for (BlockCoords adjacentTank : adjacentTanks)
+				for (BlockPos adjacentTank : adjacentTanks)
 				{
 					if (foundTanks.add(adjacentTank))
 					{
@@ -1038,7 +1032,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		}
 		while (!currentTanks.isEmpty());
 
-		return new ArrayList<BlockCoords>(foundTanks);
+		return new ArrayList<BlockPos>(foundTanks);
 	}
 
 	/**
@@ -1046,9 +1040,9 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	 * 
 	 * @param block
 	 * The coordinates of the tank to get the adjacent tanks for.
-	 * @return An {@link ArrayList} of the found {@link BlockCoords}.
+	 * @return An {@link ArrayList} of the found {@link BlockPos}.
 	 */
-	private ArrayList<BlockCoords> getAdjacentTanks(BlockCoords block)
+	private ArrayList<BlockPos> getAdjacentTanks(BlockPos block)
 	{
 		return getOrFindAdjacentTanks(block, null, BlockSearchMode.All, true);
 	}
@@ -1060,9 +1054,9 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	 * The coordinates of the tank to get the adjacent tanks for.
 	 * @param mode
 	 * Specifies which adjacent tanks should be included.
-	 * @return An {@link ArrayList} of the found {@link BlockCoords}.
+	 * @return An {@link ArrayList} of the found {@link BlockPos}.
 	 */
-	private ArrayList<BlockCoords> getAdjacentTanks(BlockCoords block, BlockSearchMode mode)
+	private ArrayList<BlockPos> getAdjacentTanks(BlockPos block, BlockSearchMode mode)
 	{
 		return getOrFindAdjacentTanks(block, mode, null, true);
 	}
@@ -1074,9 +1068,9 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	 * The coordinates of the tank to get the adjacent tanks for.
 	 * @param searchFlags
 	 * Specifies which adjacent tanks should be included.
-	 * @return An {@link ArrayList} of the found {@link BlockCoords}.
+	 * @return An {@link ArrayList} of the found {@link BlockPos}.
 	 */
-	private ArrayList<BlockCoords> getAdjacentTanks(BlockCoords block, EnumSet<BlockSearchMode> searchFlags)
+	private ArrayList<BlockPos> getAdjacentTanks(BlockPos block, EnumSet<BlockSearchMode> searchFlags)
 	{
 		return getOrFindAdjacentTanks(block, null, searchFlags, true);
 	}
@@ -1086,9 +1080,9 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	 * 
 	 * @param block
 	 * The coordinates of the tank to get the adjacent tanks for.
-	 * @return An {@link ArrayList} of the found {@link BlockCoords}.
+	 * @return An {@link ArrayList} of the found {@link BlockPos}.
 	 */
-	private ArrayList<BlockCoords> findAdjacentTanks(BlockCoords block)
+	private ArrayList<BlockPos> findAdjacentTanks(BlockPos block)
 	{
 		return getOrFindAdjacentTanks(block, null, BlockSearchMode.All, false);
 	}
@@ -1100,9 +1094,9 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	 * The coordinates of the tank to get the adjacent tanks for.
 	 * @param mode
 	 * Specifies which adjacent tanks should be included.
-	 * @return An {@link ArrayList} of the found {@link BlockCoords}.
+	 * @return An {@link ArrayList} of the found {@link BlockPos}.
 	 */
-	private ArrayList<BlockCoords> findAdjacentTanks(BlockCoords block, BlockSearchMode mode)
+	private ArrayList<BlockPos> findAdjacentTanks(BlockPos block, BlockSearchMode mode)
 	{
 		return getOrFindAdjacentTanks(block, mode, null, false);
 	}
@@ -1114,9 +1108,9 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	 * The coordinates of the tank to get the adjacent tanks for.
 	 * @param searchFlags
 	 * Specifies which adjacent tanks should be included.
-	 * @return An {@link ArrayList} of the found {@link BlockCoords}.
+	 * @return An {@link ArrayList} of the found {@link BlockPos}.
 	 */
-	private ArrayList<BlockCoords> findAdjacentTanks(BlockCoords block, EnumSet<BlockSearchMode> searchFlags)
+	private ArrayList<BlockPos> findAdjacentTanks(BlockPos block, EnumSet<BlockSearchMode> searchFlags)
 	{
 		return getOrFindAdjacentTanks(block, null, searchFlags, false);
 	}
@@ -1134,38 +1128,38 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	 * Specifies if the temporary tank list or {@link TileEntity} should be used to determine which blocks are valid tanks.
 	 * @return
 	 */
-	private ArrayList<BlockCoords> getOrFindAdjacentTanks(BlockCoords block, BlockSearchMode mode, EnumSet<BlockSearchMode> searchFlags, boolean useTankList)
+	private ArrayList<BlockPos> getOrFindAdjacentTanks(BlockPos block, BlockSearchMode mode, EnumSet<BlockSearchMode> searchFlags, boolean useTankList)
 	{
 		if (block == null || (mode == null && searchFlags == null))
 		{
 			return null;
 		}
 
-		ArrayList<BlockCoords> foundTanks = new ArrayList<BlockCoords>();
-		ArrayList<BlockCoords> adjacentBlocks = new ArrayList<BlockCoords>();
+		ArrayList<BlockPos> foundTanks = new ArrayList<BlockPos>();
+		ArrayList<BlockPos> adjacentBlocks = new ArrayList<BlockPos>();
 
 		if (mode == BlockSearchMode.SameLevel || (searchFlags != null && searchFlags.contains(BlockSearchMode.SameLevel)))
 		{
-			adjacentBlocks.add(new BlockCoords(block.x + 1, block.y, block.z));	// X+
-			adjacentBlocks.add(new BlockCoords(block.x - 1, block.y, block.z));	// X-
-			adjacentBlocks.add(new BlockCoords(block.x, block.y, block.z + 1));	// Z+
-			adjacentBlocks.add(new BlockCoords(block.x, block.y, block.z - 1));	// Z-
+			adjacentBlocks.add(block.east());	// X+
+			adjacentBlocks.add(block.west());	// X-
+			adjacentBlocks.add(block.south());	// Z+
+			adjacentBlocks.add(block.north());	// Z-
 		}
 
 		if (mode == BlockSearchMode.Above || (searchFlags != null && searchFlags.contains(BlockSearchMode.Above)))
 		{
-			adjacentBlocks.add(new BlockCoords(block.x, block.y + 1, block.z));	// Y+
+			adjacentBlocks.add(block.up());	// Y+
 		}
 
 		if (mode == BlockSearchMode.Below || (searchFlags != null && searchFlags.contains(BlockSearchMode.Below)))
 		{
-			adjacentBlocks.add(new BlockCoords(block.x, block.y - 1, block.z));	// Y-
+			adjacentBlocks.add(block.down());	// Y-
 		}
 
 		if (useTankList)
 		{
 			// use the tank cache to check if we found valid tanks
-			for (BlockCoords adjacentBlock : adjacentBlocks)
+			for (BlockPos adjacentBlock : adjacentBlocks)
 			{
 				if (isInTankList(adjacentBlock))
 				{
@@ -1176,7 +1170,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		else
 		{
 			// use the block types and tile entity data to check if we found valid tanks
-			for (BlockCoords adjacentBlock : adjacentBlocks)
+			for (BlockPos adjacentBlock : adjacentBlocks)
 			{
 				if (isUnlinkedTank(adjacentBlock))
 				{
@@ -1195,26 +1189,31 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	 * The coordinates of the block to check.
 	 * @return <code>true</code> if the specified block is a valid {@link TankBlock}, otherwise <code>false</code>.
 	 */
-	private boolean isUnlinkedTank(BlockCoords block)
+	private boolean isUnlinkedTank(BlockPos block)
 	{
 		if (block == null)
 		{
 			return false;
 		}
-
-		if (worldObj.getBlock(block.x, block.y, block.z) instanceof TankBlock)
+		
+		IBlockState state = worldObj.getBlockState(block);
+		
+		if (state != null)
 		{
-			TankBlockEntity tankEntity = Utils.getTileEntityAt(worldObj, TankBlockEntity.class, block);
-
-			if (tankEntity != null)
+			if (state.getBlock() instanceof TankBlock)
 			{
-				return !tankEntity.isPartOfTank();
+				TankBlockEntity tankEntity = Utils.getTileEntityAt(worldObj, TankBlockEntity.class, block);
+
+				if (tankEntity != null)
+				{
+					return !tankEntity.isPartOfTank();
+				}
 			}
-		}
-		else if (block.equals(xCoord, yCoord, zCoord) && tankPriorities.isEmpty())
-		{
-			// this valve is also considered a unlinked tank as long as it has no associated tanks
-			return true;
+			else if (block.equals(pos) && tankPriorities.isEmpty())
+			{
+				// this valve is also considered a unlinked tank as long as it has no associated tanks
+				return true;
+			}
 		}
 
 		return false;
@@ -1223,24 +1222,24 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	/**
 	 * Checks if the specified coordinates are contained in the temporary tank list.
 	 * 
-	 * @param block
+	 * @param pos
 	 * The coordinates of the block to check.
 	 * @return <code>true</code> if the specified coordinates were found, otherwise <code>false</code>.
 	 */
-	private boolean isInTankList(BlockCoords block)
+	private boolean isInTankList(BlockPos pos)
 	{
-		if (block == null)
+		if (pos == null)
 		{
 			return false;
 		}
 
 		if (tanks != null)
 		{
-			return tanks.contains(block);
+			return tanks.contains(pos);
 		}
 		else if (tankPriorities != null)
 		{
-			return tankPriorities.values().contains(block);
+			return tankPriorities.values().contains(pos);
 		}
 
 		return false;
@@ -1253,7 +1252,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	 * The coordinates of the block to check.
 	 * @return <code>true</code> if the tank has a priority, otherwise <code>false</code>.
 	 */
-	private boolean hasPriority(BlockCoords tank)
+	private boolean hasPriority(BlockPos tank)
 	{
 		return tankPriorities.containsValue(tank);
 	}
@@ -1274,14 +1273,14 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		}
 
 		NBTTagCompound tankPrioritiesTag = new NBTTagCompound();
-		BlockCoords currentCoords;
+		BlockPos currentCoords;
 		int[] serializableEntry;
 		int i = 0;
 
-		for (Entry<Integer, BlockCoords> entry : tankPriorities.entries())
+		for (Entry<Integer, BlockPos> entry : tankPriorities.entries())
 		{
 			currentCoords = entry.getValue();
-			serializableEntry = new int[] { entry.getKey(), currentCoords.x, currentCoords.y, currentCoords.z };
+			serializableEntry = new int[] { entry.getKey(), currentCoords.getX(), currentCoords.getY(), currentCoords.getZ() };
 			tankPrioritiesTag.setIntArray(Integer.toString(i), serializableEntry);
 			i++;
 		}
@@ -1310,7 +1309,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 			while (tankPrioritiesTag.hasKey(key = Integer.toString(i)))
 			{
 				serializedEntry = tankPrioritiesTag.getIntArray(key);
-				tankPriorities.put(serializedEntry[0], new BlockCoords(serializedEntry[1], serializedEntry[2], serializedEntry[3]));
+				tankPriorities.put(serializedEntry[0], new BlockPos(serializedEntry[1], serializedEntry[2], serializedEntry[3]));
 				i++;
 			}
 		}

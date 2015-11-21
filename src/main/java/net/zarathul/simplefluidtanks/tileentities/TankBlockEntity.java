@@ -2,17 +2,20 @@ package net.zarathul.simplefluidtanks.tileentities;
 
 import java.util.Arrays;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
+import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.zarathul.simplefluidtanks.blocks.TankBlock;
 import net.zarathul.simplefluidtanks.blocks.ValveBlock;
-import net.zarathul.simplefluidtanks.common.BlockCoords;
 import net.zarathul.simplefluidtanks.common.Direction;
 import net.zarathul.simplefluidtanks.common.Utils;
 import net.zarathul.simplefluidtanks.rendering.ConnectedTexturesHelper;
@@ -35,7 +38,7 @@ public class TankBlockEntity extends TileEntity
 	/**
 	 * The coordinates of the {@link ValveBlock} the {@link TankBlock} is connected to.
 	 */
-	private BlockCoords valveCoords;
+	private BlockPos valveCoords;
 
 	/**
 	 * The ids of the textures to use when rendering.
@@ -70,17 +73,17 @@ public class TankBlockEntity extends TileEntity
 		if (isPartOfTank)
 		{
 			int[] valveCoordsArray = tag.getIntArray("ValveCoords");
-			valveCoords = new BlockCoords(valveCoordsArray[0], valveCoordsArray[1], valveCoordsArray[2]);
+			valveCoords = new BlockPos(valveCoordsArray[0], valveCoordsArray[1], valveCoordsArray[2]);
 		}
 
 		textureIds = tag.getIntArray("TextureIds");
 		connections = new boolean[6];
-		connections[Direction.XPOS] = tag.getBoolean("X+");
-		connections[Direction.XNEG] = tag.getBoolean("X-");
-		connections[Direction.YPOS] = tag.getBoolean("Y+");
-		connections[Direction.YNEG] = tag.getBoolean("Y-");
-		connections[Direction.ZPOS] = tag.getBoolean("Z+");
-		connections[Direction.ZNEG] = tag.getBoolean("Z-");
+		connections[EnumFacing.EAST.getIndex()] = tag.getBoolean("X+");
+		connections[EnumFacing.WEST.getIndex()] = tag.getBoolean("X-");
+		connections[EnumFacing.UP.getIndex()] = tag.getBoolean("Y+");
+		connections[EnumFacing.DOWN.getIndex()] = tag.getBoolean("Y-");
+		connections[EnumFacing.SOUTH.getIndex()] = tag.getBoolean("Z+");
+		connections[EnumFacing.NORTH.getIndex()] = tag.getBoolean("Z-");
 	}
 
 	@Override
@@ -93,17 +96,17 @@ public class TankBlockEntity extends TileEntity
 
 		if (valveCoords != null)
 		{
-			int[] valveCoordsArray = new int[] { valveCoords.x, valveCoords.y, valveCoords.z };
+			int[] valveCoordsArray = new int[] { valveCoords.getX(), valveCoords.getY(), valveCoords.getZ() };
 			tag.setIntArray("ValveCoords", valveCoordsArray);
 		}
 
 		tag.setIntArray("TextureIds", textureIds);
-		tag.setBoolean("X+", connections[Direction.XPOS]);
-		tag.setBoolean("X-", connections[Direction.XNEG]);
-		tag.setBoolean("Y+", connections[Direction.YPOS]);
-		tag.setBoolean("Y-", connections[Direction.YNEG]);
-		tag.setBoolean("Z+", connections[Direction.ZPOS]);
-		tag.setBoolean("Z-", connections[Direction.ZNEG]);
+		tag.setBoolean("X+", connections[EnumFacing.EAST.getIndex()]);
+		tag.setBoolean("X-", connections[EnumFacing.WEST.getIndex()]);
+		tag.setBoolean("Y+", connections[EnumFacing.UP.getIndex()]);
+		tag.setBoolean("Y-", connections[EnumFacing.DOWN.getIndex()]);
+		tag.setBoolean("Z+", connections[EnumFacing.SOUTH.getIndex()]);
+		tag.setBoolean("Z-", connections[EnumFacing.NORTH.getIndex()]);
 	}
 
 	@Override
@@ -112,20 +115,14 @@ public class TankBlockEntity extends TileEntity
 		NBTTagCompound tag = new NBTTagCompound();
 		writeToNBT(tag);
 
-		return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, -1, tag);
+		return new S35PacketUpdateTileEntity(pos, -1, tag);
 	}
 
 	@Override
 	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet)
 	{
-		readFromNBT(packet.func_148857_g());
-		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-	}
-
-	@Override
-	public boolean canUpdate()
-	{
-		return false;
+		readFromNBT(packet.getNbtCompound());
+		worldObj.markBlockForUpdate(pos);
 	}
 
 	/**
@@ -168,22 +165,22 @@ public class TankBlockEntity extends TileEntity
 	/**
 	 * Links the {@link TankBlock} to a {@link ValveBlock}.
 	 * 
-	 * @param coords
+	 * @param pos
 	 * The coordinates of the {@link ValveBlock}.
 	 * @return <code>true</code> if linking succeeded, otherwise <code>false</code>.
 	 */
-	public boolean setValve(BlockCoords coords)
+	public boolean setValve(BlockPos pos)
 	{
-		if (isPartOfTank() || coords == null)
+		if (isPartOfTank() || pos == null)
 		{
 			return false;
 		}
 
-		ValveBlockEntity valveEntity = Utils.getTileEntityAt(worldObj, ValveBlockEntity.class, coords);
+		ValveBlockEntity valveEntity = Utils.getTileEntityAt(worldObj, ValveBlockEntity.class, pos);
 
 		if (valveEntity != null)
 		{
-			valveCoords = coords;
+			valveCoords = pos;
 			isPartOfTank = true;
 
 			return true;
@@ -199,12 +196,12 @@ public class TankBlockEntity extends TileEntity
 	{
 		updateConnections();
 
-		textureIds[Direction.XPOS] = ConnectedTexturesHelper.getPositiveXTexture(connections);
-		textureIds[Direction.XNEG] = ConnectedTexturesHelper.getNegativeXTexture(connections);
-		textureIds[Direction.YPOS] = ConnectedTexturesHelper.getPositiveYTexture(connections);
-		textureIds[Direction.YNEG] = ConnectedTexturesHelper.getNegativeYTexture(connections);
-		textureIds[Direction.ZPOS] = ConnectedTexturesHelper.getPositiveZTexture(connections);
-		textureIds[Direction.ZNEG] = ConnectedTexturesHelper.getNegativeZTexture(connections);
+		textureIds[EnumFacing.EAST.getIndex()] = ConnectedTexturesHelper.getPositiveXTexture(connections);
+		textureIds[EnumFacing.WEST.getIndex()] = ConnectedTexturesHelper.getNegativeXTexture(connections);
+		textureIds[EnumFacing.UP.getIndex()] = ConnectedTexturesHelper.getPositiveYTexture(connections);
+		textureIds[EnumFacing.DOWN.getIndex()] = ConnectedTexturesHelper.getNegativeYTexture(connections);
+		textureIds[EnumFacing.SOUTH.getIndex()] = ConnectedTexturesHelper.getPositiveZTexture(connections);
+		textureIds[EnumFacing.NORTH.getIndex()] = ConnectedTexturesHelper.getNegativeZTexture(connections);
 	}
 
 	/**
@@ -236,8 +233,8 @@ public class TankBlockEntity extends TileEntity
 
 		if (percentageChanged || forceBlockUpdate)
 		{
-			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-			worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);
+			worldObj.markBlockForUpdate(pos);
+			worldObj.markChunkDirty(pos, this);
 		}
 
 		return percentageChanged;
@@ -299,18 +296,18 @@ public class TankBlockEntity extends TileEntity
 	/**
 	 * Checks if the {@link TankBlock} is connected to a {@link ValveBlock} at the specified coordinates.
 	 * 
-	 * @param coords
+	 * @param pos
 	 * The {@link ValveBlock}s coordinates.
 	 * @return <code>true</code> if the {@link TankBlock} is connected to a {@link ValveBlock} at the specified coordinates, otherwise <code>false</code>.
 	 */
-	public boolean hasValveAt(BlockCoords coords)
+	public boolean hasValveAt(BlockPos pos)
 	{
-		if (!isPartOfTank() || coords == null)
+		if (!isPartOfTank() || pos == null)
 		{
 			return false;
 		}
 
-		return coords.equals(valveCoords);
+		return pos.equals(valveCoords);
 	}
 
 	/**
@@ -318,34 +315,32 @@ public class TankBlockEntity extends TileEntity
 	 */
 	private void updateConnections()
 	{
-		connections[Direction.XPOS] = shouldConnectTo(xCoord + 1, yCoord, zCoord);	// X+
-		connections[Direction.XNEG] = shouldConnectTo(xCoord - 1, yCoord, zCoord);	// X-
-		connections[Direction.YPOS] = shouldConnectTo(xCoord, yCoord + 1, zCoord);	// Y+
-		connections[Direction.YNEG] = shouldConnectTo(xCoord, yCoord - 1, zCoord);	// Y-
-		connections[Direction.ZPOS] = shouldConnectTo(xCoord, yCoord, zCoord + 1);	// Z+
-		connections[Direction.ZNEG] = shouldConnectTo(xCoord, yCoord, zCoord - 1);	// Z-
+		connections[EnumFacing.EAST.getIndex()] = shouldConnectTo(pos.east());		// X+
+		connections[EnumFacing.WEST.getIndex()] = shouldConnectTo(pos.west());		// X-
+		connections[EnumFacing.UP.getIndex()] = shouldConnectTo(pos.up());			// Y+
+		connections[EnumFacing.DOWN.getIndex()] = shouldConnectTo(pos.down());		// Y-
+		connections[EnumFacing.SOUTH.getIndex()] = shouldConnectTo(pos.south());	// Z+
+		connections[EnumFacing.NORTH.getIndex()] = shouldConnectTo(pos.north());	// Z-
 	}
 
 	/**
 	 * Checks if the {@link TankBlock}s textures should connect to a {@link TankBlock} at the specified coordinates.
 	 * 
-	 * @param x
-	 * The x-coordinate of the connection candidate.
-	 * @param y
-	 * The y-coordinate of the connection candidate.
-	 * @param z
-	 * The z-coordinate of the connection candidate.
+	 * @param checkPos
+	 * The coordinates of the connection candidate.
 	 * @return <code>true</code> if the textures should connect, otherwise <code>false</code>.
 	 */
-	private boolean shouldConnectTo(int x, int y, int z)
+	private boolean shouldConnectTo(BlockPos checkPos)
 	{
 		// only check adjacent blocks
-		if (x < xCoord - 1 || x > xCoord + 1 || y < yCoord - 1 || y > yCoord + 1 || z < zCoord - 1 || z > zCoord + 1)
+		if (checkPos.getX() < pos.getX() - 1 || checkPos.getX() > pos.getX() + 1 ||
+			checkPos.getY() < pos.getY() - 1 || checkPos.getY() > pos.getY() + 1 ||
+			checkPos.getZ() < pos.getZ() - 1 || checkPos.getZ() > pos.getZ() + 1)
 		{
 			return false;
 		}
 
-		TankBlockEntity connectionCandidate = Utils.getTileEntityAt(worldObj, TankBlockEntity.class, x, y, z);
+		TankBlockEntity connectionCandidate = Utils.getTileEntityAt(worldObj, TankBlockEntity.class, checkPos);
 
 		if (connectionCandidate != null)
 		{
@@ -371,8 +366,8 @@ public class TankBlockEntity extends TileEntity
 
 		if (!suppressBlockUpdates)
 		{
-			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-			worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);
+			worldObj.markBlockForUpdate(pos);
+			worldObj.markChunkDirty(pos, this);
 		}
 	}
 }

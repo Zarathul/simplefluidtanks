@@ -3,68 +3,46 @@ package net.zarathul.simplefluidtanks.blocks;
 import java.util.HashSet;
 import java.util.Random;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.BlockCauldron;
+import net.minecraft.block.BlockDirectional;
+import net.minecraft.block.BlockFurnace;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.zarathul.simplefluidtanks.CommonEventHub;
 import net.zarathul.simplefluidtanks.SimpleFluidTanks;
-import net.zarathul.simplefluidtanks.common.BlockCoords;
 import net.zarathul.simplefluidtanks.common.Utils;
 import net.zarathul.simplefluidtanks.configuration.Config;
 import net.zarathul.simplefluidtanks.registration.Registry;
-import net.zarathul.simplefluidtanks.rendering.TankBlockRenderer;
 import net.zarathul.simplefluidtanks.tileentities.TankBlockEntity;
 import net.zarathul.simplefluidtanks.tileentities.ValveBlockEntity;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Represents a tank in the mods multiblock structure.
  */
 public class TankBlock extends WrenchableBlock
 {
-	private final HashSet<BlockCoords> ignorePreDestroyEvent;
-
 	public TankBlock()
 	{
 		super(TankMaterial.tankMaterial);
 
-		setBlockName(Registry.TANKBLOCK_NAME);
+		setUnlocalizedName(Registry.TANK_BLOCK_NAME);
 		setCreativeTab(SimpleFluidTanks.creativeTab);
 		setHardness(Config.tankBlockHardness);
 		setResistance(Config.tankBlockResistance);
 		setStepSound(soundTypeGlass);
 		setHarvestLevel("pickaxe", 2);
-		ignorePreDestroyEvent = new HashSet<BlockCoords>();
 	}
 
-	@SideOnly(Side.CLIENT)
-	private IIcon[] icons;
-
-	@SideOnly(Side.CLIENT)
-	public IIcon[] getIcons()
-	{
-		return icons;
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public IIcon getIcon(int side, int meta)
-	{
-		return icons[0];
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister iconRegister)
-	{
-		icons = new IIcon[]
-		{
-			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_closed"),				// 0
+	/*		
+	  		iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_closed"),				// 0
 			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_open"),					// 1
 
 			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_top_bottom"),			// 2
@@ -84,35 +62,10 @@ public class TankBlock extends WrenchableBlock
 			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_bottom"),				// 13
 			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_left"),					// 14
 			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_right")					// 15
-		};
-	}
-
+	 */
+	
 	@Override
-	public void onBlockPreDestroy(World world, int x, int y, int z, int par5)
-	{
-		if (!world.isRemote)
-		{
-			BlockCoords tankCoords = new BlockCoords(x, y, z);
-
-			// ignore the event if the tanks coordinates are on the ignore list
-			if (ignorePreDestroyEvent.contains(tankCoords))
-			{
-				ignorePreDestroyEvent.remove(tankCoords);
-
-				return;
-			}
-
-			ValveBlockEntity valveEntity = getValve(world, x, y, z);
-
-			if (valveEntity != null)
-			{
-				valveEntity.disbandMultiblock();
-			}
-		}
-	}
-
-	@Override
-	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side)
+	public boolean isSideSolid(IBlockAccess world, BlockPos pos, EnumFacing side)
 	{
 		// allow torches, ladders etc. to be places on every side
 		return true;
@@ -125,27 +78,7 @@ public class TankBlock extends WrenchableBlock
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public int getRenderBlockPass()
-	{
-		return 1;
-	}
-
-	@Override
-	public boolean canRenderInPass(int pass)
-	{
-		return (pass == 1);
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public int getRenderType()
-	{
-		return TankBlockRenderer.id;
-	}
-
-	@Override
-	public boolean renderAsNormalBlock()
+	public boolean isFullCube()
 	{
 		return false;
 	}
@@ -157,67 +90,63 @@ public class TankBlock extends WrenchableBlock
 	}
 
 	@Override
+	public int getRenderType()
+	{
+		return 3;
+	}
+
+	@Override
+	public EnumWorldBlockLayer getBlockLayer()
+	{
+		return EnumWorldBlockLayer.TRANSLUCENT;
+	}
+
+	@Override
 	public TileEntity createNewTileEntity(World world, int unknown)
 	{
 		return new TankBlockEntity();
 	}
 
+	@SideOnly(Side.CLIENT)
 	@Override
-	protected void handleToolWrenchClick(World world, int x, int y, int z, EntityPlayer player, ItemStack equippedItemStack)
+	public boolean shouldSideBeRendered(IBlockAccess worldIn, BlockPos pos, EnumFacing side)
+	{
+		return true;
+	}
+
+	@Override
+	public boolean requiresUpdates()
+	{
+		return false;
+	}
+
+	@Override
+	protected void handleToolWrenchClick(World world, BlockPos pos, EntityPlayer player, ItemStack equippedItemStack)
 	{
 		// dismantle aka. instantly destroy the tank and drop the
 		// appropriate item, telling the connected valve to rebuild in the process
 		if (player.isSneaking())
 		{
-			TankBlockEntity tankEntity = Utils.getTileEntityAt(world, TankBlockEntity.class, x, y, z);
+			TankBlockEntity tankEntity = Utils.getTileEntityAt(world, TankBlockEntity.class, pos);
 			ValveBlockEntity valveEntity = null;
 
 			if (tankEntity != null && tankEntity.isPartOfTank())
 			{
 				valveEntity = tankEntity.getValve();
-				// makes the tankblock ignore its preDestroy event, this way
+				// ignore the BlockBreak event for this TankBlock, this way
 				// there will be no reset of the whole tank
-				ignorePreDestroyEvent.add(new BlockCoords(x, y, z));
+				SimpleFluidTanks.commonEventHub.ignoreBlockBreak(pos);
 			}
 
-			// destroy the tankblock
-			world.setBlockToAir(x, y, z);
+			// destroy the TankBlock
+			world.setBlockToAir(pos);
 			// last two parameters are metadata and fortune
-			dropBlockAsItem(world, x, y, z, 0, 0);
+			dropBlockAsItem(world, pos, this.getDefaultState(), 0);
 
 			if (valveEntity != null)
 			{
 				valveEntity.formMultiblock();
 			}
 		}
-	}
-
-	/**
-	 * Gets the {@link ValveBlock}s {@link TileEntity} the {@link TankBlock} is linked to.
-	 * 
-	 * @return The valves {@link ValveBlockEntity}<br>
-	 * or<br>
-	 * <code>null</code> if the {@link TankBlock} is not linked to a {@link ValveBlock}.
-	 * @param world
-	 * The world.
-	 * @param x
-	 * The {@link TankBlock}s x-coordinate.
-	 * @param y
-	 * The {@link TankBlock}s y-coordinate.
-	 * @param z
-	 * The {@link TankBlock}s z-coordinate.
-	 */
-	private ValveBlockEntity getValve(IBlockAccess world, int x, int y, int z)
-	{
-		TankBlockEntity tankEntity = Utils.getTileEntityAt(world, TankBlockEntity.class, x, y, z);
-
-		if (tankEntity != null)
-		{
-			ValveBlockEntity valveEntity = tankEntity.getValve();
-
-			return valveEntity;
-		}
-
-		return null;
 	}
 }

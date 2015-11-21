@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "facing=north": { "model": "simplefluidtanks:valve" },
+        "facing=south": { "model": "simplefluidtanks:valve", "y": 180 },
+        "facing=west":  { "model": "simplefluidtanks:valve", "y": 270 },
+        "facing=east":  { "model": "simplefluidtanks:valve", "y": 90 }
+    }
+}

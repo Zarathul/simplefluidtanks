@@ -45,7 +45,7 @@ public final class Config
 		{
 			new RecipeComponent("I", "oreDict", "ingotIron"),
 			new RecipeComponent("S", "oreDict", "slimeball"),
-			new RecipeComponent("T", SimpleFluidTanks.MOD_ID, Registry.TANKBLOCK_NAME)
+			new RecipeComponent("T", SimpleFluidTanks.MOD_ID, Registry.TANK_BLOCK_NAME)
 		}
 	);
 

@@ -1,0 +1,25 @@
+{
+    "textures": {
+        "particle": "simplefluidtanks:blocks/tankClosed",
+        "down": "simplefluidtanks:blocks/tankClosed",
+        "up": "simplefluidtanks:blocks/tankClosed",
+        "north": "simplefluidtanks:blocks/tankClosed",
+        "south": "simplefluidtanks:blocks/tankClosed",
+        "west": "simplefluidtanks:blocks/tankClosed",
+        "east": "simplefluidtanks:blocks/tankClosed"
+    },
+    
+    "elements": [
+        {   "from": [ 0, 0, 0 ],
+            "to": [ 16, 16, 16 ],
+            "faces": {
+                "down":  { "texture": "#down" },
+                "up":    { "texture": "#up" },
+                "north": { "texture": "#north" },
+                "south": { "texture": "#south" },
+                "west":  { "texture": "#west" },
+                "east":  { "texture": "#east" }
+            }
+        }
+    ]
+}

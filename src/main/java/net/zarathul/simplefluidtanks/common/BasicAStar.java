@@ -6,9 +6,12 @@ import java.util.HashSet;
 import java.util.PriorityQueue;
 import java.util.Set;
 
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
+
 /**
- * Very basic unoptimized implementation of the A-Star algorithm, that only works on a plane (meaning it does not search down- or upwards). It is currently used to find the closest {@link BlockCoords}
- * in a {@link Collection} to given {@link BlockCoords}.<br>
+ * Very basic unoptimized implementation of the A-Star algorithm, that only works on a plane (meaning it does not search down- or upwards). It is currently used to find the closest block coordinates
+ * in a {@link Collection} to the given block coordinates.<br>
  * (References used http://theory.stanford.edu/~amitp/GameProgramming/)
  */
 public class BasicAStar
@@ -27,9 +30,9 @@ public class BasicAStar
 		 */
 		public int estimatedTotalCost;
 		/**
-		 * The {@link BlockCoords} representing the position of this node in the world.
+		 * The {@link BlockPos} representing the position of this node in the world.
 		 */
-		public BlockCoords block;
+		public BlockPos block;
 		/**
 		 * The previous node.
 		 */
@@ -129,17 +132,17 @@ public class BasicAStar
 	/**
 	 * Holds the coordinates the algorithm has already visited.
 	 */
-	private final HashSet<BlockCoords> visitedBlocks;
+	private final HashSet<BlockPos> visitedBlocks;
 
 	/**
 	 * Holds the current smallest known cost to get to a {@link Node}, for every visited {@link Node}.
 	 */
-	private final HashMap<BlockCoords, Integer> minCosts;
+	private final HashMap<BlockPos, Integer> minCosts;
 
 	/**
-	 * A {@link Set} of {@link BlockCoords} the algorithm can move through.
+	 * A {@link Set} of {@link BlockPos} the algorithm can move through.
 	 */
-	private HashSet<BlockCoords> passableBlocks;
+	private HashSet<BlockPos> passableBlocks;
 
 	/**
 	 * Default constructor.
@@ -147,24 +150,24 @@ public class BasicAStar
 	public BasicAStar()
 	{
 		unvisitedNodes = new PriorityQueue<Node>();
-		visitedBlocks = new HashSet<BlockCoords>();
-		minCosts = new HashMap<BlockCoords, Integer>();
+		visitedBlocks = new HashSet<BlockPos>();
+		minCosts = new HashMap<BlockPos, Integer>();
 	}
 
 	/**
 	 * Creates a new instance of the algorithm that can perform searches within the specified bounds.
 	 * 
 	 * @param passableBlocks
-	 * A {@link Collection} of {@link BlockCoords} the algorithm can move through.
+	 * A {@link Collection} of {@link BlockPos} the algorithm can move through.
 	 */
-	public BasicAStar(Collection<BlockCoords> passableBlocks)
+	public BasicAStar(Collection<BlockPos> passableBlocks)
 	{
 		this();
-		this.passableBlocks = new HashSet<BlockCoords>(passableBlocks);
+		this.passableBlocks = new HashSet<BlockPos>(passableBlocks);
 	}
 
 	/**
-	 * Tries to find the shortest path from one {@link BlockCoords} to another.
+	 * Tries to find the shortest path from one {@link BlockPos} to another.
 	 * 
 	 * @param start
 	 * The coordinates of the starting {@link Node}.
@@ -173,7 +176,7 @@ public class BasicAStar
 	 * @return <code>null</code> if one of the arguments was <code>null</code> or if no way could be found from the start to the goal.<br>
 	 * Otherwise returns a {@link Node} representing the reached goal. It holds the total accumulated cost to reach the goal and it can be used to step through and reconstruct the shortest path.
 	 */
-	public Node getShortestPath(BlockCoords start, BlockCoords goal)
+	public Node getShortestPath(BlockPos start, BlockPos goal)
 	{
 		if (start == null || goal == null)
 		{
@@ -203,14 +206,14 @@ public class BasicAStar
 	}
 
 	/**
-	 * Sets the {@link BlockCoords} the algorithm can move through.
+	 * Sets the {@link BlockPos} the algorithm can move through.
 	 * 
 	 * @param passableBlocks
-	 * A {@link Set} of {@link BlockCoords} the algorithm can move through.
+	 * A {@link Set} of {@link BlockPos} the algorithm can move through.
 	 */
-	public void setPassableBlocks(Collection<BlockCoords> passableBlocks)
+	public void setPassableBlocks(Collection<BlockPos> passableBlocks)
 	{
-		this.passableBlocks = new HashSet<BlockCoords>(passableBlocks);
+		this.passableBlocks = new HashSet<BlockPos>(passableBlocks);
 	}
 
 	/**
@@ -221,7 +224,7 @@ public class BasicAStar
 	 * @param goal
 	 * The coordinates of the goal.
 	 */
-	private void computeCosts(Node node, BlockCoords goal)
+	private void computeCosts(Node node, BlockPos goal)
 	{
 		int currentCost = (node.hasParent()) ? node.parent.currentCost + getMovementCost(node.parent.block, node.block) : 0;
 		int estimatedRemainingCost = getEstimatedRemainingCost(node.block, goal);
@@ -239,11 +242,11 @@ public class BasicAStar
 	 * The coordinates of the goal.
 	 * @return The guessed cost to get from <code>start</code> to <code>goal</code>.
 	 */
-	private int getEstimatedRemainingCost(BlockCoords start, BlockCoords goal)
+	private int getEstimatedRemainingCost(BlockPos start, BlockPos goal)
 	{
 		// Manhattan Distance
-		int dx = Math.abs(start.x - goal.x);
-		int dy = Math.abs(start.y - goal.y);
+		int dx = Math.abs(start.getX() - goal.getX());
+		int dy = Math.abs(start.getY() - goal.getY());
 
 		return dx + dy;
 	}
@@ -257,7 +260,7 @@ public class BasicAStar
 	 * The coordinates of the {@link Node} to move to.
 	 * @return
 	 */
-	private int getMovementCost(BlockCoords from, BlockCoords to)
+	private int getMovementCost(BlockPos from, BlockPos to)
 	{
 		if (from.equals(to))
 		{
@@ -281,17 +284,17 @@ public class BasicAStar
 	 * @param goal
 	 * The coordinates of the goal.
 	 */
-	private void getAdjacentNodes(Node node, BlockCoords goal)
+	private void getAdjacentNodes(Node node, BlockPos goal)
 	{
-		BlockCoords[] neighborBlocks = new BlockCoords[]
+		BlockPos[] neighborBlocks = new BlockPos[]
 		{
-			node.block.offset(Direction.XPOS),
-			node.block.offset(Direction.XNEG),
-			node.block.offset(Direction.ZPOS),
-			node.block.offset(Direction.ZNEG)
+			node.block.offset(EnumFacing.EAST),
+			node.block.offset(EnumFacing.WEST),
+			node.block.offset(EnumFacing.SOUTH),
+			node.block.offset(EnumFacing.NORTH)
 		};
 
-		for (BlockCoords neighborBlock : neighborBlocks)
+		for (BlockPos neighborBlock : neighborBlocks)
 		{
 			if (!passableBlocks.contains(neighborBlock) || visitedBlocks.contains(neighborBlock))
 			{
