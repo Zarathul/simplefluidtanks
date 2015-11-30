@@ -1,5 +1,533 @@
 {
+    "forge_marker": 1,
+    "defaults": {
+        "textures": {
+            "down": "simplefluidtanks:blocks/tank_closed",
+            "idown": "simplefluidtanks:blocks/tank_open",
+            "up": "simplefluidtanks:blocks/tank_closed",
+            "iup": "simplefluidtanks:blocks/tank_open",
+            "north": "simplefluidtanks:blocks/tank_closed",
+            "inorth": "simplefluidtanks:blocks/tank_open",
+            "south": "simplefluidtanks:blocks/tank_closed",
+            "isouth": "simplefluidtanks:blocks/tank_open",
+            "west": "simplefluidtanks:blocks/tank_closed",
+            "iwest": "simplefluidtanks:blocks/tank_open",
+            "east": "simplefluidtanks:blocks/tank_closed",
+            "ieast": "simplefluidtanks:blocks/tank_open",
+            "particle": "simplefluidtanks:blocks/tank_closed"
+        },
+        "model": "simplefluidtanks:tank"
+    },
     "variants": {
-        "normal": { "model": "simplefluidtanks:tank" }
+        "down=false,east=false,north=true,south=true,up=true,west=true": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "down": "simplefluidtanks:blocks/tank_top_bottom",
+                "east": "simplefluidtanks:blocks/tank_left_right_top"
+            }
+        },
+        "down=false,east=false,north=true,south=false,up=false,west=true": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "down": "simplefluidtanks:blocks/tank_bottom_left",
+                "up": "simplefluidtanks:blocks/tank_top_left",
+                "south": "simplefluidtanks:blocks/tank_left",
+                "east": "simplefluidtanks:blocks/tank_right"
+            }
+        },
+        "down=true,east=false,north=false,south=false,up=true,west=true": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "north": "simplefluidtanks:blocks/tank_top_bottom_right",
+                "south": "simplefluidtanks:blocks/tank_top_bottom_left",
+                "east": "simplefluidtanks:blocks/tank_top_bottom"
+            }
+        },
+        "down=false,east=false,north=false,south=false,up=false,west=false": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "down": "simplefluidtanks:blocks/tank_closed",
+                "up": "simplefluidtanks:blocks/tank_closed",
+                "north": "simplefluidtanks:blocks/tank_closed",
+                "south": "simplefluidtanks:blocks/tank_closed",
+                "west": "simplefluidtanks:blocks/tank_closed",
+                "east": "simplefluidtanks:blocks/tank_closed"
+            }
+        },
+        "down=false,east=false,north=true,south=true,up=false,west=false": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "down": "simplefluidtanks:blocks/tank_top_bottom",
+                "up": "simplefluidtanks:blocks/tank_top_bottom",
+                "west": "simplefluidtanks:blocks/tank_left_right",
+                "east": "simplefluidtanks:blocks/tank_left_right"
+            }
+        },
+        "down=true,east=false,north=true,south=false,up=true,west=true": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "south": "simplefluidtanks:blocks/tank_top_bottom_left",
+                "east": "simplefluidtanks:blocks/tank_top_bottom_right"
+            }
+        },
+        "down=true,east=false,north=false,south=false,up=true,west=false": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "north": "simplefluidtanks:blocks/tank_top_bottom",
+                "south": "simplefluidtanks:blocks/tank_top_bottom",
+                "west": "simplefluidtanks:blocks/tank_top_bottom",
+                "east": "simplefluidtanks:blocks/tank_top_bottom"
+            }
+        },
+        "down=false,east=false,north=true,south=false,up=true,west=true": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "down": "simplefluidtanks:blocks/tank_bottom_left",
+                "south": "simplefluidtanks:blocks/tank_top_left",
+                "east": "simplefluidtanks:blocks/tank_top_right"
+            }
+        },
+        "down=false,east=true,north=true,south=true,up=true,west=false": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "down": "simplefluidtanks:blocks/tank_top_bottom_right",
+                "west": "simplefluidtanks:blocks/tank_left_right_top"
+            }
+        },
+        "down=true,east=false,north=false,south=true,up=true,west=true": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "north": "simplefluidtanks:blocks/tank_top_bottom_right",
+                "east": "simplefluidtanks:blocks/tank_top_bottom_left"
+            }
+        },
+        "down=false,east=true,north=true,south=false,up=false,west=false": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "down": "simplefluidtanks:blocks/tank_bottom_right",
+                "up": "simplefluidtanks:blocks/tank_top_right",
+                "south": "simplefluidtanks:blocks/tank_right",
+                "west": "simplefluidtanks:blocks/tank_left"
+            }
+        },
+        "down=true,east=false,north=true,south=false,up=true,west=false": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "south": "simplefluidtanks:blocks/tank_top_bottom",
+                "west": "simplefluidtanks:blocks/tank_top_bottom_left",
+                "east": "simplefluidtanks:blocks/tank_top_bottom_right"
+            }
+        },
+        "down=true,east=true,north=false,south=true,up=true,west=false": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "north": "simplefluidtanks:blocks/tank_top_bottom_left",
+                "west": "simplefluidtanks:blocks/tank_top_bottom_right"
+            }
+        },
+        "down=false,east=false,north=false,south=true,up=true,west=true": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "down": "simplefluidtanks:blocks/tank_top_left",
+                "north": "simplefluidtanks:blocks/tank_top_right",
+                "east": "simplefluidtanks:blocks/tank_top_left"
+            }
+        },
+        "down=true,east=false,north=true,south=true,up=false,west=false": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "up": "simplefluidtanks:blocks/tank_top_bottom",
+                "west": "simplefluidtanks:blocks/tank_left_right_bottom",
+                "east": "simplefluidtanks:blocks/tank_left_right_bottom"
+            }
+        },
+        "down=false,east=true,north=true,south=false,up=false,west=true": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "down": "simplefluidtanks:blocks/tank_left_right_bottom",
+                "up": "simplefluidtanks:blocks/tank_left_right_top",
+                "south": "simplefluidtanks:blocks/tank_left_right"
+            }
+        },
+        "down=true,east=true,north=true,south=true,up=false,west=true": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "up": "simplefluidtanks:blocks/tank_open"
+            }
+        },
+        "down=false,east=false,north=false,south=false,up=false,west=true": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "down": "simplefluidtanks:blocks/tank_left",
+                "up": "simplefluidtanks:blocks/tank_left",
+                "north": "simplefluidtanks:blocks/tank_right",
+                "south": "simplefluidtanks:blocks/tank_left",
+                "east": "simplefluidtanks:blocks/tank_closed"
+            }
+        },
+        "down=false,east=true,north=false,south=false,up=true,west=false": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "down": "simplefluidtanks:blocks/tank_right",
+                "north": "simplefluidtanks:blocks/tank_top_left",
+                "south": "simplefluidtanks:blocks/tank_top_right",
+                "west": "simplefluidtanks:blocks/tank_top"
+            }
+        },
+        "down=true,east=true,north=true,south=false,up=false,west=true": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "up": "simplefluidtanks:blocks/tank_left_right_top",
+                "south": "simplefluidtanks:blocks/tank_left_right_bottom"
+            }
+        },
+        "down=true,east=true,north=false,south=true,up=true,west=true": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "north": "simplefluidtanks:blocks/tank_open"
+            }
+        },
+        "down=false,east=true,north=false,south=true,up=true,west=false": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "down": "simplefluidtanks:blocks/tank_top_right",
+                "north": "simplefluidtanks:blocks/tank_top_left",
+                "west": "simplefluidtanks:blocks/tank_top_right"
+            }
+        },
+        "down=false,east=true,north=true,south=true,up=false,west=false": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "down": "simplefluidtanks:blocks/tank_top_bottom_right",
+                "up": "simplefluidtanks:blocks/tank_top_bottom_right",
+                "west": "simplefluidtanks:blocks/tank_left_right"
+            }
+        },
+        "down=true,east=false,north=true,south=true,up=true,west=true": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "east": "simplefluidtanks:blocks/tank_open"
+            }
+        },
+        "down=false,east=false,north=false,south=true,up=false,west=false": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "down": "simplefluidtanks:blocks/tank_top",
+                "up": "simplefluidtanks:blocks/tank_bottom",
+                "north": "simplefluidtanks:blocks/tank_closed",
+                "west": "simplefluidtanks:blocks/tank_right",
+                "east": "simplefluidtanks:blocks/tank_left"
+            }
+        },
+        "down=true,east=true,north=true,south=true,up=false,west=false": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "up": "simplefluidtanks:blocks/tank_top_bottom_right",
+                "west": "simplefluidtanks:blocks/tank_left_right_bottom"
+            }
+        },
+        "down=false,east=false,north=true,south=false,up=true,west=false": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "down": "simplefluidtanks:blocks/tank_bottom",
+                "south": "simplefluidtanks:blocks/tank_top",
+                "west": "simplefluidtanks:blocks/tank_top_left",
+                "east": "simplefluidtanks:blocks/tank_top_right"
+            }
+        },
+        "down=false,east=true,north=true,south=true,up=false,west=true": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "down": "simplefluidtanks:blocks/tank_open",
+                "up": "simplefluidtanks:blocks/tank_open"
+            }
+        },
+        "down=true,east=true,north=false,south=false,up=true,west=true": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "north": "simplefluidtanks:blocks/tank_open",
+                "south": "simplefluidtanks:blocks/tank_open"
+            }
+        },
+        "down=false,east=true,north=false,south=false,up=true,west=true": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "down": "simplefluidtanks:blocks/tank_left_right",
+                "north": "simplefluidtanks:blocks/tank_left_right_top",
+                "south": "simplefluidtanks:blocks/tank_left_right_top"
+            }
+        },
+        "down=true,east=false,north=false,south=true,up=false,west=true": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "up": "simplefluidtanks:blocks/tank_bottom_left",
+                "north": "simplefluidtanks:blocks/tank_bottom_right",
+                "east": "simplefluidtanks:blocks/tank_bottom_left"
+            }
+        },
+        "down=false,east=true,north=false,south=false,up=false,west=false": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "down": "simplefluidtanks:blocks/tank_right",
+                "up": "simplefluidtanks:blocks/tank_right",
+                "north": "simplefluidtanks:blocks/tank_left",
+                "south": "simplefluidtanks:blocks/tank_right",
+                "west": "simplefluidtanks:blocks/tank_closed"
+            }
+        },
+        "down=false,east=false,north=false,south=false,up=true,west=false": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "down": "simplefluidtanks:blocks/tank_closed",
+                "north": "simplefluidtanks:blocks/tank_top",
+                "south": "simplefluidtanks:blocks/tank_top",
+                "west": "simplefluidtanks:blocks/tank_top",
+                "east": "simplefluidtanks:blocks/tank_top"
+            }
+        },
+        "down=false,east=true,north=false,south=false,up=false,west=true": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "down": "simplefluidtanks:blocks/tank_left_right",
+                "up": "simplefluidtanks:blocks/tank_left_right",
+                "north": "simplefluidtanks:blocks/tank_left_right",
+                "south": "simplefluidtanks:blocks/tank_left_right"
+            }
+        },
+        "down=true,east=false,north=false,south=false,up=false,west=false": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "up": "simplefluidtanks:blocks/tank_closed",
+                "north": "simplefluidtanks:blocks/tank_bottom",
+                "south": "simplefluidtanks:blocks/tank_bottom",
+                "west": "simplefluidtanks:blocks/tank_bottom",
+                "east": "simplefluidtanks:blocks/tank_bottom"
+            }
+        },
+        "down=true,east=true,north=true,south=false,up=true,west=false": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "south": "simplefluidtanks:blocks/tank_top_bottom_right",
+                "west": "simplefluidtanks:blocks/tank_top_bottom_left"
+            }
+        },
+        "down=true,east=false,north=false,south=true,up=true,west=false": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "north": "simplefluidtanks:blocks/tank_top_bottom",
+                "west": "simplefluidtanks:blocks/tank_top_bottom_right",
+                "east": "simplefluidtanks:blocks/tank_top_bottom_left"
+            }
+        },
+        "down=true,east=true,north=false,south=true,up=false,west=true": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "up": "simplefluidtanks:blocks/tank_left_right_bottom",
+                "north": "simplefluidtanks:blocks/tank_left_right_bottom"
+            }
+        },
+        "down=false,east=true,north=false,south=true,up=false,west=false": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "down": "simplefluidtanks:blocks/tank_top_right",
+                "up": "simplefluidtanks:blocks/tank_bottom_right",
+                "north": "simplefluidtanks:blocks/tank_left",
+                "west": "simplefluidtanks:blocks/tank_right"
+            }
+        },
+        "down=false,east=true,north=false,south=true,up=false,west=true": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "down": "simplefluidtanks:blocks/tank_left_right_top",
+                "up": "simplefluidtanks:blocks/tank_left_right_bottom",
+                "north": "simplefluidtanks:blocks/tank_left_right"
+            }
+        },
+        "down=false,east=false,north=true,south=true,up=true,west=false": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "down": "simplefluidtanks:blocks/tank_top_bottom",
+                "west": "simplefluidtanks:blocks/tank_left_right_top",
+                "east": "simplefluidtanks:blocks/tank_left_right_top"
+            }
+        },
+        "down=true,east=true,north=false,south=false,up=true,west=false": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "north": "simplefluidtanks:blocks/tank_top_bottom_left",
+                "south": "simplefluidtanks:blocks/tank_top_bottom_right",
+                "west": "simplefluidtanks:blocks/tank_top_bottom"
+            }
+        },
+        "down=false,east=false,north=true,south=false,up=false,west=false": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "down": "simplefluidtanks:blocks/tank_bottom",
+                "up": "simplefluidtanks:blocks/tank_top",
+                "south": "simplefluidtanks:blocks/tank_closed",
+                "west": "simplefluidtanks:blocks/tank_left",
+                "east": "simplefluidtanks:blocks/tank_right"
+            }
+        },
+        "down=false,east=true,north=true,south=false,up=true,west=true": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "down": "simplefluidtanks:blocks/tank_left_right_bottom",
+                "south": "simplefluidtanks:blocks/tank_left_right_top"
+            }
+        },
+        "down=false,east=false,north=false,south=true,up=false,west=true": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "down": "simplefluidtanks:blocks/tank_top_left",
+                "up": "simplefluidtanks:blocks/tank_bottom_left",
+                "north": "simplefluidtanks:blocks/tank_right",
+                "east": "simplefluidtanks:blocks/tank_left"
+            }
+        },
+        "down=true,east=true,north=false,south=true,up=false,west=false": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "up": "simplefluidtanks:blocks/tank_bottom_right",
+                "north": "simplefluidtanks:blocks/tank_bottom_left",
+                "west": "simplefluidtanks:blocks/tank_bottom_right"
+            }
+        },
+        "down=true,east=false,north=true,south=true,up=true,west=false": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "west": "simplefluidtanks:blocks/tank_open",
+                "east": "simplefluidtanks:blocks/tank_open"
+            }
+        },
+        "down=true,east=true,north=true,south=false,up=true,west=true": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "south": "simplefluidtanks:blocks/tank_open"
+            }
+        },
+        "down=true,east=false,north=false,south=true,up=false,west=false": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "up": "simplefluidtanks:blocks/tank_bottom",
+                "north": "simplefluidtanks:blocks/tank_bottom",
+                "west": "simplefluidtanks:blocks/tank_bottom_right",
+                "east": "simplefluidtanks:blocks/tank_bottom_left"
+            }
+        },
+        "down=true,east=true,north=true,south=false,up=false,west=false": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "up": "simplefluidtanks:blocks/tank_top_right",
+                "south": "simplefluidtanks:blocks/tank_bottom_right",
+                "west": "simplefluidtanks:blocks/tank_bottom_left"
+            }
+        },
+        "down=true,east=false,north=false,south=false,up=false,west=true": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "up": "simplefluidtanks:blocks/tank_left",
+                "north": "simplefluidtanks:blocks/tank_bottom_right",
+                "south": "simplefluidtanks:blocks/tank_bottom_left",
+                "east": "simplefluidtanks:blocks/tank_bottom"
+            }
+        },
+        "down=true,east=true,north=true,south=true,up=true,west=false": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "west": "simplefluidtanks:blocks/tank_open"
+            }
+        },
+        "down=true,east=true,north=false,south=false,up=false,west=true": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "up": "simplefluidtanks:blocks/tank_left_right",
+                "north": "simplefluidtanks:blocks/tank_left_right_bottom",
+                "south": "simplefluidtanks:blocks/tank_left_right_bottom"
+            }
+        },
+        "down=true,east=false,north=true,south=false,up=false,west=false": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "up": "simplefluidtanks:blocks/tank_top",
+                "south": "simplefluidtanks:blocks/tank_bottom",
+                "west": "simplefluidtanks:blocks/tank_bottom_left",
+                "east": "simplefluidtanks:blocks/tank_bottom_right"
+            }
+        },
+        "down=false,east=false,north=true,south=true,up=false,west=true": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "down": "simplefluidtanks:blocks/tank_top_bottom_left",
+                "up": "simplefluidtanks:blocks/tank_top_bottom_left",
+                "east": "simplefluidtanks:blocks/tank_left_right"
+            }
+        },
+        "down=false,east=false,north=false,south=true,up=true,west=false": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "down": "simplefluidtanks:blocks/tank_top",
+                "north": "simplefluidtanks:blocks/tank_top",
+                "west": "simplefluidtanks:blocks/tank_top_right",
+                "east": "simplefluidtanks:blocks/tank_top_left"
+            }
+        },
+        "down=true,east=true,north=false,south=false,up=false,west=false": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "up": "simplefluidtanks:blocks/tank_right",
+                "north": "simplefluidtanks:blocks/tank_bottom_left",
+                "south": "simplefluidtanks:blocks/tank_bottom_right",
+                "west": "simplefluidtanks:blocks/tank_bottom"
+            }
+        },
+        "down=false,east=false,north=false,south=false,up=true,west=true": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "down": "simplefluidtanks:blocks/tank_left",
+                "north": "simplefluidtanks:blocks/tank_top_right",
+                "south": "simplefluidtanks:blocks/tank_top_left",
+                "east": "simplefluidtanks:blocks/tank_top"
+            }
+        },
+        "down=true,east=false,north=true,south=false,up=false,west=true": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "up": "simplefluidtanks:blocks/tank_top_left",
+                "south": "simplefluidtanks:blocks/tank_bottom_left",
+                "east": "simplefluidtanks:blocks/tank_bottom_right"
+            }
+        },
+        "down=true,east=true,north=true,south=true,up=true,west=true": {
+            "model": "simplefluidtanks:tank"
+        },
+        "down=false,east=true,north=true,south=true,up=true,west=true": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "down": "simplefluidtanks:blocks/tank_open"
+            }
+        },
+        "down=false,east=true,north=false,south=true,up=true,west=true": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "down": "simplefluidtanks:blocks/tank_left_right_top",
+                "north": "simplefluidtanks:blocks/tank_left_right_top"
+            }
+        },
+        "down=true,east=false,north=true,south=true,up=false,west=true": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "up": "simplefluidtanks:blocks/tank_top_bottom_left",
+                "east": "simplefluidtanks:blocks/tank_left_right_bottom"
+            }
+        },
+        "down=false,east=true,north=true,south=false,up=true,west=false": {
+            "model": "simplefluidtanks:tank",
+            textures: {
+                "down": "simplefluidtanks:blocks/tank_bottom_right",
+                "south": "simplefluidtanks:blocks/tank_top_right",
+                "west": "simplefluidtanks:blocks/tank_top_left"
+            }
+        }
     }
 }

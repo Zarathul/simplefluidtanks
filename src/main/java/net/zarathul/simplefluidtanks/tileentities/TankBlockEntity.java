@@ -78,12 +78,12 @@ public class TankBlockEntity extends TileEntity
 
 		textureIds = tag.getIntArray("TextureIds");
 		connections = new boolean[6];
-		connections[EnumFacing.EAST.getIndex()] = tag.getBoolean("X+");
-		connections[EnumFacing.WEST.getIndex()] = tag.getBoolean("X-");
-		connections[EnumFacing.UP.getIndex()] = tag.getBoolean("Y+");
 		connections[EnumFacing.DOWN.getIndex()] = tag.getBoolean("Y-");
-		connections[EnumFacing.SOUTH.getIndex()] = tag.getBoolean("Z+");
+		connections[EnumFacing.UP.getIndex()] = tag.getBoolean("Y+");
 		connections[EnumFacing.NORTH.getIndex()] = tag.getBoolean("Z-");
+		connections[EnumFacing.SOUTH.getIndex()] = tag.getBoolean("Z+");
+		connections[EnumFacing.WEST.getIndex()] = tag.getBoolean("X-");
+		connections[EnumFacing.EAST.getIndex()] = tag.getBoolean("X+");
 	}
 
 	@Override
@@ -101,12 +101,12 @@ public class TankBlockEntity extends TileEntity
 		}
 
 		tag.setIntArray("TextureIds", textureIds);
-		tag.setBoolean("X+", connections[EnumFacing.EAST.getIndex()]);
-		tag.setBoolean("X-", connections[EnumFacing.WEST.getIndex()]);
-		tag.setBoolean("Y+", connections[EnumFacing.UP.getIndex()]);
 		tag.setBoolean("Y-", connections[EnumFacing.DOWN.getIndex()]);
-		tag.setBoolean("Z+", connections[EnumFacing.SOUTH.getIndex()]);
+		tag.setBoolean("Y+", connections[EnumFacing.UP.getIndex()]);
 		tag.setBoolean("Z-", connections[EnumFacing.NORTH.getIndex()]);
+		tag.setBoolean("Z+", connections[EnumFacing.SOUTH.getIndex()]);
+		tag.setBoolean("X-", connections[EnumFacing.WEST.getIndex()]);
+		tag.setBoolean("X+", connections[EnumFacing.EAST.getIndex()]);
 	}
 
 	@Override
@@ -261,18 +261,19 @@ public class TankBlockEntity extends TileEntity
 
 		return null;
 	}
-
+	
 	/**
-	 * Gets info on which side of the {@link TankBlock} is connected to another {@link TankBlock} of the same multiblock structure.
+	 * Determines if the {@link TankBlock} is connected to another {@link TankBlock} of the same multiblock structure on the specified side.
 	 * 
-	 * @return A boolean array whose elements are <code>true</code> for sides with a {@link TankBlock} of the same multiblock structure.<br>
-	 * Vanilla side values are used as indexes.
-	 * @see Direction
+	 * @param side
+	 * The side to check.
+	 * @return <code>true</code> the the specified side is connected, otherwise <code>false</code>.
 	 */
-	public boolean[] getConnections()
+	public boolean isConnected(EnumFacing side)
 	{
-		// I'd rather return an read-only collection here. For performance reasons I'll leave it as is for now (the array is used for rendering and a list would introduce unnecessary overhead).
-		return connections;
+		if (side == null) return false;
+		
+		return connections[side.getIndex()];
 	}
 
 	/**
@@ -280,17 +281,11 @@ public class TankBlockEntity extends TileEntity
 	 * 
 	 * @param side
 	 * The side to get the index for.
-	 * @return The texture index or <code>-1</code> if the <code>side</code> argument was invalid.
-	 * @see Direction
+	 * @return The texture index.
 	 */
-	public int getTextureIndex(int side)
+	public int getTextureIndex(EnumFacing side)
 	{
-		if (side < 0 || side > 5)
-		{
-			return -1;
-		}
-
-		return textureIds[side];
+		return textureIds[side.getIndex()];
 	}
 
 	/**

@@ -6,6 +6,10 @@ import java.util.Random;
 import net.minecraft.block.BlockCauldron;
 import net.minecraft.block.BlockDirectional;
 import net.minecraft.block.BlockFurnace;
+import net.minecraft.block.properties.PropertyBool;
+import net.minecraft.block.properties.PropertyInteger;
+import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -29,6 +33,13 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  */
 public class TankBlock extends WrenchableBlock
 {
+	public static final PropertyBool DOWN = PropertyBool.create("down");
+	public static final PropertyBool UP = PropertyBool.create("up");
+	public static final PropertyBool NORTH = PropertyBool.create("north");
+	public static final PropertyBool SOUTH = PropertyBool.create("south");
+	public static final PropertyBool WEST = PropertyBool.create("west");
+	public static final PropertyBool EAST = PropertyBool.create("east");
+	
 	public TankBlock()
 	{
 		super(TankMaterial.tankMaterial);
@@ -39,31 +50,58 @@ public class TankBlock extends WrenchableBlock
 		setResistance(Config.tankBlockResistance);
 		setStepSound(soundTypeGlass);
 		setHarvestLevel("pickaxe", 2);
+		
+		setDefaultState(this.blockState.getBaseState()
+				.withProperty(DOWN, false)
+				.withProperty(UP, false)
+				.withProperty(NORTH, false)
+				.withProperty(SOUTH, false)
+				.withProperty(WEST, false)
+				.withProperty(EAST, false));
 	}
 
-	/*		
-	  		iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_closed"),				// 0
-			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_open"),					// 1
+	@Override
+	protected BlockState createBlockState()
+	{
+		return new BlockState(this, DOWN, UP, NORTH, SOUTH, WEST, EAST);
+	}
 
-			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_top_bottom"),			// 2
-			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_left_right"),			// 3
-
-			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_top_right"),				// 4
-			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_bottom_right"),			// 5
-			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_bottom_left"),			// 6
-			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_top_left"),				// 7
-
-			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_left_right_top"),		// 8
-			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_top_bottom_right"),		// 9
-			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_left_right_bottom"),		// 10
-			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_top_bottom_left"),		// 11
-
-			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_top"),					// 12
-			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_bottom"),				// 13
-			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_left"),					// 14
-			iconRegister.registerIcon(SimpleFluidTanks.MOD_ID + ":tank_right")					// 15
-	 */
+	@Override
+	public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos)
+	{
+		TankBlockEntity tankEntity = Utils.getTileEntityAt(world, TankBlockEntity.class, pos);
+		
+		if (tankEntity != null)
+		{
+			if (tankEntity.isPartOfTank())
+			{
+				state = state.withProperty(DOWN, tankEntity.isConnected(EnumFacing.DOWN))
+						.withProperty(UP, tankEntity.isConnected(EnumFacing.UP))
+						.withProperty(NORTH, tankEntity.isConnected(EnumFacing.NORTH))
+						.withProperty(SOUTH, tankEntity.isConnected(EnumFacing.SOUTH))
+						.withProperty(WEST, tankEntity.isConnected(EnumFacing.WEST))
+						.withProperty(EAST, tankEntity.isConnected(EnumFacing.EAST));
+			}
+			else
+			{
+				state = state.withProperty(DOWN, false)
+						.withProperty(UP, false)
+						.withProperty(NORTH, false)
+						.withProperty(SOUTH, false)
+						.withProperty(WEST, false)
+						.withProperty(EAST, false);
+			}
+		}
+		
+		return state;
+	}
 	
+	@Override
+	public int getMetaFromState(IBlockState state)
+	{
+		return 0;
+	}
+
 	@Override
 	public boolean isSideSolid(IBlockAccess world, BlockPos pos, EnumFacing side)
 	{
@@ -109,9 +147,9 @@ public class TankBlock extends WrenchableBlock
 
 	@SideOnly(Side.CLIENT)
 	@Override
-	public boolean shouldSideBeRendered(IBlockAccess worldIn, BlockPos pos, EnumFacing side)
+	public boolean shouldSideBeRendered(IBlockAccess world, BlockPos pos, EnumFacing side)
 	{
-		return true;
+		return (world.getBlockState(pos).getBlock() != this);
 	}
 
 	@Override

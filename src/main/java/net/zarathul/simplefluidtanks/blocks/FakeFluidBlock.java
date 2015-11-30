@@ -38,11 +38,9 @@ public class FakeFluidBlock extends Block
 			return true;
 		}
 
-		boolean[] connections = tankEntity.getConnections();
-
 		if (side == EnumFacing.UP)
 		{
-			if (!connections[EnumFacing.UP.getIndex()])
+			if (!tankEntity.isConnected(EnumFacing.UP))
 			{
 				return true;
 			}
@@ -52,7 +50,7 @@ public class FakeFluidBlock extends Block
 			return (tankAbove == null || tankAbove.isEmpty());
 		}
 
-		return !connections[side.getIndex()];
+		return !tankEntity.isConnected(side);
 	}
 
 	@Override

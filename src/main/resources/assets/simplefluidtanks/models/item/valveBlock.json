@@ -1,5 +1,13 @@
 {
     "parent": "simplefluidtanks:block/valve",
+    "textures": {
+        "down": "simplefluidtanks:blocks/valve",
+        "up": "simplefluidtanks:blocks/valveGrate",
+        "north": "simplefluidtanks:blocks/valve",
+        "south": "simplefluidtanks:blocks/valve",
+        "west": "simplefluidtanks:blocks/valveIo",
+        "east": "simplefluidtanks:blocks/valve"
+    },
     "display": {
         "thirdperson": {
             "rotation": [ 10, -45, 170 ],

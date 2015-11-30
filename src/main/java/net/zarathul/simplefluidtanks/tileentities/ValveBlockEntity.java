@@ -91,6 +91,11 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	 * Holds a {@link BasicAStar} instance while the tank finding algorithms are running.
 	 */
 	private BasicAStar aStar;
+	
+	/**
+	 * The facing of the valve when it's not part of a multiblock.
+	 */
+	private EnumFacing facing;
 
 	public ValveBlockEntity()
 	{
@@ -99,6 +104,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		tankPriorities = ArrayListMultimap.create();
 		tankFacingSides = -1;
 		linkedTankCount = 0;
+		facing = EnumFacing.NORTH;
 	}
 
 	@Override
@@ -111,6 +117,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		linkedTankCount = Math.max(tankPriorities.size() - 1, 0);
 
 		tankFacingSides = tag.getByte("TankFacingSides");
+		facing = EnumFacing.getFront(tag.getByte("Facing"));
 	}
 
 	@Override
@@ -122,6 +129,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		writeTankPrioritiesToNBT(tag);
 
 		tag.setByte("TankFacingSides", tankFacingSides);
+		tag.setByte("Facing", (byte)facing.getIndex());
 	}
 
 	@Override
@@ -129,6 +137,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	{
 		NBTTagCompound tag = new NBTTagCompound();
 		tag.setByte("TankFacingSides", tankFacingSides);
+		tag.setByte("Facing", (byte)facing.getIndex());
 		tag.setInteger("LinkedTankCount", linkedTankCount);
 		internalTank.writeToNBT(tag);
 
@@ -140,6 +149,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	{
 		NBTTagCompound tag = packet.getNbtCompound();
 		tankFacingSides = tag.getByte("TankFacingSides");
+		facing = EnumFacing.getFront(tag.getByte("Facing"));
 		linkedTankCount = tag.getInteger("LinkedTankCount");
 		internalTank.readFromNBT(tag);
 
@@ -248,6 +258,29 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	public FluidTankInfo[] getTankInfo(EnumFacing from)
 	{
 		return new FluidTankInfo[] { internalTank.getInfo() };
+	}
+
+	/**
+	 * Gets the facing of the valve.
+	 * 
+	 * @return The direction the valve is facing in.
+	 */
+	public EnumFacing getFacing()
+	{
+		return facing;
+	}
+
+	/**
+	 * Sets the facing of the valve.
+	 * 
+	 * @param One of the {@link EnumFacing} values (values from the y axis are ignored).
+	 */
+	public void setFacing(EnumFacing facing)
+	{
+		if (facing.getAxis() != EnumFacing.Axis.Y)
+		{
+			this.facing = facing;
+		}
 	}
 
 	/**

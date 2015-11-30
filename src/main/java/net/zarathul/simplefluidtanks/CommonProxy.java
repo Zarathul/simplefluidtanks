@@ -1,18 +1,18 @@
 package net.zarathul.simplefluidtanks;
 
-import net.zarathul.simplefluidtanks.configuration.Config;
-import net.zarathul.simplefluidtanks.registration.Registry;
-import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.zarathul.simplefluidtanks.configuration.Config;
+import net.zarathul.simplefluidtanks.registration.Registry;
 
 public class CommonProxy
 {
 	public void preInit(FMLPreInitializationEvent event)
 	{
 		SimpleFluidTanks.commonEventHub = new CommonEventHub();
-		FMLCommonHandler.instance().bus().register(SimpleFluidTanks.commonEventHub);
+		MinecraftForge.EVENT_BUS.register(SimpleFluidTanks.commonEventHub);
 		
 		Config.load(event.getSuggestedConfigurationFile());
 		Registry.registerBlocks();

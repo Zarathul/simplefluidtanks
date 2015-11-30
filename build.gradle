@@ -28,7 +28,7 @@ jar
 
 minecraft
 {
-    version = "1.8-11.14.4.1568"
+    version = "1.8-11.14.4.1572"
     runDir = "eclipse/assets"
     mappings = "snapshot_20141130"
     

@@ -1,5 +1,19 @@
 {
     "parent": "simplefluidtanks:block/tank",
+    "textures": {
+        "down": "simplefluidtanks:blocks/tank_closed",
+        "idown": "simplefluidtanks:blocks/tank_closed",
+        "up": "simplefluidtanks:blocks/tank_closed",
+        "iup": "simplefluidtanks:blocks/tank_closed",
+        "north": "simplefluidtanks:blocks/tank_closed",
+        "inorth": "simplefluidtanks:blocks/tank_closed",
+        "south": "simplefluidtanks:blocks/tank_closed",
+        "isouth": "simplefluidtanks:blocks/tank_closed",
+        "west": "simplefluidtanks:blocks/tank_closed",
+        "iwest": "simplefluidtanks:blocks/tank_closed",
+        "east": "simplefluidtanks:blocks/tank_closed",
+        "ieast": "simplefluidtanks:blocks/tank_closed"
+    },
     "display": {
         "thirdperson": {
             "rotation": [ 10, -45, 170 ],
