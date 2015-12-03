@@ -178,7 +178,6 @@ public class TankBlock extends WrenchableBlock
 
 			// destroy the TankBlock
 			world.setBlockToAir(pos);
-			// last two parameters are metadata and fortune
 			dropBlockAsItem(world, pos, this.getDefaultState(), 0);
 
 			if (valveEntity != null)
