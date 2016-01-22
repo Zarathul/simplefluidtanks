@@ -10,6 +10,12 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map.Entry;
 
+import com.google.common.base.Predicates;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Multimap;
+import com.google.common.primitives.Ints;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -34,12 +40,6 @@ import net.zarathul.simplefluidtanks.common.BlockSearchMode;
 import net.zarathul.simplefluidtanks.common.Direction;
 import net.zarathul.simplefluidtanks.common.Utils;
 import net.zarathul.simplefluidtanks.configuration.Config;
-
-import com.google.common.base.Predicates;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Multimap;
-import com.google.common.primitives.Ints;
 
 /**
  * Holds {@link TileEntity} data for {@link ValveBlock}s,
@@ -168,8 +168,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 				distributeFluidToTanks();
 				worldObj.markChunkDirty(pos, this);
 				worldObj.markBlockForUpdate(pos);
-				// triggers onNeighborTileChange on neighboring blocks, this is needed for comparators to work
-				worldObj.notifyBlockOfStateChange(pos, SimpleFluidTanks.valveBlock);
+				worldObj.updateComparatorOutputLevel(pos, SimpleFluidTanks.valveBlock);
 				FluidEvent.fireEvent(new FluidEvent.FluidFillingEvent(fillFluid, worldObj, pos, internalTank, fillFluid.amount));
 			}
 
@@ -217,8 +216,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 				distributeFluidToTanks();
 				worldObj.markChunkDirty(pos, this);
 				worldObj.markBlockForUpdate(pos);
-				// triggers onNeighborTileChange on neighboring blocks, this is needed for comparators to work
-				worldObj.notifyBlockOfStateChange(pos, SimpleFluidTanks.valveBlock);
+				worldObj.updateComparatorOutputLevel(pos, SimpleFluidTanks.valveBlock);
 				FluidEvent.fireEvent(new FluidEvent.FluidDrainingEvent(drainedFluid, worldObj, pos, internalTank, drainedFluid.amount));
 			}
 
@@ -518,8 +516,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		{
 			worldObj.markChunkDirty(pos, this);
 			worldObj.markBlockForUpdate(pos);
-			// triggers onNeighborTileChange on neighboring blocks, this is needed for comparators to work
-			worldObj.notifyBlockOfStateChange(pos, SimpleFluidTanks.valveBlock);
+			worldObj.updateComparatorOutputLevel(pos, SimpleFluidTanks.valveBlock);
 
 			if (spilledFluid != null)
 			{
@@ -554,9 +551,8 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 
 		worldObj.markChunkDirty(pos, this);
 		worldObj.markBlockForUpdate(pos);
-		// triggers onNeighborTileChange on neighboring blocks, this is needed for comparators to work
-		worldObj.notifyBlockOfStateChange(pos, SimpleFluidTanks.valveBlock);
-
+		worldObj.updateComparatorOutputLevel(pos, SimpleFluidTanks.valveBlock);
+		
 		if (oldFluidAmount > this.internalTank.getCapacity() && fluid != null)
 		{
 			FluidStack spilledFluid = fluid.copy();
@@ -586,11 +582,11 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 				tankEntities.add(tankEntity);
 			}
 		}
-
-		// Update the textures for all connected tanks. This needs to be done after setting the valve. Otherwise the connected textures can't be properly calculated.
+		
+		// This needs to be done after setting the valve. Otherwise the connected textures will be wrong.
 		for (TankBlockEntity t : tankEntities)
 		{
-			t.updateTextures();
+			t.updateConnections();
 		}
 
 		// calculate and set the internal tanks capacity, note the " + 1" is needed because the ValveBlock itself is considered a tank with storage capacity
@@ -636,7 +632,6 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	{
 		// returned amount is mb(milli buckets)
 		int amountToDistribute = internalTank.getFluidAmount();
-		int lightLevel = getFluidLuminosity();
 
 		if (amountToDistribute == 0 || amountToDistribute == internalTank.getCapacity()) // there is nothing to distribute or the internal tank is full (no fill percentage calculations needed)
 		{

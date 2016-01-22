@@ -1,10 +1,6 @@
 package net.zarathul.simplefluidtanks;
 
 import net.minecraft.creativetab.CreativeTabs;
-import net.zarathul.simplefluidtanks.blocks.FakeFluidBlock;
-import net.zarathul.simplefluidtanks.blocks.TankBlock;
-import net.zarathul.simplefluidtanks.blocks.ValveBlock;
-import net.zarathul.simplefluidtanks.items.WrenchItem;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -12,6 +8,9 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.zarathul.simplefluidtanks.blocks.TankBlock;
+import net.zarathul.simplefluidtanks.blocks.ValveBlock;
+import net.zarathul.simplefluidtanks.items.WrenchItem;
 
 @Mod(modid = SimpleFluidTanks.MOD_ID, name = "SimpleFluidTanks", version = SimpleFluidTanks.VERSION, guiFactory = "net.zarathul.simplefluidtanks.configuration.ConfigGuiFactory")
 public class SimpleFluidTanks
@@ -25,7 +24,6 @@ public class SimpleFluidTanks
 	// blocks
 	public static TankBlock tankBlock;
 	public static ValveBlock valveBlock;
-	public static FakeFluidBlock fakeFluidBlock;
 
 	// items
 	public static WrenchItem wrenchItem;

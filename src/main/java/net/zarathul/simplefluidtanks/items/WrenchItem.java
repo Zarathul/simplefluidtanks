@@ -6,8 +6,6 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.zarathul.simplefluidtanks.SimpleFluidTanks;
 import net.zarathul.simplefluidtanks.registration.Registry;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * A simple wrench.

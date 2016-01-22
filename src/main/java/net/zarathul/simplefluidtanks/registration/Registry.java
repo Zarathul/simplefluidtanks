@@ -7,11 +7,13 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.launchwrapper.LogWrapper;
-import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraftforge.fml.common.event.FMLInterModComms;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 import net.zarathul.simplefluidtanks.SimpleFluidTanks;
-import net.zarathul.simplefluidtanks.blocks.FakeFluidBlock;
 import net.zarathul.simplefluidtanks.blocks.TankBlock;
 import net.zarathul.simplefluidtanks.blocks.ValveBlock;
 import net.zarathul.simplefluidtanks.configuration.Config;
@@ -21,11 +23,6 @@ import net.zarathul.simplefluidtanks.items.ValveItem;
 import net.zarathul.simplefluidtanks.items.WrenchItem;
 import net.zarathul.simplefluidtanks.tileentities.TankBlockEntity;
 import net.zarathul.simplefluidtanks.tileentities.ValveBlockEntity;
-import net.minecraftforge.fml.client.registry.RenderingRegistry;
-import net.minecraftforge.fml.common.event.FMLInterModComms;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Provides helper methods to register blocks, items, custom renderers etc.
@@ -58,7 +55,6 @@ public final class Registry
 		// TankBlock
 		SimpleFluidTanks.tankBlock = new TankBlock();
 		GameRegistry.registerBlock(SimpleFluidTanks.tankBlock, TankItem.class, TANK_BLOCK_NAME);
-		SimpleFluidTanks.fakeFluidBlock = new FakeFluidBlock();
 
 		// ValveBlock
 		SimpleFluidTanks.valveBlock = new ValveBlock();

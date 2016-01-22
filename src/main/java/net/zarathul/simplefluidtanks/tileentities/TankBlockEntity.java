@@ -2,7 +2,6 @@ package net.zarathul.simplefluidtanks.tileentities;
 
 import java.util.Arrays;
 
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
@@ -11,14 +10,11 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
-import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.zarathul.simplefluidtanks.blocks.TankBlock;
 import net.zarathul.simplefluidtanks.blocks.ValveBlock;
-import net.zarathul.simplefluidtanks.common.Direction;
 import net.zarathul.simplefluidtanks.common.Utils;
-import net.zarathul.simplefluidtanks.rendering.ConnectedTexturesHelper;
 
 /**
  * Holds {@link TileEntity} data for {@link TankBlock}s,
@@ -41,11 +37,6 @@ public class TankBlockEntity extends TileEntity
 	private BlockPos valveCoords;
 
 	/**
-	 * The ids of the textures to use when rendering.
-	 */
-	private int[] textureIds;
-
-	/**
 	 * Contains information on which side there are other {@link TankBlock}s that belong to the same multiblock structure.
 	 */
 	private boolean[] connections;
@@ -58,7 +49,6 @@ public class TankBlockEntity extends TileEntity
 		fillPercentage = 0;
 		isPartOfTank = false;
 		valveCoords = null;
-		textureIds = new int[] { 0, 0, 0, 0, 0, 0 };
 		connections = new boolean[6];
 	}
 
@@ -76,7 +66,6 @@ public class TankBlockEntity extends TileEntity
 			valveCoords = new BlockPos(valveCoordsArray[0], valveCoordsArray[1], valveCoordsArray[2]);
 		}
 
-		textureIds = tag.getIntArray("TextureIds");
 		connections = new boolean[6];
 		connections[EnumFacing.DOWN.getIndex()] = tag.getBoolean("Y-");
 		connections[EnumFacing.UP.getIndex()] = tag.getBoolean("Y+");
@@ -100,7 +89,6 @@ public class TankBlockEntity extends TileEntity
 			tag.setIntArray("ValveCoords", valveCoordsArray);
 		}
 
-		tag.setIntArray("TextureIds", textureIds);
 		tag.setBoolean("Y-", connections[EnumFacing.DOWN.getIndex()]);
 		tag.setBoolean("Y+", connections[EnumFacing.UP.getIndex()]);
 		tag.setBoolean("Z-", connections[EnumFacing.NORTH.getIndex()]);
@@ -190,21 +178,6 @@ public class TankBlockEntity extends TileEntity
 	}
 
 	/**
-	 * Updates the texture ids for the different sides of the {@link TankBlock}.
-	 */
-	public void updateTextures()
-	{
-		updateConnections();
-
-		textureIds[EnumFacing.EAST.getIndex()] = ConnectedTexturesHelper.getPositiveXTexture(connections);
-		textureIds[EnumFacing.WEST.getIndex()] = ConnectedTexturesHelper.getNegativeXTexture(connections);
-		textureIds[EnumFacing.UP.getIndex()] = ConnectedTexturesHelper.getPositiveYTexture(connections);
-		textureIds[EnumFacing.DOWN.getIndex()] = ConnectedTexturesHelper.getNegativeYTexture(connections);
-		textureIds[EnumFacing.SOUTH.getIndex()] = ConnectedTexturesHelper.getPositiveZTexture(connections);
-		textureIds[EnumFacing.NORTH.getIndex()] = ConnectedTexturesHelper.getNegativeZTexture(connections);
-	}
-
-	/**
 	 * Gets the {@link TankBlock}s current filling level in percent.
 	 * 
 	 * @return The {@link TankBlock}s filling level in percent.
@@ -277,18 +250,6 @@ public class TankBlockEntity extends TileEntity
 	}
 
 	/**
-	 * Gets the texture index for the specified side of the {@link TankBlock}.
-	 * 
-	 * @param side
-	 * The side to get the index for.
-	 * @return The texture index.
-	 */
-	public int getTextureIndex(EnumFacing side)
-	{
-		return textureIds[side.getIndex()];
-	}
-
-	/**
 	 * Checks if the {@link TankBlock} is connected to a {@link ValveBlock} at the specified coordinates.
 	 * 
 	 * @param pos
@@ -308,7 +269,7 @@ public class TankBlockEntity extends TileEntity
 	/**
 	 * Builds an array that holds information on which side of the {@link TankBlock} is connected to another {@link TankBlock} of the same multiblock structure.
 	 */
-	private void updateConnections()
+	public void updateConnections()
 	{
 		connections[EnumFacing.EAST.getIndex()] = shouldConnectTo(pos.east());		// X+
 		connections[EnumFacing.WEST.getIndex()] = shouldConnectTo(pos.west());		// X-
@@ -356,7 +317,6 @@ public class TankBlockEntity extends TileEntity
 		isPartOfTank = false;
 		fillPercentage = 0;
 		valveCoords = null;
-		Arrays.fill(textureIds, 0);
 		Arrays.fill(connections, false);
 
 		if (!suppressBlockUpdates)

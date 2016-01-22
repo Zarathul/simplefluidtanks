@@ -1,7 +1,5 @@
 package net.zarathul.simplefluidtanks.waila;
 
-import java.util.List;
-
 import mcp.mobius.waila.api.ITaggedList.ITipList;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;

@@ -1,9 +1,5 @@
 package net.zarathul.simplefluidtanks.common;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.google.common.collect.ImmutableList;
 
 /**

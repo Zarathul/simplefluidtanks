@@ -1,7 +1,5 @@
 package mcp.mobius.waila.api;
 
-import java.util.List;
-
 import mcp.mobius.waila.api.ITaggedList.ITipList;
 import net.minecraft.item.ItemStack;
 

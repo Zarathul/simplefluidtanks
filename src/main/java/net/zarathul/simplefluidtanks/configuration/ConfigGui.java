@@ -5,9 +5,9 @@ import java.util.List;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.common.config.ConfigElement;
 import net.minecraftforge.common.config.Configuration;
-import net.zarathul.simplefluidtanks.SimpleFluidTanks;
 import net.minecraftforge.fml.client.config.GuiConfig;
 import net.minecraftforge.fml.client.config.IConfigElement;
+import net.zarathul.simplefluidtanks.SimpleFluidTanks;
 
 /**
  * The in-game config UI.

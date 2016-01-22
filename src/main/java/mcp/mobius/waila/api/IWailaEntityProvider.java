@@ -1,12 +1,8 @@
 package mcp.mobius.waila.api;
 
-import java.util.List;
-
 import mcp.mobius.waila.api.ITaggedList.ITipList;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.World;
 
 /**
  * Callback class interface used to provide Entity tooltip informations to Waila.<br>

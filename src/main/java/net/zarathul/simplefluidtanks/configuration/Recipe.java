@@ -3,8 +3,8 @@ package net.zarathul.simplefluidtanks.configuration;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import net.zarathul.simplefluidtanks.common.Utils;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.zarathul.simplefluidtanks.common.Utils;
 
 /**
  * Represents recipe data from the config file. Does not contain any information

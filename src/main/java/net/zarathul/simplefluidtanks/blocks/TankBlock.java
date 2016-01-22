@@ -1,11 +1,8 @@
 package net.zarathul.simplefluidtanks.blocks;
 
-import java.util.HashSet;
 import java.util.Random;
 
-import net.minecraft.block.BlockCauldron;
-import net.minecraft.block.BlockDirectional;
-import net.minecraft.block.BlockFurnace;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockState;
@@ -18,21 +15,28 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.zarathul.simplefluidtanks.CommonEventHub;
+import net.minecraftforge.common.property.ExtendedBlockState;
+import net.minecraftforge.common.property.IExtendedBlockState;
+import net.minecraftforge.common.property.IUnlistedProperty;
+import net.minecraftforge.common.property.Properties;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.zarathul.simplefluidtanks.SimpleFluidTanks;
 import net.zarathul.simplefluidtanks.common.Utils;
 import net.zarathul.simplefluidtanks.configuration.Config;
 import net.zarathul.simplefluidtanks.registration.Registry;
 import net.zarathul.simplefluidtanks.tileentities.TankBlockEntity;
 import net.zarathul.simplefluidtanks.tileentities.ValveBlockEntity;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Represents a tank in the mods multiblock structure.
  */
 public class TankBlock extends WrenchableBlock
 {
+	public static final IUnlistedProperty<Integer> FluidLevel = new Properties.PropertyAdapter<Integer>(PropertyInteger.create("fluidLevel", 0, 16));
+	public static final IUnlistedProperty<Integer> FluidId = new Properties.PropertyAdapter<Integer>(PropertyInteger.create("fluidId", 0, 4096));
+	public static final IUnlistedProperty<Boolean> CullFluidTop = new Properties.PropertyAdapter<Boolean>(PropertyBool.create("cullFluidTop"));
 	public static final PropertyBool DOWN = PropertyBool.create("down");
 	public static final PropertyBool UP = PropertyBool.create("up");
 	public static final PropertyBool NORTH = PropertyBool.create("north");
@@ -63,39 +67,69 @@ public class TankBlock extends WrenchableBlock
 	@Override
 	protected BlockState createBlockState()
 	{
-		return new BlockState(this, DOWN, UP, NORTH, SOUTH, WEST, EAST);
+		IUnlistedProperty[] unlistedProperties = new IUnlistedProperty[]
+		{
+			FluidLevel, FluidId, CullFluidTop
+		};
+		
+		IProperty[] listedProperties = new IProperty[]
+		{
+			DOWN, UP, NORTH, SOUTH, WEST, EAST
+		};
+		
+		return new ExtendedBlockState(this, listedProperties, unlistedProperties);
 	}
-
+	
+	@Override
+	public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos)
+	{
+		IExtendedBlockState extendedState = (IExtendedBlockState)state;
+		
+		TankBlockEntity tankEntity = Utils.getTileEntityAt(world, TankBlockEntity.class, pos);
+		TankBlockEntity tankAbove = Utils.getTileEntityAt(world, TankBlockEntity.class, pos.up());
+		
+		if (tankEntity != null && tankEntity.isPartOfTank())
+		{
+			Fluid tankFluid = tankEntity.getFluid();
+			int fluidLevel = (int)Math.round((tankEntity.getFillPercentage() / 100.0d) * 16);
+			
+			return extendedState
+					.withProperty(FluidId, (tankFluid != null) ? tankFluid.getID() : 0)
+					.withProperty(FluidLevel, fluidLevel)
+					.withProperty(CullFluidTop, (tankAbove != null && !tankAbove.isEmpty()));
+		}
+		
+		return extendedState
+				.withProperty(FluidId, 0)
+				.withProperty(FluidLevel, 0)
+				.withProperty(CullFluidTop, false);
+	}
+	
 	@Override
 	public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos)
 	{
 		TankBlockEntity tankEntity = Utils.getTileEntityAt(world, TankBlockEntity.class, pos);
 		
-		if (tankEntity != null)
+		if (tankEntity != null && tankEntity.isPartOfTank())
 		{
-			if (tankEntity.isPartOfTank())
-			{
-				state = state.withProperty(DOWN, tankEntity.isConnected(EnumFacing.DOWN))
-						.withProperty(UP, tankEntity.isConnected(EnumFacing.UP))
-						.withProperty(NORTH, tankEntity.isConnected(EnumFacing.NORTH))
-						.withProperty(SOUTH, tankEntity.isConnected(EnumFacing.SOUTH))
-						.withProperty(WEST, tankEntity.isConnected(EnumFacing.WEST))
-						.withProperty(EAST, tankEntity.isConnected(EnumFacing.EAST));
-			}
-			else
-			{
-				state = state.withProperty(DOWN, false)
-						.withProperty(UP, false)
-						.withProperty(NORTH, false)
-						.withProperty(SOUTH, false)
-						.withProperty(WEST, false)
-						.withProperty(EAST, false);
-			}
+			return state
+					.withProperty(DOWN, tankEntity.isConnected(EnumFacing.DOWN))
+					.withProperty(UP, tankEntity.isConnected(EnumFacing.UP))
+					.withProperty(NORTH, tankEntity.isConnected(EnumFacing.NORTH))
+					.withProperty(SOUTH, tankEntity.isConnected(EnumFacing.SOUTH))
+					.withProperty(WEST, tankEntity.isConnected(EnumFacing.WEST))
+					.withProperty(EAST, tankEntity.isConnected(EnumFacing.EAST));
 		}
 		
-		return state;
+		return state
+				.withProperty(DOWN, false)
+				.withProperty(UP, false)
+				.withProperty(NORTH, false)
+				.withProperty(SOUTH, false)
+				.withProperty(WEST, false)
+				.withProperty(EAST, false);
 	}
-	
+
 	@Override
 	public int getMetaFromState(IBlockState state)
 	{
@@ -149,7 +183,14 @@ public class TankBlock extends WrenchableBlock
 	@Override
 	public boolean shouldSideBeRendered(IBlockAccess world, BlockPos pos, EnumFacing side)
 	{
-		return (world.getBlockState(pos).getBlock() != this);
+		// Only cull faces touching tank blocks that belong to the same multi block.
+		
+		TankBlockEntity adjacentTankEntity = Utils.getTileEntityAt(world, TankBlockEntity.class, pos);
+		TankBlockEntity tankEntity = Utils.getTileEntityAt(world, TankBlockEntity.class, pos.offset(side.getOpposite()));
+		ValveBlockEntity adjacentTankValve = (adjacentTankEntity != null) ?  adjacentTankEntity.getValve() : null;
+		ValveBlockEntity tankValve = (tankEntity != null) ?  tankEntity.getValve() : null;
+		
+		return (adjacentTankEntity == null || (adjacentTankValve != tankValve));
 	}
 
 	@Override
