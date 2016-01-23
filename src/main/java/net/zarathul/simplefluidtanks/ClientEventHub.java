@@ -34,7 +34,7 @@ public final class ClientEventHub
 	@SubscribeEvent
 	public void OnConfigChanged(OnConfigChangedEvent event)
 	{
-		if (SimpleFluidTanks.MOD_ID.equals(event.modID) && !event.isWorldRunning)
+		if (SimpleFluidTanks.MOD_ID.equals(event.modID))
 		{
 			Config.sync();
 		}
@@ -53,7 +53,9 @@ public final class ClientEventHub
 			
 			for (int x = 0; x < TankModelFactory.FLUID_LEVELS; x++)
 			{
-				fluidModels[x] = (IRetexturableModel)event.modelLoader.getModel(new ModelResourceLocation(SimpleFluidTanks.MOD_ID + ":block/fluid_" + String.valueOf(x)));
+				// Note: We have to use ResourceLocation here instead of ModelResourceLocation. Because if ModelResourceLocation is used, 
+				// the ModelLoader expects to find a  BlockState .json for the model.
+				fluidModels[x] = (IRetexturableModel)event.modelLoader.getModel(new ResourceLocation(SimpleFluidTanks.MOD_ID + ":block/fluid_" + String.valueOf(x)));
 			}
 		}
 		catch (IOException e)
@@ -76,16 +78,16 @@ public final class ClientEventHub
         
         // retexture and cache the loaded fluid models for each registered fluid
 		
-		for (Entry<Fluid, Integer> entry : FluidRegistry.getRegisteredFluidIDs().entrySet())
+		for (Entry<String, Fluid> entry : FluidRegistry.getRegisteredFluids().entrySet())
 		{
-			for (int x = 0; x < TankModelFactory.FLUID_LEVELS; x++)
+			for (int x = 0; x < fluidModels.length; x++)
 			{
 				retexturedModel = fluidModels[x].retexture(new ImmutableMap.Builder()
-						.put("fluid", entry.getKey().getStill().toString())
+						.put("fluid", entry.getValue().getStill().toString())
 						.build());
 
 				TankModelFactory.FLUID_MODELS[x].put(
-						entry.getValue(),
+						entry.getKey(),
 						retexturedModel.bake(retexturedModel.getDefaultState(), Attributes.DEFAULT_BAKED_FORMAT, textureGetter));
 			}
 		}

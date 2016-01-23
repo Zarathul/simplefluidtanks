@@ -19,6 +19,7 @@ import net.minecraftforge.fluids.IFluidContainerItem;
 import net.zarathul.simplefluidtanks.blocks.TankBlock;
 import net.zarathul.simplefluidtanks.blocks.ValveBlock;
 import net.zarathul.simplefluidtanks.configuration.Config;
+import net.zarathul.simplefluidtanks.rendering.TankModelFactory;
 import net.zarathul.simplefluidtanks.tileentities.TankBlockEntity;
 import net.zarathul.simplefluidtanks.tileentities.ValveBlockEntity;
 
@@ -240,5 +241,21 @@ public final class Utils
 		}
 
 		return fluid;
+	}
+	
+	/**
+	 * Calculates the fluid level for the specified fill percentage.
+	 * 
+	 * @param percentage
+	 * The fill percentage.
+	 * @return
+	 * A value between 0 and {@code TankModelFactory.FLUID_LEVELS}.
+	 */
+	public static int getFluidLevel(int fillPercentage)
+	{
+		int level = (int)Math.round((fillPercentage / 100.0d) * TankModelFactory.FLUID_LEVELS);
+		
+		// Make sure that even for small amounts the fluid is rendered at the first level.
+		return (fillPercentage > 0) ? Math.max(1, level) : 0;
 	}
 }

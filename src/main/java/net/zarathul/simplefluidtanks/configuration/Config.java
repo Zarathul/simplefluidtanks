@@ -16,7 +16,7 @@ public final class Config
 {
 	private static Configuration config = null;
 
-	// default values
+	// default recipes
 
 	public static final Recipe defaultTankBlockRecipe = new Recipe
 	(
@@ -63,8 +63,10 @@ public final class Config
 		}
 	);
 
+	// default values
+	
 	private static final int defaultBucketsPerTank = 16;
-	private static final int defaultOverrideBottleVolume = 250;
+	private static final int defaultOverrideBottleVolume = 0;
 	private static final boolean defaultWrenchEnabled = true;
 	private static final float defaultTankBlockHardness = 50;
 	private static final float defaultTankBlockResistance = 1000;

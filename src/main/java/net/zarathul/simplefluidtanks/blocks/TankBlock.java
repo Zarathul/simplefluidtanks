@@ -23,6 +23,7 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.zarathul.simplefluidtanks.SimpleFluidTanks;
+import net.zarathul.simplefluidtanks.blocks.blockstate.StringProperty;
 import net.zarathul.simplefluidtanks.common.Utils;
 import net.zarathul.simplefluidtanks.configuration.Config;
 import net.zarathul.simplefluidtanks.registration.Registry;
@@ -35,7 +36,7 @@ import net.zarathul.simplefluidtanks.tileentities.ValveBlockEntity;
 public class TankBlock extends WrenchableBlock
 {
 	public static final IUnlistedProperty<Integer> FluidLevel = new Properties.PropertyAdapter<Integer>(PropertyInteger.create("fluidLevel", 0, 16));
-	public static final IUnlistedProperty<Integer> FluidId = new Properties.PropertyAdapter<Integer>(PropertyInteger.create("fluidId", 0, 4096));
+	public static final IUnlistedProperty<String> FluidName = new StringProperty("fluidName");
 	public static final IUnlistedProperty<Boolean> CullFluidTop = new Properties.PropertyAdapter<Boolean>(PropertyBool.create("cullFluidTop"));
 	public static final PropertyBool DOWN = PropertyBool.create("down");
 	public static final PropertyBool UP = PropertyBool.create("up");
@@ -69,7 +70,7 @@ public class TankBlock extends WrenchableBlock
 	{
 		IUnlistedProperty[] unlistedProperties = new IUnlistedProperty[]
 		{
-			FluidLevel, FluidId, CullFluidTop
+			FluidLevel, FluidName, CullFluidTop
 		};
 		
 		IProperty[] listedProperties = new IProperty[]
@@ -91,16 +92,31 @@ public class TankBlock extends WrenchableBlock
 		if (tankEntity != null && tankEntity.isPartOfTank())
 		{
 			Fluid tankFluid = tankEntity.getFluid();
-			int fluidLevel = (int)Math.round((tankEntity.getFillPercentage() / 100.0d) * 16);
+			int fluidLevel = Utils.getFluidLevel(tankEntity.getFillPercentage());
+			
+			boolean tankAboveIsEmpty = true;
+			boolean sameValve = false;
+			
+			if (tankAbove != null)
+			{
+				tankAboveIsEmpty = tankAbove.isEmpty();
+				ValveBlockEntity valve = tankEntity.getValve();
+				ValveBlockEntity valveAbove = tankAbove.getValve();
+				sameValve = valve != null && valveAbove != null && valve == valveAbove;
+			}
+			
+			// Only cull the fluids top face if the tank above is not empty and both tanks 
+			// are part of the same multiblock (share the same valve).
+			boolean cullFluidTop = !tankAboveIsEmpty && sameValve;
 			
 			return extendedState
-					.withProperty(FluidId, (tankFluid != null) ? tankFluid.getID() : 0)
+					.withProperty(FluidName, (tankFluid != null) ? tankFluid.getName() : "")
 					.withProperty(FluidLevel, fluidLevel)
-					.withProperty(CullFluidTop, (tankAbove != null && !tankAbove.isEmpty()));
+					.withProperty(CullFluidTop, cullFluidTop);
 		}
 		
 		return extendedState
-				.withProperty(FluidId, 0)
+				.withProperty(FluidName, "")
 				.withProperty(FluidLevel, 0)
 				.withProperty(CullFluidTop, false);
 	}

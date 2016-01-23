@@ -17,14 +17,14 @@ public class TankModelFactory implements ISmartBlockModel
 {
 	public static final int FLUID_LEVELS = 16;
 	
-	// Fluid model cache: Array index corresponds to the fluid level, the HashMap key to the fluid id.
-	public static final HashMap<Integer, IBakedModel>[] FLUID_MODELS = new HashMap[FLUID_LEVELS];
+	// Fluid model cache: Array index corresponds to the fluid level, the HashMap key to the fluid name.
+	public static final HashMap<String, IBakedModel>[] FLUID_MODELS = new HashMap[FLUID_LEVELS];
 	
 	static
 	{
 		for (int x = 0; x < FLUID_LEVELS; x++)
 		{
-			FLUID_MODELS[x] = new HashMap<Integer, IBakedModel>();
+			FLUID_MODELS[x] = new HashMap<String, IBakedModel>();
 		}
 	}
 	
@@ -66,9 +66,9 @@ public class TankModelFactory implements ISmartBlockModel
 	}
 
 	@Override
-	public TextureAtlasSprite getTexture()
+	public TextureAtlasSprite getParticleTexture()
 	{
-		return baseModel.getTexture();
+		return baseModel.getParticleTexture();
 	}
 
 	@Override
@@ -84,7 +84,7 @@ public class TankModelFactory implements ISmartBlockModel
 		
 		return new BakedTankModel(
 				baseModel,
-				exState.getValue(TankBlock.FluidId),
+				exState.getValue(TankBlock.FluidName),
 				exState.getValue(TankBlock.FluidLevel),
 				exState.getValue(TankBlock.CullFluidTop));
 	}

@@ -13,14 +13,14 @@ import net.minecraft.util.EnumFacing;
 public class BakedTankModel implements IBakedModel
 {
 	private IBakedModel baseModel;
-	private int fluidId;
+	private String fluidName;
 	private int fluidLevel;
 	private boolean cullFluidTop;
 	
-	public BakedTankModel(IBakedModel baseModel, int fluidId, int fluidLevel, boolean cullFluidTop)
+	public BakedTankModel(IBakedModel baseModel, String fluidId, int fluidLevel, boolean cullFluidTop)
 	{
 		this.baseModel = baseModel;
-		this.fluidId = fluidId;
+		this.fluidName = fluidId;
 		this.fluidLevel = fluidLevel;
 		this.cullFluidTop = cullFluidTop;
 	}
@@ -34,11 +34,11 @@ public class BakedTankModel implements IBakedModel
 		
 		if (fluidLevel > 0 && fluidLevel <= TankModelFactory.FLUID_LEVELS)
 		{
-			HashMap<Integer, IBakedModel> fluidModels = TankModelFactory.FLUID_MODELS[fluidLevel - 1];
+			HashMap<String, IBakedModel> fluidModels = TankModelFactory.FLUID_MODELS[fluidLevel - 1];
 			
-			if (fluidModels.containsKey(fluidId))
+			if (fluidModels.containsKey(fluidName))
 			{
-				faceQuads.addAll(fluidModels.get(fluidId).getFaceQuads(facing));
+				faceQuads.addAll(fluidModels.get(fluidName).getFaceQuads(facing));
 			}
 		}
 		
@@ -54,9 +54,9 @@ public class BakedTankModel implements IBakedModel
 		
 		if (fluidLevel > 0 && fluidLevel <= TankModelFactory.FLUID_LEVELS)
 		{
-			HashMap<Integer, IBakedModel> fluidModels = TankModelFactory.FLUID_MODELS[fluidLevel - 1];
+			HashMap<String, IBakedModel> fluidModels = TankModelFactory.FLUID_MODELS[fluidLevel - 1];
 			
-			if (fluidModels.containsKey(fluidId))
+			if (fluidModels.containsKey(fluidName))
 			{
 				// The fluid model needs a separate culling logic from the rest of the tank, 
 				// because the top of the fluid is supposed to be visible if the tank block 
@@ -65,14 +65,14 @@ public class BakedTankModel implements IBakedModel
 				
 				if (cullFluidTop)
 				{
-					for (BakedQuad quad : fluidModels.get(fluidId).getGeneralQuads())
+					for (BakedQuad quad : fluidModels.get(fluidName).getGeneralQuads())
 					{
 						if (quad.getFace() != EnumFacing.UP) generalQuads.add(quad);
 					}
 				}
 				else
 				{
-					generalQuads.addAll(fluidModels.get(fluidId).getGeneralQuads());
+					generalQuads.addAll(fluidModels.get(fluidName).getGeneralQuads());
 				}
 			}
 		}
@@ -99,9 +99,9 @@ public class BakedTankModel implements IBakedModel
 	}
 
 	@Override
-	public TextureAtlasSprite getTexture()
+	public TextureAtlasSprite getParticleTexture()
 	{
-		return baseModel.getTexture();
+		return baseModel.getParticleTexture();
 	}
 
 	@Override
