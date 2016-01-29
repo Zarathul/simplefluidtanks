@@ -1,12 +1,12 @@
 package net.zarathul.simplefluidtanks;
 
 import java.io.IOException;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.Map.Entry;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -27,7 +27,7 @@ import net.zarathul.simplefluidtanks.registration.Registry;
 import net.zarathul.simplefluidtanks.rendering.TankModelFactory;
 
 /**
- * Hosts Forge and FML event handlers on the client side.
+ * Hosts Forge event handlers on the client side.
  */
 public final class ClientEventHub
 {
@@ -60,23 +60,23 @@ public final class ClientEventHub
 		}
 		catch (IOException e)
 		{
-			System.out.println("Failed loading fluid model.");
+			System.err.println("Failed loading fluid model. Fluid block model missing or inaccessible.");
 			
 			return;
 		}
 		
-        Function<ResourceLocation, TextureAtlasSprite> textureGetter = new Function<ResourceLocation, TextureAtlasSprite>()
-        {
-            @Override
+		Function<ResourceLocation, TextureAtlasSprite> textureGetter = new Function<ResourceLocation, TextureAtlasSprite>()
+		{
+			@Override
 			public TextureAtlasSprite apply(ResourceLocation location)
-            {
-                return Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());
-            }
-        };
-        
-        IModel retexturedModel;
-        
-        // retexture and cache the loaded fluid models for each registered fluid
+			{
+				return Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());
+			}
+		};
+		
+		IModel retexturedModel;
+		
+		// retexture and cache the loaded fluid models for each registered fluid
 		
 		for (Entry<String, Fluid> entry : FluidRegistry.getRegisteredFluids().entrySet())
 		{
@@ -95,7 +95,7 @@ public final class ClientEventHub
 		// get ModelResourceLocations of all tank block variants from the registry except "inventory"
 		
 		RegistrySimple<ModelResourceLocation, IBakedModel> registry = (RegistrySimple)event.modelRegistry;
-		HashSet<ModelResourceLocation> modelLocations = Sets.newHashSet();
+		ArrayList<ModelResourceLocation> modelLocations = Lists.newArrayList();
 		
 		for (ModelResourceLocation modelLoc : registry.getKeys())
 		{

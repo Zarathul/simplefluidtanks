@@ -36,15 +36,15 @@ public final class Utils
 	private static FluidContainerData[] cachedFluidContainerData = null;
 
 	/**
-	 * Gets the {@link TileEntity} at the specified coordinates, casted to the specified type.
+	 * Gets the {@link TileEntity} at the specified coordinates, cast to the specified type.
 	 * 
 	 * @param access
 	 * An {@link IBlockAccess} implementation. Usually the world.
 	 * @param entityType
-	 * The type the {@link TileEntity} should be casted to.
+	 * The type the {@link TileEntity} should be cast to.
 	 * @param coords
 	 * The coordinates of the {@link TileEntity}.
-	 * @return The casted {@link TileEntity} or <code>null</code> if no {@link TileEntity} was found or the casting failed.
+	 * @return The cast {@link TileEntity} or <code>null</code> if no {@link TileEntity} was found or the types didn't match.
 	 */
 	public static final <T extends TileEntity> T getTileEntityAt(IBlockAccess access, Class<T> entityType, BlockPos coords)
 	{

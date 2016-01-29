@@ -20,7 +20,7 @@ public class StringProperty implements IUnlistedProperty<String>
 	@Override
 	public boolean isValid(String value)
 	{
-		return true;
+		return value != null;
 	}
 
 	@Override

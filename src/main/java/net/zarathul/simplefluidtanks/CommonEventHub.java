@@ -12,22 +12,22 @@ import net.zarathul.simplefluidtanks.common.Utils;
 import net.zarathul.simplefluidtanks.tileentities.ValveBlockEntity;
 
 /**
- * Hosts Forge and FML event handlers on both the server and client side.
+ * Hosts Forge event handlers on both the server and client side.
  */
 public final class CommonEventHub
 {
-	private final HashSet<BlockPos> ignoreBlockBreakEvent;
+	private final HashSet<BlockPos> ignoreBlockBreakCoords;
 	
 	public CommonEventHub()
 	{
-		ignoreBlockBreakEvent = new HashSet<BlockPos>();
+		ignoreBlockBreakCoords = new HashSet<BlockPos>();
 	}
 	
 	public void ignoreBlockBreak(BlockPos pos)
 	{
 		if (pos != null)
 		{
-			ignoreBlockBreakEvent.add(pos);
+			ignoreBlockBreakCoords.add(pos);
 		}
 	}
 	
@@ -41,9 +41,9 @@ public final class CommonEventHub
 			if (block instanceof TankBlock)
 			{
 				// ignore the event if the tanks coordinates are on the ignore list
-				if (ignoreBlockBreakEvent.contains(event.pos))
+				if (ignoreBlockBreakCoords.contains(event.pos))
 				{
-					ignoreBlockBreakEvent.remove(event.pos);
+					ignoreBlockBreakCoords.remove(event.pos);
 
 					return;
 				}

@@ -10,7 +10,9 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 
 /**
- * Very basic unoptimized implementation of the A-Star algorithm, that only works on a plane (meaning it does not search down- or upwards). It is currently used to find the closest block coordinates
+ * Very basic unoptimized implementation of the A-Star algorithm, 
+ * that only works on a plane (meaning it does not search down- or upwards). 
+ * It is currently used to find the closest block coordinates
  * in a {@link Collection} to the given block coordinates.<br>
  * (References used http://theory.stanford.edu/~amitp/GameProgramming/)
  */

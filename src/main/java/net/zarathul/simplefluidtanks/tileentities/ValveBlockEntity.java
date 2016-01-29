@@ -52,8 +52,9 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	private final FluidTank internalTank;
 
 	/**
-	 * Holds the number of {@link TankBlock}s that are linked to this {@link ValveBlock}. (This is primarily used on the client side. This way the multimap containing the tank information does not
-	 * have to be synced to clients).
+	 * Holds the number of {@link TankBlock}s that are linked to this {@link ValveBlock}. 
+	 * (This is primarily used on the client side. This way the multimap containing the 
+	 * tank information does not have to be synced to clients).
 	 */
 	private int linkedTankCount;
 
@@ -526,7 +527,8 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	}
 
 	/**
-	 * Re-runs the tank searching and prioritization algorithms and redistributes the fluid. This allows for additional {@link TankBlock}s to be added to the multiblock structure.
+	 * Re-runs the tank searching and prioritization algorithms and redistributes the fluid. 
+	 * This allows for additional {@link TankBlock}s to be added to the multiblock structure.
 	 */
 	public void formMultiblock()
 	{
@@ -633,8 +635,9 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		// returned amount is mb(milli buckets)
 		int amountToDistribute = internalTank.getFluidAmount();
 
-		if (amountToDistribute == 0 || amountToDistribute == internalTank.getCapacity()) // there is nothing to distribute or the internal tank is full (no fill percentage calculations needed)
+		if (amountToDistribute == 0 || amountToDistribute == internalTank.getCapacity())
 		{
+			// there is nothing to distribute or the internal tank is full (no fill percentage calculations needed)
 			int percentage = (amountToDistribute == 0) ? 0 : 100;
 
 			for (BlockPos tankCoords : tankPriorities.values())
@@ -785,7 +788,8 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 					{
 						for (BlockPos tankOnSameHeight : tanksOnSameHeight)
 						{
-							adjustedPriority = (tankToPriorityMappings.containsKey(tankOnSameHeight)) ? Math.max(priority, tankToPriorityMappings.get(tankOnSameHeight)) : priority;
+							adjustedPriority = (tankToPriorityMappings.containsKey(tankOnSameHeight)) ?
+									Math.max(priority, tankToPriorityMappings.get(tankOnSameHeight)) : priority;
 
 							tanksToPrioritize.put(tankOnSameHeight, adjustedPriority);
 							newTanks.addAll(getAdjacentTanks(tankOnSameHeight, BlockSearchMode.Above));
@@ -955,7 +959,8 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 				if (!tanksWithTanksBelow.isEmpty())
 				{
 					// if there is more than one way down, only consider the closest ones
-					closestTanksWithTanksBelow = (tanksWithTanksBelow.size() > 1) ? getClosestTanks(tanksInSegment, tanksWithTanksBelow, currentTank) : tanksWithTanksBelow;
+					closestTanksWithTanksBelow = (tanksWithTanksBelow.size() > 1) ?
+							getClosestTanks(tanksInSegment, tanksWithTanksBelow, currentTank) : tanksWithTanksBelow;
 
 					for (BlockPos closestTank : closestTanksWithTanksBelow)
 					{
@@ -981,6 +986,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 
 	/**
 	 * Gets the {@link BlockPos} from the specified {@link Collection} that are closest to the specified destination.
+	 * Note: A-Star needs to be set up before calling this.
 	 * 
 	 * @param passableBlocks
 	 * The {@link BlockPos} the search algorithm is allowed to move through.

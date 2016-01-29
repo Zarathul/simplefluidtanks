@@ -16,7 +16,8 @@ public class ConfigGui extends GuiConfig
 {
 	public ConfigGui(GuiScreen parentScreen)
 	{
-		super(parentScreen, getConfigElements(), SimpleFluidTanks.MOD_ID, false, false, GuiConfig.getAbridgedConfigPath(Config.getConfig().getConfigFile().getPath()), SimpleFluidTanks.MOD_READABLE_NAME);
+		super(parentScreen, getConfigElements(), SimpleFluidTanks.MOD_ID, false, false,
+				GuiConfig.getAbridgedConfigPath(Config.getConfig().getConfigFile().getPath()), SimpleFluidTanks.MOD_READABLE_NAME);
 	}
 
 	private static List<IConfigElement> getConfigElements()

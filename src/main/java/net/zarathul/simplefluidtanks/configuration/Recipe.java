@@ -59,11 +59,8 @@ public class Recipe
 	}
 
 	/**
-	 * Generates the arguments for the Forge recipe registration API call
-	 * from the specified recipe.
+	 * Generates the arguments for the Forge recipe registration API call.
 	 * 
-	 * @param recipe
-	 * The recipe to get the arguments for.
 	 * @return
 	 * The generated arguments or <code>null</code> if a component of the recipe
 	 * could't be found or if an component identifier is missing.
