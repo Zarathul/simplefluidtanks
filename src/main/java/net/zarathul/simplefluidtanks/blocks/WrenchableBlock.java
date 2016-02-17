@@ -1,14 +1,16 @@
 package net.zarathul.simplefluidtanks.blocks;
 
+import buildcraft.api.tools.IToolWrench;
+import cofh.api.item.IToolHammer;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import net.zarathul.simplefluidtanks.items.WrenchItem;
 
 /**
  * A base class for blocks that have custom behavior when a wrench is used on them.
@@ -30,7 +32,9 @@ public abstract class WrenchableBlock extends BlockContainer
 
 			if (equippedItemStack != null)
 			{
-				if (equippedItemStack.getItem() instanceof WrenchItem)	// react to ToolWrench (TODO: Replace by an Wrench API interface (e.g.Thermal Expansion))
+				Item item = equippedItemStack.getItem();
+
+				if (item instanceof IToolWrench || item instanceof IToolHammer)	// react to Wrenches (Buildcraft + Thermal Expansion)
 				{
 					handleToolWrenchClick(world, pos, player, equippedItemStack);
 
