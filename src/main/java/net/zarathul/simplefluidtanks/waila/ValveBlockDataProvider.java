@@ -1,15 +1,18 @@
 package net.zarathul.simplefluidtanks.waila;
 
-import mcp.mobius.waila.api.ITaggedList.ITipList;
+import java.util.List;
+
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
-import mcp.mobius.waila.api.IWailaDataAccessorServer;
 import mcp.mobius.waila.api.IWailaDataProvider;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.StatCollector;
+import net.minecraft.world.World;
 import net.zarathul.simplefluidtanks.blocks.ValveBlock;
 import net.zarathul.simplefluidtanks.tileentities.ValveBlockEntity;
 
@@ -31,19 +34,19 @@ public final class ValveBlockDataProvider implements IWailaDataProvider
 	}
 
 	@Override
-	public NBTTagCompound getNBTData(TileEntity te, NBTTagCompound tag, IWailaDataAccessorServer accessor)
+	public NBTTagCompound getNBTData(EntityPlayerMP player, TileEntity te, NBTTagCompound tag, World world, BlockPos pos)
 	{
 		return null;
 	}
 
 	@Override
-	public ITipList getWailaHead(ItemStack itemStack, ITipList currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config)
+	public List<String> getWailaHead(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config)
 	{
 		return currenttip;
 	}
 
 	@Override
-	public ITipList getWailaBody(ItemStack itemStack, ITipList currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config)
+	public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config)
 	{
 		TileEntity entity = accessor.getTileEntity();
 
@@ -64,11 +67,21 @@ public final class ValveBlockDataProvider implements IWailaDataProvider
 
 				if (config.getConfig(Registry.WAILA_CAPACITY_IN_MILLIBUCKETS_KEY))
 				{
-					currenttip.add(StatCollector.translateToLocalFormatted(Registry.WAILA_TOOLTIP_VALVE_CAPACITY, amount, capacity, "mB", totalFillPercentage));
+					currenttip.add(StatCollector.translateToLocalFormatted(
+							Registry.WAILA_TOOLTIP_VALVE_CAPACITY,
+							amount,
+							capacity,
+							"mB",
+							totalFillPercentage));
 				}
 				else
 				{
-					currenttip.add(StatCollector.translateToLocalFormatted(Registry.WAILA_TOOLTIP_VALVE_CAPACITY, amount / 1000, capacity / 1000, "B", totalFillPercentage));
+					currenttip.add(StatCollector.translateToLocalFormatted(
+							Registry.WAILA_TOOLTIP_VALVE_CAPACITY,
+							amount / 1000,
+							capacity / 1000,
+							"B",
+							totalFillPercentage));
 				}
 			}
 
@@ -89,7 +102,7 @@ public final class ValveBlockDataProvider implements IWailaDataProvider
 	}
 
 	@Override
-	public ITipList getWailaTail(ItemStack itemStack, ITipList currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config)
+	public List<String> getWailaTail(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config)
 	{
 		return currenttip;
 	}

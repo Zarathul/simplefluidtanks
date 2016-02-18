@@ -1,8 +1,11 @@
 package mcp.mobius.waila.api;
 
-import mcp.mobius.waila.api.ITaggedList.ITipList;
+import java.util.List;
+
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
 
 /**
  * Callback class interface used to provide Entity tooltip informations to Waila.<br>
@@ -34,7 +37,7 @@ public interface IWailaEntityProvider {
 	 * @param config Current configuration of Waila.
 	 * @return Modified input currenttip
 	 */
-	ITipList getWailaHead(Entity entity, ITipList currenttip, IWailaEntityAccessor accessor, IWailaConfigHandler config);
+	List<String> getWailaHead(Entity entity, List<String> currenttip, IWailaEntityAccessor accessor, IWailaConfigHandler config);
 	
 	/**
 	 * Callback used to add lines to one of the three sections of the tooltip (Head, Body, Tail).</br>
@@ -47,7 +50,7 @@ public interface IWailaEntityProvider {
 	 * @param config Current configuration of Waila.
 	 * @return Modified input currenttip
 	 */	
-	ITipList getWailaBody(Entity entity, ITipList currenttip, IWailaEntityAccessor accessor, IWailaConfigHandler config);
+	List<String> getWailaBody(Entity entity, List<String> currenttip, IWailaEntityAccessor accessor, IWailaConfigHandler config);
 	
 	/**
 	 * Callback used to add lines to one of the three sections of the tooltip (Head, Body, Tail).</br>
@@ -60,16 +63,17 @@ public interface IWailaEntityProvider {
 	 * @param config Current configuration of Waila.
 	 * @return Modified input currenttip
 	 */	
-	ITipList getWailaTail(Entity entity, ITipList currenttip, IWailaEntityAccessor accessor, IWailaConfigHandler config);
+	List<String> getWailaTail(Entity entity, List<String> currenttip, IWailaEntityAccessor accessor, IWailaConfigHandler config);
 	
 	/**
 	 * Callback used server side to return a custom synchronization NBTTagCompound.</br>
 	 * Will be used if the implementing class is registered via {@link IWailaRegistrar}.{@link registerNBTProvider} server and client side.</br>
 	 * You are supposed to always return the modified input NBTTagCompound tag.</br>
+	 * @param player The player requesting data synchronization (The owner of the current connection).
 	 * @param ent The Entity targeted for synchronization.
 	 * @param tag Current synchronization tag (might have been processed by other providers and might be processed by other providers).
-	 * @param accessor Contains most of the relevant information about the current environment.
+	 * @param world TileEntity's World.
 	 * @return Modified input NBTTagCompound tag.
 	 */
-	NBTTagCompound getNBTData(Entity ent, NBTTagCompound tag, IWailaEntityAccessorServer accessor);	
+	NBTTagCompound getNBTData(EntityPlayerMP player, Entity ent, NBTTagCompound tag, World world);	
 }

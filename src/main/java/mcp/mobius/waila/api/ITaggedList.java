@@ -5,9 +5,6 @@ import java.util.List;
 import java.util.Set;
 
 public interface ITaggedList<E, T> extends List<E> {
-	
-	public interface ITipList extends ITaggedList<String, String>{}	
-	
 	public boolean add(E e, T tag);
 	public boolean add(E e, Collection<? extends T> taglst);
 	public Set<T>  getTags(E e);

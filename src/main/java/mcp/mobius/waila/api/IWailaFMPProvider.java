@@ -1,6 +1,7 @@
 package mcp.mobius.waila.api;
 
-import mcp.mobius.waila.api.ITaggedList.ITipList;
+import java.util.List;
+
 import net.minecraft.item.ItemStack;
 
 /**
@@ -23,7 +24,7 @@ public interface IWailaFMPProvider {
 	 * @param config Current configuration of Waila.
 	 * @return Modified input currenttip
 	 */
-	ITipList getWailaHead(ItemStack itemStack, ITipList currenttip, IWailaFMPAccessor accessor, IWailaConfigHandler config);
+	List<String> getWailaHead(ItemStack itemStack, List<String> currenttip, IWailaFMPAccessor accessor, IWailaConfigHandler config);
 	
 	/**
 	 * Callback used to add lines to one of the three sections of the tooltip (Head, Body, Tail).</br>
@@ -36,7 +37,7 @@ public interface IWailaFMPProvider {
 	 * @param config Current configuration of Waila.
 	 * @return Modified input currenttip
 	 */		
-	ITipList getWailaBody(ItemStack itemStack, ITipList currenttip, IWailaFMPAccessor accessor, IWailaConfigHandler config);
+	List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaFMPAccessor accessor, IWailaConfigHandler config);
 	
 	/**
 	 * Callback used to add lines to one of the three sections of the tooltip (Head, Body, Tail).</br>
@@ -49,5 +50,5 @@ public interface IWailaFMPProvider {
 	 * @param config Current configuration of Waila.
 	 * @return Modified input currenttip
 	 */		
-	ITipList getWailaTail(ItemStack itemStack, ITipList currenttip, IWailaFMPAccessor accessor, IWailaConfigHandler config);
+	List<String> getWailaTail(ItemStack itemStack, List<String> currenttip, IWailaFMPAccessor accessor, IWailaConfigHandler config);
 }

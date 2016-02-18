@@ -1,14 +1,17 @@
 package net.zarathul.simplefluidtanks.waila;
 
-import mcp.mobius.waila.api.ITaggedList.ITipList;
+import java.util.List;
+
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
-import mcp.mobius.waila.api.IWailaDataAccessorServer;
 import mcp.mobius.waila.api.IWailaDataProvider;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.StatCollector;
+import net.minecraft.world.World;
 import net.zarathul.simplefluidtanks.blocks.TankBlock;
 import net.zarathul.simplefluidtanks.configuration.Config;
 import net.zarathul.simplefluidtanks.tileentities.TankBlockEntity;
@@ -31,19 +34,19 @@ public final class TankBlockDataProvider implements IWailaDataProvider
 	}
 
 	@Override
-	public NBTTagCompound getNBTData(TileEntity te, NBTTagCompound tag, IWailaDataAccessorServer accessor)
+	public NBTTagCompound getNBTData(EntityPlayerMP player, TileEntity te, NBTTagCompound tag, World world, BlockPos pos)
 	{
 		return null;
 	}
 
 	@Override
-	public ITipList getWailaHead(ItemStack itemStack, ITipList currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config)
+	public List<String> getWailaHead(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config)
 	{
 		return currenttip;
 	}
 
 	@Override
-	public ITipList getWailaBody(ItemStack itemStack, ITipList currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config)
+	public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config)
 	{
 		TileEntity entity = accessor.getTileEntity();
 
@@ -59,13 +62,26 @@ public final class TankBlockDataProvider implements IWailaDataProvider
 
 			if (config.getConfig(Registry.WAILA_TANK_CAPACITY_KEY))
 			{
+				int fillPercentage = tankEntity.getFillPercentage();
+				int amount = (int)((fillPercentage / 100.0d) * Config.bucketsPerTank * 1000);
+				
 				if (config.getConfig(Registry.WAILA_CAPACITY_IN_MILLIBUCKETS_KEY))
 				{
-					currenttip.add(StatCollector.translateToLocalFormatted(Registry.WAILA_TOOLTIP_TANK_CAPACITY, Config.bucketsPerTank * 1000, "mB", tankEntity.getFillPercentage()));
+					currenttip.add(StatCollector.translateToLocalFormatted(
+							Registry.WAILA_TOOLTIP_TANK_CAPACITY,
+							amount,
+							Config.bucketsPerTank * 1000,
+							"mB",
+							fillPercentage));
 				}
 				else
 				{
-					currenttip.add(StatCollector.translateToLocalFormatted(Registry.WAILA_TOOLTIP_TANK_CAPACITY, Config.bucketsPerTank, "B", tankEntity.getFillPercentage()));
+					currenttip.add(StatCollector.translateToLocalFormatted(
+							Registry.WAILA_TOOLTIP_TANK_CAPACITY,
+							amount / 1000,
+							Config.bucketsPerTank,
+							"B",
+							fillPercentage));
 				}
 			}
 		}
@@ -74,7 +90,7 @@ public final class TankBlockDataProvider implements IWailaDataProvider
 	}
 
 	@Override
-	public ITipList getWailaTail(ItemStack itemStack, ITipList currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config)
+	public List<String> getWailaTail(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config)
 	{
 		return currenttip;
 	}
