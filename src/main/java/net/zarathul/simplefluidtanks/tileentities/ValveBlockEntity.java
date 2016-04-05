@@ -396,32 +396,32 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 
 		if (isInTankList(pos.south()))
 		{
-			sides = sides | Direction.sidesToBitFlagsMappings.get(EnumFacing.SOUTH.getIndex());
+			sides = sides | Direction.sidesToBitFlagsMappings.get(EnumFacing.SOUTH);
 		}
 
 		if (isInTankList(pos.north()))
 		{
-			sides = sides | Direction.sidesToBitFlagsMappings.get(EnumFacing.NORTH.getIndex());
+			sides = sides | Direction.sidesToBitFlagsMappings.get(EnumFacing.NORTH);
 		}
 
 		if (isInTankList(pos.east()))
 		{
-			sides = sides | Direction.sidesToBitFlagsMappings.get(EnumFacing.EAST.getIndex());
+			sides = sides | Direction.sidesToBitFlagsMappings.get(EnumFacing.EAST);
 		}
 
 		if (isInTankList(pos.west()))
 		{
-			sides = sides | Direction.sidesToBitFlagsMappings.get(EnumFacing.WEST.getIndex());
+			sides = sides | Direction.sidesToBitFlagsMappings.get(EnumFacing.WEST);
 		}
 
 		if (isInTankList(pos.up()))
 		{
-			sides = sides | Direction.sidesToBitFlagsMappings.get(EnumFacing.UP.getIndex());
+			sides = sides | Direction.sidesToBitFlagsMappings.get(EnumFacing.UP);
 		}
 
 		if (isInTankList(pos.down()))
 		{
-			sides = sides | Direction.sidesToBitFlagsMappings.get(EnumFacing.DOWN.getIndex());
+			sides = sides | Direction.sidesToBitFlagsMappings.get(EnumFacing.DOWN);
 		}
 
 		tankFacingSides = (byte) sides;
@@ -439,14 +439,9 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	{
 		if (side != null)
 		{
-			int sideIndex = side.getIndex();
-			
-			if (sideIndex >= Byte.MIN_VALUE && sideIndex <= Byte.MAX_VALUE)
-			{
-				byte flags = (byte) (int) Direction.sidesToBitFlagsMappings.get(sideIndex);
+			byte flags = Direction.sidesToBitFlagsMappings.get(side).byteValue();
 
-				return (tankFacingSides & flags) == flags;
-			}
+			return (tankFacingSides & flags) == flags;
 		}
 
 		return false;

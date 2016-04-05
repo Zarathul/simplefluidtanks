@@ -1,12 +1,10 @@
 package net.zarathul.simplefluidtanks.registration;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.ItemModelMesher;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.launchwrapper.LogWrapper;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.event.FMLInterModComms;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -71,7 +69,7 @@ public final class Registry
 	public static void registerItems()
 	{
 		SimpleFluidTanks.wrenchItem = new WrenchItem();
-		GameRegistry.registerItem(SimpleFluidTanks.wrenchItem, WRENCH_ITEM_NAME, SimpleFluidTanks.MOD_ID);
+		GameRegistry.registerItem(SimpleFluidTanks.wrenchItem, WRENCH_ITEM_NAME);
 	}
 	
 	/**
@@ -82,11 +80,9 @@ public final class Registry
 		Item tankItem = GameRegistry.findItem(SimpleFluidTanks.MOD_ID, TANK_BLOCK_NAME);
 		Item valveItem = GameRegistry.findItem(SimpleFluidTanks.MOD_ID, VALVE_BLOCK_NAME);
 		
-		ItemModelMesher modelMesher = Minecraft.getMinecraft().getRenderItem().getItemModelMesher();
-		
-		modelMesher.register(tankItem, 0, new ModelResourceLocation(TANKITEM_MODEL_RESLOC, "inventory"));
-		modelMesher.register(valveItem, 0, new ModelResourceLocation(VALVEITEM_MODEL_RESLOC, "inventory"));
-		modelMesher.register(SimpleFluidTanks.wrenchItem, 0, new ModelResourceLocation(WRENCHITEM_MODEL_RESLOC, "inventory"));
+		ModelLoader.setCustomModelResourceLocation(tankItem, 0, new ModelResourceLocation(TANKITEM_MODEL_RESLOC, "inventory"));
+		ModelLoader.setCustomModelResourceLocation(valveItem, 0, new ModelResourceLocation(VALVEITEM_MODEL_RESLOC, "inventory"));
+		ModelLoader.setCustomModelResourceLocation(SimpleFluidTanks.wrenchItem, 0, new ModelResourceLocation(WRENCHITEM_MODEL_RESLOC, "inventory"));
 	}
 
 	/**
@@ -130,11 +126,11 @@ public final class Registry
 	{
 		if (!registerRecipe(result, recipe))
 		{
-			LogWrapper.severe("[%s] Failed to register recipe for: %s. Check your config file.", SimpleFluidTanks.MOD_ID, result.getUnlocalizedName());
+			SimpleFluidTanks.log.warn("Failed to register recipe for '%s'. Check your config file.", result.getUnlocalizedName());
 
 			if (!registerRecipe(result, defaultRecipe))
 			{
-				LogWrapper.severe("[%s] Failed to register default recipe for: %s.", SimpleFluidTanks.MOD_ID, result.getUnlocalizedName());
+				SimpleFluidTanks.log.error("Failed to register default recipe for '%s'. This should never happen.", result.getUnlocalizedName());
 			}
 		}
 	}

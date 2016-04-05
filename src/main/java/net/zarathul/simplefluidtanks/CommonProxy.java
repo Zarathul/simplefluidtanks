@@ -11,6 +11,8 @@ public class CommonProxy
 {
 	public void preInit(FMLPreInitializationEvent event)
 	{
+		SimpleFluidTanks.log = event.getModLog();
+		
 		SimpleFluidTanks.commonEventHub = new CommonEventHub();
 		MinecraftForge.EVENT_BUS.register(SimpleFluidTanks.commonEventHub);
 		

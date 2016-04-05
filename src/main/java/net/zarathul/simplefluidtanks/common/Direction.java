@@ -1,21 +1,23 @@
 package net.zarathul.simplefluidtanks.common;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+
+import net.minecraft.util.EnumFacing;
 
 /**
- * Provides constants and helper methods to convert vanilla directions into {@link ForgeDirection}s and vice versa.
+ * Provides constants and helper methods dealing with vanilla directions.
  */
 public class Direction
 {
 	/**
-	 * Maps bitflags to vanilla minecraft direction values.
+	 * Maps vanilla minecraft direction values to bitflags.
 	 */
-	public static final ImmutableList<Integer> sidesToBitFlagsMappings = ImmutableList.of(
-		1, 	// 0 YNEG
-		2, 	// 1 YPOS
-		4, 	// 2 ZNEG
-		8, 	// 3 ZPOS
-		16,	// 4 XNEG
-		32	// 5 XPOS
-	);
+	public static final ImmutableMap<EnumFacing, Integer> sidesToBitFlagsMappings = new ImmutableMap.Builder()
+			.put(EnumFacing.DOWN, 1)
+			.put(EnumFacing.UP, 2)
+			.put(EnumFacing.NORTH, 4)
+			.put(EnumFacing.SOUTH, 8)
+			.put(EnumFacing.WEST, 16)
+			.put(EnumFacing.EAST, 32)
+			.build();
 }

@@ -11,12 +11,14 @@ public class ClientProxy extends CommonProxy
 	@Override
 	public void preInit(FMLPreInitializationEvent event)
 	{
+		Registry.addCreativeTab();
+		
+		super.preInit(event);
+		
 		SimpleFluidTanks.clientEventHub = new ClientEventHub();
 		MinecraftForge.EVENT_BUS.register(SimpleFluidTanks.clientEventHub);
 
-		Registry.addCreativeTab();
-
-		super.preInit(event);
+		Registry.registerItemModels();
 	}
 
 	@Override
@@ -24,7 +26,6 @@ public class ClientProxy extends CommonProxy
 	{
 		super.init(event);
 
-		Registry.registerItemModels();
 		Registry.registerWithWaila();
 	}
 

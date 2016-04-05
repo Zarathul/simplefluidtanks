@@ -60,7 +60,7 @@ public final class ClientEventHub
 		}
 		catch (IOException e)
 		{
-			System.err.println("Failed loading fluid model. Fluid block model missing or inaccessible.");
+			SimpleFluidTanks.log.fatal("Failed loading fluid model. Fluid block model missing or inaccessible.");
 			
 			return;
 		}
@@ -78,12 +78,28 @@ public final class ClientEventHub
 		
 		// retexture and cache the loaded fluid models for each registered fluid
 		
+		String fluidTextureLoc;
+		Fluid fluid;
+		
 		for (Entry<String, Fluid> entry : FluidRegistry.getRegisteredFluids().entrySet())
 		{
 			for (int x = 0; x < fluidModels.length; x++)
 			{
+				fluid = entry.getValue();
+				fluidTextureLoc = (fluid.getStill() != null)
+						? fluid.getStill().toString()
+						: (fluid.getFlowing() != null)
+						? fluid.getFlowing().toString()
+						: null;
+				
+				if (fluidTextureLoc == null)
+				{
+					SimpleFluidTanks.log.warn(String.format("Fluid '%s' is missing both still and flowing textures. Defaulting to water texture.", entry.getKey()));
+					fluidTextureLoc = FluidRegistry.WATER.getStill().toString();
+				}
+				
 				retexturedModel = fluidModels[x].retexture(new ImmutableMap.Builder()
-						.put("fluid", entry.getValue().getStill().toString())
+						.put("fluid", fluidTextureLoc)
 						.build());
 
 				TankModelFactory.FLUID_MODELS[x].put(

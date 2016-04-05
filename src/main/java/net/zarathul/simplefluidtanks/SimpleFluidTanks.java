@@ -1,5 +1,7 @@
 package net.zarathul.simplefluidtanks;
 
+import org.apache.logging.log4j.Logger;
+
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -34,6 +36,9 @@ public class SimpleFluidTanks
 	// event  hub
 	public static ClientEventHub clientEventHub;
 	public static CommonEventHub commonEventHub;
+	
+	// logger
+	public static Logger log;
 	
 	// constants
 	public static final String MOD_ID = "simplefluidtanks";
