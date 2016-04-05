@@ -126,11 +126,11 @@ public final class Registry
 	{
 		if (!registerRecipe(result, recipe))
 		{
-			SimpleFluidTanks.log.warn("Failed to register recipe for '%s'. Check your config file.", result.getUnlocalizedName());
+			SimpleFluidTanks.log.warn(String.format("Failed to register recipe for '%s'. Check your config file.", result.getItem().getRegistryName()));
 
 			if (!registerRecipe(result, defaultRecipe))
 			{
-				SimpleFluidTanks.log.error("Failed to register default recipe for '%s'. This should never happen.", result.getUnlocalizedName());
+				SimpleFluidTanks.log.error(String.format("Failed to register default recipe for '%s'. This should never happen.", result.getItem().getRegistryName()));
 			}
 		}
 	}
