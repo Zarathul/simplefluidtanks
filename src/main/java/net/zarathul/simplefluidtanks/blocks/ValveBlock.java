@@ -6,18 +6,14 @@ import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidContainerItem;
 import net.zarathul.simplefluidtanks.SimpleFluidTanks;
 import net.zarathul.simplefluidtanks.common.Utils;
@@ -165,7 +161,8 @@ public class ValveBlock extends WrenchableBlock
 				// react to fluid containers
 				if (equippedItemStack.getItem() instanceof IFluidContainerItem || FluidContainerRegistry.isContainer(equippedItemStack))
 				{
-					handleContainerClick(world, pos, player, equippedItemStack);
+					ValveBlockEntity valveEntity = Utils.getTileEntityAt(world, ValveBlockEntity.class, pos);
+					Utils.fillDrainFluidContainer(player, equippedItemStack, valveEntity);
 					
 					return true;
 				}
@@ -207,7 +204,7 @@ public class ValveBlock extends WrenchableBlock
 	@Override
 	protected void handleToolWrenchClick(World world, BlockPos pos, EntityPlayer player, ItemStack equippedItemStack)
 	{
-		// on sneak use: disband the multiblock | on use: rebuild the multiblock
+		// On sneak use: disband the multiblock | On use: rebuild the multiblock
 
 		ValveBlockEntity valveEntity = Utils.getTileEntityAt(world, ValveBlockEntity.class, pos);
 
@@ -219,169 +216,12 @@ public class ValveBlock extends WrenchableBlock
 			}
 
 			world.setBlockToAir(pos);
-			// last two parameters are metadata and fortune
 			dropBlockAsItem(world, pos, this.getDefaultState(), 0);
 		}
 		else if (valveEntity != null)
 		{
 			// rebuild the tank
 			valveEntity.formMultiblock();
-		}
-	}
-
-	/**
-	 * Handles fluid containers used on the {@link ValveBlock}.
-	 * 
-	 * @param world
-	 * The world.
-	 * @param pos
-	 * The {@link ValveBlock}s coordinates.
-	 * @param player
-	 * The player using the item.
-	 * @param equippedItemStack
-	 * The item(stack) used on the {@link ValveBlock}.
-	 */
-	private void handleContainerClick(World world, BlockPos pos, EntityPlayer player, ItemStack equippedItemStack)
-	{
-		ValveBlockEntity valveEntity = Utils.getTileEntityAt(world, ValveBlockEntity.class, pos);
-
-		if (valveEntity != null)
-		{
-			if (FluidContainerRegistry.isEmptyContainer(equippedItemStack) ||
-				Utils.isEmptyComplexContainer(equippedItemStack) ||
-				(equippedItemStack.getItem() instanceof IFluidContainerItem && player.isSneaking()))
-			{
-				fillContainerFromTank(world, pos, player, equippedItemStack, valveEntity);
-			}
-			else
-			{
-				drainContainerIntoTank(world, pos, player, equippedItemStack, valveEntity);
-			}
-		}
-	}
-
-	/**
-	 * Fills an empty container with the liquid contained in the multiblock tank.
-	 * 
-	 * @param world
-	 * The world.
-	 * @param pos
-	 * The {@link ValveBlock}s coordinates.
-	 * @param player
-	 * The player holding the container.
-	 * @param equippedItemStack
-	 * The container {@link ItemStack}.
-	 * @param valveEntity
-	 * The affected {@link ValveBlock}s {@link TileEntity} ({@link ValveBlockEntity}).
-	 */
-	private void fillContainerFromTank(World world, BlockPos pos, EntityPlayer player, ItemStack equippedItemStack, ValveBlockEntity valveEntity)
-	{
-		if (valveEntity.getFluid() == null) return;
-
-		if (equippedItemStack.getItem() instanceof IFluidContainerItem)
-		{
-			// handle IFluidContainerItem items
-
-			IFluidContainerItem containerItem = (IFluidContainerItem) equippedItemStack.getItem();
-			int fillFluidAmount = containerItem.fill(equippedItemStack, valveEntity.getFluid(), true);
-			valveEntity.drain(null, fillFluidAmount, true);
-		}
-		else
-		{
-			// handle drain/fill by exchange items
-
-			ItemStack filledContainer = Utils.fillFluidContainer(valveEntity.getFluid(), equippedItemStack);
-
-			if (filledContainer != null)
-			{
-				int containerCapacity = Utils.getFluidContainerCapacity(valveEntity.getFluid(), equippedItemStack);
-
-				if (containerCapacity > 0)
-				{
-					FluidStack drainedFluid = valveEntity.drain(null, containerCapacity, true);
-					if (drainedFluid != null && drainedFluid.amount == containerCapacity)
-					{
-						if (--equippedItemStack.stackSize <= 0)
-						{
-							player.inventory.setInventorySlotContents(player.inventory.currentItem, null);
-						}
-
-						// add filled container to player inventory or drop it to the ground if the inventory is full or we're dealing with a fake player
-
-						if (player instanceof FakePlayer || !player.inventory.addItemStackToInventory(filledContainer))
-						{
-							world.spawnEntityInWorld(new EntityItem(world, player.posX + 0.5D, player.posY + 1.5D, player.posZ + 0.5D, filledContainer));
-						}
-						else if (player instanceof EntityPlayerMP)
-						{
-							((EntityPlayerMP) player).sendContainerToPlayer(player.inventoryContainer);
-						}
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * Drains the contents of a container into the multiblock tank.
-	 * 
-	 * @param world
-	 * The world.
-	 * @param pos
-	 * The {@link ValveBlock}s coordinates.
-	 * @param player
-	 * The player holding the container.
-	 * @param equippedItemStack
-	 * The container {@link ItemStack}.
-	 * @param valveEntity
-	 * The affected {@link ValveBlock}s {@link TileEntity} ({@link ValveBlockEntity}).
-	 */
-	private void drainContainerIntoTank(World world, BlockPos pos, EntityPlayer player, ItemStack equippedItemStack, ValveBlockEntity valveEntity)
-	{
-		if (valveEntity.isFull()) return;
-
-		if (equippedItemStack.getItem() instanceof IFluidContainerItem)
-		{
-			// handle IFluidContainerItem items
-
-			IFluidContainerItem containerItem = (IFluidContainerItem) equippedItemStack.getItem();
-			FluidStack containerFluid = containerItem.getFluid(equippedItemStack);
-			FluidStack tankFluid = valveEntity.getFluid();
-
-			if (tankFluid == null || tankFluid.isFluidEqual(containerFluid))
-			{
-				int drainAmount = Math.min(valveEntity.getRemainingCapacity(), containerFluid.amount);
-				// drain the fluid from the container first because the amount per drain could be limited
-				FluidStack drainFluid = containerItem.drain(equippedItemStack, drainAmount, true);
-				valveEntity.fill(null, drainFluid, true);
-			}
-		}
-		else
-		{
-			// handle drain/fill by exchange items
-
-			FluidStack containerFluid = Utils.getFluidForFilledItem(equippedItemStack);
-
-			if (valveEntity.fill(null, containerFluid, true) > 0 && !player.capabilities.isCreativeMode) // don't consume the container contents in creative mode
-			{
-				ItemStack emptyContainer = FluidContainerRegistry.drainFluidContainer(equippedItemStack);
-
-				if (--equippedItemStack.stackSize <= 0)
-				{
-					player.inventory.setInventorySlotContents(player.inventory.currentItem, null);
-				}
-
-				// add emptied container to player inventory or drop it to the ground if the inventory is full or we're dealing with a fake player
-
-				if (player instanceof FakePlayer || !player.inventory.addItemStackToInventory(emptyContainer))
-				{
-					world.spawnEntityInWorld(new EntityItem(world, player.posX + 0.5D, player.posY + 1.5D, player.posZ + 0.5D, emptyContainer));
-				}
-				else if (player instanceof EntityPlayerMP)
-				{
-					((EntityPlayerMP) player).sendContainerToPlayer(player.inventoryContainer);
-				}
-			}
 		}
 	}
 }

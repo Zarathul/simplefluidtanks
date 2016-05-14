@@ -170,7 +170,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 				worldObj.markChunkDirty(pos, this);
 				worldObj.markBlockForUpdate(pos);
 				worldObj.updateComparatorOutputLevel(pos, SimpleFluidTanks.valveBlock);
-				FluidEvent.fireEvent(new FluidEvent.FluidFillingEvent(fillFluid, worldObj, pos, internalTank, fillFluid.amount));
+				FluidEvent.fireEvent(new FluidEvent.FluidFillingEvent(fillFluid, worldObj, pos, internalTank, fillAmount));
 			}
 
 			return fillAmount;

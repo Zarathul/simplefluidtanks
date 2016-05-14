@@ -1,5 +1,6 @@
 package net.zarathul.simplefluidtanks.registration;
 
+import java.util.Arrays;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
@@ -16,6 +17,7 @@ import net.zarathul.simplefluidtanks.blocks.TankBlock;
 import net.zarathul.simplefluidtanks.blocks.ValveBlock;
 import net.zarathul.simplefluidtanks.configuration.Config;
 import net.zarathul.simplefluidtanks.configuration.Recipe;
+import net.zarathul.simplefluidtanks.items.CreativeTabLogoItem;
 import net.zarathul.simplefluidtanks.items.TankItem;
 import net.zarathul.simplefluidtanks.items.ValveItem;
 import net.zarathul.simplefluidtanks.items.WrenchItem;
@@ -34,6 +36,7 @@ public final class Registry
 	public static final String VALVE_ITEM_NAME = "valveItem";
 
 	public static final String WRENCH_ITEM_NAME = "wrench";
+	public static final String CREATIVE_TAB_LOGO_ITEM_NAME = "creativeTabLogo";
 
 	private static final String TANKBLOCK_ENTITY_NAME = "tankBlockEntity";
 	private static final String TANKBLOCK_ENTITY_KEY = SimpleFluidTanks.MOD_ID + ":" + TANKBLOCK_ENTITY_NAME;
@@ -44,6 +47,7 @@ public final class Registry
 	private static final String TANKITEM_MODEL_RESLOC = SimpleFluidTanks.MOD_ID + ":" + TANK_BLOCK_NAME;
 	private static final String VALVEITEM_MODEL_RESLOC = SimpleFluidTanks.MOD_ID + ":" + VALVE_BLOCK_NAME;
 	private static final String WRENCHITEM_MODEL_RESLOC = SimpleFluidTanks.MOD_ID + ":" + WRENCH_ITEM_NAME;
+	private static final String CREATIVETABITEM_MODEL_RESLOC = SimpleFluidTanks.MOD_ID + ":" + CREATIVE_TAB_LOGO_ITEM_NAME;
 
 	/**
 	 * Creates and registers all blocks added by the mod.
@@ -70,6 +74,9 @@ public final class Registry
 	{
 		SimpleFluidTanks.wrenchItem = new WrenchItem();
 		GameRegistry.registerItem(SimpleFluidTanks.wrenchItem, WRENCH_ITEM_NAME);
+		
+		SimpleFluidTanks.creativeTabLogoItem = new CreativeTabLogoItem();
+		GameRegistry.registerItem(SimpleFluidTanks.creativeTabLogoItem, CREATIVE_TAB_LOGO_ITEM_NAME);
 	}
 	
 	/**
@@ -83,6 +90,7 @@ public final class Registry
 		ModelLoader.setCustomModelResourceLocation(tankItem, 0, new ModelResourceLocation(TANKITEM_MODEL_RESLOC, "inventory"));
 		ModelLoader.setCustomModelResourceLocation(valveItem, 0, new ModelResourceLocation(VALVEITEM_MODEL_RESLOC, "inventory"));
 		ModelLoader.setCustomModelResourceLocation(SimpleFluidTanks.wrenchItem, 0, new ModelResourceLocation(WRENCHITEM_MODEL_RESLOC, "inventory"));
+		ModelLoader.setCustomModelResourceLocation(SimpleFluidTanks.creativeTabLogoItem, 0, new ModelResourceLocation(CREATIVETABITEM_MODEL_RESLOC, "inventory"));
 	}
 
 	/**
@@ -177,24 +185,30 @@ public final class Registry
 	}
 
 	/**
-	 * Adds a tab in creative mode for the mod.
+	 * Adds a creative mode tab.
 	 */
 	@SideOnly(Side.CLIENT)
 	public static final void addCreativeTab()
 	{
-		SimpleFluidTanks.creativeTab = new CreativeTabs(SimpleFluidTanks.MOD_READABLE_NAME)
-		{
-			@Override
-			public String getTranslatedTabLabel()
-			{
-				return this.getTabLabel();
-			}
-
-			@Override
-			public Item getTabIconItem()
-			{
-				return Item.getItemFromBlock(SimpleFluidTanks.tankBlock);
-			}
-		};
+		// Check if a a "Simple Mods" tab already exists, otherwise make one.
+		SimpleFluidTanks.creativeTab = Arrays.stream(CreativeTabs.creativeTabArray)
+			.filter(tab -> tab.getTabLabel().equals(SimpleFluidTanks.MOD_TAB_NAME))
+			.findFirst()
+			.orElse(
+				new CreativeTabs(SimpleFluidTanks.MOD_TAB_NAME)
+				{
+					@Override
+					public String getTranslatedTabLabel()
+					{
+						return this.getTabLabel();
+					}
+					
+					@Override
+					public Item getTabIconItem()
+					{
+						return SimpleFluidTanks.creativeTabLogoItem;
+					}
+				}
+			);
 	}
 }
