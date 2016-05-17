@@ -194,7 +194,7 @@ public final class Registry
 		SimpleFluidTanks.creativeTab = Arrays.stream(CreativeTabs.creativeTabArray)
 			.filter(tab -> tab.getTabLabel().equals(SimpleFluidTanks.MOD_TAB_NAME))
 			.findFirst()
-			.orElse(
+			.orElseGet(() ->
 				new CreativeTabs(SimpleFluidTanks.MOD_TAB_NAME)
 				{
 					@Override
