@@ -12,7 +12,6 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.zarathul.simplefluidtanks.blocks.TankBlock;
 import net.zarathul.simplefluidtanks.blocks.ValveBlock;
-import net.zarathul.simplefluidtanks.items.CreativeTabLogoItem;
 import net.zarathul.simplefluidtanks.items.WrenchItem;
 
 @Mod(modid = SimpleFluidTanks.MOD_ID, name = "SimpleFluidTanks", version = SimpleFluidTanks.VERSION, guiFactory = "net.zarathul.simplefluidtanks.configuration.ConfigGuiFactory")
@@ -30,7 +29,6 @@ public class SimpleFluidTanks
 
 	// items
 	public static WrenchItem wrenchItem;
-	public static CreativeTabLogoItem creativeTabLogoItem;
 
 	// creative tabs
 	public static CreativeTabs creativeTab;
