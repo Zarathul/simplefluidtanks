@@ -19,7 +19,7 @@ Setting up Eclipse Workspace and Compiling
 - Clone the repo to the folder you want to work in (aka the working directory).
 - Check out the branch you're interested in.
 - Open build.gradle in an editor and find the Forge version the mod is compiled against (e.g. version = "1.7.10-10.13.0.1188")
-- Go to http://files.minecraftforge.net/ and download the appropriate Forge Src zip.
+- Go to http://files.minecraftforge.net/ and download the appropriate MDK (Forge Src zip before 1.8).
 - Extract the zip to wherever you want but not to your working directory.
 - Copy the eclipse folder into your working directory.
 - Open up a console and execute "gradlew setupDecompWorkspace" then "gradlew eclipse" in your working directory.
