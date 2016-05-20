@@ -4,80 +4,68 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.common.property.IExtendedBlockState;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.zarathul.simplefluidtanks.blocks.TankBlock;
 
 public class BakedTankModel implements IBakedModel
 {
-	private IBakedModel baseModel;
-	private String fluidName;
-	private int fluidLevel;
-	private boolean cullFluidTop;
+	public static final int FLUID_LEVELS = 16;
 	
-	public BakedTankModel(IBakedModel baseModel, String fluidId, int fluidLevel, boolean cullFluidTop)
+	// Fluid model cache: Array index corresponds to the fluid level, the HashMap key to the fluid name.
+	public static final HashMap<String, IBakedModel>[] FLUID_MODELS = new HashMap[FLUID_LEVELS];
+	
+	static
+	{
+		for (int x = 0; x < FLUID_LEVELS; x++)
+		{
+			FLUID_MODELS[x] = new HashMap<String, IBakedModel>();
+		}
+	}
+	
+	private IBakedModel baseModel;
+	
+	public BakedTankModel(IBakedModel baseModel)
 	{
 		this.baseModel = baseModel;
-		this.fluidName = fluidId;
-		this.fluidLevel = fluidLevel;
-		this.cullFluidTop = cullFluidTop;
 	}
 
 	@Override
-	public List<BakedQuad> getFaceQuads(EnumFacing facing)
+	public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand)
 	{
-		List<BakedQuad> faceQuads = new LinkedList<BakedQuad>();
+		IExtendedBlockState exState = (IExtendedBlockState)state;
+		boolean cullFluidTop = exState.getValue(TankBlock.CullFluidTop);
+		int fluidLevel = exState.getValue(TankBlock.FluidLevel);
+		String fluidName = exState.getValue(TankBlock.FluidName);
 		
-		faceQuads.addAll(baseModel.getFaceQuads(facing));
+		List<BakedQuad> quads = new LinkedList<BakedQuad>();
+		quads.addAll(baseModel.getQuads(state, side, rand));
 		
-		if (fluidLevel > 0 && fluidLevel <= TankModelFactory.FLUID_LEVELS)
+		if (fluidLevel > 0 && fluidLevel <= FLUID_LEVELS)
 		{
-			HashMap<String, IBakedModel> fluidModels = TankModelFactory.FLUID_MODELS[fluidLevel - 1];
-			
-			if (fluidModels.containsKey(fluidName))
-			{
-				faceQuads.addAll(fluidModels.get(fluidName).getFaceQuads(facing));
-			}
-		}
-		
-		return faceQuads;
-	}
-
-	@Override
-	public List<BakedQuad> getGeneralQuads()
-	{
-		List<BakedQuad> generalQuads = new LinkedList<BakedQuad>();
-		
-		generalQuads.addAll(baseModel.getGeneralQuads());
-		
-		if (fluidLevel > 0 && fluidLevel <= TankModelFactory.FLUID_LEVELS)
-		{
-			HashMap<String, IBakedModel> fluidModels = TankModelFactory.FLUID_MODELS[fluidLevel - 1];
+			HashMap<String, IBakedModel> fluidModels = FLUID_MODELS[fluidLevel - 1];
 			
 			if (fluidModels.containsKey(fluidName))
 			{
 				// The fluid model needs a separate culling logic from the rest of the tank, 
 				// because the top of the fluid is supposed to be visible if the tank block 
-				// above is empty. (getGeneralQuads() handles quads that don't have a cullface
-				// annotation in the .json)
-				
-				if (cullFluidTop)
+				// above is empty.
+				if (!cullFluidTop || side != EnumFacing.UP)
 				{
-					for (BakedQuad quad : fluidModels.get(fluidName).getGeneralQuads())
-					{
-						if (quad.getFace() != EnumFacing.UP) generalQuads.add(quad);
-					}
-				}
-				else
-				{
-					generalQuads.addAll(fluidModels.get(fluidName).getGeneralQuads());
+					quads.addAll(fluidModels.get(fluidName).getQuads(null, side, rand));
 				}
 			}
 		}
 		
-		return generalQuads;
+		return quads;
 	}
 
 	@Override
@@ -108,5 +96,11 @@ public class BakedTankModel implements IBakedModel
 	public ItemCameraTransforms getItemCameraTransforms()
 	{
 		return baseModel.getItemCameraTransforms();
+	}
+
+	@Override
+	public ItemOverrideList getOverrides()
+	{
+		return null;
 	}
 }

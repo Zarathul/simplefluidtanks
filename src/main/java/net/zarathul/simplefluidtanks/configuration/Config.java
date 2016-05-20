@@ -2,7 +2,7 @@ package net.zarathul.simplefluidtanks.configuration;
 
 import java.io.File;
 
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -45,7 +45,7 @@ public final class Config
 		{
 			new RecipeComponent("I", "oreDict", "ingotIron"),
 			new RecipeComponent("S", "oreDict", "slimeball"),
-			new RecipeComponent("T", SimpleFluidTanks.MOD_ID, Registry.TANK_BLOCK_NAME)
+			new RecipeComponent("T", SimpleFluidTanks.MOD_ID, Registry.TANK_ITEM_NAME)
 		}
 	);
 
@@ -132,34 +132,34 @@ public final class Config
 
 		// misc
 
-		config.getCategory(CATEGORY_MISC).setLanguageKey("configui.category.misc").setComment(StatCollector.translateToLocal("configui.category.misc.tooltip"));
+		config.getCategory(CATEGORY_MISC).setLanguageKey("configui.category.misc").setComment(I18n.translateToLocal("configui.category.misc.tooltip"));
 
 		prop = config.get(CATEGORY_MISC, "bucketsPerTank", defaultBucketsPerTank);
-		prop.comment = StatCollector.translateToLocal("configui.bucketsPerTank.tooltip");
+		prop.setComment(I18n.translateToLocal("configui.bucketsPerTank.tooltip"));
 		prop.setLanguageKey("configui.bucketsPerTank").setRequiresWorldRestart(true).setMinValue(1);
 		bucketsPerTank = prop.getInt();
 
 		prop = config.get(CATEGORY_MISC, "wrenchEnabled", defaultWrenchEnabled);
-		prop.comment = StatCollector.translateToLocal("configui.wrenchEnabled.tooltip");
+		prop.setComment(I18n.translateToLocal("configui.wrenchEnabled.tooltip"));
 		prop.setLanguageKey("configui.wrenchEnabled").setRequiresMcRestart(true);
 		wrenchEnabled = prop.getBoolean();
 
 		prop = config.get(CATEGORY_MISC, "overrideBottleVolume", defaultOverrideBottleVolume);
-		prop.comment = StatCollector.translateToLocal("configui.overrideBottleVolume.tooltip");
+		prop.setComment(I18n.translateToLocal("configui.overrideBottleVolume.tooltip"));
 		prop.setLanguageKey("configui.overrideBottleVolume").setMinValue(0).setMaxValue(FluidContainerRegistry.BUCKET_VOLUME);
 		overrideBottleVolume = prop.getInt();
 
 		// blocks
 
-		config.getCategory(CATEGORY_BLOCKS).setLanguageKey("configui.category.blocks").setComment(StatCollector.translateToLocal("configui.category.blocks.tooltip"));
+		config.getCategory(CATEGORY_BLOCKS).setLanguageKey("configui.category.blocks").setComment(I18n.translateToLocal("configui.category.blocks.tooltip"));
 		config.getCategory(CATEGORY_BLOCKS_TANKBLOCK).setLanguageKey("configui.category.tank");
 		config.getCategory(CATEGORY_BLOCKS_VALVEBLOCK).setLanguageKey("configui.category.valve");
 
 		String blockHardnessKey = "hardness";
 		String blockResistanceKey = "resistance";
 
-		String blockHardnessComment = StatCollector.translateToLocal("configui.blockHardness.tooltip");
-		String blockResistanceComment = StatCollector.translateToLocal("configui.blockResistance.tooltip");
+		String blockHardnessComment = I18n.translateToLocal("configui.blockHardness.tooltip");
+		String blockResistanceComment = I18n.translateToLocal("configui.blockResistance.tooltip");
 
 		prop = config.get(CATEGORY_BLOCKS_TANKBLOCK, blockHardnessKey, defaultTankBlockHardness, blockHardnessComment);
 		prop.setLanguageKey("configui.blockHardness").setRequiresMcRestart(true).setMinValue(-1.0).setMaxValue(1000000.0);
@@ -179,7 +179,7 @@ public final class Config
 
 		// recipes
 
-		config.getCategory(CATEGORY_RECIPES).setLanguageKey("configui.category.recipes").setComment(StatCollector.translateToLocal("configui.category.recipes.tooltip"));
+		config.getCategory(CATEGORY_RECIPES).setLanguageKey("configui.category.recipes").setComment(I18n.translateToLocal("configui.category.recipes.tooltip"));
 		config.getCategory(CATEGORY_RECIPES_TANKBLOCK).setLanguageKey("configui.category.tank");
 		config.getCategory(CATEGORY_RECIPES_VALVEBLOCK).setLanguageKey("configui.category.valve");
 		config.getCategory(CATEGORY_RECIPES_WRENCH).setLanguageKey("configui.category.wrench");
@@ -209,22 +209,22 @@ public final class Config
 	private static Recipe loadRecipe(Configuration config, String category, Recipe defaultRecipe)
 	{
 		Property prop = config.get(category, "shapeless", defaultRecipe.isShapeless);
-		prop.comment = StatCollector.translateToLocal("configui.shapeless.tooltip");
+		prop.setComment(I18n.translateToLocal("configui.shapeless.tooltip"));
 		prop.setLanguageKey("configui.shapeless").setRequiresMcRestart(true);
 		boolean shapeless = prop.getBoolean();
 
 		prop = config.get(category, "yield", defaultRecipe.yield);
-		prop.comment = StatCollector.translateToLocal("configui.yield.tooltip");
+		prop.setComment(I18n.translateToLocal("configui.yield.tooltip"));
 		prop.setLanguageKey("configui.yield").setRequiresMcRestart(true).setMinValue(1).setMaxValue(64);
 		int yield = prop.getInt();
 
 		prop = config.get(category, "components", defaultRecipe.getComponentList());
-		prop.comment = StatCollector.translateToLocal("configui.components.tooltip");
+		prop.setComment(I18n.translateToLocal("configui.components.tooltip"));
 		prop.setLanguageKey("configui.components").setRequiresMcRestart(true).setMaxListLength(27);
 		String[] components = prop.getStringList();
 
 		prop = config.get(category, "pattern", defaultRecipe.pattern.rows.toArray(new String[0])).setIsListLengthFixed(true).setMaxListLength(3);
-		prop.comment = StatCollector.translateToLocal("configui.pattern.tooltip");
+		prop.setComment(I18n.translateToLocal("configui.pattern.tooltip"));
 		prop.setLanguageKey("configui.pattern").setRequiresMcRestart(true);
 		String[] pattern = prop.getStringList();
 

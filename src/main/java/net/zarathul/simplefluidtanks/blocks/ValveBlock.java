@@ -2,15 +2,18 @@ package net.zarathul.simplefluidtanks.blocks;
 
 import java.util.Random;
 
+import net.minecraft.block.SoundType;
 import net.minecraft.block.properties.PropertyInteger;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -19,6 +22,7 @@ import net.zarathul.simplefluidtanks.SimpleFluidTanks;
 import net.zarathul.simplefluidtanks.common.Utils;
 import net.zarathul.simplefluidtanks.configuration.Config;
 import net.zarathul.simplefluidtanks.registration.Registry;
+import net.zarathul.simplefluidtanks.tileentities.TankBlockEntity;
 import net.zarathul.simplefluidtanks.tileentities.ValveBlockEntity;
 
 /**
@@ -41,34 +45,41 @@ public class ValveBlock extends WrenchableBlock
 	{
 		super(TankMaterial.tankMaterial);
 
+		setRegistryName(Registry.VALVE_BLOCK_NAME);
 		setUnlocalizedName(Registry.VALVE_BLOCK_NAME);
 		setCreativeTab(SimpleFluidTanks.creativeTab);
 		setHardness(Config.valveBlockHardness);
 		setResistance(Config.valveBlockResistance);
-		setStepSound(soundTypeMetal);
+		setStepSound(SoundType.METAL);
 		setHarvestLevel("pickaxe", 2);
 		
 		this.setDefaultState(this.blockState.getBaseState()
 				.withProperty(UP, GRATE_TEXTURE_ID)
 				.withProperty(NORTH, IO_TEXTURE_ID));
 	}
+    
+	@Override
+	public EnumBlockRenderType getRenderType(IBlockState state)
+    {
+        return EnumBlockRenderType.MODEL;
+    }
 
 	@Override
-	public int getRenderType()
+	public boolean hasTileEntity(IBlockState state)
 	{
-		return 3;
+		return true;
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World var1, int var2)
+	public TileEntity createTileEntity(World world, IBlockState state)
 	{
 		return new ValveBlockEntity();
 	}
 
 	@Override
-	protected BlockState createBlockState()
+	protected BlockStateContainer createBlockState()
 	{
-		return new BlockState(this, DOWN, UP, NORTH, SOUTH, WEST, EAST);
+		return new BlockStateContainer(this, DOWN, UP, NORTH, SOUTH, WEST, EAST);
 	}
 	
 	@Override
@@ -130,7 +141,7 @@ public class ValveBlock extends WrenchableBlock
 			{
 				valveEntity.setFacing(facing);
 				world.markChunkDirty(pos, valveEntity);
-				world.markBlockForUpdate(pos);
+				world.notifyBlockUpdate(pos, state, state, 3);
 			}
 		}
 	}
@@ -150,26 +161,25 @@ public class ValveBlock extends WrenchableBlock
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float hitX, float hitY, float hitZ)
+	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player,
+			EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
 	{
 		if (!world.isRemote)
 		{
-			ItemStack equippedItemStack = player.getCurrentEquippedItem();
-
-			if (equippedItemStack != null)
+			if (heldItem != null)
 			{
 				// react to fluid containers
-				if (equippedItemStack.getItem() instanceof IFluidContainerItem || FluidContainerRegistry.isContainer(equippedItemStack))
+				if (heldItem.getItem() instanceof IFluidContainerItem || FluidContainerRegistry.isContainer(heldItem))
 				{
 					ValveBlockEntity valveEntity = Utils.getTileEntityAt(world, ValveBlockEntity.class, pos);
-					Utils.fillDrainFluidContainer(player, equippedItemStack, valveEntity);
+					Utils.fillDrainFluidContainer(player, heldItem, valveEntity);
 					
 					return true;
 				}
 			}
 		}
 		
-		return super.onBlockActivated(world, pos, state, player, side, hitX, hitY, hitZ);
+		return super.onBlockActivated(world, pos, state, player, hand, heldItem, side, hitX, hitY, hitZ);
 	}
 
 	@Override
@@ -179,13 +189,13 @@ public class ValveBlock extends WrenchableBlock
 	}
 
 	@Override
-	public boolean hasComparatorInputOverride()
+	public boolean hasComparatorInputOverride(IBlockState state)
 	{
 		return true;
 	}
 
 	@Override
-	public int getComparatorInputOverride(World world, BlockPos pos)
+	public int getComparatorInputOverride(IBlockState state, World world, BlockPos pos)
 	{
 		ValveBlockEntity valveEntity = Utils.getTileEntityAt(world, ValveBlockEntity.class, pos);
 

@@ -6,15 +6,18 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidContainerRegistry.FluidContainerData;
@@ -23,7 +26,7 @@ import net.minecraftforge.fluids.IFluidContainerItem;
 import net.zarathul.simplefluidtanks.blocks.TankBlock;
 import net.zarathul.simplefluidtanks.blocks.ValveBlock;
 import net.zarathul.simplefluidtanks.configuration.Config;
-import net.zarathul.simplefluidtanks.rendering.TankModelFactory;
+import net.zarathul.simplefluidtanks.rendering.BakedTankModel;
 import net.zarathul.simplefluidtanks.tileentities.TankBlockEntity;
 import net.zarathul.simplefluidtanks.tileentities.ValveBlockEntity;
 
@@ -63,6 +66,23 @@ public final class Utils
 		}
 
 		return null;
+	}
+	
+	/**
+	 * Marks a block for update and syncs TileEntity data with the client.
+	 * 
+	 * @param world
+	 * The world.
+	 * @param pos
+	 * The location of the block.
+	 */
+	public static final void markBlockForUpdate(World world, BlockPos pos)
+	{
+		if (world == null || pos == null) return;
+		
+		IBlockState state = world.getBlockState(pos);
+		
+		world.notifyBlockUpdate(pos, state, state, 3);
 	}
 
 	/**
@@ -136,9 +156,9 @@ public final class Utils
 			int x = 0;
 			String currentKey = key + x;
 
-			while (StatCollector.canTranslate(currentKey))
+			while (I18n.canTranslate(currentKey))
 			{
-				lines.add(StatCollector.translateToLocalFormatted(currentKey, args));
+				lines.add(I18n.translateToLocalFormatted(currentKey, args));
 				currentKey = key + ++x;
 			}
 		}
@@ -156,7 +176,7 @@ public final class Utils
 	 */
 	public static int getFluidLevel(int fillPercentage)
 	{
-		int level = (int)Math.round((fillPercentage / 100.0d) * TankModelFactory.FLUID_LEVELS);
+		int level = (int)Math.round((fillPercentage / 100.0d) * BakedTankModel.FLUID_LEVELS);
 		
 		// Make sure that even for small amounts the fluid is rendered at the first level.
 		return (fillPercentage > 0) ? Math.max(1, level) : 0;
@@ -213,8 +233,12 @@ public final class Utils
 				filledContainer.stackSize = 1;
 			}
 			
+			// TODO: Why no worky?
+//			SoundEvent fillSound = valveEntity.getFluid().getFluid().getFillSound(valveEntity.getFluid());
 			int fillFluidAmount = containerItem.fill(filledContainer, valveEntity.getFluid(), true);
 			valveEntity.drain(null, fillFluidAmount, true);
+			
+//			player.playSound(fillSound, 1f, 1f);
 		}
 		else
 		{
@@ -286,6 +310,10 @@ public final class Utils
 				// Drain the fluid from the container first because the amount per drain could be limited
 				FluidStack drainedFluid = containerItem.drain(emptyContainer, drainAmount, true);
 				valveEntity.fill(null, drainedFluid, true);
+				
+				// TODO: Why no worky?
+//				SoundEvent soundevent = drainedFluid.getFluid().getEmptySound(drainedFluid);
+//				player.playSound(soundevent, 1f, 1f);
 			}
 		}
 		else
@@ -341,9 +369,6 @@ public final class Utils
 			{
 				((EntityPlayerMP)player).sendContainerToPlayer(player.inventoryContainer);
 			}
-			
-			float pitch = ((player.worldObj.rand.nextFloat() - player.worldObj.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F;
-            player.worldObj.playSoundEffect(player.posX, player.posY, player.posZ, "random.pop", 0.2F, pitch);
 		}
 	}
 	

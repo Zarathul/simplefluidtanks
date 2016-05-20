@@ -1,21 +1,22 @@
 package net.zarathul.simplefluidtanks.blocks;
 
-import buildcraft.api.tools.IToolWrench;
-import cofh.api.item.IToolHammer;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.zarathul.simplefluidtanks.items.WrenchItem;
 
 /**
  * A base class for blocks that have custom behavior when a wrench is used on them.
  */
-public abstract class WrenchableBlock extends BlockContainer
+public abstract class WrenchableBlock extends Block
 {
 
 	protected WrenchableBlock(Material material)
@@ -24,19 +25,18 @@ public abstract class WrenchableBlock extends BlockContainer
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float hitX, float hitY, float hitZ)
+	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player,
+			EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
 	{
 		if (!world.isRemote)
 		{
-			ItemStack equippedItemStack = player.getCurrentEquippedItem();
-
-			if (equippedItemStack != null)
+			if (heldItem != null)
 			{
-				Item item = equippedItemStack.getItem();
+				Item item = heldItem.getItem();
 
-				if (item instanceof IToolWrench || item instanceof IToolHammer)	// react to Wrenches (Buildcraft + Thermal Expansion)
+				if (item instanceof WrenchItem)	// TODO: react to Wrenches (Buildcraft + Thermal Expansion) when APIs update
 				{
-					handleToolWrenchClick(world, pos, player, equippedItemStack);
+					handleToolWrenchClick(world, pos, player, heldItem);
 
 					return true;
 				}

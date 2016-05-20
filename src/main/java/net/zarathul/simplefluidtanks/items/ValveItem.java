@@ -8,7 +8,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.zarathul.simplefluidtanks.SimpleFluidTanks;
@@ -29,6 +29,7 @@ public class ValveItem extends ItemBlock
 		super(block);
 		this.setMaxStackSize(64);
 		this.setCreativeTab(SimpleFluidTanks.creativeTab);
+		this.setRegistryName(Registry.VALVE_ITEM_NAME);
 		this.setUnlocalizedName(Registry.VALVE_ITEM_NAME);
 	}
 
@@ -42,7 +43,7 @@ public class ValveItem extends ItemBlock
 		}
 		else
 		{
-			list.add(StatCollector.translateToLocal(toolTipKey));
+			list.add(I18n.translateToLocal(toolTipKey));
 		}
 	}
 }

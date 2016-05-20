@@ -2,14 +2,16 @@ package net.zarathul.simplefluidtanks.tileentities;
 
 import java.util.Arrays;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.zarathul.simplefluidtanks.blocks.TankBlock;
@@ -98,19 +100,25 @@ public class TankBlockEntity extends TileEntity
 	}
 
 	@Override
+	public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState)
+	{
+		return oldState.getBlock() != newState.getBlock();
+	}
+
+	@Override
 	public Packet getDescriptionPacket()
 	{
 		NBTTagCompound tag = new NBTTagCompound();
 		writeToNBT(tag);
 
-		return new S35PacketUpdateTileEntity(pos, -1, tag);
+		return new SPacketUpdateTileEntity(pos, -1, tag);
 	}
 
 	@Override
-	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet)
+	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet)
 	{
 		readFromNBT(packet.getNbtCompound());
-		worldObj.markBlockForUpdate(pos);
+		Utils.markBlockForUpdate(worldObj, pos);
 	}
 
 	/**
@@ -206,7 +214,7 @@ public class TankBlockEntity extends TileEntity
 
 		if (percentageChanged || forceBlockUpdate)
 		{
-			worldObj.markBlockForUpdate(pos);
+			Utils.markBlockForUpdate(worldObj, pos);
 			worldObj.markChunkDirty(pos, this);
 		}
 
@@ -321,7 +329,7 @@ public class TankBlockEntity extends TileEntity
 
 		if (!suppressBlockUpdates)
 		{
-			worldObj.markBlockForUpdate(pos);
+			Utils.markBlockForUpdate(worldObj, pos);
 			worldObj.markChunkDirty(pos, this);
 		}
 	}

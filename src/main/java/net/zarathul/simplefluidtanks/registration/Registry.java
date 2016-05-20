@@ -2,7 +2,7 @@ package net.zarathul.simplefluidtanks.registration;
 
 import java.util.Arrays;
 
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -54,11 +54,11 @@ public final class Registry
 	{
 		// TankBlock
 		SimpleFluidTanks.tankBlock = new TankBlock();
-		GameRegistry.registerBlock(SimpleFluidTanks.tankBlock, TankItem.class, TANK_BLOCK_NAME);
+		GameRegistry.register(SimpleFluidTanks.tankBlock);
 
 		// ValveBlock
 		SimpleFluidTanks.valveBlock = new ValveBlock();
-		GameRegistry.registerBlock(SimpleFluidTanks.valveBlock, ValveItem.class, VALVE_BLOCK_NAME);
+		GameRegistry.register(SimpleFluidTanks.valveBlock);
 
 		// TileEntities
 		GameRegistry.registerTileEntity(TankBlockEntity.class, TANKBLOCK_ENTITY_KEY);
@@ -70,8 +70,14 @@ public final class Registry
 	 */
 	public static void registerItems()
 	{
+		SimpleFluidTanks.tankItem = new TankItem(SimpleFluidTanks.tankBlock);
+		GameRegistry.register(SimpleFluidTanks.tankItem);
+		
+		SimpleFluidTanks.valveItem = new ValveItem(SimpleFluidTanks.valveBlock);
+		GameRegistry.register(SimpleFluidTanks.valveItem);
+		
 		SimpleFluidTanks.wrenchItem = new WrenchItem();
-		GameRegistry.registerItem(SimpleFluidTanks.wrenchItem, WRENCH_ITEM_NAME);
+		GameRegistry.register(SimpleFluidTanks.wrenchItem);
 	}
 	
 	/**
@@ -79,11 +85,8 @@ public final class Registry
 	 */
 	public static void registerItemModels()
 	{
-		Item tankItem = GameRegistry.findItem(SimpleFluidTanks.MOD_ID, TANK_BLOCK_NAME);
-		Item valveItem = GameRegistry.findItem(SimpleFluidTanks.MOD_ID, VALVE_BLOCK_NAME);
-		
-		ModelLoader.setCustomModelResourceLocation(tankItem, 0, new ModelResourceLocation(TANKITEM_MODEL_RESLOC, "inventory"));
-		ModelLoader.setCustomModelResourceLocation(valveItem, 0, new ModelResourceLocation(VALVEITEM_MODEL_RESLOC, "inventory"));
+		ModelLoader.setCustomModelResourceLocation(SimpleFluidTanks.tankItem, 0, new ModelResourceLocation(TANKITEM_MODEL_RESLOC, "inventory"));
+		ModelLoader.setCustomModelResourceLocation(SimpleFluidTanks.valveItem, 0, new ModelResourceLocation(VALVEITEM_MODEL_RESLOC, "inventory"));
 		ModelLoader.setCustomModelResourceLocation(SimpleFluidTanks.wrenchItem, 0, new ModelResourceLocation(WRENCHITEM_MODEL_RESLOC, "inventory"));
 	}
 

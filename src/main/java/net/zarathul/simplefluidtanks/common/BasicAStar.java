@@ -6,8 +6,8 @@ import java.util.HashSet;
 import java.util.PriorityQueue;
 import java.util.Set;
 
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 
 /**
  * Very basic unoptimized implementation of the A-Star algorithm, 

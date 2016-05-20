@@ -1,5 +1,6 @@
 package net.zarathul.simplefluidtanks.blocks;
 
+import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 
@@ -58,8 +59,8 @@ public class TankMaterial extends Material
 	}
 
 	@Override
-	public int getMaterialMobility()
+	public EnumPushReaction getMobilityFlag()
 	{
-		return 2;
+		return EnumPushReaction.BLOCK;
 	}
 }

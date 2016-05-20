@@ -20,11 +20,12 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidEvent;
@@ -142,11 +143,11 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		tag.setInteger("LinkedTankCount", linkedTankCount);
 		internalTank.writeToNBT(tag);
 
-		return new S35PacketUpdateTileEntity(pos, -1, tag);
+		return new SPacketUpdateTileEntity(pos, -1, tag);
 	}
 
 	@Override
-	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet)
+	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet)
 	{
 		NBTTagCompound tag = packet.getNbtCompound();
 		tankFacingSides = tag.getByte("TankFacingSides");
@@ -154,7 +155,13 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		linkedTankCount = tag.getInteger("LinkedTankCount");
 		internalTank.readFromNBT(tag);
 
-		worldObj.markBlockForUpdate(pos);
+		Utils.markBlockForUpdate(worldObj, pos);
+	}
+
+	@Override
+	public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState)
+	{
+		return oldState.getBlock() != newState.getBlock();
 	}
 
 	@Override
@@ -167,9 +174,8 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 			if (doFill && fillAmount > 0)
 			{
 				distributeFluidToTanks();
-				worldObj.markChunkDirty(pos, this);
-				worldObj.markBlockForUpdate(pos);
-				worldObj.updateComparatorOutputLevel(pos, SimpleFluidTanks.valveBlock);
+				Utils.markBlockForUpdate(worldObj, pos);
+				markDirty();
 				FluidEvent.fireEvent(new FluidEvent.FluidFillingEvent(fillFluid, worldObj, pos, internalTank, fillAmount));
 			}
 
@@ -215,9 +221,8 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 			if (doDrain && drainedFluid != null && drainedFluid.amount > 0)
 			{
 				distributeFluidToTanks();
-				worldObj.markChunkDirty(pos, this);
-				worldObj.markBlockForUpdate(pos);
-				worldObj.updateComparatorOutputLevel(pos, SimpleFluidTanks.valveBlock);
+				Utils.markBlockForUpdate(worldObj, pos);
+				markDirty();
 				FluidEvent.fireEvent(new FluidEvent.FluidDrainingEvent(drainedFluid, worldObj, pos, internalTank, drainedFluid.amount));
 			}
 
@@ -510,9 +515,8 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 
 		if (!suppressBlockUpdates)
 		{
-			worldObj.markChunkDirty(pos, this);
-			worldObj.markBlockForUpdate(pos);
-			worldObj.updateComparatorOutputLevel(pos, SimpleFluidTanks.valveBlock);
+			Utils.markBlockForUpdate(worldObj, pos);
+			markDirty();
 
 			if (spilledFluid != null)
 			{
@@ -546,9 +550,8 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		// the ValveBlock also counts as a tank in the multiblock structure
 		linkedTankCount = Math.max(tankPriorities.size() - 1, 0);
 
-		worldObj.markChunkDirty(pos, this);
-		worldObj.markBlockForUpdate(pos);
-		worldObj.updateComparatorOutputLevel(pos, SimpleFluidTanks.valveBlock);
+		Utils.markBlockForUpdate(worldObj, pos);
+		markDirty();
 		
 		if (oldFluidAmount > this.internalTank.getCapacity() && fluid != null)
 		{
@@ -603,8 +606,8 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 
 			if (tankEntity != null)
 			{
+				Utils.markBlockForUpdate(worldObj, pos);
 				worldObj.markChunkDirty(tank, tankEntity);
-				worldObj.markBlockForUpdate(tank);
 			}
 		}
 

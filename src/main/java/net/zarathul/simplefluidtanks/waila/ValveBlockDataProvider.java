@@ -9,9 +9,9 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.zarathul.simplefluidtanks.blocks.ValveBlock;
 import net.zarathul.simplefluidtanks.tileentities.ValveBlockEntity;
@@ -56,7 +56,7 @@ public final class ValveBlockDataProvider implements IWailaDataProvider
 
 			if (config.getConfig(Registry.WAILA_TANK_COUNT_KEY))
 			{
-				currenttip.add(StatCollector.translateToLocalFormatted(Registry.WAILA_TOOLTIP_TANKS, valveEntity.getLinkedTankCount()));
+				currenttip.add(I18n.translateToLocalFormatted(Registry.WAILA_TOOLTIP_TANKS, valveEntity.getLinkedTankCount()));
 			}
 
 			if (config.getConfig(Registry.WAILA_TOTAL_CAPACITY_KEY))
@@ -67,7 +67,7 @@ public final class ValveBlockDataProvider implements IWailaDataProvider
 
 				if (config.getConfig(Registry.WAILA_CAPACITY_IN_MILLIBUCKETS_KEY))
 				{
-					currenttip.add(StatCollector.translateToLocalFormatted(
+					currenttip.add(I18n.translateToLocalFormatted(
 							Registry.WAILA_TOOLTIP_VALVE_CAPACITY,
 							amount,
 							capacity,
@@ -76,7 +76,7 @@ public final class ValveBlockDataProvider implements IWailaDataProvider
 				}
 				else
 				{
-					currenttip.add(StatCollector.translateToLocalFormatted(
+					currenttip.add(I18n.translateToLocalFormatted(
 							Registry.WAILA_TOOLTIP_VALVE_CAPACITY,
 							amount / 1000,
 							capacity / 1000,
@@ -91,10 +91,10 @@ public final class ValveBlockDataProvider implements IWailaDataProvider
 
 				if (fluidName == null)
 				{
-					fluidName = StatCollector.translateToLocal(Registry.WAILA_TOOLTIP_FLUID_EMPTY);
+					fluidName = I18n.translateToLocal(Registry.WAILA_TOOLTIP_FLUID_EMPTY);
 				}
 
-				currenttip.add(StatCollector.translateToLocalFormatted(Registry.WAILA_TOOLTIP_FLUID, fluidName));
+				currenttip.add(I18n.translateToLocalFormatted(Registry.WAILA_TOOLTIP_FLUID, fluidName));
 			}
 		}
 

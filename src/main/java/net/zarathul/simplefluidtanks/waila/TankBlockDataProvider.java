@@ -9,8 +9,8 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.zarathul.simplefluidtanks.blocks.TankBlock;
 import net.zarathul.simplefluidtanks.configuration.Config;
@@ -56,8 +56,8 @@ public final class TankBlockDataProvider implements IWailaDataProvider
 
 			if (config.getConfig(Registry.WAILA_TANK_LINKED_KEY))
 			{
-				String readableFlag = StatCollector.translateToLocal((tankEntity.isPartOfTank()) ? Registry.WAILA_TOOLTIP_YES : Registry.WAILA_TOOLTIP_NO);
-				currenttip.add(StatCollector.translateToLocalFormatted(Registry.WAILA_TOOLTIP_ISLINKED, readableFlag));
+				String readableFlag = I18n.translateToLocal((tankEntity.isPartOfTank()) ? Registry.WAILA_TOOLTIP_YES : Registry.WAILA_TOOLTIP_NO);
+				currenttip.add(I18n.translateToLocalFormatted(Registry.WAILA_TOOLTIP_ISLINKED, readableFlag));
 			}
 
 			if (config.getConfig(Registry.WAILA_TANK_CAPACITY_KEY))
@@ -67,7 +67,7 @@ public final class TankBlockDataProvider implements IWailaDataProvider
 				
 				if (config.getConfig(Registry.WAILA_CAPACITY_IN_MILLIBUCKETS_KEY))
 				{
-					currenttip.add(StatCollector.translateToLocalFormatted(
+					currenttip.add(I18n.translateToLocalFormatted(
 							Registry.WAILA_TOOLTIP_TANK_CAPACITY,
 							amount,
 							Config.bucketsPerTank * 1000,
@@ -76,7 +76,7 @@ public final class TankBlockDataProvider implements IWailaDataProvider
 				}
 				else
 				{
-					currenttip.add(StatCollector.translateToLocalFormatted(
+					currenttip.add(I18n.translateToLocalFormatted(
 							Registry.WAILA_TOOLTIP_TANK_CAPACITY,
 							amount / 1000,
 							Config.bucketsPerTank,

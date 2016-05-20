@@ -2,17 +2,19 @@ package net.zarathul.simplefluidtanks.blocks;
 
 import java.util.Random;
 
+import net.minecraft.block.SoundType;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyInteger;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumWorldBlockLayer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
@@ -49,11 +51,12 @@ public class TankBlock extends WrenchableBlock
 	{
 		super(TankMaterial.tankMaterial);
 
+		setRegistryName(Registry.TANK_BLOCK_NAME);
 		setUnlocalizedName(Registry.TANK_BLOCK_NAME);
 		setCreativeTab(SimpleFluidTanks.creativeTab);
 		setHardness(Config.tankBlockHardness);
 		setResistance(Config.tankBlockResistance);
-		setStepSound(soundTypeGlass);
+		setStepSound(SoundType.GLASS);
 		setHarvestLevel("pickaxe", 2);
 		
 		setDefaultState(this.blockState.getBaseState()
@@ -66,7 +69,7 @@ public class TankBlock extends WrenchableBlock
 	}
 
 	@Override
-	protected BlockState createBlockState()
+	protected BlockStateContainer createBlockState()
 	{
 		IUnlistedProperty[] unlistedProperties = new IUnlistedProperty[]
 		{
@@ -153,7 +156,7 @@ public class TankBlock extends WrenchableBlock
 	}
 
 	@Override
-	public boolean isSideSolid(IBlockAccess world, BlockPos pos, EnumFacing side)
+	public boolean isSideSolid(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side)
 	{
 		// allow torches, ladders etc. to be places on every side
 		return true;
@@ -166,43 +169,56 @@ public class TankBlock extends WrenchableBlock
 	}
 
 	@Override
-	public boolean isFullCube()
+	public boolean isFullyOpaque(IBlockState state)
 	{
 		return false;
 	}
 
 	@Override
-	public boolean isOpaqueCube()
+	public boolean isFullBlock(IBlockState state)
+	{
+		return true;
+	}
+
+	@Override
+	public boolean isFullCube(IBlockState state)
 	{
 		return false;
 	}
 
+	@SideOnly(Side.CLIENT)
 	@Override
-	public int getRenderType()
+	public BlockRenderLayer getBlockLayer()
 	{
-		return 3;
+		return BlockRenderLayer.TRANSLUCENT;
+	}
+    
+	@Override
+	public EnumBlockRenderType getRenderType(IBlockState state)
+    {
+        return EnumBlockRenderType.MODEL;
+    }
+
+	@Override
+	public boolean hasTileEntity(IBlockState state)
+	{
+		return true;
 	}
 
 	@Override
-	public EnumWorldBlockLayer getBlockLayer()
-	{
-		return EnumWorldBlockLayer.TRANSLUCENT;
-	}
-
-	@Override
-	public TileEntity createNewTileEntity(World world, int unknown)
+	public TileEntity createTileEntity(World world, IBlockState state)
 	{
 		return new TankBlockEntity();
 	}
 
 	@SideOnly(Side.CLIENT)
 	@Override
-	public boolean shouldSideBeRendered(IBlockAccess world, BlockPos pos, EnumFacing side)
+	public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side)
 	{
 		// Only cull faces touching tank blocks that belong to the same multi block.
 		
-		TankBlockEntity adjacentTankEntity = Utils.getTileEntityAt(world, TankBlockEntity.class, pos);
-		TankBlockEntity tankEntity = Utils.getTileEntityAt(world, TankBlockEntity.class, pos.offset(side.getOpposite()));
+		TankBlockEntity adjacentTankEntity = Utils.getTileEntityAt(blockAccess, TankBlockEntity.class, pos);
+		TankBlockEntity tankEntity = Utils.getTileEntityAt(blockAccess, TankBlockEntity.class, pos.offset(side.getOpposite()));
 		ValveBlockEntity adjacentTankValve = (adjacentTankEntity != null) ?  adjacentTankEntity.getValve() : null;
 		ValveBlockEntity tankValve = (tankEntity != null) ?  tankEntity.getValve() : null;
 		
