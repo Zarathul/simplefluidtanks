@@ -53,6 +53,12 @@ public class TankMaterial extends Material
 	}
 
 	@Override
+	public boolean blocksLight()
+	{
+		return false;
+	}
+
+	@Override
 	public boolean isToolNotRequired()
 	{
 		return false;

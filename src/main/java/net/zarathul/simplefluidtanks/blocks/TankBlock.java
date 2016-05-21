@@ -169,7 +169,7 @@ public class TankBlock extends WrenchableBlock
 	}
 
 	@Override
-	public boolean isFullyOpaque(IBlockState state)
+	public boolean isOpaqueCube(IBlockState state)
 	{
 		return false;
 	}
@@ -183,7 +183,7 @@ public class TankBlock extends WrenchableBlock
 	@Override
 	public boolean isFullCube(IBlockState state)
 	{
-		return false;
+		return true;
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -216,13 +216,19 @@ public class TankBlock extends WrenchableBlock
 	public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side)
 	{
 		// Only cull faces touching tank blocks that belong to the same multi block.
-		
-		TankBlockEntity adjacentTankEntity = Utils.getTileEntityAt(blockAccess, TankBlockEntity.class, pos);
-		TankBlockEntity tankEntity = Utils.getTileEntityAt(blockAccess, TankBlockEntity.class, pos.offset(side.getOpposite()));
+		TankBlockEntity adjacentTankEntity = Utils.getTileEntityAt(blockAccess, TankBlockEntity.class, pos.offset(side));
+		TankBlockEntity tankEntity = Utils.getTileEntityAt(blockAccess, TankBlockEntity.class, pos);
 		ValveBlockEntity adjacentTankValve = (adjacentTankEntity != null) ?  adjacentTankEntity.getValve() : null;
 		ValveBlockEntity tankValve = (tankEntity != null) ?  tankEntity.getValve() : null;
 		
 		return (adjacentTankEntity == null || (adjacentTankValve != tankValve));
+	}
+
+	@SideOnly(Side.CLIENT)
+	@Override
+	public boolean doesSideBlockRendering(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing face)
+	{
+		return false;
 	}
 
 	@Override
