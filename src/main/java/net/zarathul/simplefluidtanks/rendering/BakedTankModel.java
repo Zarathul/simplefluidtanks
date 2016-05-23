@@ -55,10 +55,11 @@ public class BakedTankModel implements IBakedModel
 			
 			if (fluidModels.containsKey(fluidName))
 			{
-				// The fluid model needs a separate culling logic from the rest of the tank, 
-				// because the top of the fluid is supposed to be visible if the tank block 
-				// above is empty.
-				if (side != EnumFacing.UP)
+				// The top quad of the fluid model needs a separate culling logic from the 
+				// rest of the tank, because the top needs to be visible if the tank isn't
+				// full, even if there's a tank above.
+				// (side is null for quads that don't have a cullface annotation in the .json)
+				if (side != null || !cullFluidTop)
 				{
 					quads.addAll(fluidModels.get(fluidName).getQuads(null, side, rand));
 				}
