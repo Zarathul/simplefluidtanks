@@ -37,9 +37,8 @@ public class SimpleFluidTanks
 	// creative tabs
 	public static CreativeTabs creativeTab;
 
-	// event  hub
+	// event hubs
 	public static ClientEventHub clientEventHub;
-	public static CommonEventHub commonEventHub;
 	
 	// logger
 	public static Logger log;

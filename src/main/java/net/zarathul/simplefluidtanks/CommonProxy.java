@@ -13,9 +13,6 @@ public class CommonProxy
 	{
 		SimpleFluidTanks.log = event.getModLog();
 		
-		SimpleFluidTanks.commonEventHub = new CommonEventHub();
-		MinecraftForge.EVENT_BUS.register(SimpleFluidTanks.commonEventHub);
-		
 		Config.load(event.getSuggestedConfigurationFile());
 		Registry.registerBlocks();
 		Registry.registerItems();

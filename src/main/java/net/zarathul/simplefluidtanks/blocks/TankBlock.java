@@ -1,5 +1,6 @@
 package net.zarathul.simplefluidtanks.blocks;
 
+import java.util.HashSet;
 import java.util.Random;
 
 import net.minecraft.block.SoundType;
@@ -47,6 +48,9 @@ public class TankBlock extends WrenchableBlock
 	public static final PropertyBool WEST = PropertyBool.create("west");
 	public static final PropertyBool EAST = PropertyBool.create("east");
 	
+	private final HashSet<BlockPos> ignoreBlockBreakCoords;
+	
+	
 	public TankBlock()
 	{
 		super(TankMaterial.tankMaterial);
@@ -66,6 +70,8 @@ public class TankBlock extends WrenchableBlock
 				.withProperty(SOUTH, false)
 				.withProperty(WEST, false)
 				.withProperty(EAST, false));
+		
+		ignoreBlockBreakCoords = new HashSet<BlockPos>();
 	}
 
 	@Override
@@ -238,6 +244,29 @@ public class TankBlock extends WrenchableBlock
 	}
 
 	@Override
+	public void breakBlock(World world, BlockPos pos, IBlockState state)
+	{
+		if (!world.isRemote)
+		{
+			// ignore the event if the tanks coordinates are on the ignore list
+			if (ignoreBlockBreakCoords.contains(pos))
+			{
+				ignoreBlockBreakCoords.remove(pos);
+
+				return;
+			}
+
+			// get the valve the tank is connected to and disband the multiblock
+			ValveBlockEntity valveEntity = Utils.getValve(world, pos);
+
+			if (valveEntity != null)
+			{
+				valveEntity.disbandMultiblock();
+			}
+		}
+	}
+
+	@Override
 	protected void handleToolWrenchClick(World world, BlockPos pos, EntityPlayer player, ItemStack equippedItemStack)
 	{
 		// dismantle aka. instantly destroy the tank and drop the
@@ -252,7 +281,7 @@ public class TankBlock extends WrenchableBlock
 				valveEntity = tankEntity.getValve();
 				// ignore the BlockBreak event for this TankBlock, this way
 				// there will be no reset of the whole tank
-				SimpleFluidTanks.commonEventHub.ignoreBlockBreak(pos);
+				ignoreBlockBreakCoords.add(pos);
 			}
 
 			// destroy the TankBlock

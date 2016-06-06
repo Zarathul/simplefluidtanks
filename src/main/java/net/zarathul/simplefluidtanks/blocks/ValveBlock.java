@@ -212,6 +212,21 @@ public class ValveBlock extends WrenchableBlock
 	}
 
 	@Override
+	public void breakBlock(World world, BlockPos pos, IBlockState state)
+	{
+		if (!world.isRemote)
+		{
+			// disband the multiblock if the valve is mined/destroyed
+			ValveBlockEntity valveEntity = Utils.getTileEntityAt(world, ValveBlockEntity.class, pos);
+
+			if (valveEntity != null)
+			{
+				valveEntity.disbandMultiblock();
+			}
+		}
+	}
+
+	@Override
 	protected void handleToolWrenchClick(World world, BlockPos pos, EntityPlayer player, ItemStack equippedItemStack)
 	{
 		// On sneak use: disband the multiblock | On use: rebuild the multiblock
