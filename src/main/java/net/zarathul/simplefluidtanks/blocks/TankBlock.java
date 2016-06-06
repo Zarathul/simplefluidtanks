@@ -60,7 +60,7 @@ public class TankBlock extends WrenchableBlock
 		setCreativeTab(SimpleFluidTanks.creativeTab);
 		setHardness(Config.tankBlockHardness);
 		setResistance(Config.tankBlockResistance);
-		setStepSound(SoundType.GLASS);
+		setSoundType(SoundType.GLASS);
 		setHarvestLevel("pickaxe", 2);
 		
 		setDefaultState(this.blockState.getBaseState()

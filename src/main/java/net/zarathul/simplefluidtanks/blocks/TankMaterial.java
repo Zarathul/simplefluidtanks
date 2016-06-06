@@ -13,7 +13,7 @@ public class TankMaterial extends Material
 
 	public TankMaterial()
 	{
-		super(MapColor.airColor);
+		super(MapColor.AIR);
 	}
 
 	@Override

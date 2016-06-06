@@ -188,7 +188,7 @@ public final class Registry
 	public static final void addCreativeTab()
 	{
 		// Check if a a "Simple Mods" tab already exists, otherwise make one.
-		SimpleFluidTanks.creativeTab = Arrays.stream(CreativeTabs.creativeTabArray)
+		SimpleFluidTanks.creativeTab = Arrays.stream(CreativeTabs.CREATIVE_TAB_ARRAY)
 			.filter(tab -> tab.getTabLabel().equals(SimpleFluidTanks.MOD_TAB_NAME))
 			.findFirst()
 			.orElseGet(() ->

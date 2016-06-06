@@ -50,7 +50,7 @@ public class ValveBlock extends WrenchableBlock
 		setCreativeTab(SimpleFluidTanks.creativeTab);
 		setHardness(Config.valveBlockHardness);
 		setResistance(Config.valveBlockResistance);
-		setStepSound(SoundType.METAL);
+		setSoundType(SoundType.METAL);
 		setHarvestLevel("pickaxe", 2);
 		
 		this.setDefaultState(this.blockState.getBaseState()

@@ -35,7 +35,7 @@ import net.zarathul.simplefluidtanks.tileentities.ValveBlockEntity;
  */
 public final class Utils
 {
-	public static final ItemStack FILLED_BOTTLE = new ItemStack(Items.potionitem);
+	public static final ItemStack FILLED_BOTTLE = new ItemStack(Items.POTIONITEM);
 
 	/**
 	 * Chances that other mods register fluid containers while the game is already running are low. So cache the container data.

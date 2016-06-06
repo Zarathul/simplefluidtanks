@@ -123,7 +123,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound tag)
+	public NBTTagCompound writeToNBT(NBTTagCompound tag)
 	{
 		super.writeToNBT(tag);
 
@@ -132,10 +132,12 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 
 		tag.setByte("TankFacingSides", tankFacingSides);
 		tag.setByte("Facing", (byte)facing.getIndex());
+		
+		return tag;
 	}
 
 	@Override
-	public Packet getDescriptionPacket()
+	public SPacketUpdateTileEntity getUpdatePacket()
 	{
 		NBTTagCompound tag = new NBTTagCompound();
 		tag.setByte("TankFacingSides", tankFacingSides);

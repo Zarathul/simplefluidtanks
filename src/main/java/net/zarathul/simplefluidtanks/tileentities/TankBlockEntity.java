@@ -78,7 +78,7 @@ public class TankBlockEntity extends TileEntity
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound tag)
+	public NBTTagCompound writeToNBT(NBTTagCompound tag)
 	{
 		super.writeToNBT(tag);
 
@@ -97,6 +97,8 @@ public class TankBlockEntity extends TileEntity
 		tag.setBoolean("Z+", connections[EnumFacing.SOUTH.getIndex()]);
 		tag.setBoolean("X-", connections[EnumFacing.WEST.getIndex()]);
 		tag.setBoolean("X+", connections[EnumFacing.EAST.getIndex()]);
+		
+		return tag;
 	}
 
 	@Override
@@ -106,7 +108,7 @@ public class TankBlockEntity extends TileEntity
 	}
 
 	@Override
-	public Packet getDescriptionPacket()
+	public SPacketUpdateTileEntity getUpdatePacket()
 	{
 		NBTTagCompound tag = new NBTTagCompound();
 		writeToNBT(tag);
