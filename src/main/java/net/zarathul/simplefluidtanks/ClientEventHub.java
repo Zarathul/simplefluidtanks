@@ -78,34 +78,38 @@ public final class ClientEventHub
 		
 		// retexture and cache the loaded fluid models for each registered fluid
 		
-		String fluidTextureLoc;
 		Fluid fluid;
+		String fluidTextureLoc;
+		IBakedModel[] bakedFluidModels;
+		ImmutableMap textureMapping;
 		
 		for (Entry<String, Fluid> entry : FluidRegistry.getRegisteredFluids().entrySet())
 		{
-			for (int x = 0; x < fluidModels.length; x++)
+			fluid = entry.getValue();
+			fluidTextureLoc = (fluid.getStill() != null)
+					? fluid.getStill().toString()
+					: (fluid.getFlowing() != null)
+					? fluid.getFlowing().toString()
+					: null;
+			
+			if (fluidTextureLoc == null)
 			{
-				fluid = entry.getValue();
-				fluidTextureLoc = (fluid.getStill() != null)
-						? fluid.getStill().toString()
-						: (fluid.getFlowing() != null)
-						? fluid.getFlowing().toString()
-						: null;
-				
-				if (fluidTextureLoc == null)
-				{
-					SimpleFluidTanks.log.warn(String.format("Fluid '%s' is missing both still and flowing textures. Defaulting to water texture.", entry.getKey()));
-					fluidTextureLoc = FluidRegistry.WATER.getStill().toString();
-				}
-				
-				retexturedModel = fluidModels[x].retexture(new ImmutableMap.Builder()
-						.put("fluid", fluidTextureLoc)
-						.build());
-
-				BakedTankModel.FLUID_MODELS[x].put(
-						entry.getKey(),
-						retexturedModel.bake(retexturedModel.getDefaultState(), Attributes.DEFAULT_BAKED_FORMAT, textureGetter));
+				SimpleFluidTanks.log.warn(String.format("Fluid '%s' is missing both still and flowing textures. Defaulting to water texture.", entry.getKey()));
+				fluidTextureLoc = FluidRegistry.WATER.getStill().toString();
 			}
+			
+			bakedFluidModels = new IBakedModel[BakedTankModel.FLUID_LEVELS];
+			textureMapping = new ImmutableMap.Builder()
+					.put("fluid", fluidTextureLoc)
+					.build();
+			
+			for (int x = 0; x < BakedTankModel.FLUID_LEVELS; x++)
+			{
+				retexturedModel = fluidModels[x].retexture(textureMapping);
+				bakedFluidModels[x] = retexturedModel.bake(retexturedModel.getDefaultState(), Attributes.DEFAULT_BAKED_FORMAT, textureGetter);
+			}
+			
+			BakedTankModel.FLUID_MODELS.put(entry.getKey(), bakedFluidModels);
 		}
 		
 		// get ModelResourceLocations of all tank block variants from the registry except "inventory"

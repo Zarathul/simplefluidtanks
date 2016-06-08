@@ -20,16 +20,8 @@ public class BakedTankModel implements IBakedModel
 {
 	public static final int FLUID_LEVELS = 16;
 	
-	// Fluid model cache: Array index corresponds to the fluid level, the HashMap key to the fluid name.
-	public static final HashMap<String, IBakedModel>[] FLUID_MODELS = new HashMap[FLUID_LEVELS];
-	
-	static
-	{
-		for (int x = 0; x < FLUID_LEVELS; x++)
-		{
-			FLUID_MODELS[x] = new HashMap<String, IBakedModel>();
-		}
-	}
+	// Fluid model cache: The HashMap key corresponds to the fluid name, the model array index to the fluid level.
+	public static final HashMap<String, IBakedModel[]> FLUID_MODELS = new HashMap<>();
 	
 	private IBakedModel baseModel;
 	
@@ -49,20 +41,17 @@ public class BakedTankModel implements IBakedModel
 		List<BakedQuad> quads = new LinkedList<BakedQuad>();
 		quads.addAll(baseModel.getQuads(state, side, rand));
 		
-		if (fluidLevel > 0 && fluidLevel <= FLUID_LEVELS)
+		// The top quad of the fluid model needs a separate culling logic from the 
+		// rest of the tank, because the top needs to be visible if the tank isn't
+		// full, even if there's a tank above.
+		// (Note that 'side' is null for quads that don't have a cullface annotation in the .json.
+		// The top side of the fluid model has a cullface annotation, the other sides don't.)
+		if (side != null || !cullFluidTop)
 		{
-			HashMap<String, IBakedModel> fluidModels = FLUID_MODELS[fluidLevel - 1];
-			
-			if (fluidModels.containsKey(fluidName))
+			if (fluidLevel > 0 && fluidLevel <= FLUID_LEVELS && FLUID_MODELS.containsKey(fluidName))
 			{
-				// The top quad of the fluid model needs a separate culling logic from the 
-				// rest of the tank, because the top needs to be visible if the tank isn't
-				// full, even if there's a tank above.
-				// (side is null for quads that don't have a cullface annotation in the .json)
-				if (side != null || !cullFluidTop)
-				{
-					quads.addAll(fluidModels.get(fluidName).getQuads(null, side, rand));
-				}
+				IBakedModel fluidModel = FLUID_MODELS.get(fluidName)[fluidLevel - 1];
+				quads.addAll(fluidModel.getQuads(null, side, rand));
 			}
 		}
 		

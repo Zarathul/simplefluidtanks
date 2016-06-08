@@ -137,15 +137,21 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	}
 
 	@Override
-	public SPacketUpdateTileEntity getUpdatePacket()
+	public NBTTagCompound getUpdateTag()
 	{
-		NBTTagCompound tag = new NBTTagCompound();
+		NBTTagCompound tag = super.getUpdateTag();
 		tag.setByte("TankFacingSides", tankFacingSides);
 		tag.setByte("Facing", (byte)facing.getIndex());
 		tag.setInteger("LinkedTankCount", linkedTankCount);
 		internalTank.writeToNBT(tag);
+		
+		return tag;
+	}
 
-		return new SPacketUpdateTileEntity(pos, -1, tag);
+	@Override
+	public SPacketUpdateTileEntity getUpdatePacket()
+	{
+		return new SPacketUpdateTileEntity(pos, -1, getUpdateTag());
 	}
 
 	@Override

@@ -108,12 +108,17 @@ public class TankBlockEntity extends TileEntity
 	}
 
 	@Override
+	public NBTTagCompound getUpdateTag()
+	{
+		NBTTagCompound tag = super.getUpdateTag();
+		writeToNBT(tag);
+		return tag;
+	}
+
+	@Override
 	public SPacketUpdateTileEntity getUpdatePacket()
 	{
-		NBTTagCompound tag = new NBTTagCompound();
-		writeToNBT(tag);
-
-		return new SPacketUpdateTileEntity(pos, -1, tag);
+		return new SPacketUpdateTileEntity(pos, -1, getUpdateTag());
 	}
 
 	@Override
