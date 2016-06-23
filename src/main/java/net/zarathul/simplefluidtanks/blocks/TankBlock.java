@@ -43,7 +43,7 @@ public class TankBlock extends WrenchableBlock
 	}
 
 	@SideOnly(Side.CLIENT)
-	private IIcon[] icons;
+	protected IIcon[] icons;
 
 	@SideOnly(Side.CLIENT)
 	public IIcon[] getIcons()
@@ -134,7 +134,8 @@ public class TankBlock extends WrenchableBlock
 	@Override
 	public boolean canRenderInPass(int pass)
 	{
-		return (pass == 1);
+		TankBlockRenderer.renderPass = pass;
+		return true;
 	}
 
 	@Override
@@ -219,5 +220,18 @@ public class TankBlock extends WrenchableBlock
 		}
 
 		return null;
+	}
+
+	@Override
+	public int getLightValue(IBlockAccess world, int x, int y, int z) {
+		if (Config.tankFluidLightEnabled)
+		{
+			TankBlockEntity tankEntity = Utils.getTileEntityAt(world, TankBlockEntity.class, x, y, z);
+			if (tankEntity != null) 
+			{
+				return tankEntity.getFluidLightLevel();
+			}
+		}
+		return super.getLightValue(world, x, y, z);
 	}
 }

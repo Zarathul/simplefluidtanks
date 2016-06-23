@@ -1,5 +1,6 @@
 # Blocks
 tile.tankBlock.name=Fluid Tank
+tile.connectorBlock.name=Tank Connector
 tile.valveBlock.name=Valve
 
 # Items
@@ -9,6 +10,14 @@ item.tankItem.toolTipDetails0=Use a BuildCraft compatible wrench
 item.tankItem.toolTipDetails1=while sneaking to remove a tank from
 item.tankItem.toolTipDetails2=the multiblock structure.
 item.tankItem.toolTipDetails3=§9Holds up to §b%d §9buckets of fluid.
+item.connectorItem.name=Tank Connector
+item.connectorItem.toolTip=Hold §e§oshift§r§7 for details.
+item.connectorItem.toolTipDetails0=Use a BuildCraft compatible wrench
+item.connectorItem.toolTipDetails1=while sneaking to remove a connector
+item.connectorItem.toolTipDetails2=from the multiblock structure. 
+item.connectorItem.toolTipDetails3=Note the connector counts as a tank
+item.connectorItem.toolTipDetails4=towards the total capacity. Allows
+item.connectorItem.toolTipDetails5=pipes to connect to the tank.
 item.valveItem.name=Valve
 item.valveItem.toolTip=Hold §e§oshift§r§7 for details.
 item.valveItem.toolTipDetails0=Use a BuildCraft compatible wrench on the
@@ -24,6 +33,7 @@ configui.category.misc=Misc
 configui.category.blocks=Blocks
 configui.category.recipes=Recipes
 configui.category.tank=Tank
+configui.category.connector=Connector
 configui.category.valve=Valve
 configui.category.wrench=Wrench
 
@@ -31,6 +41,7 @@ configui.category.wrench=Wrench
 configui.bucketsPerTank=Buckets Per Tank
 configui.wrenchEnabled=Enable Wrench Recipe
 configui.overrideBottleVolume=Bottle Volume
+configui.tankFluidLightEnabled=Enable Tank Fluid Light
 configui.blockHardness=Block Hardness
 configui.blockResistance=Block Blast Resistance
 configui.shapeless=Shapeless
@@ -43,6 +54,7 @@ configui.category.misc.tooltip=Basic settings.
 configui.bucketsPerTank.tooltip=The amount of fluid a tank can hold measured in buckets.
 configui.wrenchEnabled.tooltip=Set to false to disable the wrench recipe.
 configui.overrideBottleVolume.tooltip=The amount of fluid a bottle can hold measured in buckets. 0 = Use Forge default.
+configui.tankFluidLightEnabled.tooltip=Will tanks emit light when they contain fluid that emits light.
 
 configui.category.blocks.tooltip=Block properties.
 configui.blockHardness.tooltip=The amount of hits the block can take before it breaks (-1 = indestructible).
@@ -59,14 +71,15 @@ waila.tankCount=Tank count
 waila.totalCapacity=Total capacity
 waila.linkStatus=Link status
 waila.tankCapacity=Tank capacity
+waila.tankTotalCapacity=Total capacity on tanks
 waila.capacityInMb=Capacities in mB
 waila.fluidName=Fluid name
 
 # Waila Tooltip Texts
 waila.toolTip.isLinked=Linked: §c%s
-waila.toolTip.tankCapacity=Capacity: §b%,d§r %s (%d%%)
-waila.toolTip.valveCapacity=Capacity: §b%,d/%,d§r %s (%d%%)
-waila.toolTip.tanks=Tanks: §b%,d
+waila.toolTip.tankCapacity=Capacity: §b%d§r %s (%d%%)
+waila.toolTip.valveCapacity=Capacity: §b%d/%d§r %s (%d%%)
+waila.toolTip.tanks=Tanks: §b%d
 waila.toolTip.fluid=Fluid: §b%s
 waila.toolTip.fluidEmpty=Empty
 waila.toolTip.yes=Yes

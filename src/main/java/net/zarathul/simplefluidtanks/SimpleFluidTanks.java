@@ -1,6 +1,7 @@
 package net.zarathul.simplefluidtanks;
 
 import net.minecraft.creativetab.CreativeTabs;
+import net.zarathul.simplefluidtanks.blocks.ConnectorBlock;
 import net.zarathul.simplefluidtanks.blocks.FakeFluidBlock;
 import net.zarathul.simplefluidtanks.blocks.TankBlock;
 import net.zarathul.simplefluidtanks.blocks.ValveBlock;
@@ -24,6 +25,7 @@ public class SimpleFluidTanks
 
 	// blocks
 	public static TankBlock tankBlock;
+	public static ConnectorBlock connectorBlock;
 	public static ValveBlock valveBlock;
 	public static FakeFluidBlock fakeFluidBlock;
 

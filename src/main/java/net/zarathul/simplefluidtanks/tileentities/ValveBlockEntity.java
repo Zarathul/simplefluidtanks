@@ -610,7 +610,8 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		if (amountToDistribute == 0 || amountToDistribute == internalTank.getCapacity()) // there is nothing to distribute or the internal tank is full (no fill percentage calculations needed)
 		{
 			int percentage = (amountToDistribute == 0) ? 0 : 100;
-
+			int fluidLightLevel = lightLevel * percentage / 100;
+			
 			for (BlockCoords tankCoords : tankPriorities.values())
 			{
 				TankBlockEntity tankEntity = Utils.getTileEntityAt(worldObj, TankBlockEntity.class, tankCoords);
@@ -618,6 +619,8 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 				if (tankEntity != null)
 				{
 					tankEntity.setFillPercentage(percentage, forceBlockUpdates);
+					if (Config.tankFluidLightEnabled) 
+						tankEntity.setFluidLightLevel(fluidLightLevel, forceBlockUpdates);
 				}
 			}
 		}
@@ -636,6 +639,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 
 				int capacity = tanksToFill.size() * Config.bucketsPerTank * FluidContainerRegistry.BUCKET_VOLUME;
 				int fillPercentage = MathHelper.clamp_int((int) Math.ceil((double) amountToDistribute / (double) capacity * 100d), 0, 100);
+				int fluidLightLevel = lightLevel * MathHelper.clamp_int(fillPercentage, 0, 10) / 10; // Ramp up the light level during the first 10% only. Gets to dark otherwise.
 
 				for (BlockCoords tank : tanksToFill)
 				{
@@ -644,6 +648,8 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 					if (tankEntity != null)
 					{
 						tankEntity.setFillPercentage(fillPercentage, forceBlockUpdates);
+						if (Config.tankFluidLightEnabled) 
+							tankEntity.setFluidLightLevel(fluidLightLevel, forceBlockUpdates);
 					}
 				}
 
