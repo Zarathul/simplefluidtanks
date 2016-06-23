@@ -134,7 +134,8 @@ public class TankBlock extends WrenchableBlock
 	@Override
 	public boolean canRenderInPass(int pass)
 	{
-		return (pass == 1);
+		TankBlockRenderer.renderPass = pass;
+		return true;
 	}
 
 	@Override

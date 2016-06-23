@@ -97,7 +97,7 @@ public final class Registry
 	public static void registerCustomRenderers()
 	{
 		RenderingRegistry.registerBlockHandler(new TankBlockRenderer());
-		MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(SimpleFluidTanks.valveBlock), new ValveItemRenderer());
+		//MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(SimpleFluidTanks.valveBlock), new ValveItemRenderer());
 	}
 
 	/**
