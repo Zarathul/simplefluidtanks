@@ -13,6 +13,8 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.IBlockAccess;
@@ -181,7 +183,19 @@ public final class Utils
 		return (fillPercentage > 0) ? Math.max(1, level) : 0;
 	}
 	
-	public static final void fillDrainFluidContainer(EntityPlayer player, ItemStack containerStack, ValveBlockEntity valveEntity)
+	/**
+	 * Either fills an empty container with the liquid from the multiblock tank, or drains the contents of a container into the tank.
+	 * 
+	 * @param world
+	 * The world.
+	 * @param player
+	 * The player holding the container.
+	 * @param containerStack
+	 * The container {@link ItemStack}.
+	 * @param valveEntity
+	 * The affected {@link ValveBlock}s {@link TileEntity} ({@link ValveBlockEntity}).
+	 */
+	public static final void fillDrainFluidContainer(World world, EntityPlayer player, ItemStack containerStack, ValveBlockEntity valveEntity)
 	{
 		if (player == null || containerStack == null || containerStack.stackSize < 1 || valveEntity == null) return;
 		
@@ -189,11 +203,11 @@ public final class Utils
 			isEmptyComplexContainer(containerStack) ||
 			(containerStack.getItem() instanceof IFluidContainerItem && player.isSneaking()))
 		{
-			fillContainerFromTank(player, containerStack, valveEntity);
+			fillContainerFromTank(world, player, containerStack, valveEntity);
 		}
 		else
 		{
-			drainContainerIntoTank(player, containerStack, valveEntity);
+			drainContainerIntoTank(world, player, containerStack, valveEntity);
 		}
 	}
 
@@ -211,12 +225,14 @@ public final class Utils
 	 * @param valveEntity
 	 * The affected {@link ValveBlock}s {@link TileEntity} ({@link ValveBlockEntity}).
 	 */
-	private static final void fillContainerFromTank(EntityPlayer player, ItemStack containerStack, ValveBlockEntity valveEntity)
+	private static final void fillContainerFromTank(World world, EntityPlayer player, ItemStack containerStack, ValveBlockEntity valveEntity)
 	{
 		if (valveEntity.getFluid() == null) return;
 		
 		boolean doItemExchange = false;
+		boolean doPlaySound = false;
 		ItemStack filledContainer;
+		SoundEvent fillSound = valveEntity.getFluid().getFluid().getFillSound(valveEntity.getFluid());
 
 		if (containerStack.getItem() instanceof IFluidContainerItem)
 		{
@@ -232,12 +248,13 @@ public final class Utils
 				filledContainer.stackSize = 1;
 			}
 			
-			// TODO: Why no worky?
-//			SoundEvent fillSound = valveEntity.getFluid().getFluid().getFillSound(valveEntity.getFluid());
 			int fillFluidAmount = containerItem.fill(filledContainer, valveEntity.getFluid(), true);
-			valveEntity.drain(null, fillFluidAmount, true);
 			
-//			player.playSound(fillSound, 1f, 1f);
+			if (fillFluidAmount > 0)
+			{
+				doPlaySound = true;
+				valveEntity.drain(null, fillFluidAmount, true);
+			}
 		}
 		else
 		{
@@ -252,7 +269,12 @@ public final class Utils
 				if (containerCapacity > 0)
 				{
 					FluidStack drainedFluid = valveEntity.drain(null, containerCapacity, true);
-					doItemExchange = (drainedFluid != null && drainedFluid.amount == containerCapacity);
+					
+					if (drainedFluid != null && drainedFluid.amount == containerCapacity)
+					{
+						doPlaySound = true;
+						doItemExchange = true;
+					}
 				}
 			}
 		}
@@ -262,6 +284,14 @@ public final class Utils
 		if (doItemExchange)
 		{
 			exchangeItems(player, containerStack, filledContainer);
+		}
+		
+		// Play fill sound
+		
+		if (doPlaySound && fillSound != null)
+		{
+			BlockPos valvePos = valveEntity.getPos();
+			world.playSound(null, valvePos.getX(), valvePos.getY(), valvePos.getZ(), fillSound, SoundCategory.PLAYERS, 1f, 1f);
 		}
 	}
 
@@ -279,12 +309,13 @@ public final class Utils
 	 * @param valveEntity
 	 * The affected {@link ValveBlock}s {@link TileEntity} ({@link ValveBlockEntity}).
 	 */
-	private static final void drainContainerIntoTank(EntityPlayer player, ItemStack containerStack, ValveBlockEntity valveEntity)
+	private static final void drainContainerIntoTank(World world, EntityPlayer player, ItemStack containerStack, ValveBlockEntity valveEntity)
 	{
 		if (valveEntity.isFull()) return;
 		
 		boolean doItemExchange = false;
 		ItemStack emptyContainer = null;
+		SoundEvent drainSound = null;
 
 		if (containerStack.getItem() instanceof IFluidContainerItem)
 		{
@@ -305,14 +336,12 @@ public final class Utils
 
 			if (tankFluid == null || tankFluid.isFluidEqual(containerFluid))
 			{
+				drainSound = containerFluid.getFluid().getEmptySound(containerFluid);
+				
 				int drainAmount = Math.min(valveEntity.getRemainingCapacity(), containerFluid.amount);
 				// Drain the fluid from the container first because the amount per drain could be limited
-				FluidStack drainedFluid = containerItem.drain(emptyContainer, drainAmount, true);
+				FluidStack drainedFluid = containerItem.drain(emptyContainer, drainAmount, !player.capabilities.isCreativeMode);
 				valveEntity.fill(null, drainedFluid, true);
-				
-				// TODO: Why no worky?
-//				SoundEvent soundevent = drainedFluid.getFluid().getEmptySound(drainedFluid);
-//				player.playSound(soundevent, 1f, 1f);
 			}
 		}
 		else
@@ -322,10 +351,15 @@ public final class Utils
 			FluidStack containerFluid = Utils.getFluidForFilledItem(containerStack);
 
 			// Don't consume the container contents in creative mode
-			if (valveEntity.fill(null, containerFluid, true) > 0 && !player.capabilities.isCreativeMode)
+			if (valveEntity.fill(null, containerFluid, true) > 0)
 			{
-				emptyContainer = FluidContainerRegistry.drainFluidContainer(containerStack);
-				doItemExchange = (emptyContainer != null);
+				drainSound = containerFluid.getFluid().getEmptySound(containerFluid);
+				
+				if (!player.capabilities.isCreativeMode)
+				{
+					emptyContainer = FluidContainerRegistry.drainFluidContainer(containerStack);
+					doItemExchange = (emptyContainer != null);
+				}
 			}
 		}
 		
@@ -334,6 +368,14 @@ public final class Utils
 		if (doItemExchange)
 		{
 			exchangeItems(player, containerStack, emptyContainer);
+		}
+		
+		// Play drain sound
+		
+		if (drainSound != null)
+		{
+			BlockPos valvePos = valveEntity.getPos();
+			world.playSound(null, valvePos.getX(), valvePos.getY(), valvePos.getZ(), drainSound, SoundCategory.PLAYERS, 1f, 1f);
 		}
 	}
 	

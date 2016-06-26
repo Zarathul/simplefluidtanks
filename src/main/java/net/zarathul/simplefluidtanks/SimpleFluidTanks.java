@@ -16,7 +16,9 @@ import net.zarathul.simplefluidtanks.items.TankItem;
 import net.zarathul.simplefluidtanks.items.ValveItem;
 import net.zarathul.simplefluidtanks.items.WrenchItem;
 
-@Mod(modid = SimpleFluidTanks.MOD_ID, name = "SimpleFluidTanks", version = SimpleFluidTanks.VERSION, guiFactory = "net.zarathul.simplefluidtanks.configuration.ConfigGuiFactory")
+@Mod(modid = SimpleFluidTanks.MOD_ID, name = "SimpleFluidTanks", version = SimpleFluidTanks.VERSION,
+     updateJSON = "https://raw.githubusercontent.com/Zarathul/mcmodversions/master/simplefluidtanks.json",
+     guiFactory = "net.zarathul.simplefluidtanks.configuration.ConfigGuiFactory")
 public class SimpleFluidTanks
 {
 	@Instance(value = SimpleFluidTanks.MOD_ID)

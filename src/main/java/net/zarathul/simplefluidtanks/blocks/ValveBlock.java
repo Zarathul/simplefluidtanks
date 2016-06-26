@@ -171,7 +171,7 @@ public class ValveBlock extends WrenchableBlock
 				if (heldItem.getItem() instanceof IFluidContainerItem || FluidContainerRegistry.isContainer(heldItem))
 				{
 					ValveBlockEntity valveEntity = Utils.getTileEntityAt(world, ValveBlockEntity.class, pos);
-					Utils.fillDrainFluidContainer(player, heldItem, valveEntity);
+					Utils.fillDrainFluidContainer(world, player, heldItem, valveEntity);
 					
 					return true;
 				}
