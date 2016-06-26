@@ -31,7 +31,7 @@ jar
 
 minecraft
 {
-    version = "1.9.4-12.17.0.1954"
+    version = "1.9.4-12.17.0.1987"
     runDir = "run"
     mappings = "snapshot_20160518"
 

@@ -10,10 +10,10 @@ import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.property.IExtendedBlockState;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
 import net.zarathul.simplefluidtanks.blocks.TankBlock;
 
 public class BakedTankModel implements IBakedModel
@@ -33,25 +33,35 @@ public class BakedTankModel implements IBakedModel
 	@Override
 	public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand)
 	{
-		IExtendedBlockState exState = (IExtendedBlockState)state;
-		boolean cullFluidTop = exState.getValue(TankBlock.CullFluidTop);
-		int fluidLevel = exState.getValue(TankBlock.FluidLevel);
-		String fluidName = exState.getValue(TankBlock.FluidName);
-		
 		List<BakedQuad> quads = new LinkedList<BakedQuad>();
-		quads.addAll(baseModel.getQuads(state, side, rand));
 		
-		// The top quad of the fluid model needs a separate culling logic from the 
-		// rest of the tank, because the top needs to be visible if the tank isn't
-		// full, even if there's a tank above.
-		// (Note that 'side' is null for quads that don't have a cullface annotation in the .json.
-		// The top side of the fluid model has a cullface annotation, the other sides don't.)
-		if (side != null || !cullFluidTop)
+		if (MinecraftForgeClient.getRenderLayer() == BlockRenderLayer.CUTOUT_MIPPED)
 		{
-			if (fluidLevel > 0 && fluidLevel <= FLUID_LEVELS && FLUID_MODELS.containsKey(fluidName))
+			// Frame
+			
+			quads.addAll(baseModel.getQuads(state, side, rand));
+		}
+		else if (MinecraftForgeClient.getRenderLayer() == BlockRenderLayer.TRANSLUCENT)
+		{
+			// Fluid
+			
+			IExtendedBlockState exState = (IExtendedBlockState)state;
+			boolean cullFluidTop = exState.getValue(TankBlock.CullFluidTop);
+			int fluidLevel = exState.getValue(TankBlock.FluidLevel);
+			String fluidName = exState.getValue(TankBlock.FluidName);
+			
+			// The top quad of the fluid model needs a separate culling logic from the 
+			// rest of the tank, because the top needs to be visible if the tank isn't
+			// full, even if there's a tank above.
+			// (Note that 'side' is null for quads that don't have a cullface annotation in the .json.
+			// The tank model has cullface annotations for every side.)
+			if ((side != null && side != EnumFacing.UP) || (side == null && !cullFluidTop))
 			{
-				IBakedModel fluidModel = FLUID_MODELS.get(fluidName)[fluidLevel - 1];
-				quads.addAll(fluidModel.getQuads(null, side, rand));
+				if (fluidLevel > 0 && fluidLevel <= FLUID_LEVELS && FLUID_MODELS.containsKey(fluidName))
+				{
+					IBakedModel fluidModel = FLUID_MODELS.get(fluidName)[fluidLevel - 1];
+					quads.addAll(fluidModel.getQuads(null, side, rand));
+				}
 			}
 		}
 		

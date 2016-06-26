@@ -19,7 +19,6 @@ import com.google.common.primitives.Ints;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -32,7 +31,6 @@ import net.minecraftforge.fluids.FluidEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
-import net.zarathul.simplefluidtanks.SimpleFluidTanks;
 import net.zarathul.simplefluidtanks.blocks.FluidTank;
 import net.zarathul.simplefluidtanks.blocks.TankBlock;
 import net.zarathul.simplefluidtanks.blocks.ValveBlock;
@@ -116,7 +114,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 
 		internalTank.readFromNBT(tag);
 		readTankPrioritiesFromNBT(tag);
-		linkedTankCount = Math.max(tankPriorities.size() - 1, 0);
+		linkedTankCount = (tag.hasKey("LinkedTankCount")) ? tag.getInteger("LinkedTankCount") : Math.max(tankPriorities.size() - 1, 0);
 
 		tankFacingSides = tag.getByte("TankFacingSides");
 		facing = EnumFacing.getFront(tag.getByte("Facing"));
@@ -157,12 +155,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	@Override
 	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet)
 	{
-		NBTTagCompound tag = packet.getNbtCompound();
-		tankFacingSides = tag.getByte("TankFacingSides");
-		facing = EnumFacing.getFront(tag.getByte("Facing"));
-		linkedTankCount = tag.getInteger("LinkedTankCount");
-		internalTank.readFromNBT(tag);
-
+		readFromNBT(packet.getNbtCompound());
 		Utils.markBlockForUpdate(worldObj, pos);
 	}
 
@@ -285,7 +278,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	/**
 	 * Sets the facing of the valve.
 	 * 
-	 * @param One of the {@link EnumFacing} values (values from the y axis are ignored).
+	 * @param One of the {@link EnumFacing} values (values on the y axis are ignored).
 	 */
 	public void setFacing(EnumFacing facing)
 	{
