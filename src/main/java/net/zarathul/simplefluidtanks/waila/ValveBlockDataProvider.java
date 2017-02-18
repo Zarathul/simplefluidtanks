@@ -63,7 +63,7 @@ public final class ValveBlockDataProvider implements IWailaDataProvider
 			{
 				int amount = valveEntity.getFluidAmount();
 				int capacity = valveEntity.getCapacity();
-				int totalFillPercentage = (capacity > 0) ? MathHelper.clamp_int((int) ((long) amount * 100 / capacity), 0, 100) : 0;
+				int totalFillPercentage = (capacity > 0) ? MathHelper.clamp((int) ((long) amount * 100 / capacity), 0, 100) : 0;
 
 				if (config.getConfig(Registry.WAILA_CAPACITY_IN_MILLIBUCKETS_KEY))
 				{

@@ -2,10 +2,10 @@
     "parent": "simplefluidtanks:block/valve",
     "textures": {
         "down": "simplefluidtanks:blocks/valve",
-        "up": "simplefluidtanks:blocks/valveGrate",
+        "up": "simplefluidtanks:blocks/valve_grate",
         "north": "simplefluidtanks:blocks/valve",
         "south": "simplefluidtanks:blocks/valve",
-        "west": "simplefluidtanks:blocks/valveIo",
+        "west": "simplefluidtanks:blocks/valve_io",
         "east": "simplefluidtanks:blocks/valve"
     },
     "display": {

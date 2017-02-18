@@ -12,8 +12,8 @@
     "logoFile": "assets/simplefluidtanks/sft_logo.jpg",
     "screenshots": [],
     "parent": "",
-    "requiredMods": [ "Forge" ],
-    "dependencies": [ "Forge", "Waila" ],
+    "requiredMods": [],
+    "dependencies": [ "Waila" ],
     "dependants": [],
     "useDependencyInformation": "true"
 }

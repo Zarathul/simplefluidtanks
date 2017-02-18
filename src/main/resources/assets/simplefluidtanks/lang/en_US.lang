@@ -30,7 +30,6 @@ configui.category.wrench=Wrench
 # ConfigUI Element Labels
 configui.bucketsPerTank=Buckets Per Tank
 configui.wrenchEnabled=Enable Wrench Recipe
-configui.overrideBottleVolume=Bottle Volume
 configui.blockHardness=Block Hardness
 configui.blockResistance=Block Blast Resistance
 configui.shapeless=Shapeless
@@ -42,7 +41,6 @@ configui.pattern=Pattern
 configui.category.misc.tooltip=Basic settings.
 configui.bucketsPerTank.tooltip=The amount of fluid a tank can hold measured in buckets.
 configui.wrenchEnabled.tooltip=Set to false to disable the wrench recipe.
-configui.overrideBottleVolume.tooltip=The amount of fluid a bottle can hold measured in buckets. 0 = Use Forge default.
 
 configui.category.blocks.tooltip=Block properties.
 configui.blockHardness.tooltip=The amount of hits the block can take before it breaks (-1 = indestructible).

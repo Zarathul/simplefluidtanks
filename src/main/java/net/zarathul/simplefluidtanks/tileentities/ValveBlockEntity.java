@@ -10,6 +10,9 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map.Entry;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.google.common.base.Predicates;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Collections2;
@@ -25,12 +28,15 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.FluidTankProperties;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.zarathul.simplefluidtanks.blocks.FluidTank;
 import net.zarathul.simplefluidtanks.blocks.TankBlock;
 import net.zarathul.simplefluidtanks.blocks.ValveBlock;
@@ -49,6 +55,11 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	 * The {@link FluidTank} that actually holds all the fluid in the multiblock tank.
 	 */
 	private final FluidTank internalTank;
+
+	/**
+	 * The tanks properties.
+	 */
+	private IFluidTankProperties[] properties;
 
 	/**
 	 * Holds the number of {@link TankBlock}s that are linked to this {@link ValveBlock}. 
@@ -135,6 +146,21 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	}
 
 	@Override
+	public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing)
+	{
+		return capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY || super.hasCapability(capability, facing);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	@Nullable
+	public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
+	{
+		if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) return (T) this;
+		return super.getCapability(capability, facing);
+	}
+
+	@Override
 	public NBTTagCompound getUpdateTag()
 	{
 		NBTTagCompound tag = super.getUpdateTag();
@@ -156,7 +182,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet)
 	{
 		readFromNBT(packet.getNbtCompound());
-		Utils.markBlockForUpdate(worldObj, pos);
+		Utils.markBlockForUpdate(world, pos);
 	}
 
 	@Override
@@ -166,18 +192,28 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	}
 
 	@Override
-	public int fill(EnumFacing from, FluidStack fillFluid, boolean doFill)
+	public IFluidTankProperties[] getTankProperties()
 	{
-		if (!worldObj.isRemote && hasTanks())
+		if (this.properties == null)
+		{
+			this.properties = FluidTankProperties.convert(new FluidTankInfo[] { internalTank.getInfo() });
+		}
+		
+		return this.properties;
+	}
+
+	@Override
+	public int fill(FluidStack fillFluid, boolean doFill)
+	{
+		if (!world.isRemote && hasTanks())
 		{
 			int fillAmount = internalTank.fill(fillFluid, doFill);
 
 			if (doFill && fillAmount > 0)
 			{
 				distributeFluidToTanks();
-				Utils.markBlockForUpdate(worldObj, pos);
+				Utils.markBlockForUpdate(world, pos);
 				markDirty();
-				FluidEvent.fireEvent(new FluidEvent.FluidFillingEvent(fillFluid, worldObj, pos, internalTank, fillAmount));
 			}
 
 			return fillAmount;
@@ -187,22 +223,20 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	}
 
 	@Override
-	public FluidStack drain(EnumFacing from, FluidStack drainFluid, boolean doDrain)
+	public FluidStack drain(FluidStack drainFluid, boolean doDrain)
 	{
-		return drain(from, drainFluid, -1, doDrain);
+		return drain(drainFluid, -1, doDrain);
 	}
 
 	@Override
-	public FluidStack drain(EnumFacing from, int drainAmount, boolean doDrain)
+	public FluidStack drain(int drainAmount, boolean doDrain)
 	{
-		return drain(from, null, drainAmount, doDrain);
+		return drain(null, drainAmount, doDrain);
 	}
 
 	/**
 	 * Drains fluid from the multiblock tank.
 	 * 
-	 * @param from
-	 * The direction the fluid is drained from.
 	 * @param drainFluid
 	 * The fluid type and amount to drain.
 	 * @param drainAmount
@@ -211,9 +245,9 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	 * Indicates whether the draining should be simulated or not.
 	 * @return The type and amount of fluid drained.
 	 */
-	private FluidStack drain(EnumFacing from, FluidStack drainFluid, int drainAmount, boolean doDrain)
+	private FluidStack drain(FluidStack drainFluid, int drainAmount, boolean doDrain)
 	{
-		if (!worldObj.isRemote && hasTanks())
+		if (!world.isRemote && hasTanks())
 		{
 			FluidStack drainedFluid = (drainFluid != null && drainFluid.isFluidEqual(internalTank.getFluid())) ?
 				internalTank.drain(drainFluid.amount, doDrain) :
@@ -222,47 +256,14 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 			if (doDrain && drainedFluid != null && drainedFluid.amount > 0)
 			{
 				distributeFluidToTanks();
-				Utils.markBlockForUpdate(worldObj, pos);
+				Utils.markBlockForUpdate(world, pos);
 				markDirty();
-				FluidEvent.fireEvent(new FluidEvent.FluidDrainingEvent(drainedFluid, worldObj, pos, internalTank, drainedFluid.amount));
 			}
 
 			return drainedFluid;
 		}
 
 		return null;
-	}
-
-	@Override
-	public boolean canFill(EnumFacing from, Fluid fluid)
-	{
-		if (hasTanks() && !isFacingTank(from) && fluid != null && !internalTank.isFull())
-		{
-			FluidStack tankFluid = internalTank.getFluid();
-
-			return (tankFluid == null || tankFluid.isFluidEqual(new FluidStack(fluid, 0)));
-		}
-
-		return false;
-	}
-
-	@Override
-	public boolean canDrain(EnumFacing from, Fluid fluid)
-	{
-		if (hasTanks() && !isFacingTank(from) && fluid != null && internalTank.getFluidAmount() > 0)
-		{
-			FluidStack tankFluid = internalTank.getFluid();
-
-			return (tankFluid != null && tankFluid.isFluidEqual(new FluidStack(fluid, 0)));
-		}
-
-		return false;
-	}
-
-	@Override
-	public FluidTankInfo[] getTankInfo(EnumFacing from)
-	{
-		return new FluidTankInfo[] { internalTank.getInfo() };
 	}
 
 	/**
@@ -491,7 +492,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	{
 		for (BlockPos tankCoords : tankPriorities.values())
 		{
-			TankBlockEntity tankEntity = Utils.getTileEntityAt(worldObj, TankBlockEntity.class, tankCoords);
+			TankBlockEntity tankEntity = Utils.getTileEntityAt(world, TankBlockEntity.class, tankCoords);
 
 			if (tankEntity != null)
 			{
@@ -516,12 +517,12 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 
 		if (!suppressBlockUpdates)
 		{
-			Utils.markBlockForUpdate(worldObj, pos);
+			Utils.markBlockForUpdate(world, pos);
 			markDirty();
 
 			if (spilledFluid != null)
 			{
-				FluidEvent.fireEvent(new FluidEvent.FluidSpilledEvent(spilledFluid, worldObj, pos));
+				FluidEvent.fireEvent(new FluidEvent.FluidSpilledEvent(spilledFluid, world, pos));
 			}
 		}
 	}
@@ -551,14 +552,14 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		// the ValveBlock also counts as a tank in the multiblock structure
 		linkedTankCount = Math.max(tankPriorities.size() - 1, 0);
 
-		Utils.markBlockForUpdate(worldObj, pos);
+		Utils.markBlockForUpdate(world, pos);
 		markDirty();
 		
 		if (oldFluidAmount > this.internalTank.getCapacity() && fluid != null)
 		{
 			FluidStack spilledFluid = fluid.copy();
 			spilledFluid.amount = oldFluidAmount - this.internalTank.getCapacity();
-			FluidEvent.fireEvent(new FluidEvent.FluidSpilledEvent(spilledFluid, worldObj, pos));
+			FluidEvent.fireEvent(new FluidEvent.FluidSpilledEvent(spilledFluid, world, pos));
 		}
 	}
 
@@ -575,7 +576,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		// set the valve for all connected tanks
 		for (BlockPos tankCoords : tankPriorities.values())
 		{
-			TankBlockEntity tankEntity = Utils.getTileEntityAt(worldObj, TankBlockEntity.class, tankCoords);
+			TankBlockEntity tankEntity = Utils.getTileEntityAt(world, TankBlockEntity.class, tankCoords);
 
 			if (tankEntity != null)
 			{
@@ -591,7 +592,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		}
 
 		// calculate and set the internal tanks capacity, note the " + 1" is needed because the ValveBlock itself is considered a tank with storage capacity
-		internalTank.setCapacity((tankEntities.size() + 1) * Config.bucketsPerTank * FluidContainerRegistry.BUCKET_VOLUME);
+		internalTank.setCapacity((tankEntities.size() + 1) * Config.bucketsPerTank * Fluid.BUCKET_VOLUME);
 	}
 
 	/**
@@ -603,12 +604,12 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 
 		for (BlockPos tank : tanksToUpdate)
 		{
-			TankBlockEntity tankEntity = Utils.getTileEntityAt(worldObj, TankBlockEntity.class, tank);
+			TankBlockEntity tankEntity = Utils.getTileEntityAt(world, TankBlockEntity.class, tank);
 
 			if (tankEntity != null)
 			{
-				Utils.markBlockForUpdate(worldObj, pos);
-				worldObj.markChunkDirty(tank, tankEntity);
+				Utils.markBlockForUpdate(world, pos);
+				world.markChunkDirty(tank, tankEntity);
 			}
 		}
 
@@ -641,7 +642,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 
 			for (BlockPos tankCoords : tankPriorities.values())
 			{
-				TankBlockEntity tankEntity = Utils.getTileEntityAt(worldObj, TankBlockEntity.class, tankCoords);
+				TankBlockEntity tankEntity = Utils.getTileEntityAt(world, TankBlockEntity.class, tankCoords);
 
 				if (tankEntity != null)
 				{
@@ -662,12 +663,12 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 			{
 				tanksToFill = tankPriorities.get(priorities[i]);
 
-				int capacity = tanksToFill.size() * Config.bucketsPerTank * FluidContainerRegistry.BUCKET_VOLUME;
-				int fillPercentage = MathHelper.clamp_int((int) Math.ceil((double) amountToDistribute / (double) capacity * 100d), 0, 100);
+				int capacity = tanksToFill.size() * Config.bucketsPerTank * Fluid.BUCKET_VOLUME;
+				int fillPercentage = MathHelper.clamp((int) Math.ceil((double) amountToDistribute / (double) capacity * 100d), 0, 100);
 
 				for (BlockPos tank : tanksToFill)
 				{
-					TankBlockEntity tankEntity = Utils.getTileEntityAt(worldObj, TankBlockEntity.class, tank);
+					TankBlockEntity tankEntity = Utils.getTileEntityAt(world, TankBlockEntity.class, tank);
 
 					if (tankEntity != null)
 					{
@@ -1229,13 +1230,13 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 			return false;
 		}
 		
-		IBlockState state = worldObj.getBlockState(block);
+		IBlockState state = world.getBlockState(block);
 		
 		if (state != null)
 		{
 			if (state.getBlock() instanceof TankBlock)
 			{
-				TankBlockEntity tankEntity = Utils.getTileEntityAt(worldObj, TankBlockEntity.class, block);
+				TankBlockEntity tankEntity = Utils.getTileEntityAt(world, TankBlockEntity.class, block);
 
 				if (tankEntity != null)
 				{

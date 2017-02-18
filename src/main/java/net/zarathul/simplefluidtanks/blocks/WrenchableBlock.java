@@ -26,10 +26,12 @@ public abstract class WrenchableBlock extends Block
 
 	@Override
 	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player,
-			EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
+			EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
 	{
 		if (!world.isRemote)
 		{
+			ItemStack heldItem = player.getHeldItem(hand);
+			
 			if (heldItem != null)
 			{
 				Item item = heldItem.getItem();

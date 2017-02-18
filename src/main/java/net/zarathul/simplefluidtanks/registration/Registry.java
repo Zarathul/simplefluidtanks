@@ -160,7 +160,7 @@ public final class Registry
 
 			if (registrationArgs != null && recipe.yield > 0)
 			{
-				result.stackSize = recipe.yield;
+				result.setCount(recipe.yield);
 
 				if (recipe.isShapeless)
 				{
@@ -201,9 +201,9 @@ public final class Registry
 					}
 					
 					@Override
-					public Item getTabIconItem()
+					public ItemStack getTabIconItem()
 					{
-						return Item.getItemFromBlock(SimpleFluidTanks.valveBlock);
+						return new ItemStack(Item.getItemFromBlock(SimpleFluidTanks.valveBlock));
 					}
 				}
 			);

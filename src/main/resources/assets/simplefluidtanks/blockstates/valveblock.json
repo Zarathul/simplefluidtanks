@@ -16,12 +16,12 @@
         "down": {
             0: {
                 "textures": {
-                    "down": "simplefluidtanks:blocks/valveGrate"
+                    "down": "simplefluidtanks:blocks/valve_grate"
                 }
             },
             1: {
                 "textures": {
-                    "down": "simplefluidtanks:blocks/valveIo"
+                    "down": "simplefluidtanks:blocks/valve_io"
                 }
             },
             2: {
@@ -33,12 +33,12 @@
         "up": {
             0: {
                 "textures": {
-                    "up": "simplefluidtanks:blocks/valveGrate"
+                    "up": "simplefluidtanks:blocks/valve_grate"
                 }
             },
             1: {
                 "textures": {
-                    "up": "simplefluidtanks:blocks/valveIo"
+                    "up": "simplefluidtanks:blocks/valve_io"
                 }
             },
             2: {
@@ -50,12 +50,12 @@
         "north": {
             0: {
                 "textures": {
-                    "north": "simplefluidtanks:blocks/valveGrate"
+                    "north": "simplefluidtanks:blocks/valve_grate"
                 }
             },
             1: {
                 "textures": {
-                    "north": "simplefluidtanks:blocks/valveIo"
+                    "north": "simplefluidtanks:blocks/valve_io"
                 }
             },
             2: {
@@ -67,12 +67,12 @@
         "south": {
             0: {
                 "textures": {
-                    "south": "simplefluidtanks:blocks/valveGrate"
+                    "south": "simplefluidtanks:blocks/valve_grate"
                 }
             },
             1: {
                 "textures": {
-                    "south": "simplefluidtanks:blocks/valveIo"
+                    "south": "simplefluidtanks:blocks/valve_io"
                 }
             },
             2: {
@@ -84,12 +84,12 @@
         "west": {
             0: {
                 "textures": {
-                    "west": "simplefluidtanks:blocks/valveGrate"
+                    "west": "simplefluidtanks:blocks/valve_grate"
                 }
             },
             1: {
                 "textures": {
-                    "west": "simplefluidtanks:blocks/valveIo"
+                    "west": "simplefluidtanks:blocks/valve_io"
                 }
             },
             2: {
@@ -101,12 +101,12 @@
         "east": {
             0: {
                 "textures": {
-                    "east": "simplefluidtanks:blocks/valveGrate"
+                    "east": "simplefluidtanks:blocks/valve_grate"
                 }
             },
             1: {
                 "textures": {
-                    "east": "simplefluidtanks:blocks/valveIo"
+                    "east": "simplefluidtanks:blocks/valve_io"
                 }
             },
             2: {

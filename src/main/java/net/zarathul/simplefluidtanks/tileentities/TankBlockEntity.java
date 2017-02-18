@@ -124,7 +124,7 @@ public class TankBlockEntity extends TileEntity
 	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet)
 	{
 		readFromNBT(packet.getNbtCompound());
-		Utils.markBlockForUpdate(worldObj, pos);
+		Utils.markBlockForUpdate(world, pos);
 	}
 
 	/**
@@ -158,7 +158,7 @@ public class TankBlockEntity extends TileEntity
 	{
 		if (isPartOfTank())
 		{
-			return Utils.getTileEntityAt(worldObj, ValveBlockEntity.class, valveCoords);
+			return Utils.getTileEntityAt(world, ValveBlockEntity.class, valveCoords);
 		}
 
 		return null;
@@ -178,7 +178,7 @@ public class TankBlockEntity extends TileEntity
 			return false;
 		}
 
-		ValveBlockEntity valveEntity = Utils.getTileEntityAt(worldObj, ValveBlockEntity.class, pos);
+		ValveBlockEntity valveEntity = Utils.getTileEntityAt(world, ValveBlockEntity.class, pos);
 
 		if (valveEntity != null)
 		{
@@ -212,7 +212,7 @@ public class TankBlockEntity extends TileEntity
 	 */
 	public boolean setFillPercentage(int percentage, boolean forceBlockUpdate)
 	{
-		percentage = MathHelper.clamp_int(percentage, 0, 100);
+		percentage = MathHelper.clamp(percentage, 0, 100);
 
 		boolean percentageChanged = (percentage != fillPercentage);
 
@@ -220,8 +220,8 @@ public class TankBlockEntity extends TileEntity
 
 		if (percentageChanged || forceBlockUpdate)
 		{
-			Utils.markBlockForUpdate(worldObj, pos);
-			worldObj.markChunkDirty(pos, this);
+			Utils.markBlockForUpdate(world, pos);
+			world.markChunkDirty(pos, this);
 		}
 
 		return percentageChanged;
@@ -310,7 +310,7 @@ public class TankBlockEntity extends TileEntity
 			return false;
 		}
 
-		TankBlockEntity connectionCandidate = Utils.getTileEntityAt(worldObj, TankBlockEntity.class, checkPos);
+		TankBlockEntity connectionCandidate = Utils.getTileEntityAt(world, TankBlockEntity.class, checkPos);
 
 		if (connectionCandidate != null)
 		{
@@ -335,8 +335,8 @@ public class TankBlockEntity extends TileEntity
 
 		if (!suppressBlockUpdates)
 		{
-			Utils.markBlockForUpdate(worldObj, pos);
-			worldObj.markChunkDirty(pos, this);
+			Utils.markBlockForUpdate(world, pos);
+			world.markChunkDirty(pos, this);
 		}
 	}
 }

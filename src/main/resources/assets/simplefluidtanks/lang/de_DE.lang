@@ -31,7 +31,6 @@ configui.category.wrench=Schraubenschlüssel
 # ConfigUI Element Labels
 configui.bucketsPerTank=Eimer pro Tank
 configui.wrenchEnabled=Schraubenschlüsselrezept aktiv
-configui.overrideBottleVolume=Flaschen Fassungsvermögen
 configui.blockHardness=Härte des Blocks
 configui.blockResistance=Explosionswiderstand des Blocks
 configui.shapeless=Formlos
@@ -43,7 +42,6 @@ configui.pattern=Muster
 configui.category.misc.tooltip=Grundlegende Einstellungen.
 configui.bucketsPerTank.tooltip=Die Menge an Flüssigkeit die ein Tank aufnehmen kann, gemessen in Eimern.
 configui.wrenchEnabled.tooltip=Auf "false" setzen um das Rezept für den Schraubenschlüssel zu deaktivieren.
-configui.overrideBottleVolume.tooltip=Die Menge an Flüssigkeit die eine Flasche aufnehmen kann, gemessen in Eimern. 0 = Forge Standard benutzen.
 
 configui.category.blocks.tooltip=Blockeigenschaften.
 configui.blockHardness.tooltip=Die Menge an Treffern die ein Block aushält, bis er zerstört wird (-1 = unzerstörbar).
