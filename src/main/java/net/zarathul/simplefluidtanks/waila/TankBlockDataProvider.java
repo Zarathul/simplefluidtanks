@@ -54,21 +54,21 @@ public final class TankBlockDataProvider implements IWailaDataProvider
 		{
 			TankBlockEntity tankEntity = (TankBlockEntity) entity;
 
-			if (config.getConfig(Registry.WAILA_TANK_LINKED_KEY))
+			if (config.getConfig(SFTPlugin.WAILA_TANK_LINKED_KEY))
 			{
-				String readableFlag = I18n.translateToLocal((tankEntity.isPartOfTank()) ? Registry.WAILA_TOOLTIP_YES : Registry.WAILA_TOOLTIP_NO);
-				currenttip.add(I18n.translateToLocalFormatted(Registry.WAILA_TOOLTIP_ISLINKED, readableFlag));
+				String readableFlag = I18n.translateToLocal((tankEntity.isPartOfTank()) ? SFTPlugin.WAILA_TOOLTIP_YES : SFTPlugin.WAILA_TOOLTIP_NO);
+				currenttip.add(I18n.translateToLocalFormatted(SFTPlugin.WAILA_TOOLTIP_ISLINKED, readableFlag));
 			}
 
-			if (config.getConfig(Registry.WAILA_TANK_CAPACITY_KEY))
+			if (config.getConfig(SFTPlugin.WAILA_TANK_CAPACITY_KEY))
 			{
 				int fillPercentage = tankEntity.getFillPercentage();
 				int amount = (int)((fillPercentage / 100.0d) * Config.bucketsPerTank * 1000);
 				
-				if (config.getConfig(Registry.WAILA_CAPACITY_IN_MILLIBUCKETS_KEY))
+				if (config.getConfig(SFTPlugin.WAILA_CAPACITY_IN_MILLIBUCKETS_KEY))
 				{
 					currenttip.add(I18n.translateToLocalFormatted(
-							Registry.WAILA_TOOLTIP_TANK_CAPACITY,
+							SFTPlugin.WAILA_TOOLTIP_TANK_CAPACITY,
 							amount,
 							Config.bucketsPerTank * 1000,
 							"mB",
@@ -77,7 +77,7 @@ public final class TankBlockDataProvider implements IWailaDataProvider
 				else
 				{
 					currenttip.add(I18n.translateToLocalFormatted(
-							Registry.WAILA_TOOLTIP_TANK_CAPACITY,
+							SFTPlugin.WAILA_TOOLTIP_TANK_CAPACITY,
 							amount / 1000,
 							Config.bucketsPerTank,
 							"B",

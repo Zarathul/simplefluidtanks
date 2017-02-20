@@ -1,6 +1,8 @@
 package net.zarathul.simplefluidtanks.waila;
 
+import mcp.mobius.waila.api.IWailaPlugin;
 import mcp.mobius.waila.api.IWailaRegistrar;
+import mcp.mobius.waila.api.WailaPlugin;
 import net.minecraft.util.text.translation.I18n;
 import net.zarathul.simplefluidtanks.SimpleFluidTanks;
 import net.zarathul.simplefluidtanks.tileentities.TankBlockEntity;
@@ -9,7 +11,8 @@ import net.zarathul.simplefluidtanks.tileentities.ValveBlockEntity;
 /**
  * Hosts the registry callback for Waila.
  */
-public final class Registry
+@WailaPlugin
+public final class SFTPlugin implements IWailaPlugin
 {
 	private static final String WAILA_TANK_COUNT = "tankCount";
 	private static final String WAILA_TOTAL_CAPACITY = "totalCapacity";
@@ -49,7 +52,8 @@ public final class Registry
 	 * @param registrar
 	 * The registration interface provided by Waila.
 	 */
-	public static final void register(IWailaRegistrar registrar)
+	@Override
+	public void register(IWailaRegistrar registrar)
 	{
 		registrar.addConfig(SimpleFluidTanks.MOD_READABLE_NAME, WAILA_TANK_COUNT_KEY, I18n.translateToLocal(WAILA_TANK_COUNT_LOCA));
 		registrar.addConfig(SimpleFluidTanks.MOD_READABLE_NAME, WAILA_TOTAL_CAPACITY_KEY, I18n.translateToLocal(WAILA_TOTAL_CAPACITY_LOCA));

@@ -8,6 +8,7 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
@@ -16,6 +17,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.FluidActionResult;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.zarathul.simplefluidtanks.SimpleFluidTanks;
@@ -173,7 +175,17 @@ public class ValveBlock extends WrenchableBlock
 				if (heldItem.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null))
 				{
 					ValveBlockEntity valveEntity = Utils.getTileEntityAt(world, ValveBlockEntity.class, pos);
-					FluidUtil.interactWithFluidHandler(heldItem, valveEntity, player);
+					FluidActionResult result = FluidUtil.interactWithFluidHandler(heldItem, valveEntity, player);
+					
+					if  (result.isSuccess())
+					{
+						player.inventory.setInventorySlotContents(player.inventory.currentItem, result.getResult());
+						
+						if (player instanceof EntityPlayerMP)
+						{
+							((EntityPlayerMP)player).sendContainerToPlayer(player.inventoryContainer);
+						}
+					}
 					
 					return true;
 				}

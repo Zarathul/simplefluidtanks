@@ -61,7 +61,7 @@ waila.capacityInMb=Capacities in mB
 waila.fluidName=Fluid name
 
 # Waila Tooltip Texts
-waila.toolTip.isLinked=Linked: §c%s
+waila.toolTip.isLinked=Linked: §a%s
 waila.toolTip.tankCapacity=Capacity: §b%,d/%,d§r %s (%d%%)
 waila.toolTip.valveCapacity=Capacity: §b%,d/%,d§r %s (%d%%)
 waila.toolTip.tanks=Tanks: §b%,d

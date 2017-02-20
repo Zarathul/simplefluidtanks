@@ -59,10 +59,13 @@ public final class ClientEventHub
 		RegistrySimple<ModelResourceLocation, IBakedModel> registry = (RegistrySimple)event.getModelRegistry();
 		ArrayList<ModelResourceLocation> modelLocations = Lists.newArrayList();
 		
+		// as of 1.11.2 (maybe earlier) all resource names must be all lower case
+		String modelPath = Registry.TANK_BLOCK_NAME.toLowerCase();
+		
 		for (ModelResourceLocation modelLoc : registry.getKeys())
 		{
 			if (modelLoc.getResourceDomain().equals(SimpleFluidTanks.MOD_ID)
-				&& modelLoc.getResourcePath().equals(Registry.TANK_BLOCK_NAME)
+				&& modelLoc.getResourcePath().equals(modelPath)
 				&& !modelLoc.getVariant().equals("inventory"))
 			{
 				modelLocations.add(modelLoc);
