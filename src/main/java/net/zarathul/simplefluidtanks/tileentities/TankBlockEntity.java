@@ -16,6 +16,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.zarathul.simplefluidtanks.blocks.TankBlock;
 import net.zarathul.simplefluidtanks.blocks.ValveBlock;
 import net.zarathul.simplefluidtanks.common.Utils;
+import net.zarathul.simplefluidtanks.rendering.BakedTankModel;
 
 /**
  * Holds {@link TileEntity} data for {@link TankBlock}s,
@@ -23,9 +24,9 @@ import net.zarathul.simplefluidtanks.common.Utils;
 public class TankBlockEntity extends TileEntity
 {
 	/**
-	 * The filling level of the tank in percent.
+	 * The fill level of the tank.
 	 */
-	private int fillPercentage;
+	private int fillLevel;
 
 	/**
 	 * Indicates if the {@link TankBlock} is part of a multiblock tank aka. connected to a {@link ValveBlock}.
@@ -47,7 +48,7 @@ public class TankBlockEntity extends TileEntity
 	 */
 	public TankBlockEntity()
 	{
-		fillPercentage = 0;
+		fillLevel = 0;
 		isPartOfTank = false;
 		valveCoords = null;
 		connections = new boolean[6];
@@ -58,7 +59,7 @@ public class TankBlockEntity extends TileEntity
 	{
 		super.readFromNBT(tag);
 
-		fillPercentage = tag.getByte("FillPercentage");
+		fillLevel = tag.getByte("FillLevel");
 		isPartOfTank = tag.getBoolean("isPartOfTank");
 
 		if (isPartOfTank)
@@ -81,7 +82,7 @@ public class TankBlockEntity extends TileEntity
 	{
 		super.writeToNBT(tag);
 
-		tag.setByte("FillPercentage", (byte) fillPercentage);
+		tag.setByte("FillLevel", (byte) fillLevel);
 		tag.setBoolean("isPartOfTank", isPartOfTank);
 
 		if (valveCoords != null)
@@ -123,8 +124,18 @@ public class TankBlockEntity extends TileEntity
 	@Override
 	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet)
 	{
+		int oldFillLevel = fillLevel;
+		boolean wasPartOfTank = isPartOfTank;
+		boolean[] oldConnections = Arrays.copyOf(connections, connections.length);
+		
 		readFromNBT(packet.getNbtCompound());
-		Utils.markBlockForUpdate(world, pos);
+		
+		if (wasPartOfTank != isPartOfTank
+			|| oldFillLevel != fillLevel
+			|| !Arrays.equals(oldConnections, connections))
+		{
+			Utils.syncBlockAndRerender(world, pos);
+		}
 	}
 
 	/**
@@ -144,7 +155,7 @@ public class TankBlockEntity extends TileEntity
 	 */
 	public boolean isEmpty()
 	{
-		return fillPercentage == 0;
+		return fillLevel == 0;
 	}
 
 	/**
@@ -192,39 +203,39 @@ public class TankBlockEntity extends TileEntity
 	}
 
 	/**
-	 * Gets the {@link TankBlock}s current filling level in percent.
+	 * Gets the {@link TankBlock}s current fill level.
 	 * 
 	 * @return The {@link TankBlock}s filling level in percent.
 	 */
-	public int getFillPercentage()
+	public int getFillLevel()
 	{
-		return fillPercentage;
+		return fillLevel;
 	}
 
 	/**
-	 * Sets the {@link TankBlock}s current filling level in percent.
+	 * Sets the {@link TankBlock}s current fill level.
 	 * 
-	 * @param percentage
-	 * The percentage the {@link TankBlock}s filling level should be set to.
+	 * @param level
+	 * The {@link TankBlock}s fill level.
 	 * @param forceBlockUpdate
 	 * Specifies if a block update should be forced.
-	 * @return <code>true</code> if the filling level was updated, otherwise <code>false</code>.
+	 * @return <code>true</code> if the fill level has changed, otherwise <code>false</code>.
 	 */
-	public boolean setFillPercentage(int percentage, boolean forceBlockUpdate)
+	public boolean setFillLevel(int level, boolean forceBlockUpdate)
 	{
-		percentage = MathHelper.clamp(percentage, 0, 100);
+		level = MathHelper.clamp(level, 0, BakedTankModel.FLUID_LEVELS);
 
-		boolean percentageChanged = (percentage != fillPercentage);
+		boolean levelChanged = (level != fillLevel);
 
-		fillPercentage = percentage;
+		fillLevel = level;
 
-		if (percentageChanged || forceBlockUpdate)
+		if (levelChanged || forceBlockUpdate)
 		{
-			Utils.markBlockForUpdate(world, pos);
-			world.markChunkDirty(pos, this);
+			Utils.syncBlockAndRerender(world, pos);
+			markDirty();
 		}
 
-		return percentageChanged;
+		return levelChanged;
 	}
 
 	/**
@@ -329,14 +340,14 @@ public class TankBlockEntity extends TileEntity
 	public void disconnect(boolean suppressBlockUpdates)
 	{
 		isPartOfTank = false;
-		fillPercentage = 0;
+		fillLevel = 0;
 		valveCoords = null;
 		Arrays.fill(connections, false);
 
 		if (!suppressBlockUpdates)
 		{
-			Utils.markBlockForUpdate(world, pos);
-			world.markChunkDirty(pos, this);
+			Utils.syncBlockAndRerender(world, pos);
+			markDirty();
 		}
 	}
 }

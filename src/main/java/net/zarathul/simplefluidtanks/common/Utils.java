@@ -50,20 +50,21 @@ public final class Utils
 	}
 	
 	/**
-	 * Marks a block for update and syncs TileEntity data with the client.
+	 * Triggers synchronization of TileEntity data with the client. Also causes
+	 * rerender of the block but does not not trigger a block update.
 	 * 
 	 * @param world
 	 * The world.
 	 * @param pos
 	 * The location of the block.
 	 */
-	public static final void markBlockForUpdate(World world, BlockPos pos)
+	public static final void syncBlockAndRerender(World world, BlockPos pos)
 	{
 		if (world == null || pos == null) return;
 		
 		IBlockState state = world.getBlockState(pos);
 		
-		world.notifyBlockUpdate(pos, state, state, 3);
+		world.markAndNotifyBlock(pos, null, state, state, 2);
 	}
 
 	/**
@@ -161,5 +162,22 @@ public final class Utils
 		
 		// Make sure that even for small amounts the fluid is rendered at the first level.
 		return (fillPercentage > 0) ? Math.max(1, level) : 0;
+	}
+	
+	/**
+	 * Calculates the comparator redstone signal strength based on the quotient of the specified values.
+	 * 
+	 * @param numerator
+	 * The numerator.
+	 * @param denominator
+	 * The denominator.
+	 * @return
+	 * A value between 0 and 15.
+	 */
+	public static int getComparatorLevel(float numerator, float denominator)
+	{
+		int level = (denominator != 0) ? ((int) Math.floor((numerator / denominator) * 14.0f)) + ((numerator > 0) ? 1 : 0) : 0;
+		
+		return level;
 	}
 }

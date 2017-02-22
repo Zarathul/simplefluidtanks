@@ -101,7 +101,7 @@ public class TankBlock extends WrenchableBlock
 		if (tankEntity != null && tankEntity.isPartOfTank())
 		{
 			Fluid tankFluid = tankEntity.getFluid();
-			int fluidLevel = Utils.getFluidLevel(tankEntity.getFillPercentage());
+			int fluidLevel = tankEntity.getFillLevel();
 			
 			boolean tankAboveIsEmpty = true;
 			boolean sameValve = false;

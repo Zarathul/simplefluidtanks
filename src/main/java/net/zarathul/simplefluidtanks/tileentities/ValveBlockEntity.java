@@ -181,8 +181,15 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	@Override
 	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet)
 	{
+		byte oldTankFacingSides = tankFacingSides;
+		int oldFacing = facing.getIndex();
+		
 		readFromNBT(packet.getNbtCompound());
-		Utils.markBlockForUpdate(world, pos);
+		
+		if (oldTankFacingSides != tankFacingSides || oldFacing != facing.getIndex())
+		{
+			Utils.syncBlockAndRerender(world, pos);
+		}
 	}
 
 	@Override
@@ -212,7 +219,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 			if (doFill && fillAmount > 0)
 			{
 				distributeFluidToTanks();
-				Utils.markBlockForUpdate(world, pos);
+				Utils.syncBlockAndRerender(world, pos);
 				markDirty();
 			}
 
@@ -256,7 +263,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 			if (doDrain && drainedFluid != null && drainedFluid.amount > 0)
 			{
 				distributeFluidToTanks();
-				Utils.markBlockForUpdate(world, pos);
+				Utils.syncBlockAndRerender(world, pos);
 				markDirty();
 			}
 
@@ -517,7 +524,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 
 		if (!suppressBlockUpdates)
 		{
-			Utils.markBlockForUpdate(world, pos);
+			Utils.syncBlockAndRerender(world, pos);
 			markDirty();
 
 			if (spilledFluid != null)
@@ -552,7 +559,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		// the ValveBlock also counts as a tank in the multiblock structure
 		linkedTankCount = Math.max(tankPriorities.size() - 1, 0);
 
-		Utils.markBlockForUpdate(world, pos);
+		Utils.syncBlockAndRerender(world, pos);
 		markDirty();
 		
 		if (oldFluidAmount > this.internalTank.getCapacity() && fluid != null)
@@ -608,8 +615,8 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 
 			if (tankEntity != null)
 			{
-				Utils.markBlockForUpdate(world, pos);
-				world.markChunkDirty(tank, tankEntity);
+				Utils.syncBlockAndRerender(world, tankEntity.getPos());
+				tankEntity.markDirty();
 			}
 		}
 
@@ -638,7 +645,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		if (amountToDistribute == 0 || amountToDistribute == internalTank.getCapacity())
 		{
 			// there is nothing to distribute or the internal tank is full (no fill percentage calculations needed)
-			int percentage = (amountToDistribute == 0) ? 0 : 100;
+			int fillPercentage = (amountToDistribute == 0) ? 0 : 100;
 
 			for (BlockPos tankCoords : tankPriorities.values())
 			{
@@ -646,7 +653,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 
 				if (tankEntity != null)
 				{
-					tankEntity.setFillPercentage(percentage, forceBlockUpdates);
+					tankEntity.setFillLevel(Utils.getFluidLevel(fillPercentage), forceBlockUpdates);
 				}
 			}
 		}
@@ -672,7 +679,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 
 					if (tankEntity != null)
 					{
-						tankEntity.setFillPercentage(fillPercentage, forceBlockUpdates);
+						tankEntity.setFillLevel(Utils.getFluidLevel(fillPercentage), forceBlockUpdates);
 					}
 				}
 

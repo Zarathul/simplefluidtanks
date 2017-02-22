@@ -63,7 +63,7 @@ waila.fluidName=Flüssigkeitsname
 
 # Waila tooltip texts
 waila.toolTip.isLinked=Verbunden: §a%s
-waila.toolTip.tankCapacity=Kapazität: §b%,d/%,d§r %s (%d%%)
+waila.toolTip.tankCapacity=Kapazität: §b%,d§r %s
 waila.toolTip.valveCapacity=Kapazität: §b%,d/%,d§r %s (%d%%)
 waila.toolTip.tanks=Tanks: §b%,d
 waila.toolTip.fluid=Flüssigkeit: §b%s

@@ -13,6 +13,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.Fluid;
 import net.zarathul.simplefluidtanks.blocks.ValveBlock;
 import net.zarathul.simplefluidtanks.tileentities.ValveBlockEntity;
 
@@ -78,8 +79,8 @@ public final class ValveBlockDataProvider implements IWailaDataProvider
 				{
 					currenttip.add(I18n.translateToLocalFormatted(
 							SFTPlugin.WAILA_TOOLTIP_VALVE_CAPACITY,
-							amount / 1000,
-							capacity / 1000,
+							amount / Fluid.BUCKET_VOLUME,
+							capacity / Fluid.BUCKET_VOLUME,
 							"B",
 							totalFillPercentage));
 				}

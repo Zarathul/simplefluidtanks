@@ -12,6 +12,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.Fluid;
 import net.zarathul.simplefluidtanks.blocks.TankBlock;
 import net.zarathul.simplefluidtanks.configuration.Config;
 import net.zarathul.simplefluidtanks.tileentities.TankBlockEntity;
@@ -62,26 +63,19 @@ public final class TankBlockDataProvider implements IWailaDataProvider
 
 			if (config.getConfig(SFTPlugin.WAILA_TANK_CAPACITY_KEY))
 			{
-				int fillPercentage = tankEntity.getFillPercentage();
-				int amount = (int)((fillPercentage / 100.0d) * Config.bucketsPerTank * 1000);
-				
 				if (config.getConfig(SFTPlugin.WAILA_CAPACITY_IN_MILLIBUCKETS_KEY))
 				{
 					currenttip.add(I18n.translateToLocalFormatted(
 							SFTPlugin.WAILA_TOOLTIP_TANK_CAPACITY,
-							amount,
-							Config.bucketsPerTank * 1000,
-							"mB",
-							fillPercentage));
+							Config.bucketsPerTank * Fluid.BUCKET_VOLUME,
+							"mB"));
 				}
 				else
 				{
 					currenttip.add(I18n.translateToLocalFormatted(
 							SFTPlugin.WAILA_TOOLTIP_TANK_CAPACITY,
-							amount / 1000,
 							Config.bucketsPerTank,
-							"B",
-							fillPercentage));
+							"B"));
 				}
 			}
 		}
