@@ -1338,10 +1338,10 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	 */
 	private void readTankPrioritiesFromNBT(NBTTagCompound tag)
 	{
-		tankPriorities = ArrayListMultimap.create();
-
 		if (tag != null)
 		{
+			tankPriorities = ArrayListMultimap.create();
+
 			NBTTagCompound tankPrioritiesTag = tag.getCompoundTag("TankPriorities");
 			String key;
 			int i = 0;

@@ -240,7 +240,7 @@ public class BakedTankFluidModel implements IBakedModel
 	@Override
 	public boolean isAmbientOcclusion()
 	{
-		return true;
+		return false;
 	}
 
 	@Override

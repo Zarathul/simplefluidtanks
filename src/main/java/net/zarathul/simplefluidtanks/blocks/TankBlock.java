@@ -62,6 +62,7 @@ public class TankBlock extends WrenchableBlock
 		setResistance(Config.tankBlockResistance);
 		setSoundType(SoundType.GLASS);
 		setHarvestLevel("pickaxe", 2);
+		setLightOpacity(0);
 		
 		setDefaultState(this.blockState.getBaseState()
 				.withProperty(DOWN, false)
@@ -192,6 +193,12 @@ public class TankBlock extends WrenchableBlock
 		return true;
 	}
 
+	@Override
+	public int getLightOpacity(IBlockState state, IBlockAccess world, BlockPos pos)
+	{
+		return 0;
+	}
+	
 	@SideOnly(Side.CLIENT)
 	@Override
 	public BlockRenderLayer getBlockLayer()

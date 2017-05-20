@@ -71,7 +71,7 @@ public class BakedTankModel implements IBakedModel
 	@Override
 	public boolean isAmbientOcclusion()
 	{
-		return baseModel.isAmbientOcclusion();
+		return false;
 	}
 
 	@Override

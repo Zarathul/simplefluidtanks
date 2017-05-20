@@ -10,8 +10,10 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.translation.I18n;
+import net.minecraft.world.ChunkCache;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.zarathul.simplefluidtanks.blocks.TankBlock;
 import net.zarathul.simplefluidtanks.blocks.ValveBlock;
 import net.zarathul.simplefluidtanks.rendering.BakedTankModel;
@@ -28,21 +30,23 @@ public final class Utils
 	 * 
 	 * @param access
 	 * An {@link IBlockAccess} implementation. Usually the world.
-	 * @param entityType
+	 * @param tileType
 	 * The type the {@link TileEntity} should be cast to.
-	 * @param coords
+	 * @param pos
 	 * The coordinates of the {@link TileEntity}.
-	 * @return The cast {@link TileEntity} or <code>null</code> if no {@link TileEntity} was found or the types didn't match.
+	 * @return The {@link TileEntity} or <code>null</code> if no {@link TileEntity} was found or the types didn't match.
 	 */
-	public static final <T extends TileEntity> T getTileEntityAt(IBlockAccess access, Class<T> entityType, BlockPos coords)
+ 	public static final <T extends TileEntity> T getTileEntityAt(IBlockAccess access, Class<T> tileType, BlockPos pos)
 	{
-		if (access != null && entityType != null && coords != null)
+		if (access != null && tileType != null && pos != null)
 		{
-			TileEntity entity = access.getTileEntity(coords);
+			TileEntity tile = (access instanceof ChunkCache)
+				? ((ChunkCache)access).getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK)
+				: access.getTileEntity(pos);
 
-			if (entity != null && entity.getClass() == entityType)
+			if (tile != null && tile.getClass() == tileType)
 			{
-				return (T) entity;
+				return (T) tile;
 			}
 		}
 

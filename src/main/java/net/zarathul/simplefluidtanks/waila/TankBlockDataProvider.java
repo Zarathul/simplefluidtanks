@@ -55,25 +55,25 @@ public final class TankBlockDataProvider implements IWailaDataProvider
 		{
 			TankBlockEntity tankEntity = (TankBlockEntity) entity;
 
-			if (config.getConfig(SFTPlugin.WAILA_TANK_LINKED_KEY))
+			if (config.getConfig(WailaRegistry.WAILA_TANK_LINKED_KEY))
 			{
-				String readableFlag = I18n.translateToLocal((tankEntity.isPartOfTank()) ? SFTPlugin.WAILA_TOOLTIP_YES : SFTPlugin.WAILA_TOOLTIP_NO);
-				currenttip.add(I18n.translateToLocalFormatted(SFTPlugin.WAILA_TOOLTIP_ISLINKED, readableFlag));
+				String readableFlag = I18n.translateToLocal((tankEntity.isPartOfTank()) ? WailaRegistry.WAILA_TOOLTIP_YES : WailaRegistry.WAILA_TOOLTIP_NO);
+				currenttip.add(I18n.translateToLocalFormatted(WailaRegistry.WAILA_TOOLTIP_ISLINKED, readableFlag));
 			}
 
-			if (config.getConfig(SFTPlugin.WAILA_TANK_CAPACITY_KEY))
+			if (config.getConfig(WailaRegistry.WAILA_TANK_CAPACITY_KEY))
 			{
-				if (config.getConfig(SFTPlugin.WAILA_CAPACITY_IN_MILLIBUCKETS_KEY))
+				if (config.getConfig(WailaRegistry.WAILA_CAPACITY_IN_MILLIBUCKETS_KEY))
 				{
 					currenttip.add(I18n.translateToLocalFormatted(
-							SFTPlugin.WAILA_TOOLTIP_TANK_CAPACITY,
+							WailaRegistry.WAILA_TOOLTIP_TANK_CAPACITY,
 							Config.bucketsPerTank * Fluid.BUCKET_VOLUME,
 							"mB"));
 				}
 				else
 				{
 					currenttip.add(I18n.translateToLocalFormatted(
-							SFTPlugin.WAILA_TOOLTIP_TANK_CAPACITY,
+							WailaRegistry.WAILA_TOOLTIP_TANK_CAPACITY,
 							Config.bucketsPerTank,
 							"B"));
 				}

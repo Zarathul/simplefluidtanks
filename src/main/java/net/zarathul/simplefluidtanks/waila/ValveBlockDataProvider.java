@@ -55,21 +55,21 @@ public final class ValveBlockDataProvider implements IWailaDataProvider
 		{
 			ValveBlockEntity valveEntity = (ValveBlockEntity) entity;
 
-			if (config.getConfig(SFTPlugin.WAILA_TANK_COUNT_KEY))
+			if (config.getConfig(WailaRegistry.WAILA_TANK_COUNT_KEY))
 			{
-				currenttip.add(I18n.translateToLocalFormatted(SFTPlugin.WAILA_TOOLTIP_TANKS, valveEntity.getLinkedTankCount()));
+				currenttip.add(I18n.translateToLocalFormatted(WailaRegistry.WAILA_TOOLTIP_TANKS, valveEntity.getLinkedTankCount()));
 			}
 
-			if (config.getConfig(SFTPlugin.WAILA_TOTAL_CAPACITY_KEY))
+			if (config.getConfig(WailaRegistry.WAILA_TOTAL_CAPACITY_KEY))
 			{
 				int amount = valveEntity.getFluidAmount();
 				int capacity = valveEntity.getCapacity();
 				int totalFillPercentage = (capacity > 0) ? MathHelper.clamp((int) ((long) amount * 100 / capacity), 0, 100) : 0;
 
-				if (config.getConfig(SFTPlugin.WAILA_CAPACITY_IN_MILLIBUCKETS_KEY))
+				if (config.getConfig(WailaRegistry.WAILA_CAPACITY_IN_MILLIBUCKETS_KEY))
 				{
 					currenttip.add(I18n.translateToLocalFormatted(
-							SFTPlugin.WAILA_TOOLTIP_VALVE_CAPACITY,
+							WailaRegistry.WAILA_TOOLTIP_VALVE_CAPACITY,
 							amount,
 							capacity,
 							"mB",
@@ -78,7 +78,7 @@ public final class ValveBlockDataProvider implements IWailaDataProvider
 				else
 				{
 					currenttip.add(I18n.translateToLocalFormatted(
-							SFTPlugin.WAILA_TOOLTIP_VALVE_CAPACITY,
+							WailaRegistry.WAILA_TOOLTIP_VALVE_CAPACITY,
 							amount / Fluid.BUCKET_VOLUME,
 							capacity / Fluid.BUCKET_VOLUME,
 							"B",
@@ -86,16 +86,16 @@ public final class ValveBlockDataProvider implements IWailaDataProvider
 				}
 			}
 
-			if (config.getConfig(SFTPlugin.WAILA_FLUID_NAME_KEY))
+			if (config.getConfig(WailaRegistry.WAILA_FLUID_NAME_KEY))
 			{
 				String fluidName = valveEntity.getLocalizedFluidName();
 
 				if (fluidName == null)
 				{
-					fluidName = I18n.translateToLocal(SFTPlugin.WAILA_TOOLTIP_FLUID_EMPTY);
+					fluidName = I18n.translateToLocal(WailaRegistry.WAILA_TOOLTIP_FLUID_EMPTY);
 				}
 
-				currenttip.add(I18n.translateToLocalFormatted(SFTPlugin.WAILA_TOOLTIP_FLUID, fluidName));
+				currenttip.add(I18n.translateToLocalFormatted(WailaRegistry.WAILA_TOOLTIP_FLUID, fluidName));
 			}
 		}
 

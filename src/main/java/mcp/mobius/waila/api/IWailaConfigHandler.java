@@ -15,7 +15,7 @@ public interface IWailaConfigHandler {
      *
      * @return
      */
-    Set<String> getModuleNames();
+    public Set<String> getModuleNames();
 
     /**
      * Returns all the currently available options for a given module
@@ -23,7 +23,7 @@ public interface IWailaConfigHandler {
      * @param modName Module name
      * @return
      */
-    HashMap<String, String> getConfigKeys(String modName);
+    public HashMap<String, String> getConfigKeys(String modName);
 
     /**
      * Returns the current value of an option (true/false) with a default value if not set.
@@ -32,7 +32,7 @@ public interface IWailaConfigHandler {
      * @param defvalue Default values
      * @return Value of the option or defvalue if not set.
      */
-    boolean getConfig(String key, boolean defvalue);
+    public boolean getConfig(String key, boolean defvalue);
 
     /**
      * Returns the current value of an option (true/false) with a default value true if not set
@@ -40,5 +40,5 @@ public interface IWailaConfigHandler {
      * @param key Option to lookup
      * @return Value of the option or true if not set.
      */
-    boolean getConfig(String key);
+    public boolean getConfig(String key);
 }
