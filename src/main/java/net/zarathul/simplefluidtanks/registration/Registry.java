@@ -75,8 +75,11 @@ public final class Registry
 		SimpleFluidTanks.valveItem = new ValveItem(SimpleFluidTanks.valveBlock);
 		GameRegistry.register(SimpleFluidTanks.valveItem);
 		
-		SimpleFluidTanks.wrenchItem = new WrenchItem();
-		GameRegistry.register(SimpleFluidTanks.wrenchItem);
+		if (Config.wrenchEnabled)
+		{
+			SimpleFluidTanks.wrenchItem = new WrenchItem();
+			GameRegistry.register(SimpleFluidTanks.wrenchItem);
+		}
 	}
 	
 	/**
@@ -86,7 +89,11 @@ public final class Registry
 	{
 		ModelLoader.setCustomModelResourceLocation(SimpleFluidTanks.tankItem, 0, new ModelResourceLocation(TANKITEM_MODEL_RESLOC, "inventory"));
 		ModelLoader.setCustomModelResourceLocation(SimpleFluidTanks.valveItem, 0, new ModelResourceLocation(VALVEITEM_MODEL_RESLOC, "inventory"));
-		ModelLoader.setCustomModelResourceLocation(SimpleFluidTanks.wrenchItem, 0, new ModelResourceLocation(WRENCHITEM_MODEL_RESLOC, "inventory"));
+		
+		if (Config.wrenchEnabled)
+		{
+			ModelLoader.setCustomModelResourceLocation(SimpleFluidTanks.wrenchItem, 0, new ModelResourceLocation(WRENCHITEM_MODEL_RESLOC, "inventory"));
+		}
 	}
 
 	/**

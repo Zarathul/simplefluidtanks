@@ -64,7 +64,7 @@ public final class Config
 
 	// default values
 	
-	private static final int defaultBucketsPerTank = 16;
+	private static final int defaultBucketsPerTank = 32;
 	private static final boolean defaultWrenchEnabled = true;
 	private static final float defaultTankBlockHardness = 50;
 	private static final float defaultTankBlockResistance = 1000;
