@@ -1,5 +1,6 @@
 package net.zarathul.simplefluidtanks.blocks;
 
+import buildcraft.api.tools.IToolWrench;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
@@ -36,7 +37,7 @@ public abstract class WrenchableBlock extends Block
 			{
 				Item item = heldItem.getItem();
 
-				if (item instanceof WrenchItem)	// TODO: react to Wrenches (Buildcraft + Thermal Expansion) when APIs update
+				if (item instanceof WrenchItem || item instanceof IToolWrench)	// react to Wrenches TODO: Add Thermal Expansion support when APIs update
 				{
 					handleToolWrenchClick(world, pos, player, heldItem);
 
