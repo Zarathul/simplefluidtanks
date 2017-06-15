@@ -182,21 +182,9 @@ public class TankBlock extends WrenchableBlock
 	}
 
 	@Override
-	public boolean isFullBlock(IBlockState state)
-	{
-		return true;
-	}
-
-	@Override
 	public boolean isFullCube(IBlockState state)
 	{
-		return true;
-	}
-
-	@Override
-	public int getLightOpacity(IBlockState state, IBlockAccess world, BlockPos pos)
-	{
-		return 0;
+		return false;
 	}
 	
 	@SideOnly(Side.CLIENT)
