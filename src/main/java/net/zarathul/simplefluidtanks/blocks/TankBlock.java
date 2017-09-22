@@ -1,8 +1,5 @@
 package net.zarathul.simplefluidtanks.blocks;
 
-import java.util.HashSet;
-import java.util.Random;
-
 import net.minecraft.block.SoundType;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
@@ -29,9 +26,11 @@ import net.zarathul.simplefluidtanks.SimpleFluidTanks;
 import net.zarathul.simplefluidtanks.blocks.blockstate.StringProperty;
 import net.zarathul.simplefluidtanks.common.Utils;
 import net.zarathul.simplefluidtanks.configuration.Config;
-import net.zarathul.simplefluidtanks.registration.Registry;
 import net.zarathul.simplefluidtanks.tileentities.TankBlockEntity;
 import net.zarathul.simplefluidtanks.tileentities.ValveBlockEntity;
+
+import java.util.HashSet;
+import java.util.Random;
 
 /**
  * Represents a tank in the mods multiblock structure.
@@ -55,8 +54,8 @@ public class TankBlock extends WrenchableBlock
 	{
 		super(TankMaterial.tankMaterial);
 
-		setRegistryName(Registry.TANK_BLOCK_NAME);
-		setUnlocalizedName(Registry.TANK_BLOCK_NAME);
+		setRegistryName(SimpleFluidTanks.TANK_BLOCK_NAME);
+		setUnlocalizedName(SimpleFluidTanks.TANK_BLOCK_NAME);
 		setCreativeTab(SimpleFluidTanks.creativeTab);
 		setHardness(Config.tankBlockHardness);
 		setResistance(Config.tankBlockResistance);

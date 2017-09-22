@@ -9,3 +9,6 @@
 /gradle-app.setting
 /libs
 *.launch
+/.idea
+/out
+/simplefluidtanks.iml

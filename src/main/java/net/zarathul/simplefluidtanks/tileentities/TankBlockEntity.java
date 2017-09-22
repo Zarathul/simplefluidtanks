@@ -1,7 +1,5 @@
 package net.zarathul.simplefluidtanks.tileentities;
 
-import java.util.Arrays;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -17,6 +15,8 @@ import net.zarathul.simplefluidtanks.blocks.TankBlock;
 import net.zarathul.simplefluidtanks.blocks.ValveBlock;
 import net.zarathul.simplefluidtanks.common.Utils;
 import net.zarathul.simplefluidtanks.rendering.BakedTankModel;
+
+import java.util.Arrays;
 
 /**
  * Holds {@link TileEntity} data for {@link TankBlock}s,

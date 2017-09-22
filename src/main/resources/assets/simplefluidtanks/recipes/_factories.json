@@ -1,0 +1,5 @@
+{
+	"conditions": {
+		"detachable": "net.zarathul.simplefluidtanks.configuration.DetachabledRecipeCondition"
+	}
+}

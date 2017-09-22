@@ -1,6 +1,8 @@
 package net.zarathul.simplefluidtanks.blocks;
 
-import buildcraft.api.tools.IToolWrench;
+import appeng.api.implementations.items.IAEWrench;
+import blusunrize.immersiveengineering.api.tool.ITool;
+import cofh.api.item.IToolHammer;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
@@ -12,7 +14,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.zarathul.simplefluidtanks.items.WrenchItem;
+import net.zarathul.simplefluidtanks.SimpleFluidTanks;
 
 /**
  * A base class for blocks that have custom behavior when a wrench is used on them.
@@ -31,15 +33,18 @@ public abstract class WrenchableBlock extends Block
 	{
 		if (!world.isRemote)
 		{
-			ItemStack heldItem = player.getHeldItem(hand);
+			ItemStack heldItemStack = player.getHeldItem(hand);
 			
-			if (heldItem != null)
+			if (!heldItemStack.isEmpty())
 			{
-				Item item = heldItem.getItem();
+				Item heldItem = heldItemStack.getItem();
 
-				if (item instanceof WrenchItem || item instanceof IToolWrench)	// react to Wrenches TODO: Add Thermal Expansion support when APIs update
+				if (heldItem == SimpleFluidTanks.wrenchItem
+					|| heldItem instanceof IToolHammer		// Cofh (Thermal Expansion)
+					|| heldItem instanceof ITool			// ImmersiveEngineering
+					|| heldItem instanceof IAEWrench)		// AppliedEnergistics2
 				{
-					handleToolWrenchClick(world, pos, player, heldItem);
+					handleToolWrenchClick(world, pos, player, heldItemStack);
 
 					return true;
 				}

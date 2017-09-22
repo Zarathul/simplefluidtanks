@@ -1,13 +1,9 @@
 package net.zarathul.simplefluidtanks.common;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.PriorityQueue;
-import java.util.Set;
-
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+
+import java.util.*;
 
 /**
  * Very basic unoptimized implementation of the A-Star algorithm, 
@@ -261,6 +257,7 @@ public class BasicAStar
 	 * @param to
 	 * The coordinates of the {@link Node} to move to.
 	 * @return
+	 * An integer value representing the movement cost.
 	 */
 	private int getMovementCost(BlockPos from, BlockPos to)
 	{

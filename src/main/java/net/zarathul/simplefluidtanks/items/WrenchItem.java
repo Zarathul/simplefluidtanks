@@ -6,7 +6,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.zarathul.simplefluidtanks.SimpleFluidTanks;
-import net.zarathul.simplefluidtanks.registration.Registry;
 
 /**
  * A simple wrench.
@@ -20,8 +19,8 @@ public class WrenchItem extends Item
 		setMaxStackSize(1);
 
 		setCreativeTab(SimpleFluidTanks.creativeTab);
-		setRegistryName(Registry.WRENCH_ITEM_NAME);
-		setUnlocalizedName(Registry.WRENCH_ITEM_NAME);
+		setRegistryName(SimpleFluidTanks.WRENCH_ITEM_NAME);
+		setUnlocalizedName(SimpleFluidTanks.WRENCH_ITEM_NAME);
 	}
 
 	@Override

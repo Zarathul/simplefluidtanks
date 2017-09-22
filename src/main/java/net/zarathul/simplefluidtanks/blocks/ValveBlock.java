@@ -1,7 +1,5 @@
 package net.zarathul.simplefluidtanks.blocks;
 
-import java.util.Random;
-
 import net.minecraft.block.SoundType;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
@@ -10,21 +8,25 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.play.server.SPacketSoundEffect;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.FluidActionResult;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.zarathul.simplefluidtanks.SimpleFluidTanks;
 import net.zarathul.simplefluidtanks.common.Utils;
 import net.zarathul.simplefluidtanks.configuration.Config;
-import net.zarathul.simplefluidtanks.registration.Registry;
 import net.zarathul.simplefluidtanks.tileentities.ValveBlockEntity;
+
+import java.util.Random;
 
 /**
  * Represents a valve in the mods multiblock structure.
@@ -46,8 +48,8 @@ public class ValveBlock extends WrenchableBlock
 	{
 		super(TankMaterial.tankMaterial);
 
-		setRegistryName(Registry.VALVE_BLOCK_NAME);
-		setUnlocalizedName(Registry.VALVE_BLOCK_NAME);
+		setRegistryName(SimpleFluidTanks.VALVE_BLOCK_NAME);
+		setUnlocalizedName(SimpleFluidTanks.VALVE_BLOCK_NAME);
 		setCreativeTab(SimpleFluidTanks.creativeTab);
 		setHardness(Config.valveBlockHardness);
 		setResistance(Config.valveBlockResistance);
@@ -167,27 +169,27 @@ public class ValveBlock extends WrenchableBlock
 	{
 		if (!world.isRemote)
 		{
-			ItemStack heldItem = player.getHeldItem(hand);
-			
-			if (heldItem != null)
+			ValveBlockEntity valveEntity = Utils.getTileEntityAt(world, ValveBlockEntity.class, pos);
+
+			if (valveEntity != null)
 			{
-				// react to fluid containers
-				if (heldItem.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null))
+				IFluidHandler handler = valveEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side);
+
+				// FIXME: Horrible workaround until Forge fixes sounds not playing client-side.
+				FluidStack tankFluidBefore = (valveEntity.getFluidAmount() > 0) ? valveEntity.getFluid().copy() : null;
+
+				if (FluidUtil.interactWithFluidHandler(player, hand, handler))
 				{
-					ValveBlockEntity valveEntity = Utils.getTileEntityAt(world, ValveBlockEntity.class, pos);
-					FluidActionResult result = FluidUtil.interactWithFluidHandler(heldItem, valveEntity, player);
-					
-					if  (result.isSuccess())
-					{
-						player.inventory.setInventorySlotContents(player.inventory.currentItem, result.getResult());
-						
-						if (player instanceof EntityPlayerMP)
-						{
-							((EntityPlayerMP)player).sendContainerToPlayer(player.inventoryContainer);
-						}
-					}
-					
-					return true;
+					// Pick a sound depending on what happens with the held container item.
+					SoundEvent soundevent = (tankFluidBefore == null || tankFluidBefore.amount < valveEntity.getFluidAmount())
+						? valveEntity.getFluid().getFluid().getEmptySound()
+						: tankFluidBefore.getFluid().getFillSound();
+
+					((EntityPlayerMP)player).connection.sendPacket(new SPacketSoundEffect(
+						soundevent,
+						player.getSoundCategory(),
+						player.posX, player.posY, player.posZ,
+						1.0f, 1.0f));
 				}
 			}
 		}

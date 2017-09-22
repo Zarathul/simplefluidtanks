@@ -1,11 +1,7 @@
 package net.zarathul.simplefluidtanks.rendering;
 
-import java.util.EnumMap;
-import java.util.List;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -19,6 +15,9 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
+
+import java.util.EnumMap;
+import java.util.List;
 
 public class BakedTankFluidModel implements IBakedModel
 {

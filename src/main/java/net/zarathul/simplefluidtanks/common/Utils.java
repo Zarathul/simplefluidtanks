@@ -1,11 +1,8 @@
 package net.zarathul.simplefluidtanks.common;
 
-import java.util.ArrayList;
-
 import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -19,6 +16,8 @@ import net.zarathul.simplefluidtanks.blocks.ValveBlock;
 import net.zarathul.simplefluidtanks.rendering.BakedTankModel;
 import net.zarathul.simplefluidtanks.tileentities.TankBlockEntity;
 import net.zarathul.simplefluidtanks.tileentities.ValveBlockEntity;
+
+import java.util.ArrayList;
 
 /**
  * General utility class.
@@ -132,6 +131,7 @@ public final class Utils
 	 * @param args
 	 * Formatting arguments.
 	 * @return
+	 * A list of localized strings for the specified key, or an empty list if the key was not found.
 	 */
 	public static final ArrayList<String> multiLineTranslateToLocal(String key, Object... args)
 	{
@@ -155,7 +155,7 @@ public final class Utils
 	/**
 	 * Calculates the fluid level for the specified fill percentage.
 	 * 
-	 * @param percentage
+	 * @param fillPercentage
 	 * The fill percentage.
 	 * @return
 	 * A value between 0 and {@code TankModelFactory.FLUID_LEVELS}.

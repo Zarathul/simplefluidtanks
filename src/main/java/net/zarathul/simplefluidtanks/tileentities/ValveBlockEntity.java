@@ -1,24 +1,10 @@
 package net.zarathul.simplefluidtanks.tileentities;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Map.Entry;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.google.common.base.Predicates;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Multimap;
 import com.google.common.primitives.Ints;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -45,6 +31,11 @@ import net.zarathul.simplefluidtanks.common.BlockSearchMode;
 import net.zarathul.simplefluidtanks.common.Direction;
 import net.zarathul.simplefluidtanks.common.Utils;
 import net.zarathul.simplefluidtanks.configuration.Config;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * Holds {@link TileEntity} data for {@link ValveBlock}s,
@@ -286,7 +277,8 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	/**
 	 * Sets the facing of the valve.
 	 * 
-	 * @param One of the {@link EnumFacing} values (values on the y axis are ignored).
+	 * @param facing
+	 * One of the {@link EnumFacing} values (values on the y axis are ignored).
 	 */
 	public void setFacing(EnumFacing facing)
 	{
@@ -1168,6 +1160,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	 * @param useTankList
 	 * Specifies if the temporary tank list or {@link TileEntity} should be used to determine which blocks are valid tanks.
 	 * @return
+	 * A list of all adjacent tanks.
 	 */
 	private ArrayList<BlockPos> getOrFindAdjacentTanks(BlockPos block, BlockSearchMode mode, EnumSet<BlockSearchMode> searchFlags, boolean useTankList)
 	{
@@ -1238,23 +1231,20 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		}
 		
 		IBlockState state = world.getBlockState(block);
-		
-		if (state != null)
-		{
-			if (state.getBlock() instanceof TankBlock)
-			{
-				TankBlockEntity tankEntity = Utils.getTileEntityAt(world, TankBlockEntity.class, block);
 
-				if (tankEntity != null)
-				{
-					return !tankEntity.isPartOfTank();
-				}
-			}
-			else if (block.equals(pos) && tankPriorities.isEmpty())
+		if (state.getBlock() instanceof TankBlock)
+		{
+			TankBlockEntity tankEntity = Utils.getTileEntityAt(world, TankBlockEntity.class, block);
+
+			if (tankEntity != null)
 			{
-				// this valve is also considered a unlinked tank as long as it has no associated tanks
-				return true;
+				return !tankEntity.isPartOfTank();
 			}
+		}
+		else if (block.equals(pos) && tankPriorities.isEmpty())
+		{
+			// this valve is also considered a unlinked tank as long as it has no associated tanks
+			return true;
 		}
 
 		return false;
@@ -1303,8 +1293,6 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	 * 
 	 * @param tag
 	 * The tag to write to.
-	 * @param priorities
-	 * The tank priority map.
 	 */
 	private void writeTankPrioritiesToNBT(NBTTagCompound tag)
 	{
@@ -1334,7 +1322,6 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	 * 
 	 * @param tag
 	 * The tag to read from.
-	 * @return The tank priority map.
 	 */
 	private void readTankPrioritiesFromNBT(NBTTagCompound tag)
 	{

@@ -1,22 +1,22 @@
 package net.zarathul.simplefluidtanks;
 
-import java.util.ArrayList;
-import java.util.Map.Entry;
-
 import com.google.common.collect.Lists;
-
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.util.registry.RegistrySimple;
 import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.zarathul.simplefluidtanks.configuration.Config;
-import net.zarathul.simplefluidtanks.registration.Registry;
 import net.zarathul.simplefluidtanks.rendering.BakedTankFluidModel;
 import net.zarathul.simplefluidtanks.rendering.BakedTankModel;
+
+import java.util.ArrayList;
+import java.util.Map.Entry;
 
 /**
  * Hosts Forge event handlers on the client side.
@@ -30,6 +30,14 @@ public final class ClientEventHub
 		{
 			Config.sync();
 		}
+	}
+
+	@SubscribeEvent
+	public void OnModelRegistration(ModelRegistryEvent event)
+	{
+		ModelLoader.setCustomModelResourceLocation(SimpleFluidTanks.tankItem, 0, new ModelResourceLocation(SimpleFluidTanks.tankItem.getRegistryName(), "inventory"));
+		ModelLoader.setCustomModelResourceLocation(SimpleFluidTanks.valveItem, 0, new ModelResourceLocation(SimpleFluidTanks.valveItem.getRegistryName(), "inventory"));
+		ModelLoader.setCustomModelResourceLocation(SimpleFluidTanks.wrenchItem, 0, new ModelResourceLocation(SimpleFluidTanks.wrenchItem.getRegistryName(), "inventory"));
 	}
 	
 	@SubscribeEvent
@@ -60,7 +68,7 @@ public final class ClientEventHub
 		ArrayList<ModelResourceLocation> modelLocations = Lists.newArrayList();
 		
 		// as of 1.11.2 (maybe earlier) all resource names must be all lower case
-		String modelPath = Registry.TANK_BLOCK_NAME.toLowerCase();
+		String modelPath = SimpleFluidTanks.TANK_BLOCK_NAME.toLowerCase();
 		
 		for (ModelResourceLocation modelLoc : registry.getKeys())
 		{

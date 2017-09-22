@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "simplefluidtanks:detachable",
+      "name": "wrenchEnabled"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " I ",
+    " II",
+    "I  "
+  ],
+  "key": {
+    "I": {
+      "type": "forge:ore_dict",
+	  "ore": "ingotIron"
+    }
+  },
+  "result": {
+    "item": "simplefluidtanks:wrench",
+    "count": 1
+  }
+}

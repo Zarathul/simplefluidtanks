@@ -1,7 +1,6 @@
 package net.zarathul.simplefluidtanks.common;
 
 import com.google.common.collect.ImmutableMap;
-
 import net.minecraft.util.EnumFacing;
 
 /**

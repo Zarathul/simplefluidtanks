@@ -53,20 +53,11 @@ configui.yield.tooltip=Die Menge an Blöcken/Gegenständen die das Rezept ergieb
 configui.components.tooltip=Die Blöcke/Gegenstände die für das Rezept benötigt werden. Format: [MusterId], [ModId], [GegenstandsId]. Benutze "-" als MusterId für formlose Rezepte. Benutze "oreDict" als ModId für Ore Dictionary Gegenstände.
 configui.pattern.tooltip=Das Muster des Rezepts für die Werkbank. Benutze "-" für leere Positionen.
 
-# Waila option labels
-waila.tankCount=Tank Anzahl
-waila.totalCapacity=Gesamtkapazität
-waila.linkStatus=Verbindungsstatus
-waila.tankCapacity=Tankkapazität
-waila.capacityInMb=Kapazitäten in mB
-waila.fluidName=Flüssigkeitsname
-
-# Waila tooltip texts
-waila.toolTip.isLinked=Verbunden: §a%s
-waila.toolTip.tankCapacity=Kapazität: §b%,d§r %s
-waila.toolTip.valveCapacity=Kapazität: §b%,d/%,d§r %s (%d%%)
-waila.toolTip.tanks=Tanks: §b%,d
-waila.toolTip.fluid=Flüssigkeit: §b%s
-waila.toolTip.fluidEmpty=Leer
-waila.toolTip.yes=Ja
-waila.toolTip.no=Nein
+# TheOneProbe Tooltip Texts
+tankInfo.isLinked=Verbunden: §a%s
+tankInfo.tankCapacity=Kapazität: §b%,d§r %s
+tankInfo.valveCapacity=Kapazität: §b%,d/%,d§r %s (%d%%)
+tankInfo.tanks=Tanks: §b%,d
+tankInfo.fluidEmpty=Leer
+tankInfo.yes=Ja
+tankInfo.no=Nein

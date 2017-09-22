@@ -52,20 +52,11 @@ configui.yield.tooltip=The amount of blocks/items the recipe yields.
 configui.components.tooltip=The blocks/items needed to complete the recipe. Format: [patternId], [modId], [itemId]. Use "-" as the patternId for shapeless recipes. Use "oreDict" as the modId for ore dictionary items.
 configui.pattern.tooltip=The crafting table pattern for the recipe. Use "-" for empty slots.
 
-# Waila Option Labels
-waila.tankCount=Tank count
-waila.totalCapacity=Total capacity
-waila.linkStatus=Link status
-waila.tankCapacity=Tank capacity
-waila.capacityInMb=Capacities in mB
-waila.fluidName=Fluid name
-
-# Waila Tooltip Texts
-waila.toolTip.isLinked=Linked: §a%s
-waila.toolTip.tankCapacity=Capacity: §b%,d§r %s
-waila.toolTip.valveCapacity=Capacity: §b%,d/%,d§r %s (%d%%)
-waila.toolTip.tanks=Tanks: §b%,d
-waila.toolTip.fluid=Fluid: §b%s
-waila.toolTip.fluidEmpty=Empty
-waila.toolTip.yes=Yes
-waila.toolTip.no=No
+# TheOneProbe Tooltip Texts
+tankInfo.isLinked=Linked: §a%s
+tankInfo.tankCapacity=Capacity: §b%,d§r %s
+tankInfo.valveCapacity=Capacity: §b%,d/%,d§r %s (%d%%)
+tankInfo.tanks=Tanks: §b%,d
+tankInfo.fluidEmpty=Empty
+tankInfo.yes=Yes
+tankInfo.no=No

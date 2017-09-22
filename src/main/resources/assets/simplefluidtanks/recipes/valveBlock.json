@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ISI",
+    "STS",
+    "ISI"
+  ],
+  "key": {
+    "I": {
+      "type": "forge:ore_dict",
+	  "ore": "ingotIron"
+    },
+    "S": {
+      "type": "forge:ore_dict",
+	  "ore": "slimeball"
+    },
+    "T": {
+      "item": "simplefluidtanks:tankItem"
+    }
+  },
+  "result": {
+    "item": "simplefluidtanks:valveItem",
+    "count": 1
+  }
+}

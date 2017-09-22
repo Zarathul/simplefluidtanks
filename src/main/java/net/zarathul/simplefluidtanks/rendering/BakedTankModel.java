@@ -1,9 +1,5 @@
 package net.zarathul.simplefluidtanks.rendering;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -15,6 +11,10 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.zarathul.simplefluidtanks.blocks.TankBlock;
+
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 public class BakedTankModel implements IBakedModel
 {
