@@ -18,6 +18,7 @@ import net.zarathul.simplefluidtanks.tileentities.TankBlockEntity;
 import net.zarathul.simplefluidtanks.tileentities.ValveBlockEntity;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * General utility class.
@@ -191,7 +192,37 @@ public final class Utils
 	private static final char[] METRIC_SUFFIXES = { 'k', 'M', 'G', 'T', 'P', 'E' };
 
 	/**
-	 * Shortens a number using metric suffixes and applies the provided format.
+	 * Shortens a number using metric suffixes and applies the provided format and locale.
+	 *
+	 * @param number
+	 * The number to shorten. Numbers lower than 1000 remain unchanged.
+	 * @param shortFormat
+	 * The string format to apply in case {@code number} gets shortened (3 arguments). The first argument is the
+	 * shortened number (floating point), the second is the metric suffix and the third is the passed in object
+	 * ({@code misc}) which can be anything.
+	 * @param longFormat
+	 * The string format to apply in case {@code number} is not shortened (2 arguments). The first argument is the
+	 * unmodified number (decimal) and the second is the passed in object ({@code misc}) which can be anything.
+	 * @param locale
+	 * The locale to use for the number format.
+	 * @param misc
+	 * Can be used to add additional text to the output string.
+	 * @return
+	 * <c>null</c> if either {@code shortFormat}, {@code longFormat} or {@code locale} is <c>null</c>, otherwise the
+	 * potentially shortened and formatted number.
+	 */
+	public static String getMetricFormattedNumber(long number, String shortFormat, String longFormat, Locale locale, Object misc)
+	{
+		if (shortFormat == null || longFormat == null || locale == null) return null;
+		if (number < FACTOR) return String.format(locale, longFormat, number, misc);
+
+		int exponent = (int)(Math.log(number) / FACTOR_LOG);
+
+		return String.format(locale, shortFormat, number / Math.pow(FACTOR, exponent), METRIC_SUFFIXES[exponent - 1], misc);
+	}
+
+	/**
+	 * Shortens a number using metric suffixes and applies the provided format (UK locale).
 	 *
 	 * @param number
 	 * The number to shorten. Numbers lower than 1000 remain unchanged.
@@ -205,16 +236,11 @@ public final class Utils
 	 * @param misc
 	 * Can be used to add additional text to the output string.
 	 * @return
-	 * <c>null</c> if either {@code shortFormat} or {@code longFormat} is <c>null</c>, otherwise the potentially
-	 * shortened and formatted number.
+	 * <c>null</c> if either {@code shortFormat}, {@code longFormat} or {@code locale} is <c>null</c>, otherwise the
+	 * potentially shortened and formatted number.
 	 */
 	public static String getMetricFormattedNumber(long number, String shortFormat, String longFormat, Object misc)
 	{
-		if (shortFormat == null || longFormat == null) return null;
-		if (number < FACTOR) return String.format(longFormat, number, misc);
-
-		int exponent = (int)(Math.log(number) / FACTOR_LOG);
-
-		return String.format(shortFormat, number / Math.pow(FACTOR, exponent), METRIC_SUFFIXES[exponent - 1], misc);
+		return getMetricFormattedNumber(number, shortFormat, longFormat, Locale.UK, misc);
 	}
 }
