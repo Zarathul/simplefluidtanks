@@ -31,29 +31,27 @@ public abstract class WrenchableBlock extends Block
 	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player,
 			EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
 	{
-		if (!world.isRemote)
-		{
-			ItemStack heldItemStack = player.getHeldItem(hand);
-			
-			if (!heldItemStack.isEmpty())
-			{
-				Item heldItem = heldItemStack.getItem();
+		ItemStack heldItemStack = player.getHeldItem(hand);
 
-				if (heldItem == SimpleFluidTanks.wrenchItem
-					|| heldItem instanceof IToolHammer		// Cofh (Thermal Expansion)
-					|| heldItem instanceof ITool			// ImmersiveEngineering
-					|| heldItem instanceof IAEWrench)		// AppliedEnergistics2
+		if (!heldItemStack.isEmpty())
+		{
+			Item heldItem = heldItemStack.getItem();
+
+			if (heldItem == SimpleFluidTanks.wrenchItem
+				|| heldItem instanceof IToolHammer		// Cofh (Thermal Expansion)
+				|| heldItem instanceof ITool			// ImmersiveEngineering
+				|| heldItem instanceof IAEWrench)		// AppliedEnergistics2
+			{
+				if (!world.isRemote)
 				{
 					handleToolWrenchClick(world, pos, player, heldItemStack);
-
-					return true;
 				}
-			}
 
-			return false;
+				return true;
+			}
 		}
 
-		return true;
+		return super.onBlockActivated(world, pos, state, player, hand, side, hitX, hitY, hitZ);
 	}
 
 	/**

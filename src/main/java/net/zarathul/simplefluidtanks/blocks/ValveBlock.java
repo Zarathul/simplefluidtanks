@@ -175,24 +175,29 @@ public class ValveBlock extends WrenchableBlock
 			{
 				IFluidHandler handler = valveEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side);
 
-				// FIXME: Horrible workaround until Forge fixes sounds not playing client-side.
-				FluidStack tankFluidBefore = (valveEntity.getFluidAmount() > 0) ? valveEntity.getFluid().copy() : null;
-
-				if (FluidUtil.interactWithFluidHandler(player, hand, handler))
+				if (handler != null)
 				{
-					// Pick a sound depending on what happens with the held container item.
-					SoundEvent soundevent = (tankFluidBefore == null || tankFluidBefore.amount < valveEntity.getFluidAmount())
-						? valveEntity.getFluid().getFluid().getEmptySound()
-						: tankFluidBefore.getFluid().getFillSound();
+					// FIXME: Horrible workaround until Forge fixes sounds not playing client-side.
+					FluidStack tankFluidBefore = (valveEntity.getFluidAmount() > 0) ? valveEntity.getFluid().copy() : null;
 
-					((EntityPlayerMP)player).connection.sendPacket(new SPacketSoundEffect(
-						soundevent,
-						player.getSoundCategory(),
-						player.posX, player.posY, player.posZ,
-						1.0f, 1.0f));
+					if (FluidUtil.interactWithFluidHandler(player, hand, handler))
+					{
+						// Pick a sound depending on what happens with the held container item.
+						SoundEvent soundevent = (tankFluidBefore == null || tankFluidBefore.amount < valveEntity.getFluidAmount())
+							? valveEntity.getFluid().getFluid().getEmptySound()
+							: tankFluidBefore.getFluid().getFillSound();
+
+						((EntityPlayerMP)player).connection.sendPacket(new SPacketSoundEffect(
+							soundevent,
+							player.getSoundCategory(),
+							player.posX, player.posY, player.posZ,
+							1.0f, 1.0f));
+					}
 				}
 			}
 		}
+
+		if (FluidUtil.getFluidHandler(player.getHeldItem(hand)) != null) return true;
 		
 		return super.onBlockActivated(world, pos, state, player, hand, side, hitX, hitY, hitZ);
 	}

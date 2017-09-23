@@ -158,8 +158,9 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		tag.setByte("TankFacingSides", tankFacingSides);
 		tag.setByte("Facing", (byte)facing.getIndex());
 		tag.setInteger("LinkedTankCount", linkedTankCount);
+
 		internalTank.writeToNBT(tag);
-		
+
 		return tag;
 	}
 
@@ -205,12 +206,16 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	{
 		if (!world.isRemote && hasTanks())
 		{
+			// Only update the client if the fluid changes. So then tanks can render the correct fluid.
+			boolean clientUpdateNeeded = (fillFluid != null) && internalTank.getFluidAmount() == 0;
 			int fillAmount = internalTank.fill(fillFluid, doFill);
 
 			if (doFill && fillAmount > 0)
 			{
 				distributeFluidToTanks();
-				Utils.syncBlockAndRerender(world, pos);
+
+				if (clientUpdateNeeded) Utils.syncBlockAndRerender(world, pos);
+
 				markDirty();
 			}
 
@@ -254,7 +259,6 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 			if (doDrain && drainedFluid != null && drainedFluid.amount > 0)
 			{
 				distributeFluidToTanks();
-				Utils.syncBlockAndRerender(world, pos);
 				markDirty();
 			}
 
@@ -1327,18 +1331,22 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	{
 		if (tag != null)
 		{
-			tankPriorities = ArrayListMultimap.create();
-
 			NBTTagCompound tankPrioritiesTag = tag.getCompoundTag("TankPriorities");
-			String key;
-			int i = 0;
-			int[] serializedEntry;
 
-			while (tankPrioritiesTag.hasKey(key = Integer.toString(i)))
+			if (!tankPrioritiesTag.hasNoTags())
 			{
-				serializedEntry = tankPrioritiesTag.getIntArray(key);
-				tankPriorities.put(serializedEntry[0], new BlockPos(serializedEntry[1], serializedEntry[2], serializedEntry[3]));
-				i++;
+				tankPriorities = ArrayListMultimap.create();
+
+				String key;
+				int i = 0;
+				int[] serializedEntry;
+
+				while (tankPrioritiesTag.hasKey(key = Integer.toString(i)))
+				{
+					serializedEntry = tankPrioritiesTag.getIntArray(key);
+					tankPriorities.put(serializedEntry[0], new BlockPos(serializedEntry[1], serializedEntry[2], serializedEntry[3]));
+					i++;
+				}
 			}
 		}
 	}

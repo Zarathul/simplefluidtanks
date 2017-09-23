@@ -54,9 +54,8 @@ configui.pattern.tooltip=The crafting table pattern for the recipe. Use "-" for 
 
 # TheOneProbe Tooltip Texts
 tankInfo.isLinked=Linked: §a%s
-tankInfo.tankCapacity=Capacity: §b%,d§r %s
-tankInfo.valveCapacity=Capacity: §b%,d/%,d§r %s (%d%%)
+tankInfo.capacity=Capacity: §b%,d§r B
+tankInfo.amount=Amount: §b%,d§r B
 tankInfo.tanks=Tanks: §b%,d
-tankInfo.fluidEmpty=Empty
 tankInfo.yes=Yes
 tankInfo.no=No

@@ -18,6 +18,7 @@ public final class TheOneProbeCompat
 		public Void apply(ITheOneProbe theOneProbe)
 		{
 			theOneProbe.registerProvider(new TankInfoProvider());
+			theOneProbe.registerProbeConfigProvider(new TankInfoConfigProvider());
 			SimpleFluidTanks.log.info("TheOneProbe compatibility enabled.");
 
 			return null;

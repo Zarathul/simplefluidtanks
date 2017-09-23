@@ -55,9 +55,8 @@ configui.pattern.tooltip=Das Muster des Rezepts für die Werkbank. Benutze "-" f
 
 # TheOneProbe Tooltip Texts
 tankInfo.isLinked=Verbunden: §a%s
-tankInfo.tankCapacity=Kapazität: §b%,d§r %s
-tankInfo.valveCapacity=Kapazität: §b%,d/%,d§r %s (%d%%)
+tankInfo.capacity=Kapazität: §b%,d§r B
+tankInfo.amount=Menge: §b%,d§r B
 tankInfo.tanks=Tanks: §b%,d
-tankInfo.fluidEmpty=Leer
 tankInfo.yes=Ja
 tankInfo.no=Nein
