@@ -15,13 +15,13 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.zarathul.simplefluidtanks.SimpleFluidTanks;
+import net.zarathul.simplefluidtanks.common.Utils;
 
 /**
  * A base class for blocks that have custom behavior when a wrench is used on them.
  */
 public abstract class WrenchableBlock extends Block
 {
-
 	protected WrenchableBlock(Material material)
 	{
 		super(material);
@@ -38,9 +38,9 @@ public abstract class WrenchableBlock extends Block
 			Item heldItem = heldItemStack.getItem();
 
 			if (heldItem == SimpleFluidTanks.wrenchItem
-				|| heldItem instanceof IToolHammer		// Cofh (Thermal Expansion)
-				|| heldItem instanceof ITool			// ImmersiveEngineering
-				|| heldItem instanceof IAEWrench)		// AppliedEnergistics2
+				|| (Utils.isInterfaceAvailable("cofh.api.item", "IToolHammer") && heldItem instanceof IToolHammer)
+				|| (Utils.isInterfaceAvailable("blusunrize.immersiveengineering.api.tool", "ITool") && heldItem instanceof ITool)
+				|| (Utils.isInterfaceAvailable("appeng.api.implementations.items", "IAEWrench") && heldItem instanceof IAEWrench))
 			{
 				if (!world.isRemote)
 				{

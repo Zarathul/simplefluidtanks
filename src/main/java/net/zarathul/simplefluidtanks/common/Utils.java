@@ -18,6 +18,7 @@ import net.zarathul.simplefluidtanks.tileentities.TankBlockEntity;
 import net.zarathul.simplefluidtanks.tileentities.ValveBlockEntity;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
 
 /**
@@ -242,5 +243,43 @@ public final class Utils
 	public static String getMetricFormattedNumber(long number, String shortFormat, String longFormat, Object misc)
 	{
 		return getMetricFormattedNumber(number, shortFormat, longFormat, Locale.UK, misc);
+	}
+
+	/**
+	 * Cache for {@code isInterfaceAvailable()} return values.
+	 */
+	private static HashMap<String, Boolean> InterfaceLookupCache = new HashMap<>();
+
+	/**
+	 * Checks if the given interface is available. This is used to call into APIs of other mods that may not always be
+	 * there.
+	 *
+	 * @param packageName
+	 * The name of the package containing the interface.
+	 * @param interfaceName
+	 * The name of the interface to check.
+	 *
+	 * @return
+	 * <c>true</c> if the interface exists, otherwise <c>false</c>.
+	 */
+	public static boolean isInterfaceAvailable(String packageName, String interfaceName)
+	{
+		String FullyQualifiedName = packageName + "." + interfaceName;
+
+		if (InterfaceLookupCache.containsKey(FullyQualifiedName)) return InterfaceLookupCache.get(FullyQualifiedName);
+
+		try
+		{
+			Class<?> Interface = Class.forName(FullyQualifiedName);
+			InterfaceLookupCache.put(FullyQualifiedName, true);
+
+			return true;
+		}
+		catch (Exception e)
+		{
+			InterfaceLookupCache.put(FullyQualifiedName, false);
+
+			return false;
+		}
 	}
 }
