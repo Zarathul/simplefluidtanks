@@ -33,22 +33,14 @@ public abstract class WrenchableBlock extends Block
 	{
 		ItemStack heldItemStack = player.getHeldItem(hand);
 
-		if (!heldItemStack.isEmpty())
+		if (!heldItemStack.isEmpty() && Utils.isWrenchItem(heldItemStack.getItem()))
 		{
-			Item heldItem = heldItemStack.getItem();
-
-			if (heldItem == SimpleFluidTanks.wrenchItem
-				|| (Utils.isInterfaceAvailable("cofh.api.item", "IToolHammer") && heldItem instanceof IToolHammer)
-				|| (Utils.isInterfaceAvailable("blusunrize.immersiveengineering.api.tool", "ITool") && heldItem instanceof ITool)
-				|| (Utils.isInterfaceAvailable("appeng.api.implementations.items", "IAEWrench") && heldItem instanceof IAEWrench))
+			if (!world.isRemote)
 			{
-				if (!world.isRemote)
-				{
-					handleToolWrenchClick(world, pos, player, heldItemStack);
-				}
-
-				return true;
+				handleToolWrenchClick(world, pos, player, heldItemStack);
 			}
+
+			return true;
 		}
 
 		return super.onBlockActivated(world, pos, state, player, hand, side, hitX, hitY, hitZ);

@@ -17,7 +17,7 @@ buildscript
 
 apply plugin: 'net.minecraftforge.gradle.forge'
 
-version = "1.12.2-1.7.1.1"
+version = "1.12.2-1.7.1.2"
 group= "net.zarathul.simplefluidtanks" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "simplefluidtanks"
 
