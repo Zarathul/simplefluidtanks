@@ -18,9 +18,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidEvent;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.zarathul.simplefluidtanks.blocks.FluidTank;
@@ -46,11 +44,6 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	 * The {@link FluidTank} that actually holds all the fluid in the multiblock tank.
 	 */
 	private final FluidTank internalTank;
-
-	/**
-	 * The tanks properties.
-	 */
-	private IFluidTankProperties[] properties;
 
 	/**
 	 * Holds the number of {@link TankBlock}s that are linked to this {@link ValveBlock}. 
@@ -102,7 +95,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	public ValveBlockEntity()
 	{
 		super();
-		internalTank = new FluidTank(0);
+		internalTank = new FluidTank(this, 0);
 		tankPriorities = ArrayListMultimap.create();
 		tankFacingSides = -1;
 		linkedTankCount = 0;
@@ -193,12 +186,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	@Override
 	public IFluidTankProperties[] getTankProperties()
 	{
-		if (this.properties == null)
-		{
-			this.properties = FluidTankProperties.convert(new FluidTankInfo[] { internalTank.getInfo() });
-		}
-		
-		return this.properties;
+		return internalTank.getTankProperties();
 	}
 
 	@Override
