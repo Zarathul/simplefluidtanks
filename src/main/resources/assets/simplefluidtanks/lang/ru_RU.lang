@@ -1,0 +1,61 @@
+# Blocks
+tile.tankBlock.name=Жидкостный резервуар
+tile.valveBlock.name=Клапан
+
+# Items
+item.tankItem.name=Жидкостный резервуар
+item.tankItem.toolTip=Зажмите §e§oShift§r§7 для деталей.
+item.tankItem.toolTipDetails0=Используйте гаечный ключ, присядя,
+item.tankItem.toolTipDetails1=чтобы удалить резервуар из
+item.tankItem.toolTipDetails2=многоблочной структуры.
+item.tankItem.toolTipDetails3=§9Вмещает до §b%d §9ведер жидкости.
+item.valveItem.name=Клапан
+item.valveItem.toolTip=Зажмите §e§oShift§r§7 для деталей.
+item.valveItem.toolTipDetails0=Используйте гаечный ключ на клапане, чтобы
+item.valveItem.toolTipDetails1=добавить новые баки в многоблочную структуру
+item.valveItem.toolTipDetails2=без потери жидкости. Обратите внимание,
+item.valveItem.toolTipDetails3=что клапан считается резервуаром по отношению
+item.valveItem.toolTipDetails4=к общей емкости и издает сигнал
+item.valveItem.toolTipDetails5=красного камня вместе с компаратором.
+item.wrench.name=Гаечный ключ
+
+# ConfigUI Category Labels
+configui.category.misc=Разное
+configui.category.blocks=Блоки
+configui.category.recipes=Рецепты
+configui.category.tank=Резервуар
+configui.category.valve=Клапан
+configui.category.wrench=Гаечный ключ
+
+# ConfigUI Element Labels
+configui.bucketsPerTank=Ведер на резервуар
+configui.wrenchEnabled=Включить рецепт гаечного ключа
+configui.blockHardness=Твердость блока
+configui.blockResistance=Сопротивление блока к взрыву
+configui.shapeless=Бесформенный
+configui.yield=Доход
+configui.components=Компоненты
+configui.pattern=Шаблон
+
+# ConfigUI Element ToolTips
+configui.category.misc.tooltip=Базовые настройки.
+configui.bucketsPerTank.tooltip=Количество жидкости, которое может вместить резервуар, измеряется в ведрах.
+configui.wrenchEnabled.tooltip=Установите значение "false", чтобы отключить рецепт гаечного ключа.
+
+configui.category.blocks.tooltip=Свойства блока.
+configui.blockHardness.tooltip=Количество ударов, которые блок может принять, прежде чем он сломается (-1 = неразрушимый).
+configui.blockResistance.tooltip=Блоки устойчивы к взрывам.
+
+configui.category.recipes.tooltip=Рецепты создания.
+configui.shapeless.tooltip=Если для этого параметра установлено значение "true", шаблон игнорируется.
+configui.yield.tooltip=Количество блоков/предметов, которое дает рецепт.
+configui.components.tooltip=Блоки/предметы, необходимые для завершения рецепта. Формат: [patternId], [modId], [itemId]. Используйте "-" как patternId для бесформенных рецептов. Используйте "oreDict" как modId для предметов словаря руды.
+configui.pattern.tooltip=Шаблон верстака для рецепта. Используйте "-" для пустых слотов.
+
+# TheOneProbe Tooltip Texts
+tankInfo.isLinked=Связано: §a%s
+tankInfo.capacity=Ёмкость: §b%,d§r В
+tankInfo.amount=Количество: §b%,d§r B
+tankInfo.tanks=Резервуар: §b%,d
+tankInfo.yes=Да
+tankInfo.no=Нет
