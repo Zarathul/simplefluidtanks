@@ -4,7 +4,7 @@ SimpleFluidTanks (SFT) is a minecraft mod that adds multiblock fluid tanks which
 
 Download
 ========
-Get the lastest version at [CurseForge](http://minecraft.curseforge.com/projects/simplefluidtanks/files)
+Get the lastest version at [CurseForge](https://www.curseforge.com/minecraft/mc-mods/simplefluidtanks/files)
 
 Design
 ======
