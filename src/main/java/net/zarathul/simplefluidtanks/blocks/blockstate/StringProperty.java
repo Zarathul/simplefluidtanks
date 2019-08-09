@@ -1,5 +1,6 @@
 package net.zarathul.simplefluidtanks.blocks.blockstate;
 
+/*
 import net.minecraftforge.common.property.IUnlistedProperty;
 
 public class StringProperty implements IUnlistedProperty<String>
@@ -36,3 +37,5 @@ public class StringProperty implements IUnlistedProperty<String>
 	}
 
 }
+
+ */

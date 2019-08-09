@@ -1,5 +1,5 @@
 package net.zarathul.simplefluidtanks.theoneprobe;
-
+/*
 import mcjty.theoneprobe.api.IProbeConfig;
 import mcjty.theoneprobe.api.IProbeConfigProvider;
 import mcjty.theoneprobe.api.IProbeHitData;
@@ -24,3 +24,4 @@ public class TankInfoConfigProvider implements IProbeConfigProvider
 		config.setTankMode(0);
 	}
 }
+*/

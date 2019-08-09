@@ -1,34 +1,30 @@
 package net.zarathul.simplefluidtanks.blocks;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockRenderType;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
-import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.properties.PropertyBool;
-import net.minecraft.block.properties.PropertyInteger;
-import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.state.BooleanProperty;
+import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumBlockRenderType;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IEnviromentBlockReader;
 import net.minecraft.world.World;
-import net.minecraftforge.common.property.ExtendedBlockState;
-import net.minecraftforge.common.property.IExtendedBlockState;
-import net.minecraftforge.common.property.IUnlistedProperty;
-import net.minecraftforge.common.property.Properties;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.ToolType;
 import net.zarathul.simplefluidtanks.SimpleFluidTanks;
-import net.zarathul.simplefluidtanks.blocks.blockstate.StringProperty;
 import net.zarathul.simplefluidtanks.common.Utils;
 import net.zarathul.simplefluidtanks.configuration.Config;
 import net.zarathul.simplefluidtanks.tileentities.TankBlockEntity;
 import net.zarathul.simplefluidtanks.tileentities.ValveBlockEntity;
 
+import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Random;
 
@@ -37,65 +33,83 @@ import java.util.Random;
  */
 public class TankBlock extends WrenchableBlock
 {
+	/*
 	public static final IUnlistedProperty<Integer> FluidLevel = new Properties.PropertyAdapter<Integer>(PropertyInteger.create("fluidLevel", 0, 16));
 	public static final IUnlistedProperty<String> FluidName = new StringProperty("fluidName");
 	public static final IUnlistedProperty<Boolean> CullFluidTop = new Properties.PropertyAdapter<Boolean>(PropertyBool.create("cullFluidTop"));
-	public static final PropertyBool DOWN = PropertyBool.create("down");
-	public static final PropertyBool UP = PropertyBool.create("up");
-	public static final PropertyBool NORTH = PropertyBool.create("north");
-	public static final PropertyBool SOUTH = PropertyBool.create("south");
-	public static final PropertyBool WEST = PropertyBool.create("west");
-	public static final PropertyBool EAST = PropertyBool.create("east");
+	 */
+	public static final BooleanProperty DOWN = BooleanProperty.create("down");
+	public static final BooleanProperty UP = BooleanProperty.create("up");
+	public static final BooleanProperty NORTH = BooleanProperty.create("north");
+	public static final BooleanProperty SOUTH = BooleanProperty.create("south");
+	public static final BooleanProperty WEST = BooleanProperty.create("west");
+	public static final BooleanProperty EAST = BooleanProperty.create("east");
 	
 	private final HashSet<BlockPos> ignoreBlockBreakCoords;
 	
 	
 	public TankBlock()
 	{
-		super(TankMaterial.tankMaterial);
+		super(Block.Properties.create(TankMaterial.tankMaterial)
+				.hardnessAndResistance(Config.tankBlockHardness, Config.tankBlockResistance)
+				.sound(SoundType.GLASS)
+				.harvestLevel(2)
+				.harvestTool(ToolType.PICKAXE));
 
 		setRegistryName(SimpleFluidTanks.TANK_BLOCK_NAME);
-		setUnlocalizedName(SimpleFluidTanks.TANK_BLOCK_NAME);
-		setCreativeTab(SimpleFluidTanks.creativeTab);
-		setHardness(Config.tankBlockHardness);
-		setResistance(Config.tankBlockResistance);
-		setSoundType(SoundType.GLASS);
-		setHarvestLevel("pickaxe", 2);
-		setLightOpacity(0);
+		//setUnlocalizedName(SimpleFluidTanks.TANK_BLOCK_NAME);
+		//setCreativeTab(SimpleFluidTanks.creativeTab);
+		//setLightOpacity(0);
 		
-		setDefaultState(this.blockState.getBaseState()
-				.withProperty(DOWN, false)
-				.withProperty(UP, false)
-				.withProperty(NORTH, false)
-				.withProperty(SOUTH, false)
-				.withProperty(WEST, false)
-				.withProperty(EAST, false));
+		setDefaultState(this.getStateContainer().getBaseState()
+				.with(DOWN,  false)
+				.with(UP,    false)
+				.with(NORTH, false)
+				.with(SOUTH, false)
+				.with(WEST,  false)
+				.with(EAST,  false));
 		
 		ignoreBlockBreakCoords = new HashSet<BlockPos>();
 	}
 
 	@Override
-	protected BlockStateContainer createBlockState()
+	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder)
 	{
+		// FIXME: Unlisted properties missing
+		/*
 		IUnlistedProperty[] unlistedProperties = new IUnlistedProperty[]
-		{
-			FluidLevel, FluidName, CullFluidTop
-		};
-		
-		IProperty[] listedProperties = new IProperty[]
-		{
-			DOWN, UP, NORTH, SOUTH, WEST, EAST
-		};
-		
-		return new ExtendedBlockState(this, listedProperties, unlistedProperties);
+				{
+						FluidLevel, FluidName, CullFluidTop
+				};
+		 */
+		builder.add(DOWN, UP, NORTH, SOUTH, WEST, EAST);
 	}
-	
+
 	@Override
-	public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos)
+	public BlockState getExtendedState(BlockState state, IBlockReader world, BlockPos pos)
 	{
-		IExtendedBlockState extendedState = (IExtendedBlockState)state;
-		
 		TankBlockEntity tankEntity = Utils.getTileEntityAt(world, TankBlockEntity.class, pos);
+
+		if (tankEntity != null && tankEntity.isPartOfTank())
+		{
+			return state
+					.with(DOWN,  tankEntity.isConnected(Direction.DOWN))
+					.with(UP,    tankEntity.isConnected(Direction.UP))
+					.with(NORTH, tankEntity.isConnected(Direction.NORTH))
+					.with(SOUTH, tankEntity.isConnected(Direction.SOUTH))
+					.with(WEST,  tankEntity.isConnected(Direction.WEST))
+					.with(EAST,  tankEntity.isConnected(Direction.EAST));
+		}
+
+		return state
+				.with(DOWN,  false)
+				.with(UP,    false)
+				.with(NORTH, false)
+				.with(SOUTH, false)
+				.with(WEST,  false)
+				.with(EAST,  false);
+
+		/*
 		TankBlockEntity tankAbove = Utils.getTileEntityAt(world, TankBlockEntity.class, pos.up());
 		
 		if (tankEntity != null && tankEntity.isPartOfTank())
@@ -119,17 +133,20 @@ public class TankBlock extends WrenchableBlock
 			boolean cullFluidTop = !tankAboveIsEmpty && sameValve;
 			
 			return extendedState
-					.withProperty(FluidName, (tankFluid != null) ? tankFluid.getName() : "")
-					.withProperty(FluidLevel, fluidLevel)
-					.withProperty(CullFluidTop, cullFluidTop);
+					.with(FluidName, (tankFluid != null) ? tankFluid.getName() : "")
+					.with(FluidLevel, fluidLevel)
+					.with(CullFluidTop, cullFluidTop);
 		}
 		
 		return extendedState
-				.withProperty(FluidName, "")
-				.withProperty(FluidLevel, 0)
-				.withProperty(CullFluidTop, false);
+				.with(FluidName, "")
+				.with(FluidLevel, 0)
+				.with(CullFluidTop, false);
+
+		 */
 	}
-	
+
+	/*
 	@Override
 	public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos)
 	{
@@ -138,29 +155,25 @@ public class TankBlock extends WrenchableBlock
 		if (tankEntity != null && tankEntity.isPartOfTank())
 		{
 			return state
-					.withProperty(DOWN, tankEntity.isConnected(EnumFacing.DOWN))
-					.withProperty(UP, tankEntity.isConnected(EnumFacing.UP))
-					.withProperty(NORTH, tankEntity.isConnected(EnumFacing.NORTH))
-					.withProperty(SOUTH, tankEntity.isConnected(EnumFacing.SOUTH))
-					.withProperty(WEST, tankEntity.isConnected(EnumFacing.WEST))
-					.withProperty(EAST, tankEntity.isConnected(EnumFacing.EAST));
+					.with(DOWN, tankEntity.isConnected(EnumFacing.DOWN))
+					.with(UP, tankEntity.isConnected(EnumFacing.UP))
+					.with(NORTH, tankEntity.isConnected(EnumFacing.NORTH))
+					.with(SOUTH, tankEntity.isConnected(EnumFacing.SOUTH))
+					.with(WEST, tankEntity.isConnected(EnumFacing.WEST))
+					.with(EAST, tankEntity.isConnected(EnumFacing.EAST));
 		}
 		
 		return state
-				.withProperty(DOWN, false)
-				.withProperty(UP, false)
-				.withProperty(NORTH, false)
-				.withProperty(SOUTH, false)
-				.withProperty(WEST, false)
-				.withProperty(EAST, false);
+				.with(DOWN, false)
+				.with(UP, false)
+				.with(NORTH, false)
+				.with(SOUTH, false)
+				.with(WEST, false)
+				.with(EAST, false);
 	}
+	 */
 
-	@Override
-	public int getMetaFromState(IBlockState state)
-	{
-		return 0;
-	}
-
+	/*
 	@Override
 	public boolean isSideSolid(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side)
 	{
@@ -185,66 +198,74 @@ public class TankBlock extends WrenchableBlock
 	{
 		return false;
 	}
-	
-	@SideOnly(Side.CLIENT)
+	 */
+
 	@Override
-	public BlockRenderLayer getBlockLayer()
+	@OnlyIn(Dist.CLIENT)
+	public BlockRenderLayer getRenderLayer()
 	{
 		return BlockRenderLayer.TRANSLUCENT;
 	}
-    
+
 	@Override
-	public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer)
+	public boolean canRenderInLayer(BlockState state, BlockRenderLayer layer)
 	{
 		return (layer == BlockRenderLayer.CUTOUT_MIPPED || layer == BlockRenderLayer.TRANSLUCENT);
 	}
 
 	@Override
-	public EnumBlockRenderType getRenderType(IBlockState state)
-    {
-        return EnumBlockRenderType.MODEL;
-    }
+	public BlockRenderType getRenderType(BlockState state)
+	{
+		return BlockRenderType.MODEL;
+	}
 
 	@Override
-	public boolean hasTileEntity(IBlockState state)
+	public boolean hasTileEntity(BlockState state)
 	{
 		return true;
 	}
 
+	@Nullable
 	@Override
-	public TileEntity createTileEntity(World world, IBlockState state)
+	public TileEntity createTileEntity(BlockState state, IBlockReader world)
 	{
 		return new TankBlockEntity();
 	}
 
-	@SideOnly(Side.CLIENT)
 	@Override
-	public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side)
+	@OnlyIn(Dist.CLIENT)
+	public boolean isSideInvisible(BlockState state, BlockState adjacentBlockState, Direction side)
 	{
+		// FIXME: Ummmm, no world !
 		// Only cull faces touching tank blocks that belong to the same multi block.
+		/*
 		TankBlockEntity adjacentTankEntity = Utils.getTileEntityAt(blockAccess, TankBlockEntity.class, pos.offset(side));
 		TankBlockEntity tankEntity = Utils.getTileEntityAt(blockAccess, TankBlockEntity.class, pos);
 		ValveBlockEntity adjacentTankValve = (adjacentTankEntity != null) ?  adjacentTankEntity.getValve() : null;
 		ValveBlockEntity tankValve = (tankEntity != null) ?  tankEntity.getValve() : null;
-		
+
 		return (adjacentTankEntity == null || (adjacentTankValve != tankValve));
+		 */
+
+		return super.isSideInvisible(state, adjacentBlockState, side);
 	}
 
-	@SideOnly(Side.CLIENT)
 	@Override
-	public boolean doesSideBlockRendering(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing face)
+	@OnlyIn(Dist.CLIENT)
+	public boolean doesSideBlockRendering(BlockState state, IEnviromentBlockReader world, BlockPos pos, Direction face)
 	{
 		return false;
 	}
 
 	@Override
-	public boolean requiresUpdates()
+	public boolean ticksRandomly(BlockState state)
 	{
 		return false;
 	}
 
+	// FIXME: Is there no other way to get notified when the block breaks?
 	@Override
-	public void breakBlock(World world, BlockPos pos, IBlockState state)
+	public void dropXpOnBlockBreak(World world, BlockPos pos, int amount)
 	{
 		if (!world.isRemote)
 		{
@@ -267,7 +288,7 @@ public class TankBlock extends WrenchableBlock
 	}
 
 	@Override
-	protected void handleToolWrenchClick(World world, BlockPos pos, EntityPlayer player, ItemStack equippedItemStack)
+	protected void handleToolWrenchClick(World world, BlockPos pos, PlayerEntity player, ItemStack equippedItemStack)
 	{
 		// dismantle aka. instantly destroy the tank and drop the
 		// appropriate item, telling the connected valve to rebuild in the process
@@ -285,8 +306,12 @@ public class TankBlock extends WrenchableBlock
 			}
 
 			// destroy the TankBlock
+			/*
 			world.setBlockToAir(pos);
 			dropBlockAsItem(world, pos, this.getDefaultState(), 0);
+			 */
+			// FIXME: Is this enough?
+			world.destroyBlock(pos, true);
 
 			if (valveEntity != null)
 			{

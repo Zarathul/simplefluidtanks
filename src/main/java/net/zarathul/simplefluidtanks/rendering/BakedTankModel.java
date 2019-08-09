@@ -1,20 +1,21 @@
 package net.zarathul.simplefluidtanks.rendering;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.block.model.ItemOverrideList;
+import net.minecraft.block.BlockState;
+import net.minecraft.client.renderer.model.BakedQuad;
+import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraftforge.client.MinecraftForgeClient;
-import net.minecraftforge.common.property.IExtendedBlockState;
 import net.zarathul.simplefluidtanks.blocks.TankBlock;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 public class BakedTankModel implements IBakedModel
 {
@@ -31,31 +32,32 @@ public class BakedTankModel implements IBakedModel
 	}
 
 	@Override
-	public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand)
+	public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand)
 	{
 		List<BakedQuad> quads = new LinkedList<BakedQuad>();
-		
+
 		if (MinecraftForgeClient.getRenderLayer() == BlockRenderLayer.CUTOUT_MIPPED)
 		{
 			// Frame
-			
+
 			quads.addAll(baseModel.getQuads(state, side, rand));
 		}
 		else if (MinecraftForgeClient.getRenderLayer() == BlockRenderLayer.TRANSLUCENT)
 		{
 			// Fluid
-			
+
+			// FIXME: No idea how to get this data here since IExtendedBlockState does no longer exist.
 			IExtendedBlockState exState = (IExtendedBlockState)state;
 			boolean cullFluidTop = exState.getValue(TankBlock.CullFluidTop);
 			int fluidLevel = exState.getValue(TankBlock.FluidLevel);
 			String fluidName = exState.getValue(TankBlock.FluidName);
-			
-			// The top quad of the fluid model needs a separate culling logic from the 
+
+			// The top quad of the fluid model needs a separate culling logic from the
 			// rest of the tank, because the top needs to be visible if the tank isn't
 			// full, even if there's a tank above.
 			// (Note that 'side' is null for quads that don't have a cullface annotation in the .json.
 			// The tank model has cullface annotations for every side.)
-			if ((side != null && side != EnumFacing.UP) || (side == null && !cullFluidTop))
+			if ((side != null && side != Direction.UP) || (side == null && !cullFluidTop))
 			{
 				if (fluidLevel > 0 && fluidLevel <= FLUID_LEVELS && FLUID_MODELS.containsKey(fluidName))
 				{
@@ -64,7 +66,7 @@ public class BakedTankModel implements IBakedModel
 				}
 			}
 		}
-		
+
 		return quads;
 	}
 

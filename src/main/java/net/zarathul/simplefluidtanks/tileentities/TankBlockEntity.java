@@ -1,16 +1,17 @@
 package net.zarathul.simplefluidtanks.tileentities;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.block.BlockState;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+import net.zarathul.simplefluidtanks.SimpleFluidTanks;
 import net.zarathul.simplefluidtanks.blocks.TankBlock;
 import net.zarathul.simplefluidtanks.blocks.ValveBlock;
 import net.zarathul.simplefluidtanks.common.Utils;
@@ -48,6 +49,8 @@ public class TankBlockEntity extends TileEntity
 	 */
 	public TankBlockEntity()
 	{
+		super(SimpleFluidTanks.tankEntity);
+
 		fillLevel = 0;
 		isPartOfTank = false;
 		valveCoords = null;
@@ -55,9 +58,9 @@ public class TankBlockEntity extends TileEntity
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound tag)
+	public void read(CompoundNBT tag)
 	{
-		super.readFromNBT(tag);
+		super.read(tag);
 
 		fillLevel = tag.getByte("FillLevel");
 		isPartOfTank = tag.getBoolean("isPartOfTank");
@@ -69,66 +72,69 @@ public class TankBlockEntity extends TileEntity
 		}
 
 		connections = new boolean[6];
-		connections[EnumFacing.DOWN.getIndex()] = tag.getBoolean("Y-");
-		connections[EnumFacing.UP.getIndex()] = tag.getBoolean("Y+");
-		connections[EnumFacing.NORTH.getIndex()] = tag.getBoolean("Z-");
-		connections[EnumFacing.SOUTH.getIndex()] = tag.getBoolean("Z+");
-		connections[EnumFacing.WEST.getIndex()] = tag.getBoolean("X-");
-		connections[EnumFacing.EAST.getIndex()] = tag.getBoolean("X+");
+		connections[Direction.DOWN.getIndex()] = tag.getBoolean("Y-");
+		connections[Direction.UP.getIndex()] = tag.getBoolean("Y+");
+		connections[Direction.NORTH.getIndex()] = tag.getBoolean("Z-");
+		connections[Direction.SOUTH.getIndex()] = tag.getBoolean("Z+");
+		connections[Direction.WEST.getIndex()] = tag.getBoolean("X-");
+		connections[Direction.EAST.getIndex()] = tag.getBoolean("X+");
 	}
 
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound tag)
+	public CompoundNBT write(CompoundNBT tag)
 	{
-		super.writeToNBT(tag);
+		super.write(tag);
 
-		tag.setByte("FillLevel", (byte) fillLevel);
-		tag.setBoolean("isPartOfTank", isPartOfTank);
+		tag.putByte("FillLevel", (byte) fillLevel);
+		tag.putBoolean("isPartOfTank", isPartOfTank);
 
 		if (valveCoords != null)
 		{
 			int[] valveCoordsArray = new int[] { valveCoords.getX(), valveCoords.getY(), valveCoords.getZ() };
-			tag.setIntArray("ValveCoords", valveCoordsArray);
+			tag.putIntArray("ValveCoords", valveCoordsArray);
 		}
 
-		tag.setBoolean("Y-", connections[EnumFacing.DOWN.getIndex()]);
-		tag.setBoolean("Y+", connections[EnumFacing.UP.getIndex()]);
-		tag.setBoolean("Z-", connections[EnumFacing.NORTH.getIndex()]);
-		tag.setBoolean("Z+", connections[EnumFacing.SOUTH.getIndex()]);
-		tag.setBoolean("X-", connections[EnumFacing.WEST.getIndex()]);
-		tag.setBoolean("X+", connections[EnumFacing.EAST.getIndex()]);
+		tag.putBoolean("Y-", connections[Direction.DOWN.getIndex()]);
+		tag.putBoolean("Y+", connections[Direction.UP.getIndex()]);
+		tag.putBoolean("Z-", connections[Direction.NORTH.getIndex()]);
+		tag.putBoolean("Z+", connections[Direction.SOUTH.getIndex()]);
+		tag.putBoolean("X-", connections[Direction.WEST.getIndex()]);
+		tag.putBoolean("X+", connections[Direction.EAST.getIndex()]);
 		
 		return tag;
 	}
 
+	/*
 	@Override
-	public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState)
+	public boolean shouldRefresh(World world, BlockPos pos, BlockState oldState, BlockState newState)
 	{
 		return oldState.getBlock() != newState.getBlock();
 	}
 
+ */
+
 	@Override
-	public NBTTagCompound getUpdateTag()
+	public CompoundNBT getUpdateTag()
 	{
-		NBTTagCompound tag = super.getUpdateTag();
-		writeToNBT(tag);
+		CompoundNBT tag = super.getUpdateTag();
+		write(tag);
 		return tag;
 	}
 
 	@Override
-	public SPacketUpdateTileEntity getUpdatePacket()
+	public SUpdateTileEntityPacket getUpdatePacket()
 	{
-		return new SPacketUpdateTileEntity(pos, -1, getUpdateTag());
+		return new SUpdateTileEntityPacket(pos, -1, getUpdateTag());
 	}
 
 	@Override
-	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet)
+	public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket packet)
 	{
 		int oldFillLevel = fillLevel;
 		boolean wasPartOfTank = isPartOfTank;
 		boolean[] oldConnections = Arrays.copyOf(connections, connections.length);
 		
-		readFromNBT(packet.getNbtCompound());
+		read(packet.getNbtCompound());
 		
 		if (wasPartOfTank != isPartOfTank
 			|| oldFillLevel != fillLevel
@@ -267,7 +273,7 @@ public class TankBlockEntity extends TileEntity
 	 * The side to check.
 	 * @return <code>true</code> the the specified side is connected, otherwise <code>false</code>.
 	 */
-	public boolean isConnected(EnumFacing side)
+	public boolean isConnected(Direction side)
 	{
 		if (side == null) return false;
 		
@@ -296,12 +302,12 @@ public class TankBlockEntity extends TileEntity
 	 */
 	public void updateConnections()
 	{
-		connections[EnumFacing.EAST.getIndex()] = shouldConnectTo(pos.east());		// X+
-		connections[EnumFacing.WEST.getIndex()] = shouldConnectTo(pos.west());		// X-
-		connections[EnumFacing.UP.getIndex()] = shouldConnectTo(pos.up());			// Y+
-		connections[EnumFacing.DOWN.getIndex()] = shouldConnectTo(pos.down());		// Y-
-		connections[EnumFacing.SOUTH.getIndex()] = shouldConnectTo(pos.south());	// Z+
-		connections[EnumFacing.NORTH.getIndex()] = shouldConnectTo(pos.north());	// Z-
+		connections[Direction.EAST.getIndex()] = shouldConnectTo(pos.east());		// X+
+		connections[Direction.WEST.getIndex()] = shouldConnectTo(pos.west());		// X-
+		connections[Direction.UP.getIndex()] = shouldConnectTo(pos.up());			// Y+
+		connections[Direction.DOWN.getIndex()] = shouldConnectTo(pos.down());		// Y-
+		connections[Direction.SOUTH.getIndex()] = shouldConnectTo(pos.south());	// Z+
+		connections[Direction.NORTH.getIndex()] = shouldConnectTo(pos.north());	// Z-
 	}
 
 	/**

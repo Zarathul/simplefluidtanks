@@ -1,5 +1,5 @@
 package net.zarathul.simplefluidtanks.theoneprobe;
-
+/*
 import mcjty.theoneprobe.api.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -16,7 +16,7 @@ import net.zarathul.simplefluidtanks.tileentities.ValveBlockEntity;
 
 /**
  * Provides TheOneProbe tooltip information for portals.
- */
+
 public class TankInfoProvider implements IProbeInfoProvider
 {
 	// I18N keys
@@ -87,3 +87,4 @@ public class TankInfoProvider implements IProbeInfoProvider
 		}
 	}
 }
+*/

@@ -1,6 +1,6 @@
 package net.zarathul.simplefluidtanks.blocks;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fluids.*;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -83,19 +83,19 @@ public class FluidTank implements IFluidTank, IFluidHandler, IFluidTankPropertie
 		this(tile, new FluidStack(fluid, amount), capacity);
 	}
 
-	public FluidTank readFromNBT(NBTTagCompound nbt)
+	public FluidTank readFromNBT(CompoundNBT nbt)
 	{
-		setCapacity(nbt.getInteger("Capacity"));
+		setCapacity(nbt.getInt("Capacity"));
 
-		FluidStack loadedFluid = (nbt.hasKey("Empty")) ? null : FluidStack.loadFluidStackFromNBT(nbt);
+		FluidStack loadedFluid = (nbt.contains("Empty")) ? null : FluidStack.loadFluidStackFromNBT(nbt);
 		setFluid(loadedFluid);
 
 		return this;
 	}
 
-	public NBTTagCompound writeToNBT(NBTTagCompound nbt)
+	public CompoundNBT writeToNBT(CompoundNBT nbt)
 	{
-		nbt.setInteger("Capacity", capacity);
+		nbt.putInt("Capacity", capacity);
 
 		if (fluid != null)
 		{
@@ -103,7 +103,7 @@ public class FluidTank implements IFluidTank, IFluidHandler, IFluidTankPropertie
 		}
 		else
 		{
-			nbt.setString("Empty", "");
+			nbt.putString("Empty", "");
 		}
 
 		return nbt;

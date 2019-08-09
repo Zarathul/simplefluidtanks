@@ -6,13 +6,14 @@ import cofh.api.item.IToolHammer;
 import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.translation.I18n;
-import net.minecraft.world.ChunkCache;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.translation.LanguageMap;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.zarathul.simplefluidtanks.SimpleFluidTanks;
@@ -34,21 +35,22 @@ public final class Utils
 	/**
 	 * Gets the {@link TileEntity} at the specified coordinates, cast to the specified type.
 	 * 
-	 * @param access
-	 * An {@link IBlockAccess} implementation. Usually the world.
+	 * @param world
+	 * The world.
 	 * @param tileType
 	 * The type the {@link TileEntity} should be cast to.
 	 * @param pos
 	 * The coordinates of the {@link TileEntity}.
 	 * @return The {@link TileEntity} or <code>null</code> if no {@link TileEntity} was found or the types didn't match.
 	 */
- 	public static final <T extends TileEntity> T getTileEntityAt(IBlockAccess access, Class<T> tileType, BlockPos pos)
+ 	public static final <T extends TileEntity> T getTileEntityAt(IBlockReader world, Class<T> tileType, BlockPos pos)
 	{
-		if (access != null && tileType != null && pos != null)
+		if (world != null && tileType != null && pos != null)
 		{
-			TileEntity tile = (access instanceof ChunkCache)
-				? ((ChunkCache)access).getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK)
-				: access.getTileEntity(pos);
+			//TileEntity tile = world.getChunkAt(pos).getTileEntity(pos, Chunk.CreateEntityType.CHECK);
+			// FIXME: This creates a TileEntity if there is none at 'pos', which is bad. Well, the new interface does
+			//  not provide a method to get the chunk ... soooo out of luck I guess.
+			TileEntity tile = world.getTileEntity(pos);
 
 			if (tile != null && tile.getClass() == tileType)
 			{
@@ -72,7 +74,7 @@ public final class Utils
 	{
 		if (world == null || pos == null) return;
 		
-		IBlockState state = world.getBlockState(pos);
+		BlockState state = world.getBlockState(pos);
 		
 		world.markAndNotifyBlock(pos, null, state, state, 2);
 	}
@@ -88,7 +90,7 @@ public final class Utils
 	 * @param pos
 	 * The {@link TankBlock}s coordinates.
 	 */
-	public static ValveBlockEntity getValve(IBlockAccess world, BlockPos pos)
+	public static ValveBlockEntity getValve(World world, BlockPos pos)
 	{
 		if (world != null && pos != null)
 		{
@@ -138,20 +140,22 @@ public final class Utils
 	 * @param args
 	 * Formatting arguments.
 	 * @return
-	 * A list of localized strings for the specified key, or an empty list if the key was not found.
+	 * A list of localized ITextComponents for the specified key, or an empty list if the key was not found.
 	 */
-	public static final ArrayList<String> multiLineTranslateToLocal(String key, Object... args)
+	public static final ArrayList<ITextComponent> multiLineTranslateToLocal(String key, Object... args)
 	{
-		ArrayList<String> lines = new ArrayList<String>();
+		ArrayList<ITextComponent> lines = new ArrayList<>();
 
 		if (key != null)
 		{
 			int x = 0;
 			String currentKey = key + x;
+			LanguageMap I18nMap = LanguageMap.getInstance();
 
-			while (I18n.canTranslate(currentKey))
+			while (I18nMap.exists(currentKey))
 			{
-				lines.add(I18n.translateToLocalFormatted(currentKey, args));
+				// Get translated text and apply formatting because 'translateToLocalFormatted()' is gone .. yay ....
+				lines.add(new StringTextComponent(String.format(I18nMap.translateKey(currentKey), args)));
 				currentKey = key + ++x;
 			}
 		}

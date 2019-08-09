@@ -10,6 +10,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -27,6 +28,7 @@ import net.zarathul.simplefluidtanks.blocks.ValveBlock;
 import net.zarathul.simplefluidtanks.common.BasicAStar;
 import net.zarathul.simplefluidtanks.common.BlockSearchMode;
 import net.zarathul.simplefluidtanks.common.Direction;
+import net.zarathul.simplefluidtanks.common.Directions;
 import net.zarathul.simplefluidtanks.common.Utils;
 import net.zarathul.simplefluidtanks.configuration.Config;
 
@@ -90,7 +92,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	/**
 	 * The facing of the valve when it's not part of a multiblock.
 	 */
-	private EnumFacing facing;
+	private Direction facing;
 
 	public ValveBlockEntity()
 	{
@@ -261,7 +263,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	 * 
 	 * @return The direction the valve is facing in.
 	 */
-	public EnumFacing getFacing()
+	public Direction getFacing()
 	{
 		return facing;
 	}
@@ -270,11 +272,11 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	 * Sets the facing of the valve.
 	 * 
 	 * @param facing
-	 * One of the {@link EnumFacing} values (values on the y axis are ignored).
+	 * One of the {@link Direction} values (values on the y axis are ignored).
 	 */
-	public void setFacing(EnumFacing facing)
+	public void setFacing(Direction facing)
 	{
-		if (facing.getAxis() != EnumFacing.Axis.Y)
+		if (facing.getAxis() != Direction.Axis.Y)
 		{
 			this.facing = facing;
 		}
@@ -433,11 +435,11 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	 * @return <code>true</code> if the {@link ValveBlock} is facing a connected {@link TankBlock} on the specified side, otherwise <code>false</code>.
 	 * @see Direction
 	 */
-	public boolean isFacingTank(EnumFacing side)
+	public boolean isFacingTank(Direction side)
 	{
 		if (side != null)
 		{
-			byte flags = Direction.sidesToBitFlagsMappings.get(side).byteValue();
+			byte flags = Directions.sidesToBitFlagsMappings.get(side).byteValue();
 
 			return (tankFacingSides & flags) == flags;
 		}

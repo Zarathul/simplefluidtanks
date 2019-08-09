@@ -1,20 +1,13 @@
 package net.zarathul.simplefluidtanks.blocks;
 
-import appeng.api.implementations.items.IAEWrench;
-import blusunrize.immersiveengineering.api.tool.ITool;
-import cofh.api.item.IToolHammer;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockContainer;
-import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.world.World;
-import net.zarathul.simplefluidtanks.SimpleFluidTanks;
 import net.zarathul.simplefluidtanks.common.Utils;
 
 /**
@@ -22,14 +15,13 @@ import net.zarathul.simplefluidtanks.common.Utils;
  */
 public abstract class WrenchableBlock extends Block
 {
-	protected WrenchableBlock(Material material)
+	protected WrenchableBlock(Block.Properties props)
 	{
-		super(material);
+		super(props);
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player,
-			EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
+	public boolean onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit)
 	{
 		ItemStack heldItemStack = player.getHeldItem(hand);
 
@@ -43,11 +35,11 @@ public abstract class WrenchableBlock extends Block
 			return true;
 		}
 
-		return super.onBlockActivated(world, pos, state, player, hand, side, hitX, hitY, hitZ);
+		return super.onBlockActivated(state, world, pos, player, hand, hit);
 	}
 
 	/**
-	 * Handles clicks with wrenches on the {@link BlockContainer}.
+	 * Handles clicks with wrenches on the block.
 	 * 
 	 * @param world
 	 * The world.
@@ -56,7 +48,7 @@ public abstract class WrenchableBlock extends Block
 	 * @param player
 	 * The player using the item.
 	 * @param equippedItemStack
-	 * The item(stack) used on the {@link ValveBlock}.
+	 * The item(stack) used on the block.
 	 */
-	protected abstract void handleToolWrenchClick(World world, BlockPos pos, EntityPlayer player, ItemStack equippedItemStack);
+	protected abstract void handleToolWrenchClick(World world, BlockPos pos, PlayerEntity player, ItemStack equippedItemStack);
 }

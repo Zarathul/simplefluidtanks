@@ -1,6 +1,6 @@
 package net.zarathul.simplefluidtanks.common;
 
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.*;
@@ -287,10 +287,10 @@ public class BasicAStar
 	{
 		BlockPos[] neighborBlocks = new BlockPos[]
 		{
-			node.block.offset(EnumFacing.EAST),
-			node.block.offset(EnumFacing.WEST),
-			node.block.offset(EnumFacing.SOUTH),
-			node.block.offset(EnumFacing.NORTH)
+			node.block.offset(Direction.EAST),
+			node.block.offset(Direction.WEST),
+			node.block.offset(Direction.SOUTH),
+			node.block.offset(Direction.NORTH)
 		};
 
 		for (BlockPos neighborBlock : neighborBlocks)

@@ -1,22 +1,25 @@
 package net.zarathul.simplefluidtanks.blocks;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockRenderType;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
-import net.minecraft.block.properties.PropertyInteger;
-import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.play.server.SPacketSoundEffect;
+import net.minecraft.network.play.server.SPlaySoundEffectPacket;
+import net.minecraft.state.IntegerProperty;
+import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumBlockRenderType;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ToolType;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -26,19 +29,19 @@ import net.zarathul.simplefluidtanks.common.Utils;
 import net.zarathul.simplefluidtanks.configuration.Config;
 import net.zarathul.simplefluidtanks.tileentities.ValveBlockEntity;
 
-import java.util.Random;
+import javax.annotation.Nullable;
 
 /**
  * Represents a valve in the mods multiblock structure.
  */
 public class ValveBlock extends WrenchableBlock
 {
-	public static final PropertyInteger DOWN = PropertyInteger.create("down", 0, 2);
-	public static final PropertyInteger UP = PropertyInteger.create("up", 0, 2);
-	public static final PropertyInteger NORTH = PropertyInteger.create("north", 0, 2);
-	public static final PropertyInteger SOUTH = PropertyInteger.create("south", 0, 2);
-	public static final PropertyInteger WEST = PropertyInteger.create("west", 0, 2);
-	public static final PropertyInteger EAST = PropertyInteger.create("east", 0, 2);
+	public static final IntegerProperty DOWN = IntegerProperty.create("down", 0, 2);
+	public static final IntegerProperty UP = IntegerProperty.create("up", 0, 2);
+	public static final IntegerProperty NORTH = IntegerProperty.create("north", 0, 2);
+	public static final IntegerProperty SOUTH = IntegerProperty.create("south", 0, 2);
+	public static final IntegerProperty WEST = IntegerProperty.create("west", 0, 2);
+	public static final IntegerProperty EAST = IntegerProperty.create("east", 0, 2);
 	
 	private static final int GRATE_TEXTURE_ID = 0;
 	private static final int IO_TEXTURE_ID = 1;
@@ -46,97 +49,92 @@ public class ValveBlock extends WrenchableBlock
 
 	public ValveBlock()
 	{
-		super(TankMaterial.tankMaterial);
+		super(Block.Properties.create(TankMaterial.tankMaterial)
+		.hardnessAndResistance(Config.valveBlockHardness, Config.valveBlockResistance)
+		.sound(SoundType.METAL)
+		.harvestLevel(2)
+		.harvestTool(ToolType.PICKAXE));
 
 		setRegistryName(SimpleFluidTanks.VALVE_BLOCK_NAME);
-		setUnlocalizedName(SimpleFluidTanks.VALVE_BLOCK_NAME);
-		setCreativeTab(SimpleFluidTanks.creativeTab);
-		setHardness(Config.valveBlockHardness);
-		setResistance(Config.valveBlockResistance);
-		setSoundType(SoundType.METAL);
-		setHarvestLevel("pickaxe", 2);
-		
-		this.setDefaultState(this.blockState.getBaseState()
-				.withProperty(UP, GRATE_TEXTURE_ID)
-				.withProperty(NORTH, IO_TEXTURE_ID));
+		//setUnlocalizedName(SimpleFluidTanks.VALVE_BLOCK_NAME);
+		//setCreativeTab(SimpleFluidTanks.creativeTab);
+
+		this.setDefaultState(this.getStateContainer().getBaseState()
+				.with(UP, GRATE_TEXTURE_ID)
+				.with(NORTH, IO_TEXTURE_ID));
 	}
-    
-	@Override
-	public EnumBlockRenderType getRenderType(IBlockState state)
-    {
-        return EnumBlockRenderType.MODEL;
-    }
 
 	@Override
-	public boolean hasTileEntity(IBlockState state)
+	public boolean hasTileEntity(BlockState state)
 	{
 		return true;
 	}
 
+	@Nullable
 	@Override
-	public TileEntity createTileEntity(World world, IBlockState state)
+	public TileEntity createTileEntity(BlockState state, IBlockReader world)
 	{
 		return new ValveBlockEntity();
 	}
 
 	@Override
-	protected BlockStateContainer createBlockState()
+	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder)
 	{
-		return new BlockStateContainer(this, DOWN, UP, NORTH, SOUTH, WEST, EAST);
-	}
-	
-	@Override
-	public int getMetaFromState(IBlockState state)
-	{
-		return 0;
+		builder.add(DOWN, UP, NORTH, SOUTH, WEST, EAST);
 	}
 
 	@Override
-	public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos)
+	public BlockRenderType getRenderType(BlockState state)
+	{
+		return BlockRenderType.MODEL;
+	}
+
+	@Override
+	public BlockState getExtendedState(BlockState state, IBlockReader world, BlockPos pos)
 	{
 		ValveBlockEntity valveEntity = Utils.getTileEntityAt(world, ValveBlockEntity.class, pos);
-		
+
 		if (valveEntity != null)
 		{
 			if (valveEntity.hasTanks())
 			{
-				state = state.withProperty(DOWN, (valveEntity.isFacingTank(EnumFacing.DOWN)) ? GRATE_TEXTURE_ID : IO_TEXTURE_ID)
-						.withProperty(UP, (valveEntity.isFacingTank(EnumFacing.UP)) ? GRATE_TEXTURE_ID : IO_TEXTURE_ID)
-						.withProperty(NORTH, (valveEntity.isFacingTank(EnumFacing.NORTH)) ? GRATE_TEXTURE_ID : IO_TEXTURE_ID)
-						.withProperty(SOUTH, (valveEntity.isFacingTank(EnumFacing.SOUTH)) ? GRATE_TEXTURE_ID : IO_TEXTURE_ID)
-						.withProperty(WEST, (valveEntity.isFacingTank(EnumFacing.WEST)) ? GRATE_TEXTURE_ID : IO_TEXTURE_ID)
-						.withProperty(EAST, (valveEntity.isFacingTank(EnumFacing.EAST)) ? GRATE_TEXTURE_ID : IO_TEXTURE_ID);
+				state = state.with(DOWN , (valveEntity.isFacingTank(Direction.DOWN))  ? GRATE_TEXTURE_ID : IO_TEXTURE_ID)
+							 .with(UP   , (valveEntity.isFacingTank(Direction.UP))    ? GRATE_TEXTURE_ID : IO_TEXTURE_ID)
+							 .with(NORTH, (valveEntity.isFacingTank(Direction.NORTH)) ? GRATE_TEXTURE_ID : IO_TEXTURE_ID)
+							 .with(SOUTH, (valveEntity.isFacingTank(Direction.SOUTH)) ? GRATE_TEXTURE_ID : IO_TEXTURE_ID)
+							 .with(WEST , (valveEntity.isFacingTank(Direction.WEST))  ? GRATE_TEXTURE_ID : IO_TEXTURE_ID)
+							 .with(EAST , (valveEntity.isFacingTank(Direction.EAST))  ? GRATE_TEXTURE_ID : IO_TEXTURE_ID);
 			}
 			else
 			{
-				EnumFacing facing = valveEntity.getFacing();
-				
-				state = state.withProperty(DOWN, TANK_TEXTURE_ID)
-						.withProperty(UP, GRATE_TEXTURE_ID)
-						.withProperty(NORTH, (facing == EnumFacing.NORTH) ? IO_TEXTURE_ID : TANK_TEXTURE_ID)
-						.withProperty(SOUTH, (facing == EnumFacing.SOUTH) ? IO_TEXTURE_ID : TANK_TEXTURE_ID)
-						.withProperty(WEST, (facing == EnumFacing.WEST) ? IO_TEXTURE_ID : TANK_TEXTURE_ID)
-						.withProperty(EAST, (facing == EnumFacing.EAST) ? IO_TEXTURE_ID : TANK_TEXTURE_ID);
+				Direction facing = valveEntity.getFacing();
+
+				state = state.with(DOWN , TANK_TEXTURE_ID)
+							 .with(UP   , GRATE_TEXTURE_ID)
+							 .with(NORTH, (facing == Direction.NORTH) ? IO_TEXTURE_ID : TANK_TEXTURE_ID)
+							 .with(SOUTH, (facing == Direction.SOUTH) ? IO_TEXTURE_ID : TANK_TEXTURE_ID)
+							 .with(WEST , (facing == Direction.WEST)  ? IO_TEXTURE_ID : TANK_TEXTURE_ID)
+							 .with(EAST , (facing == Direction.EAST)  ? IO_TEXTURE_ID : TANK_TEXTURE_ID);
 			}
 		}
-		
+
 		return state;
 	}
 
 	@Override
-	public boolean requiresUpdates()
+	public boolean ticksRandomly(BlockState state)
 	{
 		return false;
 	}
 
 	@Override
-	public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack items)
+	public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack items)
 	{
 		super.onBlockPlacedBy(world, pos, state, placer, items);
 		
 		if (!world.isRemote)
 		{
-			EnumFacing facing = placer.getHorizontalFacing().getOpposite();
+			Direction facing = placer.getHorizontalFacing().getOpposite();
 			
 			ValveBlockEntity valveEntity = Utils.getTileEntityAt(world, ValveBlockEntity.class, pos);
 			
@@ -150,7 +148,7 @@ public class ValveBlock extends WrenchableBlock
 	}
 
 	@Override
-	public void onBlockAdded(World world, BlockPos pos, IBlockState state)
+	public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean isMoving)
 	{
 		if (!world.isRemote)
 		{
@@ -164,8 +162,7 @@ public class ValveBlock extends WrenchableBlock
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player,
-			EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
+	public boolean onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit)
 	{
 		if (!world.isRemote)
 		{
@@ -173,7 +170,7 @@ public class ValveBlock extends WrenchableBlock
 
 			if (valveEntity != null)
 			{
-				IFluidHandler handler = valveEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side);
+				IFluidHandler handler = valveEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, hit.getFace()).orElse(null);
 
 				if (handler != null)
 				{
@@ -187,7 +184,7 @@ public class ValveBlock extends WrenchableBlock
 							? valveEntity.getFluid().getFluid().getEmptySound()
 							: tankFluidBefore.getFluid().getFillSound();
 
-						((EntityPlayerMP)player).connection.sendPacket(new SPacketSoundEffect(
+						((ServerPlayerEntity)player).connection.sendPacket(new SPlaySoundEffectPacket(
 							soundevent,
 							player.getSoundCategory(),
 							player.posX, player.posY, player.posZ,
@@ -199,23 +196,17 @@ public class ValveBlock extends WrenchableBlock
 
 		if (FluidUtil.getFluidHandler(player.getHeldItem(hand)) != null) return true;
 		
-		return super.onBlockActivated(world, pos, state, player, hand, side, hitX, hitY, hitZ);
+		return super.onBlockActivated(state, world, pos, player, hand, hit);
 	}
 
 	@Override
-	public int quantityDropped(IBlockState state, int fortune, Random random)
-	{
-		return 1;
-	}
-
-	@Override
-	public boolean hasComparatorInputOverride(IBlockState state)
+	public boolean hasComparatorInputOverride(BlockState state)
 	{
 		return true;
 	}
 
 	@Override
-	public int getComparatorInputOverride(IBlockState state, World world, BlockPos pos)
+	public int getComparatorInputOverride(BlockState state, World world, BlockPos pos)
 	{
 		ValveBlockEntity valveEntity = Utils.getTileEntityAt(world, ValveBlockEntity.class, pos);
 
@@ -231,8 +222,9 @@ public class ValveBlock extends WrenchableBlock
 		return 0;
 	}
 
+	// FIXME: Is there no other way to get notified when the block breaks?
 	@Override
-	public void breakBlock(World world, BlockPos pos, IBlockState state)
+	public void dropXpOnBlockBreak(World world, BlockPos pos, int amount)
 	{
 		if (!world.isRemote)
 		{
@@ -247,7 +239,7 @@ public class ValveBlock extends WrenchableBlock
 	}
 
 	@Override
-	protected void handleToolWrenchClick(World world, BlockPos pos, EntityPlayer player, ItemStack equippedItemStack)
+	protected void handleToolWrenchClick(World world, BlockPos pos, PlayerEntity player, ItemStack equippedItemStack)
 	{
 		// On sneak use: disband the multiblock | On use: rebuild the multiblock
 
@@ -260,8 +252,12 @@ public class ValveBlock extends WrenchableBlock
 				valveEntity.disbandMultiblock();
 			}
 
+			/*
 			world.setBlockToAir(pos);
 			dropBlockAsItem(world, pos, this.getDefaultState(), 0);
+			*/
+			// FIXME: Is this enough?
+			world.destroyBlock(pos, true);
 		}
 		else if (valveEntity != null)
 		{
