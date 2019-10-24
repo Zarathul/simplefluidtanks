@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.fluid.Fluid;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
@@ -29,15 +30,8 @@ public class BakedTankFluidModel implements IBakedModel
     private static final float[] x = { 0, 0, 1, 1 };
     private static final float[] z = { 0, 1, 1, 0 };
 
-    private static final ResourceLocation WATER_STILL_TEXTURE_LOC;
+    private static final ResourceLocation WATER_STILL_TEXTURE_LOC = Fluids.WATER.getAttributes().getStillTexture();
 
-    static
-	{
-		// TODO: check if the key for water is correct
-		ResourceLocation waterRegistryKey = new ResourceLocation("minecraft:water");
-		WATER_STILL_TEXTURE_LOC = ForgeRegistries.FLUIDS.getValue(waterRegistryKey).getAttributes().getStillTexture();
-	}
-	
     private Fluid fluid;
 	private int level;
 	private VertexFormat format;

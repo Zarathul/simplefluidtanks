@@ -15,10 +15,7 @@ import net.zarathul.simplefluidtanks.blocks.TankBlock;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class BakedTankModel implements IBakedModel
 {
@@ -37,16 +34,7 @@ public class BakedTankModel implements IBakedModel
 	@Override
 	public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand)
 	{
-		// WTF TODO here?
-		return null;
-	}
-
-	@Nonnull
-	@Override
-	public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData extraData)
-	{
-		// TODO: why the fuck is this a linked list ?
-		List<BakedQuad> quads = new LinkedList<BakedQuad>();
+		List<BakedQuad> quads = new ArrayList<>();
 
 		if (MinecraftForgeClient.getRenderLayer() == BlockRenderLayer.CUTOUT_MIPPED)
 		{
@@ -66,19 +54,28 @@ public class BakedTankModel implements IBakedModel
 			// rest of the tank, because the top needs to be visible if the tank isn't
 			// full, even if there's a tank above.
 			// (Note that 'side' is null for quads that don't have a cullface annotation in the .json.
+			// UPDATE 1.14.4: Not true anymore. Side is now never null. What this means in the context of
+			// cullface annotations in unknown.
 			// The tank model has cullface annotations for every side.)
-			if ((side != null && side != Direction.UP) || (side == null && !cullFluidTop))
+			if ((!cullFluidTop || side != Direction.UP) &&
+				(fluidLevel > 0 && fluidLevel <= FLUID_LEVELS && FLUID_MODELS.containsKey(fluidName)))
 			{
-				if (fluidLevel > 0 && fluidLevel <= FLUID_LEVELS && FLUID_MODELS.containsKey(fluidName))
-				{
-					IBakedModel fluidModel = FLUID_MODELS.get(fluidName)[fluidLevel - 1];
-					quads.addAll(fluidModel.getQuads(null, side, rand));
-				}
+				IBakedModel fluidModel = FLUID_MODELS.get(fluidName)[fluidLevel - 1];
+				quads.addAll(fluidModel.getQuads(null, side, rand));
 			}
 		}
 
 		return quads;
 	}
+
+	/*
+	@Nonnull
+	@Override
+	public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData extraData)
+	{
+	}
+
+	 */
 
 	@Override
 	public boolean isAmbientOcclusion()
@@ -98,6 +95,7 @@ public class BakedTankModel implements IBakedModel
 		return baseModel.isBuiltInRenderer();
 	}
 
+	@Nonnull
 	@Override
 	public TextureAtlasSprite getParticleTexture()
 	{
@@ -110,15 +108,17 @@ public class BakedTankModel implements IBakedModel
 		return baseModel.getParticleTexture();
 	}
 
+	@Nonnull
 	@Override
 	public ItemCameraTransforms getItemCameraTransforms()
 	{
 		return baseModel.getItemCameraTransforms();
 	}
 
+	@Nonnull
 	@Override
 	public ItemOverrideList getOverrides()
 	{
-		return null;
+		return ItemOverrideList.EMPTY;
 	}
 }

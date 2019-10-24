@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -134,6 +135,9 @@ public final class EventHub
 		for (Map.Entry<ResourceLocation, Fluid> entry : ForgeRegistries.FLUIDS.getEntries())
 		{
 			fluid = entry.getValue();
+			// Why the EMPTY fluid and the flowing variants are in the registry now is beyond me.
+			if (fluid == Fluids.EMPTY || fluid == Fluids.FLOWING_WATER || fluid == Fluids.FLOWING_LAVA) continue;
+
 			bakedFluidModels = new IBakedModel[BakedTankModel.FLUID_LEVELS];
 
 			for (int x = 0; x < BakedTankModel.FLUID_LEVELS; x++)

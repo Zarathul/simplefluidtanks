@@ -7,6 +7,7 @@ import net.minecraft.block.SoundType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.SPlaySoundEffectPacket;
 import net.minecraft.state.IntegerProperty;
@@ -20,6 +21,7 @@ import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -58,8 +60,12 @@ public class ValveBlock extends WrenchableBlock
 		setRegistryName(SimpleFluidTanks.VALVE_BLOCK_NAME);
 
 		this.setDefaultState(this.getStateContainer().getBaseState()
+				.with(DOWN, TANK_TEXTURE_ID)
 				.with(UP, GRATE_TEXTURE_ID)
-				.with(NORTH, IO_TEXTURE_ID));
+				.with(NORTH, IO_TEXTURE_ID)
+				.with(SOUTH, TANK_TEXTURE_ID)
+				.with(WEST, TANK_TEXTURE_ID)
+				.with(EAST, TANK_TEXTURE_ID));
 	}
 
 	@Override
@@ -87,6 +93,22 @@ public class ValveBlock extends WrenchableBlock
 		return BlockRenderType.MODEL;
 	}
 
+	@Nullable
+	@Override
+	public BlockState getStateForPlacement(BlockItemUseContext context)
+	{
+		Direction facing = context.getNearestLookingDirection().getOpposite();
+
+		return getDefaultState()
+				.with(DOWN , TANK_TEXTURE_ID)
+				.with(UP   , GRATE_TEXTURE_ID)
+				.with(NORTH, (facing == Direction.NORTH) ? IO_TEXTURE_ID : TANK_TEXTURE_ID)
+				.with(SOUTH, (facing == Direction.SOUTH) ? IO_TEXTURE_ID : TANK_TEXTURE_ID)
+				.with(WEST , (facing == Direction.WEST)  ? IO_TEXTURE_ID : TANK_TEXTURE_ID)
+				.with(EAST , (facing == Direction.EAST)  ? IO_TEXTURE_ID : TANK_TEXTURE_ID);
+	}
+
+	/*
 	@Override
 	public BlockState getExtendedState(BlockState state, IBlockReader world, BlockPos pos)
 	{
@@ -94,6 +116,7 @@ public class ValveBlock extends WrenchableBlock
 
 		if (valveEntity != null)
 		{
+			// TODO: where to do this?
 			if (valveEntity.hasTanks())
 			{
 				state = state.with(DOWN , (valveEntity.isFacingTank(Direction.DOWN))  ? GRATE_TEXTURE_ID : IO_TEXTURE_ID)
@@ -118,6 +141,8 @@ public class ValveBlock extends WrenchableBlock
 
 		return state;
 	}
+
+	 */
 
 	@Override
 	public boolean ticksRandomly(BlockState state)
@@ -173,26 +198,29 @@ public class ValveBlock extends WrenchableBlock
 				if (handler != null)
 				{
 					// FIXME: Horrible workaround until Forge fixes sounds not playing client-side.
-					FluidStack tankFluidBefore = (valveEntity.getFluidAmount() > 0) ? valveEntity.getFluid().copy() : null;
+					FluidStack tankFluidBefore = valveEntity.getFluid().copy();
 
 					if (FluidUtil.interactWithFluidHandler(player, hand, handler))
 					{
 						// Pick a sound depending on what happens with the held container item.
-						SoundEvent soundevent = (tankFluidBefore == null || tankFluidBefore.getAmount() < valveEntity.getFluidAmount())
-							? valveEntity.getFluid().getFluid().getAttributes().getEmptySound()
-							: tankFluidBefore.getFluid().getAttributes().getFillSound();
+						SoundEvent soundevent = (tankFluidBefore.getAmount() < valveEntity.getFluidAmount())
+												? valveEntity.getFluid().getFluid().getAttributes().getEmptySound()
+												: tankFluidBefore.getFluid().getAttributes().getFillSound();
 
-						((ServerPlayerEntity)player).connection.sendPacket(new SPlaySoundEffectPacket(
-							soundevent,
-							player.getSoundCategory(),
-							player.posX, player.posY, player.posZ,
-							1.0f, 1.0f));
+						if (soundevent != null)
+						{
+							((ServerPlayerEntity)player).connection.sendPacket(new SPlaySoundEffectPacket(
+									soundevent,
+									player.getSoundCategory(),
+									player.posX, player.posY, player.posZ,
+									1.0f, 1.0f));
+						}
 					}
 				}
 			}
 		}
 
-		if (FluidUtil.getFluidHandler(player.getHeldItem(hand)) != null) return true;
+		if (FluidUtil.getFluidHandler(player.getHeldItem(hand)).isPresent()) return true;
 		
 		return super.onBlockActivated(state, world, pos, player, hand, hit);
 	}

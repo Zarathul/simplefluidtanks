@@ -419,12 +419,11 @@ public class ValveBlockEntity extends TileEntity
 			tanksBeforeDisband.addAll(tankPriorities.values());
 		}
 
-		FluidStack fluidInTank = internalTank.getFluid();
-		FluidStack spilledFluid = (fluidInTank != null) ? fluidInTank.copy() : null;
+		//FluidStack spilledFluid = internalTank.getFluid().copy();
 		tankPriorities.clear();
 		linkedTankCount = 0;
 		tankFacingSides = 0;
-		internalTank.setFluid(null);
+		internalTank.setFluid(FluidStack.EMPTY);
 		internalTank.setCapacity(0);
 
 		if (!suppressBlockUpdates)
@@ -445,7 +444,7 @@ public class ValveBlockEntity extends TileEntity
 	{
 		// store the current fluid for reinsertion
 		FluidStack fluid = internalTank.getFluid();
-		int oldFluidAmount = (fluid != null) ? fluid.getAmount() : 0;
+		int oldFluidAmount = fluid.getAmount();
 
 		// find new tanks and update the valves textures
 
@@ -457,21 +456,24 @@ public class ValveBlockEntity extends TileEntity
 		updateTankFacingSides();
 
 		// redistribute the fluid
-		internalTank.setFluid(fluid);		// FIXME: Why is this here?
+		internalTank.setFluid(fluid);
 		distributeFluidToTanks(true);
 		// the ValveBlock also counts as a tank in the multiblock structure
 		linkedTankCount = Math.max(tankPriorities.size() - 1, 0);
 
 		Utils.syncBlockAndRerender(world, pos);
 		markDirty();
-		
-		if (oldFluidAmount > this.internalTank.getCapacity() && fluid != null)
+
+		// FIXME: fluid event
+		/*
+		if (oldFluidAmount > this.internalTank.getCapacity() && !fluid.isEmpty())
 		{
 			FluidStack spilledFluid = fluid.copy();
 			spilledFluid.setAmount(oldFluidAmount - this.internalTank.getCapacity());
-			// FIXME: fluid event
-			//FluidEvent.fireEvent(new FluidEvent.FluidSpilledEvent(spilledFluid, world, pos));
+			FluidEvent.fireEvent(new FluidEvent.FluidSpilledEvent(spilledFluid, world, pos));
 		}
+
+		 */
 	}
 
 	/**
