@@ -49,15 +49,13 @@ public class ValveBlock extends WrenchableBlock
 
 	public ValveBlock()
 	{
-		super(Block.Properties.create(TankMaterial.tankMaterial)
-		.hardnessAndResistance(Config.valveBlockHardness, Config.valveBlockResistance)
+		super(Block.Properties.create(SimpleFluidTanks.tankMaterial)
+		.hardnessAndResistance(Config.valveBlockHardness.get().floatValue(), Config.valveBlockResistance.get().floatValue())
 		.sound(SoundType.METAL)
 		.harvestLevel(2)
 		.harvestTool(ToolType.PICKAXE));
 
 		setRegistryName(SimpleFluidTanks.VALVE_BLOCK_NAME);
-		//setUnlocalizedName(SimpleFluidTanks.VALVE_BLOCK_NAME);
-		//setCreativeTab(SimpleFluidTanks.creativeTab);
 
 		this.setDefaultState(this.getStateContainer().getBaseState()
 				.with(UP, GRATE_TEXTURE_ID)
@@ -180,9 +178,9 @@ public class ValveBlock extends WrenchableBlock
 					if (FluidUtil.interactWithFluidHandler(player, hand, handler))
 					{
 						// Pick a sound depending on what happens with the held container item.
-						SoundEvent soundevent = (tankFluidBefore == null || tankFluidBefore.amount < valveEntity.getFluidAmount())
-							? valveEntity.getFluid().getFluid().getEmptySound()
-							: tankFluidBefore.getFluid().getFillSound();
+						SoundEvent soundevent = (tankFluidBefore == null || tankFluidBefore.getAmount() < valveEntity.getFluidAmount())
+							? valveEntity.getFluid().getFluid().getAttributes().getEmptySound()
+							: tankFluidBefore.getFluid().getAttributes().getFillSound();
 
 						((ServerPlayerEntity)player).connection.sendPacket(new SPlaySoundEffectPacket(
 							soundevent,
@@ -222,9 +220,8 @@ public class ValveBlock extends WrenchableBlock
 		return 0;
 	}
 
-	// FIXME: Is there no other way to get notified when the block breaks?
 	@Override
-	public void dropXpOnBlockBreak(World world, BlockPos pos, int amount)
+	public void onReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean isMoving)
 	{
 		if (!world.isRemote)
 		{
@@ -236,6 +233,8 @@ public class ValveBlock extends WrenchableBlock
 				valveEntity.disbandMultiblock();
 			}
 		}
+
+		super.onReplaced(state, world, pos, newState, isMoving);
 	}
 
 	@Override
@@ -252,11 +251,6 @@ public class ValveBlock extends WrenchableBlock
 				valveEntity.disbandMultiblock();
 			}
 
-			/*
-			world.setBlockToAir(pos);
-			dropBlockAsItem(world, pos, this.getDefaultState(), 0);
-			*/
-			// FIXME: Is this enough?
 			world.destroyBlock(pos, true);
 		}
 		else if (valveEntity != null)

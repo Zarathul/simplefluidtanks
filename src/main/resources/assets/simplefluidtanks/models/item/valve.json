@@ -1,0 +1,18 @@
+{
+    "parent": "simplefluidtanks:block/valve",
+    "textures": {
+        "down": "simplefluidtanks:block/valve",
+        "up": "simplefluidtanks:block/valve_grate",
+        "north": "simplefluidtanks:block/valve",
+        "south": "simplefluidtanks:block/valve",
+        "west": "simplefluidtanks:block/valve_io",
+        "east": "simplefluidtanks:block/valve"
+    },
+    "display": {
+        "gui": {
+            "rotation": [ 30, 45, 0 ],
+            "translation": [ 0, 0, 0],
+            "scale":[ 0.625, 0.625, 0.625 ]
+        }
+    }
+}

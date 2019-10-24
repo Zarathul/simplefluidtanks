@@ -1,6 +1,6 @@
 {
     "parent": "item/handheld",
     "textures": {
-        "layer0": "simplefluidtanks:items/wrench"
+        "layer0": "simplefluidtanks:item/wrench"
     }
 }

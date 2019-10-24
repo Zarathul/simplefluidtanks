@@ -1,5 +1,6 @@
 package net.zarathul.simplefluidtanks.configuration;
 
+/*
 import com.google.gson.JsonObject;
 import net.minecraft.util.JsonUtils;
 import net.minecraftforge.common.crafting.IConditionFactory;
@@ -32,3 +33,5 @@ public class DetachabledRecipeCondition implements IConditionFactory
 		};
 	}
 }
+
+ */

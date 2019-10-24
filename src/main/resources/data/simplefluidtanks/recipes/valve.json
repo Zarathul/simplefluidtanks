@@ -7,11 +7,10 @@
   ],
   "key": {
     "I": {
-      "type": "forge:ore_dict",
-	  "ore": "ingotIron"
+      "tag": "forge:ingots/iron"
     },
     "S": {
-      "type": "forge:ore_dict",
+      "type": "forge:slimeballs",
 	  "ore": "slimeball"
     },
     "T": {

@@ -11,10 +11,12 @@ import net.minecraft.client.renderer.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidAttributes;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.util.EnumMap;
@@ -24,13 +26,23 @@ import java.util.Random;
 public class BakedTankFluidModel implements IBakedModel
 {
 	private static final float offset = 0.00005f;
-    private static final float x[] = { 0, 0, 1, 1 };
-    private static final float z[] = { 0, 1, 1, 0 };
+    private static final float[] x = { 0, 0, 1, 1 };
+    private static final float[] z = { 0, 1, 1, 0 };
+
+    private static final ResourceLocation WATER_STILL_TEXTURE_LOC;
+
+    static
+	{
+		// TODO: check if the key for water is correct
+		ResourceLocation waterRegistryKey = new ResourceLocation("minecraft:water");
+		WATER_STILL_TEXTURE_LOC = ForgeRegistries.FLUIDS.getValue(waterRegistryKey).getAttributes().getStillTexture();
+	}
 	
     private Fluid fluid;
 	private int level;
 	private VertexFormat format;
 	private EnumMap<Direction, List<BakedQuad>> faceQuads;
+	private TextureAtlasSprite texture;
 	
 	public BakedTankFluidModel(Fluid fluid, int level)
 	{
@@ -39,8 +51,21 @@ public class BakedTankFluidModel implements IBakedModel
 		
 		format = DefaultVertexFormats.ITEM;
 		faceQuads = Maps.newEnumMap(Direction.class);
-		
-        for(Direction side : Direction.values())
+
+		// Use the fluid still texture by default. If the fluid has no still texture, use the
+		// flowing texture instead. If there's no flowing texture either, use the water still texture.
+		FluidAttributes fluidAttributes = fluid.getAttributes();
+		ResourceLocation fluidTextureLoc = (fluidAttributes.getStillTexture() != null) ?
+										   fluidAttributes.getStillTexture() :
+										   (fluidAttributes.getFlowingTexture() != null) ?
+										   fluidAttributes.getFlowingTexture() :
+										   WATER_STILL_TEXTURE_LOC;
+
+		texture = Minecraft.getInstance().getTextureMap().getAtlasSprite(fluidTextureLoc.toString());
+
+		// Generate quads
+
+		for(Direction side : Direction.values())
         {
             faceQuads.put(side, ImmutableList.<BakedQuad>of());
         }
@@ -270,15 +295,7 @@ public class BakedTankFluidModel implements IBakedModel
 	@Override
 	public TextureAtlasSprite getParticleTexture()
 	{
-		// Use the fluid still texture by default. If the fluid has no still texture, use the
-		// flowing texture instead. If there's no flowing texture either, use the water still texture.
-		String fluidTextureLoc = (fluid.getStill() != null)
-				? fluid.getStill().toString()
-				: (fluid.getFlowing() != null)
-				? fluid.getFlowing().toString()
-				: FluidRegistry.WATER.getStill().toString();	// FIXME: Fluid registry is still virtually non existant.
-				
-		return Minecraft.getInstance().getTextureMap().getAtlasSprite(fluidTextureLoc);
+		return this.texture;
 	}
 
 	@Override
@@ -305,11 +322,12 @@ public class BakedTankFluidModel implements IBakedModel
             		break;
             	
             	case COLOR:
+            		int fluidColor = fluid.getAttributes().getColor();
             		builder.put(e,
-            				((fluid.getColor() >> 16) & 0xFF) / 255f,
-            				((fluid.getColor() >> 8) & 0xFF) / 255f,
-            				(fluid.getColor() & 0xFF) / 255f,
-            				((fluid.getColor() >> 24) & 0xFF) / 255f);
+								((fluidColor >> 16) & 0xFF) / 255f,
+								((fluidColor >>  8) & 0xFF) / 255f,
+								((fluidColor      ) & 0xFF) / 255f,
+								((fluidColor >> 24) & 0xFF) / 255f);
             		break;
             	
             	case UV:

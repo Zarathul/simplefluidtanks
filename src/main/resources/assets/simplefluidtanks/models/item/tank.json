@@ -1,18 +1,18 @@
 {
     "parent": "simplefluidtanks:block/tank",
     "textures": {
-        "down": "simplefluidtanks:blocks/tank_closed",
-        "idown": "simplefluidtanks:blocks/tank_closed",
-        "up": "simplefluidtanks:blocks/tank_closed",
-        "iup": "simplefluidtanks:blocks/tank_closed",
-        "north": "simplefluidtanks:blocks/tank_closed",
-        "inorth": "simplefluidtanks:blocks/tank_closed",
-        "south": "simplefluidtanks:blocks/tank_closed",
-        "isouth": "simplefluidtanks:blocks/tank_closed",
-        "west": "simplefluidtanks:blocks/tank_closed",
-        "iwest": "simplefluidtanks:blocks/tank_closed",
-        "east": "simplefluidtanks:blocks/tank_closed",
-        "ieast": "simplefluidtanks:blocks/tank_closed"
+        "down": "simplefluidtanks:block/tank_closed",
+        "idown": "simplefluidtanks:block/tank_closed",
+        "up": "simplefluidtanks:block/tank_closed",
+        "iup": "simplefluidtanks:block/tank_closed",
+        "north": "simplefluidtanks:block/tank_closed",
+        "inorth": "simplefluidtanks:block/tank_closed",
+        "south": "simplefluidtanks:block/tank_closed",
+        "isouth": "simplefluidtanks:block/tank_closed",
+        "west": "simplefluidtanks:block/tank_closed",
+        "iwest": "simplefluidtanks:block/tank_closed",
+        "east": "simplefluidtanks:block/tank_closed",
+        "ieast": "simplefluidtanks:block/tank_closed"
     },
     "display": {
         "gui": {

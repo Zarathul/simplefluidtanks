@@ -5,29 +5,27 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Multimap;
 import com.google.common.primitives.Ints;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.block.BlockState;
+import net.minecraft.fluid.Fluid;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidEvent;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
+import net.zarathul.simplefluidtanks.SimpleFluidTanks;
 import net.zarathul.simplefluidtanks.blocks.FluidTank;
 import net.zarathul.simplefluidtanks.blocks.TankBlock;
 import net.zarathul.simplefluidtanks.blocks.ValveBlock;
 import net.zarathul.simplefluidtanks.common.BasicAStar;
 import net.zarathul.simplefluidtanks.common.BlockSearchMode;
-import net.zarathul.simplefluidtanks.common.Direction;
 import net.zarathul.simplefluidtanks.common.Directions;
 import net.zarathul.simplefluidtanks.common.Utils;
 import net.zarathul.simplefluidtanks.configuration.Config;
@@ -40,7 +38,7 @@ import java.util.Map.Entry;
 /**
  * Holds {@link TileEntity} data for {@link ValveBlock}s,
  */
-public class ValveBlockEntity extends TileEntity implements IFluidHandler
+public class ValveBlockEntity extends TileEntity
 {
 	/**
 	 * The {@link FluidTank} that actually holds all the fluid in the multiblock tank.
@@ -96,166 +94,81 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 
 	public ValveBlockEntity()
 	{
-		super();
-		internalTank = new FluidTank(this, 0);
+		super(SimpleFluidTanks.valveEntity);
+		internalTank = new FluidTank(0, this::onFluidChanged);
 		tankPriorities = ArrayListMultimap.create();
 		tankFacingSides = -1;
 		linkedTankCount = 0;
-		facing = EnumFacing.NORTH;
+		facing = Direction.NORTH;
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound tag)
+	public void read(CompoundNBT tag)
 	{
-		super.readFromNBT(tag);
+		super.read(tag);
 
 		internalTank.readFromNBT(tag);
 		readTankPrioritiesFromNBT(tag);
-		linkedTankCount = (tag.hasKey("LinkedTankCount")) ? tag.getInteger("LinkedTankCount") : Math.max(tankPriorities.size() - 1, 0);
+		linkedTankCount = (tag.contains("LinkedTankCount")) ? tag.getInt("LinkedTankCount") : Math.max(tankPriorities.size() - 1, 0);
 
 		tankFacingSides = tag.getByte("TankFacingSides");
-		facing = EnumFacing.getFront(tag.getByte("Facing"));
+		facing = Direction.byIndex(tag.getByte("Facing"));
 	}
 
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound tag)
+	public CompoundNBT write(CompoundNBT tag)
 	{
-		super.writeToNBT(tag);
+		super.write(tag);
 
 		internalTank.writeToNBT(tag);
 		writeTankPrioritiesToNBT(tag);
 
-		tag.setByte("TankFacingSides", tankFacingSides);
-		tag.setByte("Facing", (byte)facing.getIndex());
+		tag.putByte("TankFacingSides", tankFacingSides);
+		tag.putByte("Facing", (byte)facing.getIndex());
 		
 		return tag;
 	}
 
 	@Override
-	public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing)
+	public CompoundNBT getUpdateTag()
 	{
-		return capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY || super.hasCapability(capability, facing);
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	@Nullable
-	public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
-	{
-		if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) return (T) this;
-		return super.getCapability(capability, facing);
-	}
-
-	@Override
-	public NBTTagCompound getUpdateTag()
-	{
-		NBTTagCompound tag = super.getUpdateTag();
-		tag.setByte("TankFacingSides", tankFacingSides);
-		tag.setByte("Facing", (byte)facing.getIndex());
-		tag.setInteger("LinkedTankCount", linkedTankCount);
+		CompoundNBT tag = super.getUpdateTag();
+		tag.putByte("TankFacingSides", tankFacingSides);
+		tag.putByte("Facing", (byte)facing.getIndex());
+		tag.putInt("LinkedTankCount", linkedTankCount);
 
 		internalTank.writeToNBT(tag);
 
 		return tag;
 	}
 
+	@Nullable
 	@Override
-	public SPacketUpdateTileEntity getUpdatePacket()
+	public SUpdateTileEntityPacket getUpdatePacket()
 	{
-		return new SPacketUpdateTileEntity(pos, -1, getUpdateTag());
+		return new SUpdateTileEntityPacket(pos, -1, getUpdateTag());
 	}
 
 	@Override
-	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet)
+	public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket packet)
 	{
 		byte oldTankFacingSides = tankFacingSides;
 		int oldFacing = facing.getIndex();
-		
-		readFromNBT(packet.getNbtCompound());
-		
+
+		read(packet.getNbtCompound());
+
 		if (oldTankFacingSides != tankFacingSides || oldFacing != facing.getIndex())
 		{
 			Utils.syncBlockAndRerender(world, pos);
 		}
 	}
 
+	@Nonnull
 	@Override
-	public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState)
+	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side)
 	{
-		return oldState.getBlock() != newState.getBlock();
-	}
-
-	@Override
-	public IFluidTankProperties[] getTankProperties()
-	{
-		return internalTank.getTankProperties();
-	}
-
-	@Override
-	public int fill(FluidStack fillFluid, boolean doFill)
-	{
-		if (!world.isRemote && hasTanks())
-		{
-			// Only update the client if the fluid changes. So then tanks can render the correct fluid.
-			boolean clientUpdateNeeded = (fillFluid != null) && internalTank.getFluidAmount() == 0;
-			int fillAmount = internalTank.fill(fillFluid, doFill);
-
-			if (doFill && fillAmount > 0)
-			{
-				distributeFluidToTanks();
-
-				if (clientUpdateNeeded) Utils.syncBlockAndRerender(world, pos);
-
-				markDirty();
-			}
-
-			return fillAmount;
-		}
-
-		return 0;
-	}
-
-	@Override
-	public FluidStack drain(FluidStack drainFluid, boolean doDrain)
-	{
-		return drain(drainFluid, -1, doDrain);
-	}
-
-	@Override
-	public FluidStack drain(int drainAmount, boolean doDrain)
-	{
-		return drain(null, drainAmount, doDrain);
-	}
-
-	/**
-	 * Drains fluid from the multiblock tank.
-	 * 
-	 * @param drainFluid
-	 * The fluid type and amount to drain.
-	 * @param drainAmount
-	 * The amount of fluid to drain.
-	 * @param doDrain
-	 * Indicates whether the draining should be simulated or not.
-	 * @return The type and amount of fluid drained.
-	 */
-	private FluidStack drain(FluidStack drainFluid, int drainAmount, boolean doDrain)
-	{
-		if (!world.isRemote && hasTanks())
-		{
-			FluidStack drainedFluid = (drainFluid != null && drainFluid.isFluidEqual(internalTank.getFluid())) ?
-				internalTank.drain(drainFluid.amount, doDrain) :
-				(drainAmount >= 0) ? internalTank.drain(drainAmount, doDrain) : null;
-
-			if (doDrain && drainedFluid != null && drainedFluid.amount > 0)
-			{
-				distributeFluidToTanks();
-				markDirty();
-			}
-
-			return drainedFluid;
-		}
-
-		return null;
+		if (cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) return LazyOptional.of(() -> internalTank).cast();
+		return super.getCapability(cap, side);
 	}
 
 	/**
@@ -307,49 +220,53 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	 * 
 	 * @return The remaining amount of fluid the tank can take in until it is full.
 	 */
+/*
 	public int getRemainingCapacity()
 	{
 		return internalTank.getRemainingCapacity();
 	}
+*/
 
 	/**
 	 * Gets the luminosity of the fluid in the multiblock tank.
 	 * 
 	 * @return The luminosity of the fluid.
 	 */
+/*
 	public int getFluidLuminosity()
 	{
 		FluidStack storedFluid = this.internalTank.getFluid();
 
-		if (storedFluid != null)
+		if (!storedFluid.isEmpty())
 		{
 			Fluid fluid = storedFluid.getFluid();
 
 			if (fluid != null)
 			{
-				return fluid.getLuminosity();
+				return fluid.getAttributes().getLuminosity();
 			}
 		}
 
 		return 0;
 	}
+*/
 
 	/**
 	 * Gets the localized name of the fluid in the multiblock tank.
 	 * 
-	 * @return The localized name of the fluid.
+	 * @return The registry name of the fluid.
 	 */
-	public String getLocalizedFluidName()
+	public ResourceLocation getFluidRegistryName()
 	{
 		FluidStack storedFluid = this.internalTank.getFluid();
 
-		if (storedFluid != null)
+		if (!storedFluid.isEmpty())
 		{
 			Fluid fluid = storedFluid.getFluid();
 
 			if (fluid != null)
 			{
-				return fluid.getLocalizedName(storedFluid);
+				return fluid.getRegistryName();
 			}
 		}
 
@@ -371,10 +288,12 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	 * 
 	 * @return <code>true</code> if the tank is full, otherwise <code>false</code>.
 	 */
+/*
 	public boolean isFull()
 	{
 		return internalTank.isFull();
 	}
+*/
 
 	/**
 	 * Gets the bitmask storing which sides of the {@link ValveBlock} face connected {@link TankBlock}s.
@@ -396,32 +315,32 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 
 		if (isInTankList(pos.south()))
 		{
-			sides = sides | Direction.sidesToBitFlagsMappings.get(EnumFacing.SOUTH);
+			sides = sides | Directions.sidesToBitFlagsMappings.get(Direction.SOUTH);
 		}
 
 		if (isInTankList(pos.north()))
 		{
-			sides = sides | Direction.sidesToBitFlagsMappings.get(EnumFacing.NORTH);
+			sides = sides | Directions.sidesToBitFlagsMappings.get(Direction.NORTH);
 		}
 
 		if (isInTankList(pos.east()))
 		{
-			sides = sides | Direction.sidesToBitFlagsMappings.get(EnumFacing.EAST);
+			sides = sides | Directions.sidesToBitFlagsMappings.get(Direction.EAST);
 		}
 
 		if (isInTankList(pos.west()))
 		{
-			sides = sides | Direction.sidesToBitFlagsMappings.get(EnumFacing.WEST);
+			sides = sides | Directions.sidesToBitFlagsMappings.get(Direction.WEST);
 		}
 
 		if (isInTankList(pos.up()))
 		{
-			sides = sides | Direction.sidesToBitFlagsMappings.get(EnumFacing.UP);
+			sides = sides | Directions.sidesToBitFlagsMappings.get(Direction.UP);
 		}
 
 		if (isInTankList(pos.down()))
 		{
-			sides = sides | Direction.sidesToBitFlagsMappings.get(EnumFacing.DOWN);
+			sides = sides | Directions.sidesToBitFlagsMappings.get(Direction.DOWN);
 		}
 
 		tankFacingSides = (byte) sides;
@@ -513,10 +432,8 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 			Utils.syncBlockAndRerender(world, pos);
 			markDirty();
 
-			if (spilledFluid != null)
-			{
-				FluidEvent.fireEvent(new FluidEvent.FluidSpilledEvent(spilledFluid, world, pos));
-			}
+			// FIXME: fluid event
+			//if (spilledFluid != null) FluidEvent.fireEvent(new FluidEvent.FluidSpilledEvent(spilledFluid, world, pos));
 		}
 	}
 
@@ -528,7 +445,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	{
 		// store the current fluid for reinsertion
 		FluidStack fluid = internalTank.getFluid();
-		int oldFluidAmount = (fluid != null) ? fluid.amount : 0;
+		int oldFluidAmount = (fluid != null) ? fluid.getAmount() : 0;
 
 		// find new tanks and update the valves textures
 
@@ -540,7 +457,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		updateTankFacingSides();
 
 		// redistribute the fluid
-		internalTank.setFluid(fluid);
+		internalTank.setFluid(fluid);		// FIXME: Why is this here?
 		distributeFluidToTanks(true);
 		// the ValveBlock also counts as a tank in the multiblock structure
 		linkedTankCount = Math.max(tankPriorities.size() - 1, 0);
@@ -551,8 +468,9 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		if (oldFluidAmount > this.internalTank.getCapacity() && fluid != null)
 		{
 			FluidStack spilledFluid = fluid.copy();
-			spilledFluid.amount = oldFluidAmount - this.internalTank.getCapacity();
-			FluidEvent.fireEvent(new FluidEvent.FluidSpilledEvent(spilledFluid, world, pos));
+			spilledFluid.setAmount(oldFluidAmount - this.internalTank.getCapacity());
+			// FIXME: fluid event
+			//FluidEvent.fireEvent(new FluidEvent.FluidSpilledEvent(spilledFluid, world, pos));
 		}
 	}
 
@@ -585,7 +503,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		}
 
 		// calculate and set the internal tanks capacity, note the " + 1" is needed because the ValveBlock itself is considered a tank with storage capacity
-		internalTank.setCapacity((tankEntities.size() + 1) * Config.bucketsPerTank * Fluid.BUCKET_VOLUME);
+		internalTank.setCapacity((tankEntities.size() + 1) * Config.bucketsPerTank.get() * FluidAttributes.BUCKET_VOLUME);
 	}
 
 	/**
@@ -656,7 +574,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 			{
 				tanksToFill = tankPriorities.get(priorities[i]);
 
-				int capacity = tanksToFill.size() * Config.bucketsPerTank * Fluid.BUCKET_VOLUME;
+				int capacity = tanksToFill.size() * Config.bucketsPerTank.get() * FluidAttributes.BUCKET_VOLUME;
 				int fillPercentage = MathHelper.clamp((int) Math.ceil((double) amountToDistribute / (double) capacity * 100d), 0, 100);
 
 				for (BlockPos tank : tanksToFill)
@@ -1224,7 +1142,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 			return false;
 		}
 		
-		IBlockState state = world.getBlockState(block);
+		BlockState state = world.getBlockState(block);
 
 		if (state.getBlock() instanceof TankBlock)
 		{
@@ -1288,14 +1206,14 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	 * @param tag
 	 * The tag to write to.
 	 */
-	private void writeTankPrioritiesToNBT(NBTTagCompound tag)
+	private void writeTankPrioritiesToNBT(CompoundNBT tag)
 	{
 		if (tag == null)
 		{
 			return;
 		}
 
-		NBTTagCompound tankPrioritiesTag = new NBTTagCompound();
+		CompoundNBT tankPrioritiesTag = new CompoundNBT();
 		BlockPos currentCoords;
 		int[] serializableEntry;
 		int i = 0;
@@ -1304,11 +1222,11 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 		{
 			currentCoords = entry.getValue();
 			serializableEntry = new int[] { entry.getKey(), currentCoords.getX(), currentCoords.getY(), currentCoords.getZ() };
-			tankPrioritiesTag.setIntArray(Integer.toString(i), serializableEntry);
+			tankPrioritiesTag.putIntArray(Integer.toString(i), serializableEntry);
 			i++;
 		}
 
-		tag.setTag("TankPriorities", tankPrioritiesTag);
+		tag.put("TankPriorities", tankPrioritiesTag);
 	}
 
 	/**
@@ -1317,13 +1235,13 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 	 * @param tag
 	 * The tag to read from.
 	 */
-	private void readTankPrioritiesFromNBT(NBTTagCompound tag)
+	private void readTankPrioritiesFromNBT(CompoundNBT tag)
 	{
 		if (tag != null)
 		{
-			NBTTagCompound tankPrioritiesTag = tag.getCompoundTag("TankPriorities");
+			CompoundNBT tankPrioritiesTag = tag.getCompound("TankPriorities");
 
-			if (!tankPrioritiesTag.hasNoTags())
+			if (!tankPrioritiesTag.isEmpty())
 			{
 				tankPriorities = ArrayListMultimap.create();
 
@@ -1331,7 +1249,7 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 				int i = 0;
 				int[] serializedEntry;
 
-				while (tankPrioritiesTag.hasKey(key = Integer.toString(i)))
+				while (tankPrioritiesTag.contains(key = Integer.toString(i)))
 				{
 					serializedEntry = tankPrioritiesTag.getIntArray(key);
 					tankPriorities.put(serializedEntry[0], new BlockPos(serializedEntry[1], serializedEntry[2], serializedEntry[3]));
@@ -1339,5 +1257,20 @@ public class ValveBlockEntity extends TileEntity implements IFluidHandler
 				}
 			}
 		}
+	}
+
+	/**
+	 * Event handler that deals with changes to the fluid in the internal tank.
+	 *
+	 * @param change
+	 * The change that occurred. <br>
+	 * <code>FluidChange.TYPE</code> means always from empty to a fluid,
+	 * not the other way around.
+	 */
+	private void onFluidChanged(FluidTank.FluidChange change)
+	{
+		distributeFluidToTanks();
+		if (change.type()) Utils.syncBlockAndRerender(world, pos);
+		markDirty();
 	}
 }

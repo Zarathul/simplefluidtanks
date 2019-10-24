@@ -7,12 +7,10 @@
   ],
   "key": {
     "I": {
-      "type": "forge:ore_dict",
-	  "ore": "ingotIron"
+      "tag": "forge:ingots/iron"
     },
     "G": {
-      "type": "forge:ore_dict",
-      "ore": "blockGlass"
+      "tag": "forge:glass"
     }
   },
   "result": {

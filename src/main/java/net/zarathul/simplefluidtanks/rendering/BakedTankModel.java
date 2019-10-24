@@ -8,9 +8,12 @@ import net.minecraft.client.renderer.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraftforge.client.model.data.IModelData;
 import net.zarathul.simplefluidtanks.blocks.TankBlock;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -20,9 +23,9 @@ import java.util.Random;
 public class BakedTankModel implements IBakedModel
 {
 	public static final int FLUID_LEVELS = 16;
-	
+
 	// Fluid model cache: The HashMap key corresponds to the fluid name, the model array index to the fluid level.
-	public static final HashMap<String, IBakedModel[]> FLUID_MODELS = new HashMap<>();
+	public static final HashMap<ResourceLocation, IBakedModel[]> FLUID_MODELS = new HashMap<>();
 	
 	private IBakedModel baseModel;
 	
@@ -34,6 +37,15 @@ public class BakedTankModel implements IBakedModel
 	@Override
 	public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand)
 	{
+		// WTF TODO here?
+		return null;
+	}
+
+	@Nonnull
+	@Override
+	public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData extraData)
+	{
+		// TODO: why the fuck is this a linked list ?
 		List<BakedQuad> quads = new LinkedList<BakedQuad>();
 
 		if (MinecraftForgeClient.getRenderLayer() == BlockRenderLayer.CUTOUT_MIPPED)
@@ -46,11 +58,9 @@ public class BakedTankModel implements IBakedModel
 		{
 			// Fluid
 
-			// FIXME: No idea how to get this data here since IExtendedBlockState does no longer exist.
-			IExtendedBlockState exState = (IExtendedBlockState)state;
-			boolean cullFluidTop = exState.getValue(TankBlock.CullFluidTop);
-			int fluidLevel = exState.getValue(TankBlock.FluidLevel);
-			String fluidName = exState.getValue(TankBlock.FluidName);
+			boolean cullFluidTop = state.get(TankBlock.CullFluidTop);
+			int fluidLevel = state.get(TankBlock.FluidLevel);
+			ResourceLocation fluidName = state.get(TankBlock.FluidName);
 
 			// The top quad of the fluid model needs a separate culling logic from the
 			// rest of the tank, because the top needs to be visible if the tank isn't
@@ -90,6 +100,12 @@ public class BakedTankModel implements IBakedModel
 
 	@Override
 	public TextureAtlasSprite getParticleTexture()
+	{
+		return baseModel.getParticleTexture();
+	}
+
+	@Override
+	public TextureAtlasSprite getParticleTexture(@Nonnull IModelData data)
 	{
 		return baseModel.getParticleTexture();
 	}

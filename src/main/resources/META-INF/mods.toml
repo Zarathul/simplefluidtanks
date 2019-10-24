@@ -1,43 +1,24 @@
-# This is an example mods.toml file. It contains the data relating to the loading mods.
-# There are several mandatory fields (#mandatory), and many more that are optional (#optional).
-# The overall format is standard TOML format, v0.5.0.
-# Note that there are a couple of TOML lists in this file.
-# Find more information on toml format here:  https://github.com/toml-lang/toml
-# The name of the mod loader type to load - for regular FML @Mod mods it should be javafml
 modLoader="javafml" #mandatory
-# A version range to match for said mod loader - for regular FML @Mod it will be the forge version
 loaderVersion="[28,)" #mandatory (26 is current forge version)
-# A URL to refer people to when problems occur with this mod
 issueTrackerURL="https://github.com/Zarathul/simplefluidtanks/issues" #optional
-# A list of mods - how many allowed here is determined by the individual mod loader
-[[simplefluidtanks]] #mandatory
-# The modid of the mod
+
+[[mods]] #mandatory
 modId="simplefluidtanks" #mandatory
-# The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
 version="${file.jarVersion}" #mandatory
- # A display name for the mod
 displayName="Simple Fluid Tanks" #mandatory
-# A URL to query for updates for this mod. See the JSON update specification <here>
-updateJSONURL="http://minecraft.curseforge.com/mc-mods/simplefluidtanks/" #optional
-# A URL for the "homepage" for this mod, displayed in the mod UI
+updateJSONURL="https://raw.githubusercontent.com/Zarathul/mcmodversions/master/simplefluidtanks.json" #optional
 displayURL="https://www.curseforge.com/minecraft/mc-mods/simplefluidtanks" #optional
-# A file name (in the root of the mod JAR) containing a logo for display
-logoFile="assets/simplefluidtanks/sft_logo.jpg" #optional
-# A text field displayed in the mod UI
-credits="Thx to Boidrix for the valve textures." #optional
-# A text field displayed in the mod UI
+logoFile="sft_logo.jpg" #optional
 authors="Zarathul" #optional
-# The description text for the mod (multi line!) (#mandatory)
 description='''
 Adds fluid tanks of variable size and shape.
 '''
+
 [[dependencies.simplefluidtanks]] #optional
     modId="forge" #mandatory
     mandatory=true #mandatory
     versionRange="[28,)" #mandatory
-    # An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
     ordering="NONE"
-    # Side this dependency is applied on - BOTH, CLIENT or SERVER
     side="BOTH"
 [[dependencies.simplefluidtanks]]
     modId="minecraft"
@@ -45,9 +26,9 @@ Adds fluid tanks of variable size and shape.
     versionRange="[1.14.4]"
     ordering="NONE"
     side="BOTH"
-#[[dependencies.simplefluidtanks]]
-#    modId="theoneprobe"
-#    mandatory=false
-#    versionRange=""
-#    ordering="BEFORE"
-#    side="BOTH"
+[[dependencies.simplefluidtanks]]
+    modId="theoneprobe" #mandatory
+    mandatory=false #mandatory
+    versionRange="[1.4,)" #mandatory
+    ordering="AFTER"
+    side="BOTH"

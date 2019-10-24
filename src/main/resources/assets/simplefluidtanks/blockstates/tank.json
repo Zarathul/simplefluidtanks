@@ -1,0 +1,725 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "textures": {
+            "down": "simplefluidtanks:block/tank_closed",
+            "idown": "simplefluidtanks:block/tank_closed",
+            "up": "simplefluidtanks:block/tank_closed",
+            "iup": "simplefluidtanks:block/tank_closed",
+            "north": "simplefluidtanks:block/tank_closed",
+            "inorth": "simplefluidtanks:block/tank_closed",
+            "south": "simplefluidtanks:block/tank_closed",
+            "isouth": "simplefluidtanks:block/tank_closed",
+            "west": "simplefluidtanks:block/tank_closed",
+            "iwest": "simplefluidtanks:block/tank_closed",
+            "east": "simplefluidtanks:block/tank_closed",
+            "ieast": "simplefluidtanks:block/tank_closed",
+            "particle": "simplefluidtanks:block/tank_closed"
+        },
+        "model": "simplefluidtanks:block/tank"
+    },
+    "variants": {
+        "down=false,east=false,north=true,south=true,up=true,west=true": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "down": "simplefluidtanks:block/tank_top_bottom_left",
+                "idown": "simplefluidtanks:block/tank_top_bottom_left",
+                "east": "simplefluidtanks:block/tank_left_right_top",
+                "ieast": "simplefluidtanks:block/tank_left_right_top"
+            }
+        },
+        "down=false,east=false,north=true,south=false,up=false,west=true": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "down": "simplefluidtanks:block/tank_bottom_left",
+                "idown": "simplefluidtanks:block/tank_bottom_left",
+                "up": "simplefluidtanks:block/tank_top_left",
+                "iup": "simplefluidtanks:block/tank_top_left",
+                "south": "simplefluidtanks:block/tank_left",
+                "isouth": "simplefluidtanks:block/tank_left",
+                "east": "simplefluidtanks:block/tank_right",
+                "ieast": "simplefluidtanks:block/tank_right"
+            }
+        },
+        "down=true,east=false,north=false,south=false,up=true,west=true": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "north": "simplefluidtanks:block/tank_top_bottom_right",
+                "inorth": "simplefluidtanks:block/tank_top_bottom_right",
+                "south": "simplefluidtanks:block/tank_top_bottom_left",
+                "isouth": "simplefluidtanks:block/tank_top_bottom_left",
+                "east": "simplefluidtanks:block/tank_top_bottom",
+                "ieast": "simplefluidtanks:block/tank_top_bottom"
+            }
+        },
+        "down=false,east=false,north=false,south=false,up=false,west=false": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "down": "simplefluidtanks:block/tank_closed",
+                "idown": "simplefluidtanks:block/tank_closed",
+                "up": "simplefluidtanks:block/tank_closed",
+                "iup": "simplefluidtanks:block/tank_closed",
+                "north": "simplefluidtanks:block/tank_closed",
+                "inorth": "simplefluidtanks:block/tank_closed",
+                "south": "simplefluidtanks:block/tank_closed",
+                "isouth": "simplefluidtanks:block/tank_closed",
+                "west": "simplefluidtanks:block/tank_closed",
+                "iwest": "simplefluidtanks:block/tank_closed",
+                "east": "simplefluidtanks:block/tank_closed",
+                "ieast": "simplefluidtanks:block/tank_closed"
+            }
+        },
+        "down=false,east=false,north=true,south=true,up=false,west=false": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "down": "simplefluidtanks:block/tank_top_bottom",
+                "idown": "simplefluidtanks:block/tank_top_bottom",
+                "up": "simplefluidtanks:block/tank_top_bottom",
+                "iup": "simplefluidtanks:block/tank_top_bottom",
+                "west": "simplefluidtanks:block/tank_left_right",
+                "iwest": "simplefluidtanks:block/tank_left_right",
+                "east": "simplefluidtanks:block/tank_left_right",
+                "ieast": "simplefluidtanks:block/tank_left_right"
+            }
+        },
+        "down=true,east=false,north=true,south=false,up=true,west=true": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "south": "simplefluidtanks:block/tank_top_bottom_left",
+                "isouth": "simplefluidtanks:block/tank_top_bottom_left",
+                "east": "simplefluidtanks:block/tank_top_bottom_right",
+                "ieast": "simplefluidtanks:block/tank_top_bottom_right"
+            }
+        },
+        "down=true,east=false,north=false,south=false,up=true,west=false": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "north": "simplefluidtanks:block/tank_top_bottom",
+                "inorth": "simplefluidtanks:block/tank_top_bottom",
+                "south": "simplefluidtanks:block/tank_top_bottom",
+                "isouth": "simplefluidtanks:block/tank_top_bottom",
+                "west": "simplefluidtanks:block/tank_top_bottom",
+                "iwest": "simplefluidtanks:block/tank_top_bottom",
+                "east": "simplefluidtanks:block/tank_top_bottom",
+                "ieast": "simplefluidtanks:block/tank_top_bottom"
+            }
+        },
+        "down=false,east=false,north=true,south=false,up=true,west=true": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "down": "simplefluidtanks:block/tank_bottom_left",
+                "idown": "simplefluidtanks:block/tank_bottom_left",
+                "south": "simplefluidtanks:block/tank_top_left",
+                "isouth": "simplefluidtanks:block/tank_top_left",
+                "east": "simplefluidtanks:block/tank_top_right",
+                "ieast": "simplefluidtanks:block/tank_top_right"
+            }
+        },
+        "down=false,east=true,north=true,south=true,up=true,west=false": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "down": "simplefluidtanks:block/tank_top_bottom_right",
+                "idown": "simplefluidtanks:block/tank_top_bottom_right",
+                "west": "simplefluidtanks:block/tank_left_right_top",
+                "iwest": "simplefluidtanks:block/tank_left_right_top"
+            }
+        },
+        "down=true,east=false,north=false,south=true,up=true,west=true": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "north": "simplefluidtanks:block/tank_top_bottom_right",
+                "inorth": "simplefluidtanks:block/tank_top_bottom_right",
+                "east": "simplefluidtanks:block/tank_top_bottom_left",
+                "ieast": "simplefluidtanks:block/tank_top_bottom_left"
+            }
+        },
+        "down=false,east=true,north=true,south=false,up=false,west=false": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "down": "simplefluidtanks:block/tank_bottom_right",
+                "idown": "simplefluidtanks:block/tank_bottom_right",
+                "up": "simplefluidtanks:block/tank_top_right",
+                "iup": "simplefluidtanks:block/tank_top_right",
+                "south": "simplefluidtanks:block/tank_right",
+                "isouth": "simplefluidtanks:block/tank_right",
+                "west": "simplefluidtanks:block/tank_left",
+                "iwest": "simplefluidtanks:block/tank_left"
+            }
+        },
+        "down=true,east=false,north=true,south=false,up=true,west=false": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "south": "simplefluidtanks:block/tank_top_bottom",
+                "isouth": "simplefluidtanks:block/tank_top_bottom",
+                "west": "simplefluidtanks:block/tank_top_bottom_left",
+                "iwest": "simplefluidtanks:block/tank_top_bottom_left",
+                "east": "simplefluidtanks:block/tank_top_bottom_right",
+                "ieast": "simplefluidtanks:block/tank_top_bottom_right"
+            }
+        },
+        "down=true,east=true,north=false,south=true,up=true,west=false": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "north": "simplefluidtanks:block/tank_top_bottom_left",
+                "inorth": "simplefluidtanks:block/tank_top_bottom_left",
+                "west": "simplefluidtanks:block/tank_top_bottom_right",
+                "iwest": "simplefluidtanks:block/tank_top_bottom_right"
+            }
+        },
+        "down=false,east=false,north=false,south=true,up=true,west=true": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "down": "simplefluidtanks:block/tank_top_left",
+                "idown": "simplefluidtanks:block/tank_top_left",
+                "north": "simplefluidtanks:block/tank_top_right",
+                "inorth": "simplefluidtanks:block/tank_top_right",
+                "east": "simplefluidtanks:block/tank_top_left",
+                "ieast": "simplefluidtanks:block/tank_top_left"
+            }
+        },
+        "down=true,east=false,north=true,south=true,up=false,west=false": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "up": "simplefluidtanks:block/tank_top_bottom",
+                "iup": "simplefluidtanks:block/tank_top_bottom",
+                "west": "simplefluidtanks:block/tank_left_right_bottom",
+                "iwest": "simplefluidtanks:block/tank_left_right_bottom",
+                "east": "simplefluidtanks:block/tank_left_right_bottom",
+                "ieast": "simplefluidtanks:block/tank_left_right_bottom"
+            }
+        },
+        "down=false,east=true,north=true,south=false,up=false,west=true": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "down": "simplefluidtanks:block/tank_left_right_bottom",
+                "idown": "simplefluidtanks:block/tank_left_right_bottom",
+                "up": "simplefluidtanks:block/tank_left_right_top",
+                "iup": "simplefluidtanks:block/tank_left_right_top",
+                "south": "simplefluidtanks:block/tank_left_right",
+                "isouth": "simplefluidtanks:block/tank_left_right"
+            }
+        },
+        "down=true,east=true,north=true,south=true,up=false,west=true": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "up": "simplefluidtanks:block/tank_open",
+                "iup": "simplefluidtanks:block/tank_open"
+            }
+        },
+        "down=false,east=false,north=false,south=false,up=false,west=true": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "down": "simplefluidtanks:block/tank_left",
+                "idown": "simplefluidtanks:block/tank_left",
+                "up": "simplefluidtanks:block/tank_left",
+                "iup": "simplefluidtanks:block/tank_left",
+                "north": "simplefluidtanks:block/tank_right",
+                "inorth": "simplefluidtanks:block/tank_right",
+                "south": "simplefluidtanks:block/tank_left",
+                "isouth": "simplefluidtanks:block/tank_left",
+                "east": "simplefluidtanks:block/tank_closed",
+                "ieast": "simplefluidtanks:block/tank_closed"
+            }
+        },
+        "down=false,east=true,north=false,south=false,up=true,west=false": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "down": "simplefluidtanks:block/tank_right",
+                "idown": "simplefluidtanks:block/tank_right",
+                "north": "simplefluidtanks:block/tank_top_left",
+                "inorth": "simplefluidtanks:block/tank_top_left",
+                "south": "simplefluidtanks:block/tank_top_right",
+                "isouth": "simplefluidtanks:block/tank_top_right",
+                "west": "simplefluidtanks:block/tank_top",
+                "iwest": "simplefluidtanks:block/tank_top"
+            }
+        },
+        "down=true,east=true,north=true,south=false,up=false,west=true": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "up": "simplefluidtanks:block/tank_left_right_top",
+                "iup": "simplefluidtanks:block/tank_left_right_top",
+                "south": "simplefluidtanks:block/tank_left_right_bottom",
+                "isouth": "simplefluidtanks:block/tank_left_right_bottom"
+            }
+        },
+        "down=true,east=true,north=false,south=true,up=true,west=true": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "north": "simplefluidtanks:block/tank_open",
+                "inorth": "simplefluidtanks:block/tank_open"
+            }
+        },
+        "down=false,east=true,north=false,south=true,up=true,west=false": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "down": "simplefluidtanks:block/tank_top_right",
+                "idown": "simplefluidtanks:block/tank_top_right",
+                "north": "simplefluidtanks:block/tank_top_left",
+                "inorth": "simplefluidtanks:block/tank_top_left",
+                "west": "simplefluidtanks:block/tank_top_right",
+                "iwest": "simplefluidtanks:block/tank_top_right"
+            }
+        },
+        "down=false,east=true,north=true,south=true,up=false,west=false": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "down": "simplefluidtanks:block/tank_top_bottom_right",
+                "idown": "simplefluidtanks:block/tank_top_bottom_right",
+                "up": "simplefluidtanks:block/tank_top_bottom_right",
+                "iup": "simplefluidtanks:block/tank_top_bottom_right",
+                "west": "simplefluidtanks:block/tank_left_right",
+                "iwest": "simplefluidtanks:block/tank_left_right"
+            }
+        },
+        "down=true,east=false,north=true,south=true,up=true,west=true": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "east": "simplefluidtanks:block/tank_open",
+                "ieast": "simplefluidtanks:block/tank_open"
+            }
+        },
+        "down=false,east=false,north=false,south=true,up=false,west=false": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "down": "simplefluidtanks:block/tank_top",
+                "idown": "simplefluidtanks:block/tank_top",
+                "up": "simplefluidtanks:block/tank_bottom",
+                "iup": "simplefluidtanks:block/tank_bottom",
+                "north": "simplefluidtanks:block/tank_closed",
+                "inorth": "simplefluidtanks:block/tank_closed",
+                "west": "simplefluidtanks:block/tank_right",
+                "iwest": "simplefluidtanks:block/tank_right",
+                "east": "simplefluidtanks:block/tank_left",
+                "ieast": "simplefluidtanks:block/tank_left"
+            }
+        },
+        "down=true,east=true,north=true,south=true,up=false,west=false": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "up": "simplefluidtanks:block/tank_top_bottom_right",
+                "iup": "simplefluidtanks:block/tank_top_bottom_right",
+                "west": "simplefluidtanks:block/tank_left_right_bottom",
+                "iwest": "simplefluidtanks:block/tank_left_right_bottom"
+            }
+        },
+        "down=false,east=false,north=true,south=false,up=true,west=false": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "down": "simplefluidtanks:block/tank_bottom",
+                "idown": "simplefluidtanks:block/tank_bottom",
+                "south": "simplefluidtanks:block/tank_top",
+                "isouth": "simplefluidtanks:block/tank_top",
+                "west": "simplefluidtanks:block/tank_top_left",
+                "iwest": "simplefluidtanks:block/tank_top_left",
+                "east": "simplefluidtanks:block/tank_top_right",
+                "ieast": "simplefluidtanks:block/tank_top_right"
+            }
+        },
+        "down=false,east=true,north=true,south=true,up=false,west=true": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "down": "simplefluidtanks:block/tank_open",
+                "idown": "simplefluidtanks:block/tank_open",
+                "up": "simplefluidtanks:block/tank_open",
+                "iup": "simplefluidtanks:block/tank_open"
+            }
+        },
+        "down=true,east=true,north=false,south=false,up=true,west=true": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "north": "simplefluidtanks:block/tank_open",
+                "inorth": "simplefluidtanks:block/tank_open",
+                "south": "simplefluidtanks:block/tank_open",
+                "isouth": "simplefluidtanks:block/tank_open"
+            }
+        },
+        "down=false,east=true,north=false,south=false,up=true,west=true": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "down": "simplefluidtanks:block/tank_left_right",
+                "idown": "simplefluidtanks:block/tank_left_right",
+                "north": "simplefluidtanks:block/tank_left_right_top",
+                "inorth": "simplefluidtanks:block/tank_left_right_top",
+                "south": "simplefluidtanks:block/tank_left_right_top",
+                "isouth": "simplefluidtanks:block/tank_left_right_top"
+            }
+        },
+        "down=true,east=false,north=false,south=true,up=false,west=true": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "up": "simplefluidtanks:block/tank_bottom_left",
+                "iup": "simplefluidtanks:block/tank_bottom_left",
+                "north": "simplefluidtanks:block/tank_bottom_right",
+                "inorth": "simplefluidtanks:block/tank_bottom_right",
+                "east": "simplefluidtanks:block/tank_bottom_left",
+                "ieast": "simplefluidtanks:block/tank_bottom_left"
+            }
+        },
+        "down=false,east=true,north=false,south=false,up=false,west=false": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "down": "simplefluidtanks:block/tank_right",
+                "idown": "simplefluidtanks:block/tank_right",
+                "up": "simplefluidtanks:block/tank_right",
+                "iup": "simplefluidtanks:block/tank_right",
+                "north": "simplefluidtanks:block/tank_left",
+                "inorth": "simplefluidtanks:block/tank_left",
+                "south": "simplefluidtanks:block/tank_right",
+                "isouth": "simplefluidtanks:block/tank_right",
+                "west": "simplefluidtanks:block/tank_closed",
+                "iwest": "simplefluidtanks:block/tank_closed"
+            }
+        },
+        "down=false,east=false,north=false,south=false,up=true,west=false": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "down": "simplefluidtanks:block/tank_closed",
+                "idown": "simplefluidtanks:block/tank_closed",
+                "north": "simplefluidtanks:block/tank_top",
+                "inorth": "simplefluidtanks:block/tank_top",
+                "south": "simplefluidtanks:block/tank_top",
+                "isouth": "simplefluidtanks:block/tank_top",
+                "west": "simplefluidtanks:block/tank_top",
+                "iwest": "simplefluidtanks:block/tank_top",
+                "east": "simplefluidtanks:block/tank_top",
+                "ieast": "simplefluidtanks:block/tank_top"
+            }
+        },
+        "down=false,east=true,north=false,south=false,up=false,west=true": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "down": "simplefluidtanks:block/tank_left_right",
+                "idown": "simplefluidtanks:block/tank_left_right",
+                "up": "simplefluidtanks:block/tank_left_right",
+                "iup": "simplefluidtanks:block/tank_left_right",
+                "north": "simplefluidtanks:block/tank_left_right",
+                "inorth": "simplefluidtanks:block/tank_left_right",
+                "south": "simplefluidtanks:block/tank_left_right",
+                "isouth": "simplefluidtanks:block/tank_left_right"
+            }
+        },
+        "down=true,east=false,north=false,south=false,up=false,west=false": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "up": "simplefluidtanks:block/tank_closed",
+                "iup": "simplefluidtanks:block/tank_closed",
+                "north": "simplefluidtanks:block/tank_bottom",
+                "inorth": "simplefluidtanks:block/tank_bottom",
+                "south": "simplefluidtanks:block/tank_bottom",
+                "isouth": "simplefluidtanks:block/tank_bottom",
+                "west": "simplefluidtanks:block/tank_bottom",
+                "iwest": "simplefluidtanks:block/tank_bottom",
+                "east": "simplefluidtanks:block/tank_bottom",
+                "ieast": "simplefluidtanks:block/tank_bottom"
+            }
+        },
+        "down=true,east=true,north=true,south=false,up=true,west=false": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "south": "simplefluidtanks:block/tank_top_bottom_right",
+                "isouth": "simplefluidtanks:block/tank_top_bottom_right",
+                "west": "simplefluidtanks:block/tank_top_bottom_left",
+                "iwest": "simplefluidtanks:block/tank_top_bottom_left"
+            }
+        },
+        "down=true,east=false,north=false,south=true,up=true,west=false": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "north": "simplefluidtanks:block/tank_top_bottom",
+                "inorth": "simplefluidtanks:block/tank_top_bottom",
+                "west": "simplefluidtanks:block/tank_top_bottom_right",
+                "iwest": "simplefluidtanks:block/tank_top_bottom_right",
+                "east": "simplefluidtanks:block/tank_top_bottom_left",
+                "ieast": "simplefluidtanks:block/tank_top_bottom_left"
+            }
+        },
+        "down=true,east=true,north=false,south=true,up=false,west=true": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "up": "simplefluidtanks:block/tank_left_right_bottom",
+                "iup": "simplefluidtanks:block/tank_left_right_bottom",
+                "north": "simplefluidtanks:block/tank_left_right_bottom",
+                "inorth": "simplefluidtanks:block/tank_left_right_bottom"
+            }
+        },
+        "down=false,east=true,north=false,south=true,up=false,west=false": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "down": "simplefluidtanks:block/tank_top_right",
+                "idown": "simplefluidtanks:block/tank_top_right",
+                "up": "simplefluidtanks:block/tank_bottom_right",
+                "iup": "simplefluidtanks:block/tank_bottom_right",
+                "north": "simplefluidtanks:block/tank_left",
+                "inorth": "simplefluidtanks:block/tank_left",
+                "west": "simplefluidtanks:block/tank_right",
+                "iwest": "simplefluidtanks:block/tank_right"
+            }
+        },
+        "down=false,east=true,north=false,south=true,up=false,west=true": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "down": "simplefluidtanks:block/tank_left_right_top",
+                "idown": "simplefluidtanks:block/tank_left_right_top",
+                "up": "simplefluidtanks:block/tank_left_right_bottom",
+                "iup": "simplefluidtanks:block/tank_left_right_bottom",
+                "north": "simplefluidtanks:block/tank_left_right",
+                "inorth": "simplefluidtanks:block/tank_left_right"
+            }
+        },
+        "down=false,east=false,north=true,south=true,up=true,west=false": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "down": "simplefluidtanks:block/tank_top_bottom",
+                "idown": "simplefluidtanks:block/tank_top_bottom",
+                "west": "simplefluidtanks:block/tank_left_right_top",
+                "iwest": "simplefluidtanks:block/tank_left_right_top",
+                "east": "simplefluidtanks:block/tank_left_right_top",
+                "ieast": "simplefluidtanks:block/tank_left_right_top"
+            }
+        },
+        "down=true,east=true,north=false,south=false,up=true,west=false": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "north": "simplefluidtanks:block/tank_top_bottom_left",
+                "inorth": "simplefluidtanks:block/tank_top_bottom_left",
+                "south": "simplefluidtanks:block/tank_top_bottom_right",
+                "isouth": "simplefluidtanks:block/tank_top_bottom_right",
+                "west": "simplefluidtanks:block/tank_top_bottom",
+                "iwest": "simplefluidtanks:block/tank_top_bottom"
+            }
+        },
+        "down=false,east=false,north=true,south=false,up=false,west=false": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "down": "simplefluidtanks:block/tank_bottom",
+                "idown": "simplefluidtanks:block/tank_bottom",
+                "up": "simplefluidtanks:block/tank_top",
+                "iup": "simplefluidtanks:block/tank_top",
+                "south": "simplefluidtanks:block/tank_closed",
+                "isouth": "simplefluidtanks:block/tank_closed",
+                "west": "simplefluidtanks:block/tank_left",
+                "iwest": "simplefluidtanks:block/tank_left",
+                "east": "simplefluidtanks:block/tank_right",
+                "ieast": "simplefluidtanks:block/tank_right"
+            }
+        },
+        "down=false,east=true,north=true,south=false,up=true,west=true": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "down": "simplefluidtanks:block/tank_left_right_bottom",
+                "idown": "simplefluidtanks:block/tank_left_right_bottom",
+                "south": "simplefluidtanks:block/tank_left_right_top",
+                "isouth": "simplefluidtanks:block/tank_left_right_top"
+            }
+        },
+        "down=false,east=false,north=false,south=true,up=false,west=true": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "down": "simplefluidtanks:block/tank_top_left",
+                "idown": "simplefluidtanks:block/tank_top_left",
+                "up": "simplefluidtanks:block/tank_bottom_left",
+                "iup": "simplefluidtanks:block/tank_bottom_left",
+                "north": "simplefluidtanks:block/tank_right",
+                "inorth": "simplefluidtanks:block/tank_right",
+                "east": "simplefluidtanks:block/tank_left",
+                "ieast": "simplefluidtanks:block/tank_left"
+            }
+        },
+        "down=true,east=true,north=false,south=true,up=false,west=false": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "up": "simplefluidtanks:block/tank_bottom_right",
+                "iup": "simplefluidtanks:block/tank_bottom_right",
+                "north": "simplefluidtanks:block/tank_bottom_left",
+                "inorth": "simplefluidtanks:block/tank_bottom_left",
+                "west": "simplefluidtanks:block/tank_bottom_right",
+                "iwest": "simplefluidtanks:block/tank_bottom_right"
+            }
+        },
+        "down=true,east=false,north=true,south=true,up=true,west=false": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "west": "simplefluidtanks:block/tank_open",
+                "iwest": "simplefluidtanks:block/tank_open",
+                "east": "simplefluidtanks:block/tank_open",
+                "ieast": "simplefluidtanks:block/tank_open"
+            }
+        },
+        "down=true,east=true,north=true,south=false,up=true,west=true": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "south": "simplefluidtanks:block/tank_open",
+                "isouth": "simplefluidtanks:block/tank_open"
+            }
+        },
+        "down=true,east=false,north=false,south=true,up=false,west=false": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "up": "simplefluidtanks:block/tank_bottom",
+                "iup": "simplefluidtanks:block/tank_bottom",
+                "north": "simplefluidtanks:block/tank_bottom",
+                "inorth": "simplefluidtanks:block/tank_bottom",
+                "west": "simplefluidtanks:block/tank_bottom_right",
+                "iwest": "simplefluidtanks:block/tank_bottom_right",
+                "east": "simplefluidtanks:block/tank_bottom_left",
+                "ieast": "simplefluidtanks:block/tank_bottom_left"
+            }
+        },
+        "down=true,east=true,north=true,south=false,up=false,west=false": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "up": "simplefluidtanks:block/tank_top_right",
+                "iup": "simplefluidtanks:block/tank_top_right",
+                "south": "simplefluidtanks:block/tank_bottom_right",
+                "isouth": "simplefluidtanks:block/tank_bottom_right",
+                "west": "simplefluidtanks:block/tank_bottom_left",
+                "iwest": "simplefluidtanks:block/tank_bottom_left"
+            }
+        },
+        "down=true,east=false,north=false,south=false,up=false,west=true": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "up": "simplefluidtanks:block/tank_left",
+                "iup": "simplefluidtanks:block/tank_left",
+                "north": "simplefluidtanks:block/tank_bottom_right",
+                "inorth": "simplefluidtanks:block/tank_bottom_right",
+                "south": "simplefluidtanks:block/tank_bottom_left",
+                "isouth": "simplefluidtanks:block/tank_bottom_left",
+                "east": "simplefluidtanks:block/tank_bottom",
+                "ieast": "simplefluidtanks:block/tank_bottom"
+            }
+        },
+        "down=true,east=true,north=true,south=true,up=true,west=false": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "west": "simplefluidtanks:block/tank_open",
+                "iwest": "simplefluidtanks:block/tank_open"
+            }
+        },
+        "down=true,east=true,north=false,south=false,up=false,west=true": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "up": "simplefluidtanks:block/tank_left_right",
+                "iup": "simplefluidtanks:block/tank_left_right",
+                "north": "simplefluidtanks:block/tank_left_right_bottom",
+                "inorth": "simplefluidtanks:block/tank_left_right_bottom",
+                "south": "simplefluidtanks:block/tank_left_right_bottom",
+                "isouth": "simplefluidtanks:block/tank_left_right_bottom"
+            }
+        },
+        "down=true,east=false,north=true,south=false,up=false,west=false": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "up": "simplefluidtanks:block/tank_top",
+                "iup": "simplefluidtanks:block/tank_top",
+                "south": "simplefluidtanks:block/tank_bottom",
+                "isouth": "simplefluidtanks:block/tank_bottom",
+                "west": "simplefluidtanks:block/tank_bottom_left",
+                "iwest": "simplefluidtanks:block/tank_bottom_left",
+                "east": "simplefluidtanks:block/tank_bottom_right",
+                "ieast": "simplefluidtanks:block/tank_bottom_right"
+            }
+        },
+        "down=false,east=false,north=true,south=true,up=false,west=true": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "down": "simplefluidtanks:block/tank_top_bottom_left",
+                "idown": "simplefluidtanks:block/tank_top_bottom_left",
+                "up": "simplefluidtanks:block/tank_top_bottom_left",
+                "iup": "simplefluidtanks:block/tank_top_bottom_left",
+                "east": "simplefluidtanks:block/tank_left_right",
+                "ieast": "simplefluidtanks:block/tank_left_right"
+            }
+        },
+        "down=false,east=false,north=false,south=true,up=true,west=false": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "down": "simplefluidtanks:block/tank_top",
+                "idown": "simplefluidtanks:block/tank_top",
+                "north": "simplefluidtanks:block/tank_top",
+                "inorth": "simplefluidtanks:block/tank_top",
+                "west": "simplefluidtanks:block/tank_top_right",
+                "iwest": "simplefluidtanks:block/tank_top_right",
+                "east": "simplefluidtanks:block/tank_top_left",
+                "ieast": "simplefluidtanks:block/tank_top_left"
+            }
+        },
+        "down=true,east=true,north=false,south=false,up=false,west=false": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "up": "simplefluidtanks:block/tank_right",
+                "iup": "simplefluidtanks:block/tank_right",
+                "north": "simplefluidtanks:block/tank_bottom_left",
+                "inorth": "simplefluidtanks:block/tank_bottom_left",
+                "south": "simplefluidtanks:block/tank_bottom_right",
+                "isouth": "simplefluidtanks:block/tank_bottom_right",
+                "west": "simplefluidtanks:block/tank_bottom",
+                "iwest": "simplefluidtanks:block/tank_bottom"
+            }
+        },
+        "down=false,east=false,north=false,south=false,up=true,west=true": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "down": "simplefluidtanks:block/tank_left",
+                "idown": "simplefluidtanks:block/tank_left",
+                "north": "simplefluidtanks:block/tank_top_right",
+                "inorth": "simplefluidtanks:block/tank_top_right",
+                "south": "simplefluidtanks:block/tank_top_left",
+                "isouth": "simplefluidtanks:block/tank_top_left",
+                "east": "simplefluidtanks:block/tank_top",
+                "ieast": "simplefluidtanks:block/tank_top"
+            }
+        },
+        "down=true,east=false,north=true,south=false,up=false,west=true": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "up": "simplefluidtanks:block/tank_top_left",
+                "iup": "simplefluidtanks:block/tank_top_left",
+                "south": "simplefluidtanks:block/tank_bottom_left",
+                "isouth": "simplefluidtanks:block/tank_bottom_left",
+                "east": "simplefluidtanks:block/tank_bottom_right",
+                "ieast": "simplefluidtanks:block/tank_bottom_right"
+            }
+        },
+        "down=true,east=true,north=true,south=true,up=true,west=true": {
+            "model": "simplefluidtanks:block/tank"
+        },
+        "down=false,east=true,north=true,south=true,up=true,west=true": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "down": "simplefluidtanks:block/tank_open",
+                "idown": "simplefluidtanks:block/tank_open"
+            }
+        },
+        "down=false,east=true,north=false,south=true,up=true,west=true": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "down": "simplefluidtanks:block/tank_left_right_top",
+                "idown": "simplefluidtanks:block/tank_left_right_top",
+                "north": "simplefluidtanks:block/tank_left_right_top",
+                "inorth": "simplefluidtanks:block/tank_left_right_top"
+            }
+        },
+        "down=true,east=false,north=true,south=true,up=false,west=true": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "up": "simplefluidtanks:block/tank_top_bottom_left",
+                "iup": "simplefluidtanks:block/tank_top_bottom_left",
+                "east": "simplefluidtanks:block/tank_left_right_bottom",
+                "ieast": "simplefluidtanks:block/tank_left_right_bottom"
+            }
+        },
+        "down=false,east=true,north=true,south=false,up=true,west=false": {
+            "model": "simplefluidtanks:block/tank",
+            textures: {
+                "down": "simplefluidtanks:block/tank_bottom_right",
+                "idown": "simplefluidtanks:block/tank_bottom_right",
+                "south": "simplefluidtanks:block/tank_top_right",
+                "isouth": "simplefluidtanks:block/tank_top_right",
+                "west": "simplefluidtanks:block/tank_top_left",
+                "iwest": "simplefluidtanks:block/tank_top_left"
+            }
+        }
+    }
+}

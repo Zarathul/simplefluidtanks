@@ -25,21 +25,16 @@ import java.util.List;
  */
 public class TankItem extends BlockItem
 {
-	private static final String toolTipKey = "item." + SimpleFluidTanks.TANK_ITEM_NAME + ".toolTip";
-	private static final String toolTipDetailsKey = "item." + SimpleFluidTanks.TANK_ITEM_NAME + ".toolTipDetails";
+	private static final String toolTipKey = "item." + SimpleFluidTanks.TANK_ITEM_NAME + ".tooltip";
+	private static final String toolTipDetailsKey = "item." + SimpleFluidTanks.TANK_ITEM_NAME + ".tooltip_details";
 
 	public TankItem(Block block)
 	{
-		super(
-			block,
-			new Item.Properties()
+		super(block, new Item.Properties()
 				.maxStackSize(64)
-				.group(SimpleFluidTanks.creativeTab)
-		);
-
+				.group(SimpleFluidTanks.creativeTab));
 
 		setRegistryName(SimpleFluidTanks.TANK_ITEM_NAME);
-		//setUnlocalizedName(SimpleFluidTanks.TANK_ITEM_NAME);
 	}
 
 	@Override

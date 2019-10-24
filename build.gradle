@@ -3,7 +3,8 @@ buildscript
     repositories
     {
         maven { url = "http://files.minecraftforge.net/maven" }
-        jcenter()
+
+		jcenter()
         mavenCentral()
     }
     dependencies
@@ -16,7 +17,7 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 //apply plugin: 'maven-publish'
 
-String ForgeVersion = '1.14.4-28.0.45'
+String ForgeVersion = '1.14.4-28.1.61'
 
 version = "1.14.4-1.8.0.0"
 group= "net.zarathul.simplefluidtanks" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
@@ -34,10 +35,6 @@ minecraft
     mappings channel: 'snapshot', version: '20190719-1.14.3'
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 
-    // Could not find method replaceIn() for arguments [SimpleFluidTanks.java] on object of type net.minecraftforge.gradle.userdev.UserDevExtension.
-	//replaceIn "SimpleFluidTanks.java"
-    //replace "@VERSION@", project.version
-    
 	runs
 	{
 		client
@@ -81,9 +78,9 @@ dependencies
 
 jar
 {
-    exclude 'appeng/**'
-    exclude 'blusunrize/**'
-    exclude 'cofh/**'
+    //exclude 'appeng/**'
+    //exclude 'blusunrize/**'
+    //exclude 'cofh/**'
     exclude 'mcjty/**'
     
 	manifest

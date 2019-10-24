@@ -1,6 +1,6 @@
 package net.zarathul.simplefluidtanks.tileentities;
 
-import net.minecraft.block.BlockState;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
@@ -8,8 +8,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
-import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.zarathul.simplefluidtanks.SimpleFluidTanks;
 import net.zarathul.simplefluidtanks.blocks.TankBlock;
@@ -17,6 +15,7 @@ import net.zarathul.simplefluidtanks.blocks.ValveBlock;
 import net.zarathul.simplefluidtanks.common.Utils;
 import net.zarathul.simplefluidtanks.rendering.BakedTankModel;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 
 /**
@@ -45,6 +44,11 @@ public class TankBlockEntity extends TileEntity
 	private boolean[] connections;
 
 	/**
+	 * Contains additional information to render the tank model correctly.
+	 */
+	//private TankData modelData;
+
+	/**
 	 * Default constructor.
 	 */
 	public TankBlockEntity()
@@ -55,7 +59,43 @@ public class TankBlockEntity extends TileEntity
 		isPartOfTank = false;
 		valveCoords = null;
 		connections = new boolean[6];
+		//modelData = new TankData(new ResourceLocation("minecraft", "empty"), 0, false);
 	}
+
+	/*
+	@Override
+	public void requestModelDataUpdate()
+	{
+		modelData.fluidName = getFluid().getRegistryName();
+		modelData.fluidLevel = fillLevel;
+
+		boolean tankAboveIsEmpty = true;
+		boolean sameValve = false;
+		TankBlockEntity tankAbove = Utils.getTileEntityAt(world, TankBlockEntity.class, pos.up());
+
+		if (tankAbove != null)
+		{
+			tankAboveIsEmpty = tankAbove.isEmpty();
+			ValveBlockEntity valve = getValve();
+			ValveBlockEntity valveAbove = tankAbove.getValve();
+			sameValve = valveAbove != null && valve == valveAbove;
+		}
+
+		// Only cull the fluids top face if the tank above is not empty and both tanks
+		// are part of the same multiblock (share the same valve).
+		modelData.cullFluidTop = !tankAboveIsEmpty && sameValve;
+
+		super.requestModelDataUpdate();
+	}
+
+	@Nonnull
+	@Override
+	public IModelData getModelData()
+	{
+		return modelData;
+	}
+
+	 */
 
 	@Override
 	public void read(CompoundNBT tag)
@@ -80,6 +120,7 @@ public class TankBlockEntity extends TileEntity
 		connections[Direction.EAST.getIndex()] = tag.getBoolean("X+");
 	}
 
+	@Nonnull
 	@Override
 	public CompoundNBT write(CompoundNBT tag)
 	{
@@ -104,15 +145,7 @@ public class TankBlockEntity extends TileEntity
 		return tag;
 	}
 
-	/*
-	@Override
-	public boolean shouldRefresh(World world, BlockPos pos, BlockState oldState, BlockState newState)
-	{
-		return oldState.getBlock() != newState.getBlock();
-	}
-
- */
-
+	@Nonnull
 	@Override
 	public CompoundNBT getUpdateTag()
 	{

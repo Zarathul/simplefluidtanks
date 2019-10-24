@@ -24,20 +24,16 @@ import java.util.List;
  */
 public class ValveItem extends BlockItem
 {
-	private static final String toolTipKey = "item." + SimpleFluidTanks.VALVE_ITEM_NAME + ".toolTip";
-	private static final String toolTipDetailsKey = "item." + SimpleFluidTanks.VALVE_ITEM_NAME + ".toolTipDetails";
+	private static final String toolTipKey = "item." + SimpleFluidTanks.VALVE_ITEM_NAME + ".tooltip";
+	private static final String toolTipDetailsKey = "item." + SimpleFluidTanks.VALVE_ITEM_NAME + ".tooltip_details";
 
 	public ValveItem(Block block)
 	{
-		super(
-			block,
-			new Item.Properties()
+		super(block, new Item.Properties()
 				.maxStackSize(64)
-				.group(SimpleFluidTanks.creativeTab)
-		);
+				.group(SimpleFluidTanks.creativeTab));
 
 		this.setRegistryName(SimpleFluidTanks.VALVE_ITEM_NAME);
-		//this.setUnlocalizedName(SimpleFluidTanks.VALVE_ITEM_NAME);
 	}
 
 	@Override

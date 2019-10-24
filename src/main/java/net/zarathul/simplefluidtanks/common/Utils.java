@@ -1,8 +1,5 @@
 package net.zarathul.simplefluidtanks.common;
 
-import appeng.api.implementations.items.IAEWrench;
-import blusunrize.immersiveengineering.api.tool.ITool;
-import cofh.api.item.IToolHammer;
 import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
@@ -15,7 +12,6 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.translation.LanguageMap;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
 import net.zarathul.simplefluidtanks.SimpleFluidTanks;
 import net.zarathul.simplefluidtanks.blocks.TankBlock;
 import net.zarathul.simplefluidtanks.blocks.ValveBlock;
@@ -293,7 +289,7 @@ public final class Utils
 	}
 
 	/**
-	 * Checks if an item is a wrench (supports Cofh, Immersive Engineering and Applied Energistics APIs if present).
+	 * Checks if an item is a wrench.
 	 *
 	 * @param item
 	 * The item to check.
@@ -303,9 +299,10 @@ public final class Utils
 	 */
 	public static boolean isWrenchItem(Item item)
 	{
-		return (item == SimpleFluidTanks.wrenchItem
+		// TODO: Add support for other wrenches or tools
+		return (item == SimpleFluidTanks.wrenchItem/*
 		|| (Utils.isInterfaceAvailable("cofh.api.item", "IToolHammer") && item instanceof IToolHammer)
 		|| (Utils.isInterfaceAvailable("blusunrize.immersiveengineering.api.tool", "ITool") && item instanceof ITool)
-		|| (Utils.isInterfaceAvailable("appeng.api.implementations.items", "IAEWrench") && item instanceof IAEWrench));
+		|| (Utils.isInterfaceAvailable("appeng.api.implementations.items", "IAEWrench") && item instanceof IAEWrench)*/);
 	}
 }
