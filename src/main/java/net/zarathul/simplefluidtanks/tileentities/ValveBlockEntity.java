@@ -388,10 +388,14 @@ public class ValveBlockEntity extends TileEntity
 
 	/**
 	 * Disconnects all connected {@link TankBlock}s and resets the {@link ValveBlock} itself (capacity etc.).
+	 * The TankBlock or ValveBlock located at <code>ignorePos</code> will not get it's BlockState updated.
+	 *
+	 * @param ignorePos
+	 * Tank- or ValveBlock at this position will not get it's BlackState updated.
 	 */
-	public void disbandMultiblock()
+	public void disbandMultiblock(BlockPos ignorePos)
 	{
-		disbandMultiblock(false);
+		disbandMultiblock(false, ignorePos);
 	}
 
 	/**
@@ -399,14 +403,16 @@ public class ValveBlockEntity extends TileEntity
 	 * 
 	 * @param suppressBlockUpdates
 	 * Specifies if block updates should be suppressed.
+	 * @param ignorePos
+	 * Tank- or ValveBlock at this position will not get it's BlackState updated.
 	 */
-	public void disbandMultiblock(boolean suppressBlockUpdates)
+	public void disbandMultiblock(boolean suppressBlockUpdates, BlockPos ignorePos)
 	{
 		for (BlockPos tankCoords : tankPriorities.values())
 		{
 			TankBlockEntity tankEntity = Utils.getTileEntityAt(world, TankBlockEntity.class, tankCoords);
 
-			if (tankEntity != null)
+			if (tankEntity != null && (!tankCoords.equals(ignorePos)))
 			{
 				tankEntity.disconnect(suppressBlockUpdates);
 			}
@@ -426,8 +432,9 @@ public class ValveBlockEntity extends TileEntity
 		internalTank.setFluid(FluidStack.EMPTY);
 		internalTank.setCapacity(0);
 
-		if (!suppressBlockUpdates)
+		if (!suppressBlockUpdates && (!pos.equals(ignorePos)))
 		{
+			SimpleFluidTanks.valveBlock.updateBlockState(world, pos);
 			Utils.syncBlockAndRerender(world, pos);
 			markDirty();
 
@@ -449,18 +456,19 @@ public class ValveBlockEntity extends TileEntity
 		// find new tanks and update the valves textures
 
 		// block updates are suppressed here because tanks are updated anyway when the fluid is distributed
-		disbandMultiblock(true);
+		disbandMultiblock(true, null);
 		findAndPrioritizeTanks();
 		// tanks that are no longer part of the multiblock structure need to be updated to render correctly
 		updateOrphanedTanks();
 		updateTankFacingSides();
 
+		// the ValveBlock also counts as a tank in the multiblock structure
+		linkedTankCount = Math.max(tankPriorities.size() - 1, 0);
 		// redistribute the fluid
 		internalTank.setFluid(fluid);
 		distributeFluidToTanks(true);
-		// the ValveBlock also counts as a tank in the multiblock structure
-		linkedTankCount = Math.max(tankPriorities.size() - 1, 0);
 
+		SimpleFluidTanks.valveBlock.updateBlockState(world, pos);
 		Utils.syncBlockAndRerender(world, pos);
 		markDirty();
 
@@ -499,9 +507,10 @@ public class ValveBlockEntity extends TileEntity
 		}
 		
 		// This needs to be done after setting the valve. Otherwise the connected textures will be wrong.
-		for (TankBlockEntity t : tankEntities)
+		for (TankBlockEntity tankEntity : tankEntities)
 		{
-			t.updateConnections();
+			tankEntity.updateConnections();
+			SimpleFluidTanks.tankBlock.updateBlockState(world, tankEntity.getPos());
 		}
 
 		// calculate and set the internal tanks capacity, note the " + 1" is needed because the ValveBlock itself is considered a tank with storage capacity
@@ -521,6 +530,7 @@ public class ValveBlockEntity extends TileEntity
 
 			if (tankEntity != null)
 			{
+				SimpleFluidTanks.tankBlock.updateBlockState(world, tankEntity.getPos());
 				Utils.syncBlockAndRerender(world, tankEntity.getPos());
 				tankEntity.markDirty();
 			}

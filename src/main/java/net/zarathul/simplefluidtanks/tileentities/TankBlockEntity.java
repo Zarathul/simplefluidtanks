@@ -1,6 +1,7 @@
 package net.zarathul.simplefluidtanks.tileentities;
 
 import net.minecraft.fluid.Fluid;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
@@ -217,22 +218,19 @@ public class TankBlockEntity extends TileEntity
 	/**
 	 * Links the {@link TankBlock} to a {@link ValveBlock}.
 	 * 
-	 * @param pos
+	 * @param valvePos
 	 * The coordinates of the {@link ValveBlock}.
 	 * @return <code>true</code> if linking succeeded, otherwise <code>false</code>.
 	 */
-	public boolean setValve(BlockPos pos)
+	public boolean setValve(BlockPos valvePos)
 	{
-		if (isPartOfTank() || pos == null)
-		{
-			return false;
-		}
+		if (isPartOfTank() || valvePos == null) return false;
 
-		ValveBlockEntity valveEntity = Utils.getTileEntityAt(world, ValveBlockEntity.class, pos);
+		ValveBlockEntity valveEntity = Utils.getTileEntityAt(world, ValveBlockEntity.class, valvePos);
 
 		if (valveEntity != null)
 		{
-			valveCoords = pos;
+			valveCoords = valvePos.toImmutable();
 			isPartOfTank = true;
 
 			return true;
@@ -265,11 +263,17 @@ public class TankBlockEntity extends TileEntity
 		level = MathHelper.clamp(level, 0, BakedTankModel.FLUID_LEVELS);
 
 		boolean levelChanged = (level != fillLevel);
+		boolean levelUp = (level > fillLevel);
 
 		fillLevel = level;
 
 		if (levelChanged || forceBlockUpdate)
 		{
+			SimpleFluidTanks.tankBlock.updateBlockState(world, pos);
+			// Update the cullFluidTop property of the tank below if there is one
+			if (levelChanged && ((levelUp && fillLevel == 1) || (!levelUp && fillLevel == 0)))
+				SimpleFluidTanks.tankBlock.updateBlockState(world, pos.down());
+
 			Utils.syncBlockAndRerender(world, pos);
 			markDirty();
 		}
@@ -280,7 +284,7 @@ public class TankBlockEntity extends TileEntity
 	/**
 	 * Gets the {@link Fluid} inside the multiblock tank structure.
 	 * 
-	 * @return The fluid or <code>null</code> if the {@link TankBlock} is not linked to a {@link ValveBlock} or the multiblock tank is empty.
+	 * @return The fluid or <code>Fluids.EMPTY</code> if the {@link TankBlock} is not linked to a {@link ValveBlock} or the multiblock tank is empty.
 	 */
 	public Fluid getFluid()
 	{
@@ -296,7 +300,7 @@ public class TankBlockEntity extends TileEntity
 			}
 		}
 
-		return null;
+		return Fluids.EMPTY;
 	}
 	
 	/**
@@ -339,8 +343,8 @@ public class TankBlockEntity extends TileEntity
 		connections[Direction.WEST.getIndex()] = shouldConnectTo(pos.west());		// X-
 		connections[Direction.UP.getIndex()] = shouldConnectTo(pos.up());			// Y+
 		connections[Direction.DOWN.getIndex()] = shouldConnectTo(pos.down());		// Y-
-		connections[Direction.SOUTH.getIndex()] = shouldConnectTo(pos.south());	// Z+
-		connections[Direction.NORTH.getIndex()] = shouldConnectTo(pos.north());	// Z-
+		connections[Direction.SOUTH.getIndex()] = shouldConnectTo(pos.south());		// Z+
+		connections[Direction.NORTH.getIndex()] = shouldConnectTo(pos.north());		// Z-
 	}
 
 	/**
@@ -385,6 +389,7 @@ public class TankBlockEntity extends TileEntity
 
 		if (!suppressBlockUpdates)
 		{
+			SimpleFluidTanks.tankBlock.updateBlockState(world, pos);
 			Utils.syncBlockAndRerender(world, pos);
 			markDirty();
 		}

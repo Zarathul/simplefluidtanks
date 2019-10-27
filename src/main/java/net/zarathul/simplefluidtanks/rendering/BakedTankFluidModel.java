@@ -17,7 +17,6 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 import net.minecraftforge.fluids.FluidAttributes;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.util.EnumMap;
@@ -271,7 +270,7 @@ public class BakedTankFluidModel implements IBakedModel
 	@Override
 	public boolean isAmbientOcclusion()
 	{
-		return false;
+		return true;
 	}
 
 	@Override

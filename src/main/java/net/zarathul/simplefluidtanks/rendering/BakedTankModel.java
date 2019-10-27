@@ -15,7 +15,10 @@ import net.zarathul.simplefluidtanks.blocks.TankBlock;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Random;
 
 public class BakedTankModel implements IBakedModel
 {
@@ -31,16 +34,15 @@ public class BakedTankModel implements IBakedModel
 		this.baseModel = baseModel;
 	}
 
+	@Nonnull
 	@Override
-	public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand)
+	public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData extraData)
 	{
-		List<BakedQuad> quads = new ArrayList<>();
-
 		if (MinecraftForgeClient.getRenderLayer() == BlockRenderLayer.CUTOUT_MIPPED)
 		{
 			// Frame
 
-			quads.addAll(baseModel.getQuads(state, side, rand));
+			return baseModel.getQuads(state, side, rand);
 		}
 		else if (MinecraftForgeClient.getRenderLayer() == BlockRenderLayer.TRANSLUCENT)
 		{
@@ -54,33 +56,28 @@ public class BakedTankModel implements IBakedModel
 			// rest of the tank, because the top needs to be visible if the tank isn't
 			// full, even if there's a tank above.
 			// (Note that 'side' is null for quads that don't have a cullface annotation in the .json.
-			// UPDATE 1.14.4: Not true anymore. Side is now never null. What this means in the context of
-			// cullface annotations in unknown.
 			// The tank model has cullface annotations for every side.)
-			if ((!cullFluidTop || side != Direction.UP) &&
+			if (((side != null && side != Direction.UP) || (side == null && !cullFluidTop)) &&
 				(fluidLevel > 0 && fluidLevel <= FLUID_LEVELS && FLUID_MODELS.containsKey(fluidName)))
 			{
 				IBakedModel fluidModel = FLUID_MODELS.get(fluidName)[fluidLevel - 1];
-				quads.addAll(fluidModel.getQuads(null, side, rand));
+				return fluidModel.getQuads(null, side, rand);
 			}
 		}
 
-		return quads;
+		return Collections.EMPTY_LIST;
 	}
 
-	/*
-	@Nonnull
 	@Override
-	public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData extraData)
+	public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand)
 	{
+		return Collections.EMPTY_LIST;
 	}
-
-	 */
 
 	@Override
 	public boolean isAmbientOcclusion()
 	{
-		return false;
+		return true;
 	}
 
 	@Override

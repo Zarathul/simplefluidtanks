@@ -42,8 +42,8 @@ public class TankInfoProvider implements IProbeInfoProvider
 		{
 			TankBlockEntity tankEntity = Utils.getTileEntityAt(world, TankBlockEntity.class, data.getPos());
 
-			probeInfo.text(IS_LINKED + ((tankEntity.isPartOfTank()) ? YES : NO));
-			probeInfo.text(CAPACITY + Config.bucketsPerTank);
+			probeInfo.text(String.format("%s %s", IS_LINKED, ((tankEntity.isPartOfTank()) ? YES : NO)));
+			probeInfo.text(String.format("%s %d B", CAPACITY, Config.bucketsPerTank.get()));
 		}
 		else if (block == SimpleFluidTanks.valveBlock)
 		{
@@ -72,14 +72,14 @@ public class TankInfoProvider implements IProbeInfoProvider
 
 			if (amount > 0)
 			{
-				probeInfo.text(IProbeInfo.STARTLOC + valveEntity.getFluidRegistryName() + IProbeInfo.ENDLOC);
+				probeInfo.text(valveEntity.getFluidRegistryName().toString());
 			}
 
 			if (mode == ProbeMode.EXTENDED)
 			{
-				probeInfo.text(AMOUNT + amount);
-				probeInfo.text(CAPACITY + capacity);
-				probeInfo.text(TANKS + valveEntity.getLinkedTankCount());
+				probeInfo.text(String.format("%s %d B", AMOUNT, amount));
+				probeInfo.text(String.format("%s %d B", CAPACITY, capacity));
+				probeInfo.text(String.format("%s %d", TANKS, valveEntity.getLinkedTankCount()));
 			}
 		}
 	}

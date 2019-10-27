@@ -4,6 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.Fluids;
@@ -24,7 +25,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.zarathul.simplefluidtanks.SimpleFluidTanks;
-import net.zarathul.simplefluidtanks.blocks.blockstate.StringProperty;
+import net.zarathul.simplefluidtanks.blocks.blockstate.ResourceLocationProperty;
 import net.zarathul.simplefluidtanks.common.Utils;
 import net.zarathul.simplefluidtanks.configuration.Config;
 import net.zarathul.simplefluidtanks.tileentities.TankBlockEntity;
@@ -38,7 +39,7 @@ import java.util.HashSet;
  */
 public class TankBlock extends WrenchableBlock
 {
-	public static final StringProperty FluidName = StringProperty.create("fluid_name");
+	public static final ResourceLocationProperty FluidName = ResourceLocationProperty.create("fluid_name");
 	public static final IntegerProperty FluidLevel = IntegerProperty.create("fluid_level", 0 , 16);
 	public static final BooleanProperty CullFluidTop = BooleanProperty.create("cull_fluid_top");
 
@@ -50,7 +51,8 @@ public class TankBlock extends WrenchableBlock
 	public static final BooleanProperty EAST = BooleanProperty.create("east");
 	
 	private final HashSet<BlockPos> ignoreBlockBreakCoords;
-	private final ResourceLocation EMPTY_NAME = ForgeRegistries.FLUIDS.getKey(Fluids.EMPTY);//new ResourceLocation("minecraft:empty");
+	private final ResourceLocation EMPTY_FLUID_NAME = ForgeRegistries.FLUIDS.getKey(Fluids.EMPTY);
+	private final BooleanProperty[] CONNECTION_PROPS_FROM_DIRECTION = new BooleanProperty[6];
 
 	
 	public TankBlock()
@@ -70,11 +72,18 @@ public class TankBlock extends WrenchableBlock
 						.with(SOUTH, false)
 						.with(WEST,  false)
 						.with(EAST,  false)
-						.with(FluidName, EMPTY_NAME)
+						.with(FluidName, EMPTY_FLUID_NAME)
 						.with(FluidLevel, 0)
 						.with(CullFluidTop, false));
 
 		ignoreBlockBreakCoords = new HashSet<BlockPos>();
+
+		CONNECTION_PROPS_FROM_DIRECTION[Direction.DOWN.getIndex()] = DOWN;
+		CONNECTION_PROPS_FROM_DIRECTION[Direction.UP.getIndex()] = UP;
+		CONNECTION_PROPS_FROM_DIRECTION[Direction.NORTH.getIndex()] = NORTH;
+		CONNECTION_PROPS_FROM_DIRECTION[Direction.SOUTH.getIndex()] = SOUTH;
+		CONNECTION_PROPS_FROM_DIRECTION[Direction.WEST.getIndex()] = WEST;
+		CONNECTION_PROPS_FROM_DIRECTION[Direction.EAST.getIndex()] = EAST;
 	}
 
 	@Override
@@ -83,16 +92,19 @@ public class TankBlock extends WrenchableBlock
 		builder.add(DOWN, UP, NORTH, SOUTH, WEST, EAST, FluidName, FluidLevel, CullFluidTop);
 	}
 
-	@Override
-	public BlockState getExtendedState(BlockState state, IBlockReader world, BlockPos pos)
+	public void updateBlockState(World world, BlockPos pos)
 	{
 		TankBlockEntity tankEntity = Utils.getTileEntityAt(world, TankBlockEntity.class, pos);
-		TankBlockEntity tankAbove = Utils.getTileEntityAt(world, TankBlockEntity.class, pos.up());
+		if (tankEntity == null) return;;
 
-		if (tankEntity != null && tankEntity.isPartOfTank())
+		TankBlockEntity tankAbove = Utils.getTileEntityAt(world, TankBlockEntity.class, pos.up());
+		BlockState state = world.getBlockState(pos);
+		BlockState newState = null;
+
+		if (tankEntity.isPartOfTank())
 		{
 			Fluid tankFluid = tankEntity.getFluid();
-			ResourceLocation fluidName = (tankFluid != null) ? tankFluid.getRegistryName() : EMPTY_NAME;
+			ResourceLocation fluidName = (tankFluid != null) ? tankFluid.getRegistryName() : EMPTY_FLUID_NAME;
 			int fluidLevel = tankEntity.getFillLevel();
 
 			boolean tankAboveIsEmpty = true;
@@ -110,7 +122,7 @@ public class TankBlock extends WrenchableBlock
 			// are part of the same multiblock (share the same valve).
 			boolean cullFluidTop = !tankAboveIsEmpty && sameValve;
 
-			return state
+			newState = state
 					.with(DOWN,  tankEntity.isConnected(Direction.DOWN))
 					.with(UP,    tankEntity.isConnected(Direction.UP))
 					.with(NORTH, tankEntity.isConnected(Direction.NORTH))
@@ -122,47 +134,28 @@ public class TankBlock extends WrenchableBlock
 					.with(CullFluidTop, cullFluidTop);
 		}
 
-		return state
-				.with(DOWN,  false)
-				.with(UP,    false)
-				.with(NORTH, false)
-				.with(SOUTH, false)
-				.with(WEST,  false)
-				.with(EAST,  false)
-				.with(FluidName, EMPTY_NAME)
-				.with(FluidLevel, 0)
-				.with(CullFluidTop, false);
+		world.setBlockState(pos, (newState != null) ? newState : getDefaultState(), 3);
 	}
 
-	/*
 	@Override
-	public boolean isSideSolid(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side)
+	public boolean propagatesSkylightDown(BlockState state, IBlockReader reader, BlockPos pos)
 	{
-		// allow torches, ladders etc. to be places on every side
-		return true;
+		return (state.get(FluidLevel) == 0);
 	}
 
 	@Override
-	public int quantityDropped(Random par1Random)
-	{
-		return 1;
-	}
-
-	@Override
-	public boolean isOpaqueCube(IBlockState state)
+	public boolean canEntitySpawn(BlockState state, IBlockReader worldIn, BlockPos pos, EntityType<?> type)
 	{
 		return false;
 	}
 
 	@Override
-	public boolean isFullCube(IBlockState state)
+	public float func_220080_a(BlockState state, IBlockReader worldIn, BlockPos pos)
 	{
-		return false;
+		return 1.0f;
 	}
-	 */
 
 	@Override
-	@OnlyIn(Dist.CLIENT)
 	public BlockRenderLayer getRenderLayer()
 	{
 		return BlockRenderLayer.TRANSLUCENT;
@@ -195,15 +188,20 @@ public class TankBlock extends WrenchableBlock
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
+	public boolean isSideInvisible(BlockState state, BlockState adjacentBlockState, Direction side)
+	{
+		// Don't render if there's a connection to another TankBlock on that side, or if
+		// two TankBlocks, that are both not part of a multiblock structure, touch each other
+		// on that side.
+		return state.get(CONNECTION_PROPS_FROM_DIRECTION[side.getIndex()]) ||
+			   ((adjacentBlockState.getBlock() == SimpleFluidTanks.tankBlock) &&
+			   (!isPartOfMultiBlock(state) && !isPartOfMultiBlock(adjacentBlockState)));
+	}
+
+	@Override
 	public boolean doesSideBlockRendering(BlockState state, IEnviromentBlockReader world, BlockPos pos, Direction face)
 	{
-		// Only cull faces touching tank blocks that belong to the same multi block.
-		TankBlockEntity adjacentTankEntity = Utils.getTileEntityAt(world, TankBlockEntity.class, pos.offset(face));
-		TankBlockEntity tankEntity = Utils.getTileEntityAt(world, TankBlockEntity.class, pos);
-		ValveBlockEntity adjacentTankValve = (adjacentTankEntity != null) ? adjacentTankEntity.getValve() : null;
-		ValveBlockEntity tankValve = (tankEntity != null) ? tankEntity.getValve() : null;
-
-		return (adjacentTankEntity == null || (adjacentTankValve != tankValve));
+		return false;
 	}
 
 	@Override
@@ -217,20 +215,23 @@ public class TankBlock extends WrenchableBlock
 	{
 		if (!world.isRemote)
 		{
-			// ignore the event if the tanks coordinates are on the ignore list
-			if (ignoreBlockBreakCoords.contains(pos))
+			if (newState.getBlock() != SimpleFluidTanks.tankBlock)
 			{
-				ignoreBlockBreakCoords.remove(pos);
+				// ignore the event if the tanks coordinates are on the ignore list
+				if (ignoreBlockBreakCoords.contains(pos))
+				{
+					ignoreBlockBreakCoords.remove(pos);
 
-				return;
-			}
+					return;
+				}
 
-			// get the valve the tank is connected to and disband the multiblock
-			ValveBlockEntity valveEntity = Utils.getValve(world, pos);
+				// get the valve the tank is connected to and disband the multiblock
+				ValveBlockEntity valveEntity = Utils.getValve(world, pos);
 
-			if (valveEntity != null)
-			{
-				valveEntity.disbandMultiblock();
+				if (valveEntity != null)
+				{
+					valveEntity.disbandMultiblock(pos);
+				}
 			}
 		}
 
@@ -262,5 +263,25 @@ public class TankBlock extends WrenchableBlock
 				valveEntity.formMultiblock();
 			}
 		}
+	}
+
+	/**
+	 * Tries to determines if a TankBlock part of a multiblock structure based on its BlockState.
+	 *
+	 * @param state
+	 * The state of the block to check.
+	 * @return
+	 * <code>true</code> if any of the blocks connection properties is <code>true</code>, otherwise <code>false</code>.
+	 */
+	private boolean isPartOfMultiBlock(BlockState state)
+	{
+		return (state.get(DOWN) ||
+				state.get(UP) ||
+				state.get(NORTH) ||
+				state.get(SOUTH) ||
+				state.get(WEST) ||
+				state.get(EAST) ||
+				(state.get(FluidLevel) > 0) ||
+				(!state.get(FluidName).equals(EMPTY_FLUID_NAME)));
 	}
 }

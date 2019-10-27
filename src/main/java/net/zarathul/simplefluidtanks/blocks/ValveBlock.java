@@ -21,7 +21,6 @@ import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
-import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -108,80 +107,58 @@ public class ValveBlock extends WrenchableBlock
 				.with(EAST , (facing == Direction.EAST)  ? IO_TEXTURE_ID : TANK_TEXTURE_ID);
 	}
 
-	/*
-	@Override
-	public BlockState getExtendedState(BlockState state, IBlockReader world, BlockPos pos)
-	{
-		ValveBlockEntity valveEntity = Utils.getTileEntityAt(world, ValveBlockEntity.class, pos);
-
-		if (valveEntity != null)
-		{
-			// TODO: where to do this?
-			if (valveEntity.hasTanks())
-			{
-				state = state.with(DOWN , (valveEntity.isFacingTank(Direction.DOWN))  ? GRATE_TEXTURE_ID : IO_TEXTURE_ID)
-							 .with(UP   , (valveEntity.isFacingTank(Direction.UP))    ? GRATE_TEXTURE_ID : IO_TEXTURE_ID)
-							 .with(NORTH, (valveEntity.isFacingTank(Direction.NORTH)) ? GRATE_TEXTURE_ID : IO_TEXTURE_ID)
-							 .with(SOUTH, (valveEntity.isFacingTank(Direction.SOUTH)) ? GRATE_TEXTURE_ID : IO_TEXTURE_ID)
-							 .with(WEST , (valveEntity.isFacingTank(Direction.WEST))  ? GRATE_TEXTURE_ID : IO_TEXTURE_ID)
-							 .with(EAST , (valveEntity.isFacingTank(Direction.EAST))  ? GRATE_TEXTURE_ID : IO_TEXTURE_ID);
-			}
-			else
-			{
-				Direction facing = valveEntity.getFacing();
-
-				state = state.with(DOWN , TANK_TEXTURE_ID)
-							 .with(UP   , GRATE_TEXTURE_ID)
-							 .with(NORTH, (facing == Direction.NORTH) ? IO_TEXTURE_ID : TANK_TEXTURE_ID)
-							 .with(SOUTH, (facing == Direction.SOUTH) ? IO_TEXTURE_ID : TANK_TEXTURE_ID)
-							 .with(WEST , (facing == Direction.WEST)  ? IO_TEXTURE_ID : TANK_TEXTURE_ID)
-							 .with(EAST , (facing == Direction.EAST)  ? IO_TEXTURE_ID : TANK_TEXTURE_ID);
-			}
-		}
-
-		return state;
-	}
-
-	 */
-
 	@Override
 	public boolean ticksRandomly(BlockState state)
 	{
 		return false;
 	}
 
-	@Override
-	public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack items)
+	public void updateBlockState(World world, BlockPos pos)
 	{
-		super.onBlockPlacedBy(world, pos, state, placer, items);
-		
-		if (!world.isRemote)
-		{
-			Direction facing = placer.getHorizontalFacing().getOpposite();
-			
-			ValveBlockEntity valveEntity = Utils.getTileEntityAt(world, ValveBlockEntity.class, pos);
-			
-			if (valveEntity != null)
-			{
-				valveEntity.setFacing(facing);
-				world.markChunkDirty(pos, valveEntity);
-				world.notifyBlockUpdate(pos, state, state, 3);
-			}
-		}
+		ValveBlockEntity valveEntity = Utils.getTileEntityAt(world, ValveBlockEntity.class, pos);
+		if (valveEntity == null) return;
+
+		BlockState state = world.getBlockState(pos);
+		BlockState newState;
+		Direction facing = valveEntity.getFacing();
+
+		newState = (valveEntity.hasTanks()) ?
+				   state
+						   .with(UP, (valveEntity.isFacingTank(Direction.UP)) ? GRATE_TEXTURE_ID : IO_TEXTURE_ID)
+						   .with(DOWN, (valveEntity.isFacingTank(Direction.DOWN)) ? GRATE_TEXTURE_ID : IO_TEXTURE_ID)
+						   .with(NORTH, (valveEntity.isFacingTank(Direction.NORTH)) ? GRATE_TEXTURE_ID : IO_TEXTURE_ID)
+						   .with(SOUTH, (valveEntity.isFacingTank(Direction.SOUTH)) ? GRATE_TEXTURE_ID : IO_TEXTURE_ID)
+						   .with(EAST, (valveEntity.isFacingTank(Direction.EAST)) ? GRATE_TEXTURE_ID : IO_TEXTURE_ID)
+						   .with(WEST, (valveEntity.isFacingTank(Direction.WEST)) ? GRATE_TEXTURE_ID : IO_TEXTURE_ID) :
+				   state
+						   .with(DOWN , TANK_TEXTURE_ID)
+						   .with(UP   , GRATE_TEXTURE_ID)
+						   .with(NORTH, (facing == Direction.NORTH) ? IO_TEXTURE_ID : TANK_TEXTURE_ID)
+						   .with(SOUTH, (facing == Direction.SOUTH) ? IO_TEXTURE_ID : TANK_TEXTURE_ID)
+						   .with(WEST , (facing == Direction.WEST)  ? IO_TEXTURE_ID : TANK_TEXTURE_ID)
+						   .with(EAST , (facing == Direction.EAST)  ? IO_TEXTURE_ID : TANK_TEXTURE_ID);
+
+		world.setBlockState(pos, newState, 3);
 	}
 
 	@Override
-	public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean isMoving)
+	public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack items)
 	{
 		if (!world.isRemote)
 		{
+			Direction facing = placer.getHorizontalFacing().getOpposite();
+
 			ValveBlockEntity valveEntity = Utils.getTileEntityAt(world, ValveBlockEntity.class, pos);
 
 			if (valveEntity != null)
 			{
+				valveEntity.setFacing(facing);
 				valveEntity.formMultiblock();
+				world.markChunkDirty(pos, valveEntity);
 			}
 		}
+
+		super.onBlockPlacedBy(world, pos, state, placer, items);
 	}
 
 	@Override
@@ -253,12 +230,15 @@ public class ValveBlock extends WrenchableBlock
 	{
 		if (!world.isRemote)
 		{
-			// disband the multiblock if the valve is mined/destroyed
-			ValveBlockEntity valveEntity = Utils.getTileEntityAt(world, ValveBlockEntity.class, pos);
-
-			if (valveEntity != null)
+			if (newState.getBlock() != SimpleFluidTanks.valveBlock)
 			{
-				valveEntity.disbandMultiblock();
+				// disband the multiblock if the valve is mined/destroyed
+				ValveBlockEntity valveEntity = Utils.getTileEntityAt(world, ValveBlockEntity.class, pos);
+
+				if (valveEntity != null)
+				{
+					valveEntity.disbandMultiblock(pos);
+				}
 			}
 		}
 
@@ -276,7 +256,7 @@ public class ValveBlock extends WrenchableBlock
 		{
 			if (valveEntity != null)
 			{
-				valveEntity.disbandMultiblock();
+				valveEntity.disbandMultiblock(pos);
 			}
 
 			world.destroyBlock(pos, true);

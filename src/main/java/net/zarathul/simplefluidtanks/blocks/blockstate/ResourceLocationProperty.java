@@ -1,6 +1,6 @@
 package net.zarathul.simplefluidtanks.blocks.blockstate;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import net.minecraft.state.Property;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -8,17 +8,17 @@ import net.minecraftforge.registries.ForgeRegistries;
 import java.util.Collection;
 import java.util.Optional;
 
-public class StringProperty extends Property<ResourceLocation>
+public class ResourceLocationProperty extends Property<ResourceLocation>
 {
 	// Don't ask ...
 	private static final String DELIMITER = "_42_";
 
-	public static StringProperty create(String name)
+	public static ResourceLocationProperty create(String name)
 	{
-		return  new StringProperty(name, ResourceLocation.class);
+		return  new ResourceLocationProperty(name, ResourceLocation.class);
 	}
 
-	private StringProperty(String name, Class<ResourceLocation> valueClass)
+	private ResourceLocationProperty(String name, Class<ResourceLocation> valueClass)
 	{
 		super(name, valueClass);
 	}
@@ -26,7 +26,7 @@ public class StringProperty extends Property<ResourceLocation>
 	@Override
 	public Collection<ResourceLocation> getAllowedValues()
 	{
-		return ImmutableList.copyOf(ForgeRegistries.FLUIDS.getKeys());
+		return ImmutableSet.copyOf(ForgeRegistries.FLUIDS.getKeys());
 	}
 
 	@Override

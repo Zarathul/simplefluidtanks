@@ -14,102 +14,102 @@
     },
     "variants": {
         "down": {
-            0: {
+            "0": {
                 "textures": {
                     "down": "simplefluidtanks:block/valve_grate"
                 }
             },
-            1: {
+            "1": {
                 "textures": {
                     "down": "simplefluidtanks:block/valve_io"
                 }
             },
-            2: {
+            "2": {
                 "textures": {
                     "down": "simplefluidtanks:block/valve"
                 }
             }
         },
         "up": {
-            0: {
+            "0": {
                 "textures": {
                     "up": "simplefluidtanks:block/valve_grate"
                 }
             },
-            1: {
+            "1": {
                 "textures": {
                     "up": "simplefluidtanks:block/valve_io"
                 }
             },
-            2: {
+            "2": {
                 "textures": {
                     "up": "simplefluidtanks:block/valve"
                 }
             }
         },
         "north": {
-            0: {
+            "0": {
                 "textures": {
                     "north": "simplefluidtanks:block/valve_grate"
                 }
             },
-            1: {
+            "1": {
                 "textures": {
                     "north": "simplefluidtanks:block/valve_io"
                 }
             },
-            2: {
+            "2": {
                 "textures": {
                     "north": "simplefluidtanks:block/valve"
                 }
             }
         },
         "south": {
-            0: {
+            "0": {
                 "textures": {
                     "south": "simplefluidtanks:block/valve_grate"
                 }
             },
-            1: {
+            "1": {
                 "textures": {
                     "south": "simplefluidtanks:block/valve_io"
                 }
             },
-            2: {
+            "2": {
                 "textures": {
                     "south": "simplefluidtanks:block/valve"
                 }
             }
         },
         "west": {
-            0: {
+            "0": {
                 "textures": {
                     "west": "simplefluidtanks:block/valve_grate"
                 }
             },
-            1: {
+            "1": {
                 "textures": {
                     "west": "simplefluidtanks:block/valve_io"
                 }
             },
-            2: {
+            "2": {
                 "textures": {
                     "west": "simplefluidtanks:block/valve"
                 }
             }
         },
         "east": {
-            0: {
+            "0": {
                 "textures": {
                     "east": "simplefluidtanks:block/valve_grate"
                 }
             },
-            1: {
+            "1": {
                 "textures": {
                     "east": "simplefluidtanks:block/valve_io"
                 }
             },
-            2: {
+            "2": {
                 "textures": {
                     "east": "simplefluidtanks:block/valve"
                 }

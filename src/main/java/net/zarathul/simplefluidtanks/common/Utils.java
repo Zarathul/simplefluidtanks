@@ -10,8 +10,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.translation.LanguageMap;
-import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.zarathul.simplefluidtanks.SimpleFluidTanks;
 import net.zarathul.simplefluidtanks.blocks.TankBlock;
 import net.zarathul.simplefluidtanks.blocks.ValveBlock;
@@ -39,14 +39,11 @@ public final class Utils
 	 * The coordinates of the {@link TileEntity}.
 	 * @return The {@link TileEntity} or <code>null</code> if no {@link TileEntity} was found or the types didn't match.
 	 */
- 	public static final <T extends TileEntity> T getTileEntityAt(IBlockReader world, Class<T> tileType, BlockPos pos)
+ 	public static final <T extends TileEntity> T getTileEntityAt(World world, Class<T> tileType, BlockPos pos)
 	{
 		if (world != null && tileType != null && pos != null)
 		{
-			//TileEntity tile = world.getChunkAt(pos).getTileEntity(pos, Chunk.CreateEntityType.CHECK);
-			// FIXME: This creates a TileEntity if there is none at 'pos', which is bad. Well, the new interface does
-			//  not provide a method to get the chunk ... soooo out of luck I guess.
-			TileEntity tile = world.getTileEntity(pos);
+			TileEntity tile = world.getChunkAt(pos).getTileEntity(pos, Chunk.CreateEntityType.CHECK);
 
 			if (tile != null && tile.getClass() == tileType)
 			{

@@ -62,7 +62,7 @@ public class SimpleFluidTanks
 
 	// constants
 	public static final String MOD_ID = "simplefluidtanks";
-	public static final String MOD_READABLE_NAME = "Simple Fluid Tanks";
+	public static final String SIMPLE_MODS_ID = "simplemods";
 
 	// logger
 	public static final Logger log = LogManager.getLogger(MOD_ID);
@@ -74,29 +74,30 @@ public class SimpleFluidTanks
 		Mlc.registerConfig(ModConfig.Type.COMMON, Config.CommonConfigSpec, MOD_ID + "-common.toml");
 		Config.load(Config.CommonConfigSpec, FMLPaths.CONFIGDIR.get().resolve(MOD_ID + "-common.toml"));
 
-		// Setup config UI
-		DistExecutor.callWhenOn(Dist.CLIENT, () ->
-				() -> {
-					ConfigGuiFactory.setConfigHolder("net.zarathul.simplefluidtanks.configuration.Config");
-					Mlc.registerExtensionPoint(ExtensionPoint.CONFIGGUIFACTORY, () -> ConfigGuiFactory::getConfigGui);
-					return null;
-				}
-		);
-
 		// Setup event listeners
 		IEventBus SetupEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 		SetupEventBus.register(EventHub.class);
 		MinecraftForge.EVENT_BUS.register(EventHub.class);
+
+		// Setup client only stuff like config UI and model registry shenanigans
+		DistExecutor.callWhenOn(Dist.CLIENT, () ->
+				() -> {
+					ConfigGuiFactory.setConfigHolder("net.zarathul.simplefluidtanks.configuration.Config");
+					Mlc.registerExtensionPoint(ExtensionPoint.CONFIGGUIFACTORY, () -> ConfigGuiFactory::getConfigGui);
+					SetupEventBus.register(ClientEventHub.class);
+					return null;
+				}
+		);
 	}
 
 	static ItemGroup MakeCreativeTab()
 	{
 		// Checks if a "Simple Mods" tab already exists, otherwise makes one.
 		return Arrays.stream(ItemGroup.GROUPS)
-			.filter(tab -> tab.getPath().equals(SimpleFluidTanks.MOD_ID))
+			.filter(tab -> tab.getPath().equals(SimpleFluidTanks.SIMPLE_MODS_ID))
 			.findFirst()
 			.orElseGet(() ->
-				new ItemGroup(SimpleFluidTanks.MOD_ID)
+				new ItemGroup(SimpleFluidTanks.SIMPLE_MODS_ID)
 				{
 					@OnlyIn(Dist.CLIENT)
 					private ItemStack iconStack;

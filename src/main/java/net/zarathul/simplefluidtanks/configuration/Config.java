@@ -22,7 +22,6 @@ public final class Config
 	// default values
 	
 	private static final int defaultBucketsPerTank = 32;
-	private static final boolean defaultWrenchEnabled = true;
 	private static final float defaultTankBlockHardness = 50;
 	private static final float defaultTankBlockResistance = 1000;
 	private static final float defaultValveBlockHardness = 50;
@@ -31,7 +30,6 @@ public final class Config
 	// settings
 
 	public static ForgeConfigSpec.IntValue bucketsPerTank;
-	public static ForgeConfigSpec.BooleanValue wrenchEnabled;
 	public static ForgeConfigSpec.DoubleValue tankBlockHardness;
 	public static ForgeConfigSpec.DoubleValue tankBlockResistance;
 	public static ForgeConfigSpec.DoubleValue valveBlockHardness;
@@ -43,15 +41,10 @@ public final class Config
 
 		CommonConfigBuilder.push("misc");
 
-		bucketsPerTank = CommonConfigBuilder.translation("configui.bucketsPerTank")
+		bucketsPerTank = CommonConfigBuilder.translation("config.buckets_per_tank")
 				.comment("The amount of fluid a tank can hold measured in buckets.")
 				.worldRestart()
 				.defineInRange("bucketsPerTank", defaultBucketsPerTank, 1, Integer.MAX_VALUE);
-
-		wrenchEnabled = CommonConfigBuilder.translation("configui.wrenchEnabled")
-				.comment("Disables the wrench recipe")
-				.worldRestart()
-				.define("wrenchEnabled", defaultWrenchEnabled);
 
 		CommonConfigBuilder.pop();
 
@@ -59,19 +52,19 @@ public final class Config
 
 		CommonConfigBuilder.push("blocks");
 
-		tankBlockHardness = CommonConfigBuilder.translation("configui.blockHardness")
+		tankBlockHardness = CommonConfigBuilder.translation("config.tankblock_hardness")
 				.comment("The amount of hits the block can take before it breaks (-1 = indestructible).")
 				.defineInRange("tankBlockHardness", defaultTankBlockHardness, -1.0d, Float.MAX_VALUE);
 
-		tankBlockResistance = CommonConfigBuilder.translation("configui.blockResistance")
+		tankBlockResistance = CommonConfigBuilder.translation("config.tankblock_resistance")
 				.comment("The blocks resistance to explosions.")
 				.defineInRange("tankBlockResistance", defaultTankBlockResistance, 1.0d, Float.MAX_VALUE);
 
-		valveBlockHardness = CommonConfigBuilder.translation("configui.blockHardness")
+		valveBlockHardness = CommonConfigBuilder.translation("config.valveblock_hardness")
 				.comment("The amount of hits the block can take before it breaks (-1 = indestructible).")
 				.defineInRange("valveBlockHardness", defaultValveBlockHardness, -1.0d, Float.MAX_VALUE);
 
-		valveBlockResistance = CommonConfigBuilder.translation("configui.blockResistance")
+		valveBlockResistance = CommonConfigBuilder.translation("config.valveblock_resistance")
 				.comment("The blocks resistance to explosions.")
 				.defineInRange("valveBlockResistance", defaultValveBlockResistance, 1.0d, Float.MAX_VALUE);
 

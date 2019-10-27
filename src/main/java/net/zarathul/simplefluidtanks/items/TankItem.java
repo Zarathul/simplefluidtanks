@@ -7,15 +7,14 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.translation.LanguageMap;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.zarathul.simplefluidtanks.SimpleFluidTanks;
 import net.zarathul.simplefluidtanks.blocks.TankBlock;
 import net.zarathul.simplefluidtanks.common.Utils;
-import net.zarathul.simplefluidtanks.configuration.Config;
+import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -25,8 +24,8 @@ import java.util.List;
  */
 public class TankItem extends BlockItem
 {
-	private static final String toolTipKey = "item." + SimpleFluidTanks.TANK_ITEM_NAME + ".tooltip";
-	private static final String toolTipDetailsKey = "item." + SimpleFluidTanks.TANK_ITEM_NAME + ".tooltip_details";
+	private static final String toolTipKey = "item." + SimpleFluidTanks.MOD_ID + "." + SimpleFluidTanks.TANK_ITEM_NAME + ".tooltip";
+	private static final String toolTipDetailsKey = "item." + SimpleFluidTanks.MOD_ID + "." + SimpleFluidTanks.TANK_ITEM_NAME + ".tooltip_details";
 
 	public TankItem(Block block)
 	{
@@ -41,13 +40,21 @@ public class TankItem extends BlockItem
 	@OnlyIn(Dist.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn)
 	{
-		if (Minecraft.getInstance().gameSettings.keyBindSneak.isKeyDown())	// This was hardcoded to shift-left or right before.
+		long windowHandle = Minecraft.getInstance().mainWindow.getHandle();
+		int leftShiftState = GLFW.glfwGetKey(windowHandle, GLFW.GLFW_KEY_LEFT_SHIFT);
+		int rightShiftState = GLFW.glfwGetKey(windowHandle, GLFW.GLFW_KEY_RIGHT_SHIFT);
+
+		// This does not work for some reason.
+		//KeyBinding SneakKey = Minecraft.getInstance().gameSettings.keyBindSneak;
+		//if (SneakKey.isKeyDown())
+
+		if (leftShiftState == GLFW.GLFW_PRESS || rightShiftState == GLFW.GLFW_PRESS)
 		{
-			tooltip.addAll(Utils.multiLineTranslateToLocal(toolTipDetailsKey, Config.bucketsPerTank));
+			tooltip.addAll(Utils.multiLineTranslateToLocal(toolTipDetailsKey, 1));
 		}
 		else
 		{
-			tooltip.add(new StringTextComponent(LanguageMap.getInstance().translateKey(toolTipKey)));
+			tooltip.add(new TranslationTextComponent(toolTipKey));
 		}
 	}
 }
