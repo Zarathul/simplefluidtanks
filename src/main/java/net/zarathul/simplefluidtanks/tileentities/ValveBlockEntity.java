@@ -216,18 +216,6 @@ public class ValveBlockEntity extends TileEntity
 	}
 
 	/**
-	 * Gets the remaining capacity of the tank.
-	 * 
-	 * @return The remaining amount of fluid the tank can take in until it is full.
-	 */
-/*
-	public int getRemainingCapacity()
-	{
-		return internalTank.getRemainingCapacity();
-	}
-*/
-
-	/**
 	 * Gets the luminosity of the fluid in the multiblock tank.
 	 * 
 	 * @return The luminosity of the fluid.
@@ -281,29 +269,6 @@ public class ValveBlockEntity extends TileEntity
 	public FluidStack getFluid()
 	{
 		return internalTank.getFluid();
-	}
-
-	/**
-	 * Checks if the tank is full.
-	 * 
-	 * @return <code>true</code> if the tank is full, otherwise <code>false</code>.
-	 */
-/*
-	public boolean isFull()
-	{
-		return internalTank.isFull();
-	}
-*/
-
-	/**
-	 * Gets the bitmask storing which sides of the {@link ValveBlock} face connected {@link TankBlock}s.
-	 * 
-	 * @return A bitmask.
-	 * @see Direction
-	 */
-	public int getTankFacingSides()
-	{
-		return tankFacingSides;
 	}
 
 	/**
@@ -434,7 +399,7 @@ public class ValveBlockEntity extends TileEntity
 
 		if (!suppressBlockUpdates && (!pos.equals(ignorePos)))
 		{
-			SimpleFluidTanks.valveBlock.updateBlockState(world, pos);
+			updateBlockState();
 			Utils.syncBlockAndRerender(world, pos);
 			markDirty();
 
@@ -468,7 +433,7 @@ public class ValveBlockEntity extends TileEntity
 		internalTank.setFluid(fluid);
 		distributeFluidToTanks(true);
 
-		SimpleFluidTanks.valveBlock.updateBlockState(world, pos);
+		updateBlockState();
 		Utils.syncBlockAndRerender(world, pos);
 		markDirty();
 
@@ -510,7 +475,7 @@ public class ValveBlockEntity extends TileEntity
 		for (TankBlockEntity tankEntity : tankEntities)
 		{
 			tankEntity.updateConnections();
-			SimpleFluidTanks.tankBlock.updateBlockState(world, tankEntity.getPos());
+			tankEntity.updateBlockState();
 		}
 
 		// calculate and set the internal tanks capacity, note the " + 1" is needed because the ValveBlock itself is considered a tank with storage capacity
@@ -530,7 +495,6 @@ public class ValveBlockEntity extends TileEntity
 
 			if (tankEntity != null)
 			{
-				SimpleFluidTanks.tankBlock.updateBlockState(world, tankEntity.getPos());
 				Utils.syncBlockAndRerender(world, tankEntity.getPos());
 				tankEntity.markDirty();
 			}
@@ -1284,5 +1248,32 @@ public class ValveBlockEntity extends TileEntity
 		distributeFluidToTanks();
 		if (change.type()) Utils.syncBlockAndRerender(world, pos);
 		markDirty();
+	}
+
+	/**
+	 * Updates the BlockState of the ValveBlock belonging to this TileEntity.
+	 */
+	public void updateBlockState()
+	{
+		BlockState state = world.getBlockState(pos);
+		BlockState newState;
+
+		newState = (hasTanks()) ?
+				   state
+						   .with(ValveBlock.UP,    (isFacingTank(Direction.UP))    ? ValveBlock.GRATE_TEXTURE_ID : ValveBlock.IO_TEXTURE_ID)
+						   .with(ValveBlock.DOWN,  (isFacingTank(Direction.DOWN))  ? ValveBlock.GRATE_TEXTURE_ID : ValveBlock.IO_TEXTURE_ID)
+						   .with(ValveBlock.NORTH, (isFacingTank(Direction.NORTH)) ? ValveBlock.GRATE_TEXTURE_ID : ValveBlock.IO_TEXTURE_ID)
+						   .with(ValveBlock.SOUTH, (isFacingTank(Direction.SOUTH)) ? ValveBlock.GRATE_TEXTURE_ID : ValveBlock.IO_TEXTURE_ID)
+						   .with(ValveBlock.EAST,  (isFacingTank(Direction.EAST))  ? ValveBlock.GRATE_TEXTURE_ID : ValveBlock.IO_TEXTURE_ID)
+						   .with(ValveBlock.WEST,  (isFacingTank(Direction.WEST))  ? ValveBlock.GRATE_TEXTURE_ID : ValveBlock.IO_TEXTURE_ID) :
+				   state
+						   .with(ValveBlock.DOWN , ValveBlock.TANK_TEXTURE_ID)
+						   .with(ValveBlock.UP   , ValveBlock.GRATE_TEXTURE_ID)
+						   .with(ValveBlock.NORTH, (facing == Direction.NORTH) ? ValveBlock.IO_TEXTURE_ID : ValveBlock.TANK_TEXTURE_ID)
+						   .with(ValveBlock.SOUTH, (facing == Direction.SOUTH) ? ValveBlock.IO_TEXTURE_ID : ValveBlock.TANK_TEXTURE_ID)
+						   .with(ValveBlock.WEST , (facing == Direction.WEST)  ? ValveBlock.IO_TEXTURE_ID : ValveBlock.TANK_TEXTURE_ID)
+						   .with(ValveBlock.EAST , (facing == Direction.EAST)  ? ValveBlock.IO_TEXTURE_ID : ValveBlock.TANK_TEXTURE_ID);
+
+		world.setBlockState(pos, newState, 3);
 	}
 }

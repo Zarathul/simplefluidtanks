@@ -43,10 +43,10 @@ public class ValveBlock extends WrenchableBlock
 	public static final IntegerProperty SOUTH = IntegerProperty.create("south", 0, 2);
 	public static final IntegerProperty WEST = IntegerProperty.create("west", 0, 2);
 	public static final IntegerProperty EAST = IntegerProperty.create("east", 0, 2);
-	
-	private static final int GRATE_TEXTURE_ID = 0;
-	private static final int IO_TEXTURE_ID = 1;
-	private static final int TANK_TEXTURE_ID = 2;
+
+	public static final int GRATE_TEXTURE_ID = 0;
+	public static final int IO_TEXTURE_ID = 1;
+	public static final int TANK_TEXTURE_ID = 2;
 
 	public ValveBlock()
 	{
@@ -111,34 +111,6 @@ public class ValveBlock extends WrenchableBlock
 	public boolean ticksRandomly(BlockState state)
 	{
 		return false;
-	}
-
-	public void updateBlockState(World world, BlockPos pos)
-	{
-		ValveBlockEntity valveEntity = Utils.getTileEntityAt(world, ValveBlockEntity.class, pos);
-		if (valveEntity == null) return;
-
-		BlockState state = world.getBlockState(pos);
-		BlockState newState;
-		Direction facing = valveEntity.getFacing();
-
-		newState = (valveEntity.hasTanks()) ?
-				   state
-						   .with(UP, (valveEntity.isFacingTank(Direction.UP)) ? GRATE_TEXTURE_ID : IO_TEXTURE_ID)
-						   .with(DOWN, (valveEntity.isFacingTank(Direction.DOWN)) ? GRATE_TEXTURE_ID : IO_TEXTURE_ID)
-						   .with(NORTH, (valveEntity.isFacingTank(Direction.NORTH)) ? GRATE_TEXTURE_ID : IO_TEXTURE_ID)
-						   .with(SOUTH, (valveEntity.isFacingTank(Direction.SOUTH)) ? GRATE_TEXTURE_ID : IO_TEXTURE_ID)
-						   .with(EAST, (valveEntity.isFacingTank(Direction.EAST)) ? GRATE_TEXTURE_ID : IO_TEXTURE_ID)
-						   .with(WEST, (valveEntity.isFacingTank(Direction.WEST)) ? GRATE_TEXTURE_ID : IO_TEXTURE_ID) :
-				   state
-						   .with(DOWN , TANK_TEXTURE_ID)
-						   .with(UP   , GRATE_TEXTURE_ID)
-						   .with(NORTH, (facing == Direction.NORTH) ? IO_TEXTURE_ID : TANK_TEXTURE_ID)
-						   .with(SOUTH, (facing == Direction.SOUTH) ? IO_TEXTURE_ID : TANK_TEXTURE_ID)
-						   .with(WEST , (facing == Direction.WEST)  ? IO_TEXTURE_ID : TANK_TEXTURE_ID)
-						   .with(EAST , (facing == Direction.EAST)  ? IO_TEXTURE_ID : TANK_TEXTURE_ID);
-
-		world.setBlockState(pos, newState, 3);
 	}
 
 	@Override

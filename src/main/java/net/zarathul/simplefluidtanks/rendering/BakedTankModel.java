@@ -11,7 +11,6 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.model.data.IModelData;
-import net.zarathul.simplefluidtanks.blocks.TankBlock;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -47,10 +46,11 @@ public class BakedTankModel implements IBakedModel
 		else if (MinecraftForgeClient.getRenderLayer() == BlockRenderLayer.TRANSLUCENT)
 		{
 			// Fluid
+			TankModelData data = (TankModelData)extraData;
 
-			boolean cullFluidTop = state.get(TankBlock.CullFluidTop);
-			int fluidLevel = state.get(TankBlock.FluidLevel);
-			ResourceLocation fluidName = state.get(TankBlock.FluidName);
+			boolean cullFluidTop = data.cullFluidTop;
+			int fluidLevel = data.fillLevel;
+			ResourceLocation fluidName = data.fluidName;
 
 			// The top quad of the fluid model needs a separate culling logic from the
 			// rest of the tank, because the top needs to be visible if the tank isn't

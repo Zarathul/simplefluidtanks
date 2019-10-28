@@ -55,8 +55,8 @@ public final class Utils
 	}
 	
 	/**
-	 * Triggers synchronization of TileEntity data with the client. Also causes
-	 * rerender of the block but does not not trigger a block update.
+	 * Causes rerender of the block without triggering a block update.
+	 * Also synchronizes TileEntity data with the client if called server side.
 	 * 
 	 * @param world
 	 * The world.
@@ -162,7 +162,7 @@ public final class Utils
 	 * @param fillPercentage
 	 * The fill percentage.
 	 * @return
-	 * A value between 0 and {@code TankModelFactory.FLUID_LEVELS}.
+	 * A value between 0 and {@code BakedTankModel.FLUID_LEVELS} (inclusive).
 	 */
 	public static int getFluidLevel(int fillPercentage)
 	{

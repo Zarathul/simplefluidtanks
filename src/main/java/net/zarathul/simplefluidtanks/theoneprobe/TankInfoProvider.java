@@ -72,7 +72,7 @@ public class TankInfoProvider implements IProbeInfoProvider
 
 			if (amount > 0)
 			{
-				probeInfo.text(valveEntity.getFluidRegistryName().toString());
+				probeInfo.text(IProbeInfo.STARTLOC + valveEntity.getFluid().getTranslationKey() + IProbeInfo.ENDLOC);
 			}
 
 			if (mode == ProbeMode.EXTENDED)

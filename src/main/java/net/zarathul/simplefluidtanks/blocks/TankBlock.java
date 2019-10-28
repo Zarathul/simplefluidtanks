@@ -6,11 +6,9 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.BooleanProperty;
-import net.minecraft.state.IntegerProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
@@ -25,7 +23,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.zarathul.simplefluidtanks.SimpleFluidTanks;
-import net.zarathul.simplefluidtanks.blocks.blockstate.ResourceLocationProperty;
 import net.zarathul.simplefluidtanks.common.Utils;
 import net.zarathul.simplefluidtanks.configuration.Config;
 import net.zarathul.simplefluidtanks.tileentities.TankBlockEntity;
@@ -39,20 +36,22 @@ import java.util.HashSet;
  */
 public class TankBlock extends WrenchableBlock
 {
-	public static final ResourceLocationProperty FluidName = ResourceLocationProperty.create("fluid_name");
-	public static final IntegerProperty FluidLevel = IntegerProperty.create("fluid_level", 0 , 16);
-	public static final BooleanProperty CullFluidTop = BooleanProperty.create("cull_fluid_top");
-
+	// These properties store which side of the TankBlock is connected to another TankBlock
+	// in the multiblock structure. This is mainly used for connected textures.
 	public static final BooleanProperty DOWN = BooleanProperty.create("down");
 	public static final BooleanProperty UP = BooleanProperty.create("up");
 	public static final BooleanProperty NORTH = BooleanProperty.create("north");
 	public static final BooleanProperty SOUTH = BooleanProperty.create("south");
 	public static final BooleanProperty WEST = BooleanProperty.create("west");
 	public static final BooleanProperty EAST = BooleanProperty.create("east");
-	
+	// This property is needed because with only the sided connection properties above, it is impossible
+	// to tell if a TankBlock is actually a part of a mutliblock structure. TankBlocks can easily be
+	// a part of a multiblock tank, without being directly connected to other TankBlocks.
+	public static final BooleanProperty CONNECTED = BooleanProperty.create("connected");
+
 	private final HashSet<BlockPos> ignoreBlockBreakCoords;
 	private final ResourceLocation EMPTY_FLUID_NAME = ForgeRegistries.FLUIDS.getKey(Fluids.EMPTY);
-	private final BooleanProperty[] CONNECTION_PROPS_FROM_DIRECTION = new BooleanProperty[6];
+	private final BooleanProperty[] DIRECTION_TO_CONNECTION = new BooleanProperty[6];
 
 	
 	public TankBlock()
@@ -72,75 +71,31 @@ public class TankBlock extends WrenchableBlock
 						.with(SOUTH, false)
 						.with(WEST,  false)
 						.with(EAST,  false)
-						.with(FluidName, EMPTY_FLUID_NAME)
-						.with(FluidLevel, 0)
-						.with(CullFluidTop, false));
+						.with(CONNECTED, false));
 
 		ignoreBlockBreakCoords = new HashSet<BlockPos>();
 
-		CONNECTION_PROPS_FROM_DIRECTION[Direction.DOWN.getIndex()] = DOWN;
-		CONNECTION_PROPS_FROM_DIRECTION[Direction.UP.getIndex()] = UP;
-		CONNECTION_PROPS_FROM_DIRECTION[Direction.NORTH.getIndex()] = NORTH;
-		CONNECTION_PROPS_FROM_DIRECTION[Direction.SOUTH.getIndex()] = SOUTH;
-		CONNECTION_PROPS_FROM_DIRECTION[Direction.WEST.getIndex()] = WEST;
-		CONNECTION_PROPS_FROM_DIRECTION[Direction.EAST.getIndex()] = EAST;
+		DIRECTION_TO_CONNECTION[Direction.DOWN.getIndex()] = DOWN;
+		DIRECTION_TO_CONNECTION[Direction.UP.getIndex()] = UP;
+		DIRECTION_TO_CONNECTION[Direction.NORTH.getIndex()] = NORTH;
+		DIRECTION_TO_CONNECTION[Direction.SOUTH.getIndex()] = SOUTH;
+		DIRECTION_TO_CONNECTION[Direction.WEST.getIndex()] = WEST;
+		DIRECTION_TO_CONNECTION[Direction.EAST.getIndex()] = EAST;
 	}
 
 	@Override
 	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder)
 	{
-		builder.add(DOWN, UP, NORTH, SOUTH, WEST, EAST, FluidName, FluidLevel, CullFluidTop);
-	}
-
-	public void updateBlockState(World world, BlockPos pos)
-	{
-		TankBlockEntity tankEntity = Utils.getTileEntityAt(world, TankBlockEntity.class, pos);
-		if (tankEntity == null) return;;
-
-		TankBlockEntity tankAbove = Utils.getTileEntityAt(world, TankBlockEntity.class, pos.up());
-		BlockState state = world.getBlockState(pos);
-		BlockState newState = null;
-
-		if (tankEntity.isPartOfTank())
-		{
-			Fluid tankFluid = tankEntity.getFluid();
-			ResourceLocation fluidName = (tankFluid != null) ? tankFluid.getRegistryName() : EMPTY_FLUID_NAME;
-			int fluidLevel = tankEntity.getFillLevel();
-
-			boolean tankAboveIsEmpty = true;
-			boolean sameValve = false;
-
-			if (tankAbove != null)
-			{
-				tankAboveIsEmpty = tankAbove.isEmpty();
-				ValveBlockEntity valve = tankEntity.getValve();
-				ValveBlockEntity valveAbove = tankAbove.getValve();
-				sameValve = valveAbove != null && valve == valveAbove;
-			}
-
-			// Only cull the fluids top face if the tank above is not empty and both tanks
-			// are part of the same multiblock (share the same valve).
-			boolean cullFluidTop = !tankAboveIsEmpty && sameValve;
-
-			newState = state
-					.with(DOWN,  tankEntity.isConnected(Direction.DOWN))
-					.with(UP,    tankEntity.isConnected(Direction.UP))
-					.with(NORTH, tankEntity.isConnected(Direction.NORTH))
-					.with(SOUTH, tankEntity.isConnected(Direction.SOUTH))
-					.with(WEST,  tankEntity.isConnected(Direction.WEST))
-					.with(EAST,  tankEntity.isConnected(Direction.EAST))
-					.with(FluidName, fluidName)
-					.with(FluidLevel, fluidLevel)
-					.with(CullFluidTop, cullFluidTop);
-		}
-
-		world.setBlockState(pos, (newState != null) ? newState : getDefaultState(), 3);
+		builder.add(DOWN, UP, NORTH, SOUTH, WEST, EAST, CONNECTED);
 	}
 
 	@Override
 	public boolean propagatesSkylightDown(BlockState state, IBlockReader reader, BlockPos pos)
 	{
-		return (state.get(FluidLevel) == 0);
+		TileEntity tileEntity = reader.getTileEntity(pos);
+		TankBlockEntity tankEntity = (tileEntity != null) ? (TankBlockEntity)tileEntity : null;
+
+		return (tankEntity == null || tankEntity.getFillLevel() == 0);
 	}
 
 	@Override
@@ -193,9 +148,9 @@ public class TankBlock extends WrenchableBlock
 		// Don't render if there's a connection to another TankBlock on that side, or if
 		// two TankBlocks, that are both not part of a multiblock structure, touch each other
 		// on that side.
-		return state.get(CONNECTION_PROPS_FROM_DIRECTION[side.getIndex()]) ||
+		return state.get(DIRECTION_TO_CONNECTION[side.getIndex()]) ||
 			   ((adjacentBlockState.getBlock() == SimpleFluidTanks.tankBlock) &&
-			   (!isPartOfMultiBlock(state) && !isPartOfMultiBlock(adjacentBlockState)));
+			   (!state.get(CONNECTED) && !adjacentBlockState.get(CONNECTED)));
 	}
 
 	@Override
@@ -263,25 +218,5 @@ public class TankBlock extends WrenchableBlock
 				valveEntity.formMultiblock();
 			}
 		}
-	}
-
-	/**
-	 * Tries to determines if a TankBlock part of a multiblock structure based on its BlockState.
-	 *
-	 * @param state
-	 * The state of the block to check.
-	 * @return
-	 * <code>true</code> if any of the blocks connection properties is <code>true</code>, otherwise <code>false</code>.
-	 */
-	private boolean isPartOfMultiBlock(BlockState state)
-	{
-		return (state.get(DOWN) ||
-				state.get(UP) ||
-				state.get(NORTH) ||
-				state.get(SOUTH) ||
-				state.get(WEST) ||
-				state.get(EAST) ||
-				(state.get(FluidLevel) > 0) ||
-				(!state.get(FluidName).equals(EMPTY_FLUID_NAME)));
 	}
 }

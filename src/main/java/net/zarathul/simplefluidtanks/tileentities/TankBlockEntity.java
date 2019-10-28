@@ -1,5 +1,6 @@
 package net.zarathul.simplefluidtanks.tileentities;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.nbt.CompoundNBT;
@@ -9,12 +10,14 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.fluids.FluidStack;
 import net.zarathul.simplefluidtanks.SimpleFluidTanks;
 import net.zarathul.simplefluidtanks.blocks.TankBlock;
 import net.zarathul.simplefluidtanks.blocks.ValveBlock;
 import net.zarathul.simplefluidtanks.common.Utils;
 import net.zarathul.simplefluidtanks.rendering.BakedTankModel;
+import net.zarathul.simplefluidtanks.rendering.TankModelData;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -45,11 +48,6 @@ public class TankBlockEntity extends TileEntity
 	private boolean[] connections;
 
 	/**
-	 * Contains additional information to render the tank model correctly.
-	 */
-	//private TankData modelData;
-
-	/**
 	 * Default constructor.
 	 */
 	public TankBlockEntity()
@@ -60,16 +58,12 @@ public class TankBlockEntity extends TileEntity
 		isPartOfTank = false;
 		valveCoords = null;
 		connections = new boolean[6];
-		//modelData = new TankData(new ResourceLocation("minecraft", "empty"), 0, false);
 	}
 
-	/*
+	@Nonnull
 	@Override
-	public void requestModelDataUpdate()
+	public IModelData getModelData()
 	{
-		modelData.fluidName = getFluid().getRegistryName();
-		modelData.fluidLevel = fillLevel;
-
 		boolean tankAboveIsEmpty = true;
 		boolean sameValve = false;
 		TankBlockEntity tankAbove = Utils.getTileEntityAt(world, TankBlockEntity.class, pos.up());
@@ -84,19 +78,10 @@ public class TankBlockEntity extends TileEntity
 
 		// Only cull the fluids top face if the tank above is not empty and both tanks
 		// are part of the same multiblock (share the same valve).
-		modelData.cullFluidTop = !tankAboveIsEmpty && sameValve;
+		TankModelData modelData = new TankModelData(getFluid().getRegistryName(), fillLevel, !tankAboveIsEmpty && sameValve);
 
-		super.requestModelDataUpdate();
-	}
-
-	@Nonnull
-	@Override
-	public IModelData getModelData()
-	{
 		return modelData;
 	}
-
-	 */
 
 	@Override
 	public void read(CompoundNBT tag)
@@ -170,11 +155,21 @@ public class TankBlockEntity extends TileEntity
 		
 		read(packet.getNbtCompound());
 		
+		// Only rerender if something changed.
 		if (wasPartOfTank != isPartOfTank
 			|| oldFillLevel != fillLevel
 			|| !Arrays.equals(oldConnections, connections))
 		{
+			requestModelDataUpdate();
 			Utils.syncBlockAndRerender(world, pos);
+
+			// Unfortunately this is necessary to ensure that the culling flag in TankModelData is set correctly.
+			// This could be completely avoided if tanks got filled in reverse order, which they are not at the moment.
+			if (isConnected(Direction.DOWN) && (((oldFillLevel == 0) && (fillLevel > 0)) || ((oldFillLevel > 0) && (fillLevel == 0))))
+			{
+				TankBlockEntity tankBelow = Utils.getTileEntityAt(world, TankBlockEntity.class, pos.down());
+				if (tankBelow != null) tankBelow.requestModelDataUpdate();
+			}
 		}
 	}
 
@@ -269,11 +264,6 @@ public class TankBlockEntity extends TileEntity
 
 		if (levelChanged || forceBlockUpdate)
 		{
-			SimpleFluidTanks.tankBlock.updateBlockState(world, pos);
-			// Update the cullFluidTop property of the tank below if there is one
-			if (levelChanged && ((levelUp && fillLevel == 1) || (!levelUp && fillLevel == 0)))
-				SimpleFluidTanks.tankBlock.updateBlockState(world, pos.down());
-
 			Utils.syncBlockAndRerender(world, pos);
 			markDirty();
 		}
@@ -389,9 +379,36 @@ public class TankBlockEntity extends TileEntity
 
 		if (!suppressBlockUpdates)
 		{
-			SimpleFluidTanks.tankBlock.updateBlockState(world, pos);
+			updateBlockState();
 			Utils.syncBlockAndRerender(world, pos);
 			markDirty();
 		}
+	}
+
+	/**
+	 * Updates the BlockState of the TankBlock belonging to this TileEntity.
+	 */
+	public void updateBlockState()
+	{
+		BlockState state = world.getBlockState(pos);
+		BlockState newState = (isPartOfTank) ?
+							  state
+									  .with(TankBlock.DOWN,      isConnected(Direction.DOWN))
+									  .with(TankBlock.UP,        isConnected(Direction.UP))
+									  .with(TankBlock.NORTH,     isConnected(Direction.NORTH))
+									  .with(TankBlock.SOUTH,     isConnected(Direction.SOUTH))
+									  .with(TankBlock.WEST,      isConnected(Direction.WEST))
+									  .with(TankBlock.EAST,      isConnected(Direction.EAST))
+									  .with(TankBlock.CONNECTED, true) :
+							  state
+									  .with(TankBlock.DOWN,      false)
+									  .with(TankBlock.UP,        false)
+									  .with(TankBlock.NORTH,     false)
+									  .with(TankBlock.SOUTH,     false)
+									  .with(TankBlock.WEST,      false)
+									  .with(TankBlock.EAST,      false)
+									  .with(TankBlock.CONNECTED, false);
+
+		world.setBlockState(pos, newState, 3);
 	}
 }
