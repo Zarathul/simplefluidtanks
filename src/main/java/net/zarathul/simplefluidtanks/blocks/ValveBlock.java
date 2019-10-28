@@ -15,6 +15,7 @@ import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
@@ -160,7 +161,7 @@ public class ValveBlock extends WrenchableBlock
 						{
 							((ServerPlayerEntity)player).connection.sendPacket(new SPlaySoundEffectPacket(
 									soundevent,
-									player.getSoundCategory(),
+									SoundCategory.BLOCKS,
 									player.posX, player.posY, player.posZ,
 									1.0f, 1.0f));
 						}
