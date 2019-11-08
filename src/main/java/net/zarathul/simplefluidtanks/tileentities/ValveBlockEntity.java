@@ -416,7 +416,7 @@ public class ValveBlockEntity extends TileEntity
 	{
 		// store the current fluid for reinsertion
 		FluidStack fluid = internalTank.getFluid();
-		int oldFluidAmount = fluid.getAmount();
+		//int oldFluidAmount = fluid.getAmount();
 
 		// find new tanks and update the valves textures
 
@@ -495,6 +495,7 @@ public class ValveBlockEntity extends TileEntity
 
 			if (tankEntity != null)
 			{
+				tankEntity.updateBlockState();
 				Utils.syncBlockAndRerender(world, tankEntity.getPos());
 				tankEntity.markDirty();
 			}
@@ -1120,7 +1121,7 @@ public class ValveBlockEntity extends TileEntity
 		
 		BlockState state = world.getBlockState(block);
 
-		if (state.getBlock() instanceof TankBlock)
+		if (state.getBlock() == SimpleFluidTanks.tankBlock)
 		{
 			TankBlockEntity tankEntity = Utils.getTileEntityAt(world, TankBlockEntity.class, block);
 
@@ -1129,10 +1130,10 @@ public class ValveBlockEntity extends TileEntity
 				return !tankEntity.isPartOfTank();
 			}
 		}
-		else if (block.equals(pos) && tankPriorities.isEmpty())
+		else
 		{
 			// this valve is also considered a unlinked tank as long as it has no associated tanks
-			return true;
+			return (block.equals(pos) && tankPriorities.isEmpty());
 		}
 
 		return false;

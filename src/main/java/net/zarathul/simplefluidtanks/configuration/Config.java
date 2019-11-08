@@ -54,18 +54,22 @@ public final class Config
 
 		tankBlockHardness = CommonConfigBuilder.translation("config.tankblock_hardness")
 				.comment("The amount of hits the block can take before it breaks (-1 = indestructible).")
+				.worldRestart()
 				.defineInRange("tankBlockHardness", defaultTankBlockHardness, -1.0d, Float.MAX_VALUE);
 
 		tankBlockResistance = CommonConfigBuilder.translation("config.tankblock_resistance")
 				.comment("The blocks resistance to explosions.")
+				.worldRestart()
 				.defineInRange("tankBlockResistance", defaultTankBlockResistance, 1.0d, Float.MAX_VALUE);
 
 		valveBlockHardness = CommonConfigBuilder.translation("config.valveblock_hardness")
 				.comment("The amount of hits the block can take before it breaks (-1 = indestructible).")
+				.worldRestart()
 				.defineInRange("valveBlockHardness", defaultValveBlockHardness, -1.0d, Float.MAX_VALUE);
 
 		valveBlockResistance = CommonConfigBuilder.translation("config.valveblock_resistance")
 				.comment("The blocks resistance to explosions.")
+				.worldRestart()
 				.defineInRange("valveBlockResistance", defaultValveBlockResistance, 1.0d, Float.MAX_VALUE);
 
 		CommonConfigBuilder.pop();

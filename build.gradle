@@ -17,9 +17,9 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 //apply plugin: 'maven-publish'
 
-String ForgeVersion = '1.14.4-28.1.61'
+String ForgeVersion = '1.14.4-28.1.87'
 
-version = "1.14.4-1.8.0.0"
+version = "1.14.4-1.8.0.1"
 group= "net.zarathul.simplefluidtanks" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "simplefluidtanks"
 

@@ -176,16 +176,16 @@ public class TankBlock extends WrenchableBlock
 				if (ignoreBlockBreakCoords.contains(pos))
 				{
 					ignoreBlockBreakCoords.remove(pos);
-
-					return;
 				}
-
-				// get the valve the tank is connected to and disband the multiblock
-				ValveBlockEntity valveEntity = Utils.getValve(world, pos);
-
-				if (valveEntity != null)
+				else
 				{
-					valveEntity.disbandMultiblock(pos);
+					// get the valve the tank is connected to and disband the multiblock
+					ValveBlockEntity valveEntity = Utils.getValve(world, pos);
+
+					if (valveEntity != null)
+					{
+						valveEntity.disbandMultiblock(pos);
+					}
 				}
 			}
 		}
@@ -208,7 +208,7 @@ public class TankBlock extends WrenchableBlock
 				valveEntity = tankEntity.getValve();
 				// ignore the BlockBreak event for this TankBlock, this way
 				// there will be no reset of the whole tank
-				ignoreBlockBreakCoords.add(pos);
+				ignoreBlockBreakCoords.add(pos.toImmutable());
 			}
 
 			world.destroyBlock(pos, true);
