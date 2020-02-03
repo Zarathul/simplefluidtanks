@@ -42,8 +42,7 @@ public final class Config
 		CommonConfigBuilder.push("misc");
 
 		bucketsPerTank = CommonConfigBuilder.translation("config.buckets_per_tank")
-				.comment("The amount of fluid a tank can hold measured in buckets.")
-				.worldRestart()
+				.comment("The amount of fluid one tank block can hold measured in buckets. If this value is changed, all tanks already placed in the world need to be manually updated by right-clicking the valve with the wrench.")
 				.defineInRange("bucketsPerTank", defaultBucketsPerTank, 1, Integer.MAX_VALUE);
 
 		CommonConfigBuilder.pop();

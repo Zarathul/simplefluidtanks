@@ -19,7 +19,7 @@ apply plugin: 'eclipse'
 
 String ForgeVersion = '1.14.4-28.1.87'
 
-version = "1.14.4-1.8.0.1"
+version = "1.14.4-1.8.0.2"
 group= "net.zarathul.simplefluidtanks" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "simplefluidtanks"
 

@@ -31,7 +31,7 @@
 	"config.misc": "Verschiedenes",
 	"config.blocks": "Blöcke",
 	"config.buckets_per_tank": "Eimer pro Tank",
-	"config.buckets_per_tank.tooltip": "Die Menge an Flüssigkeit die ein Tank aufnehmen kann, gemessen in Eimern.",
+	"config.buckets_per_tank.tooltip": "Die Menge an Flüssigkeit die ein Tank aufnehmen kann, gemessen in Eimern. Wird dieser Wert geändert, müssen alle Tanks die bereits in der Welt plaziert wurden, durch einen Rechtsklick mit dem Schraubenschlüssel auf das Ventil aktualisiert werden.",
 	"config.tankblock_hardness": "Härte von Tanks",
 	"config.tankblock_hardness.tooltip": "Die Menge an Treffern die ein Tank aushält, bis er zerstört wird (-1 = unzerstörbar).",
 	"config.tankblock_resistance": "Explosionswiderstand von Tanks",

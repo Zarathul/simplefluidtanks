@@ -30,7 +30,7 @@
 	"config.misc": "Misc",
 	"config.blocks": "Blocks",
 	"config.buckets_per_tank": "Buckets Per Tank",
-	"config.buckets_per_tank.tooltip": "The amount of fluid a tank can hold measured in buckets.",
+	"config.buckets_per_tank.tooltip": "The amount of fluid one tank block can hold measured in buckets. If this value is changed, all tanks already placed in the world need to be manually updated by right-clicking the valve with the wrench.",
 	"config.tankblock_hardness": "Tank Hardness",
 	"config.tankblock_hardness.tooltip": "The amount of hits the tank can take before it breaks (-1 = indestructible).",
 	"config.tankblock_resistance": "Tank Blast Resistance",
